@@ -3,6 +3,8 @@ SLC = glslc
 CFLAGS = -std=gnu17 -march=native -mtune=native -flto -O2 -Wall -Wextra
 SLFLAGS = -O
 
+.PHONY: all clean
+
 all: zero
 
 zero: main.o graphics.o network.o window.o content.o shaders/shader.vert.spv shaders/shader.frag.spv
