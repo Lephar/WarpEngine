@@ -1,50 +1,40 @@
 CC = gcc
-SLC = glslc
 CFLAGS = -std=gnu17 -march=native -mtune=native -flto -O2 -Wall -Wextra
+LDLIBS = -lm -luuid -lpthread -lvulkan -lglfw
+
+SLC = glslc
 SLFLAGS = -O
 
 .PHONY: all clean
 
 all: zero
 
-zero: main.o graphics.o network.o window.o content.o shaders/shader.vert.spv shaders/shader.frag.spv
-	$(CC) main.o graphics.o network.o window.o content.o -o zero $(CFLAGS)
+zero: main.o base.o network.o graphics.o content.o game.o shaders/vertex.spv shaders/fragment.spv
+	$(CC) main.o base.o network.o graphics.o content.o game.o -o zero $(LDLIBS) $(CFLAGS)
 
-main.o: main.c main.h.gch
-	$(CC) -c main.c -o main.o $(CFLAGS)
+main.o: main.c
+	$(CC) -c main.c $(CFLAGS)
 
-main.h.gch: main.h
-	$(CC) -c main.h -o main.h.gch $(CFLAGS)
+base.o: base.c base.h
+	$(CC) -c base.c $(CFLAGS)
 
-graphics.o: graphics.c graphics.h.gch
-	$(CC) -c graphics.c -o graphics.o -lm -lvulkan $(CFLAGS)
+network.o: network.c network.h
+	$(CC) -c network.c $(CFLAGS)
 
-graphics.h.gch: graphics.h
-	$(CC) -c graphics.h -o graphics.h.gch $(CFLAGS)
+graphics.o: graphics.c graphics.h
+	$(CC) -c graphics.c $(CFLAGS)
 
-network.o: network.c network.h.gch
-	$(CC) -c network.c -o network.o -luuid -lpthread $(CFLAGS)
+content.o: content.c content.h
+	$(CC) -c content.c $(CFLAGS)
 
-network.h.gch: network.h
-	$(CC) -c network.h -o network.h.gch $(CFLAGS)
+game.o: game.c game.h
+	$(CC) -c game.c $(CFLAGS)
 
-window.o: window.c window.h.gch
-	$(CC) -c window.c -o window.o -lm -lvulkan -lglfw $(CFLAGS)
+shaders/vertex.spv: shaders/vertex.vert
+	$(SLC) shaders/vertex.vert -o shaders/vertex.spv $(SLFLAGS)
 
-window.h.gch: window.h
-	$(CC) -c window.h -o window.h.gch $(CFLAGS)
-
-content.o: content.c content.h.gch
-	$(CC) -c content.c -o content.o -lm $(CFLAGS)
-
-content.h.gch: content.h
-	$(CC) -c content.h -o content.h.gch $(CFLAGS)
-
-shaders/shader.vert.spv: shaders/shader.vert
-	$(SLC) shaders/shader.vert -o shaders/shader.vert.spv $(SLFLAGS)
-
-shaders/shader.frag.spv: shaders/shader.frag
-	$(SLC) shaders/shader.frag -o shaders/shader.frag.spv $(SLFLAGS)
+shaders/fragment.spv: shaders/fragment.frag
+	$(SLC) shaders/fragment.frag -o shaders/fragment.spv $(SLFLAGS)
 
 clean:
-	rm shaders/*.spv *.gch *.o zero
+	rm shaders/*.spv *.o zero
