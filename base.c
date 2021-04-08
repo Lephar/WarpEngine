@@ -1,11 +1,7 @@
 #include "base.h"
-#include <stdio.h>
 #include <string.h>
 
 GLFWwindow *window;
-VkInstance instance;
-VkDebugUtilsMessengerEXT messenger;
-VkSurfaceKHR surface;
 
 struct dimensions {
 	int32_t width;
@@ -82,20 +78,7 @@ void resizeCallback(GLFWwindow *handle, int32_t width, int32_t height) {
 	dimensions.height = height;
 }
 
-VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-											   VkDebugUtilsMessageTypeFlagsEXT type,
-											   const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-											   void *pUserData) {
-	(void) type;
-	(void) pUserData;
-
-	if (severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-		printf("%s\n", pCallbackData->pMessage);
-
-	return VK_FALSE;
-}
-
-void initializeBase(void) {
+void createWindow(void) {
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	window = glfwCreateWindow(1280, 720, "Zero", NULL, NULL);
@@ -104,59 +87,25 @@ void initializeBase(void) {
 	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetFramebufferSizeCallback(window, resizeCallback);
 	glfwGetCursorPos(window, &controls.mouseX, &controls.mouseY);
-
-	uint32_t layerCount = 1u, extensionCount = 0u;
-	const char **extensions = glfwGetRequiredInstanceExtensions(&extensionCount);
-
-	extensionCount += 1;
-	const char *layerNames[] = {"VK_LAYER_KHRONOS_validation"}, *extensionNames[extensionCount];
-	memcpy(extensionNames, extensions, (extensionCount - 1) * sizeof(const char *));
-	extensionNames[extensionCount - 1] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
-
-	VkApplicationInfo applicationInfo = {
-			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-			.pApplicationName = "Zero",
-			.applicationVersion = VK_MAKE_VERSION(0, 1, 0),
-			.pEngineName = "Zero Engine",
-			.engineVersion = VK_MAKE_VERSION(0, 1, 0),
-			.apiVersion = VK_API_VERSION_1_2
-	};
-
-	VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {
-			.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-			.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-							   VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-							   VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-							   VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-			.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-						   VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-						   VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
-			.pfnUserCallback = messageCallback
-	};
-
-	VkInstanceCreateInfo instanceInfo = {
-			.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-			.pApplicationInfo = &applicationInfo,
-			.enabledLayerCount = layerCount,
-			.ppEnabledLayerNames = layerNames,
-			.enabledExtensionCount = extensionCount,
-			.ppEnabledExtensionNames = extensionNames,
-			.pNext = &messengerInfo
-	};
-
-	vkCreateInstance(&instanceInfo, NULL, &instance);
-	PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT = (PFN_vkCreateDebugUtilsMessengerEXT)
-			glfwGetInstanceProcAddress(instance, "vkCreateDebugUtilsMessengerEXT");
-	vkCreateDebugUtilsMessengerEXT(instance, &messengerInfo, NULL, &messenger);
-	glfwCreateWindowSurface(instance, window, NULL, &surface);
 }
 
-void clearBase(void) {
-	vkDestroySurfaceKHR(instance, surface, NULL);
-	PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT = (PFN_vkDestroyDebugUtilsMessengerEXT)
+void getExtensions(uint32_t *count, const char ***names) {
+	*names = glfwGetRequiredInstanceExtensions(count);
+}
+
+void loadFunctions(VkInstance instance, PFN_vkCreateDebugUtilsMessengerEXT *messengerCreator,
+				   PFN_vkDestroyDebugUtilsMessengerEXT *messengerDestroyer) {
+	*messengerCreator = (PFN_vkCreateDebugUtilsMessengerEXT)
+			glfwGetInstanceProcAddress(instance, "vkCreateDebugUtilsMessengerEXT");
+	*messengerDestroyer = (PFN_vkDestroyDebugUtilsMessengerEXT)
 			glfwGetInstanceProcAddress(instance, "vkDestroyDebugUtilsMessengerEXT");
-	vkDestroyDebugUtilsMessengerEXT(instance, messenger, NULL);
-	vkDestroyInstance(instance, NULL);
+}
+
+void createSurface(VkInstance instance, VkSurfaceKHR *surface) {
+	glfwCreateWindowSurface(instance, window, NULL, surface);
+}
+
+void destroyWindow(void) {
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }

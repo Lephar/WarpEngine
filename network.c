@@ -8,6 +8,7 @@
 #include "network.h"
 
 #define UUID_STRING_SIZE 37
+
 #include <stdio.h>
 
 int32_t server;
@@ -24,25 +25,25 @@ void establishConnection(void) {
 	};
 	inet_pton(AF_INET, "10.0.0.30", &serverAddress.sin_addr);
 
-	(void) connect(server, (struct sockaddr*) &serverAddress, sizeof(struct sockaddr_in));
+	(void) connect(server, (struct sockaddr *) &serverAddress, sizeof(struct sockaddr_in));
 
 	uuid_t uuidBinary;
 	recv(server, uuidBinary, sizeof(uuid_t), MSG_WAITALL);
 
 	char uuidString[UUID_STRING_SIZE];
 	uuid_unparse_upper(uuidBinary, uuidString);
-	printf("%s\n", uuidString);
+	//printf("%s\n", uuidString);
 
 	close(server);
 }
 
-_Noreturn void* startReceiver(__attribute__((unused)) void* parameter) {
-	while(1){
+_Noreturn void *startReceiver(__attribute__((unused)) void *parameter) {
+	while (1) {
 	}
 }
 
-_Noreturn void* startSender(__attribute__((unused)) void* parameter) {
-	while(1){
+_Noreturn void *startSender(__attribute__((unused)) void *parameter) {
+	while (1) {
 	}
 }
 

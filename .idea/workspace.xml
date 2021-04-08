@@ -16,25 +16,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/base.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shaders/fragment.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shaders/vertex.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/ZeroClient.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ZeroClient.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base.c" beforeDir="false" afterPath="$PROJECT_DIR$/base.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base.h" beforeDir="false" afterPath="$PROJECT_DIR$/base.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graphics.c" beforeDir="false" afterPath="$PROJECT_DIR$/graphics.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graphics.h" beforeDir="false" afterPath="$PROJECT_DIR$/graphics.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/network.c" beforeDir="false" afterPath="$PROJECT_DIR$/network.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/network.h" beforeDir="false" afterPath="$PROJECT_DIR$/network.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/shader.frag" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/shader.vert" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/window.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/window.h" beforeDir="false" afterPath="$PROJECT_DIR$/base.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,16 +93,6 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -125,8 +105,18 @@
       <workItem from="1617020991534" duration="1000" />
       <workItem from="1617021040508" duration="112000" />
       <workItem from="1617021160860" duration="8100000" />
-      <workItem from="1617118408117" duration="11584000" />
+      <workItem from="1617118408117" duration="12033000" />
+      <workItem from="1617651211259" duration="624000" />
+      <workItem from="1617903607485" duration="9291000" />
     </task>
+    <task id="LOCAL-00001" summary="Restructured code, implemented client socket, and created Vulkan base">
+      <created>1617139707648</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1617139707648</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,8 +132,11 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Restructured code, implemented client socket, and created Vulkan base" />
+    <option name="LAST_COMMIT_MESSAGE" value="Restructured code, implemented client socket, and created Vulkan base" />
   </component>
 </project>
