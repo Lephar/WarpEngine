@@ -4,10 +4,6 @@
 
 void createInstance(uint32_t, const char **, VkInstance *);
 
-void bindFunctions(PFN_vkCreateDebugUtilsMessengerEXT, PFN_vkDestroyDebugUtilsMessengerEXT);
-
-void createMessenger(void);
-
 void bindSurface(VkSurfaceKHR);
 
 void startRenderer(void);

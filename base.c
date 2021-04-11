@@ -93,14 +93,6 @@ void getExtensions(uint32_t *count, const char ***names) {
 	*names = glfwGetRequiredInstanceExtensions(count);
 }
 
-void loadFunctions(VkInstance instance, PFN_vkCreateDebugUtilsMessengerEXT *messengerCreator,
-				   PFN_vkDestroyDebugUtilsMessengerEXT *messengerDestroyer) {
-	*messengerCreator = (PFN_vkCreateDebugUtilsMessengerEXT)
-			glfwGetInstanceProcAddress(instance, "vkCreateDebugUtilsMessengerEXT");
-	*messengerDestroyer = (PFN_vkDestroyDebugUtilsMessengerEXT)
-			glfwGetInstanceProcAddress(instance, "vkDestroyDebugUtilsMessengerEXT");
-}
-
 void createSurface(VkInstance instance, VkSurfaceKHR *surface) {
 	glfwCreateWindowSurface(instance, window, NULL, surface);
 }
