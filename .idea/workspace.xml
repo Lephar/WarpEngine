@@ -16,13 +16,98 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="Separated window system from renderer and formatted code">
-      <change beforePath="$PROJECT_DIR$/.idea/ZeroClient.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ZeroClient.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base.c" beforeDir="false" afterPath="$PROJECT_DIR$/base.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base.h" beforeDir="false" afterPath="$PROJECT_DIR$/base.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics.c" beforeDir="false" afterPath="$PROJECT_DIR$/graphics.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics.h" beforeDir="false" afterPath="$PROJECT_DIR$/graphics.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/affine-mat.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/affine.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/affine2d.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/applesimd.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/bezier.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/box.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/affine.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/affine2d.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/bezier.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/box.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/cam.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/curve.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/ease.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/euler.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/frustum.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/io.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/mat2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/mat3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/mat4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/plane.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/project.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/quat.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/ray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/sphere.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/vec2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/vec3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/call/vec4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/cam.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/cglm.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/color.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/common.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/curve.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/ease.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/euler.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/frustum.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/io.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/mat2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/mat3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/mat4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/plane.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/project.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/quat.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/ray.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/arm.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/avx/affine.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/avx/mat4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/intrin.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/neon/mat4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/sse2/affine.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/sse2/mat2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/sse2/mat3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/sse2/mat4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/sse2/quat.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/simd/x86.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/sphere.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/affine.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/affine2d.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/box.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/cam.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/color.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/curve.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/euler.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/frustum.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/io.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/mat2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/mat3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/mat4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/plane.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/project.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/quat.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/sphere.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/vec2-ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/vec2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/vec3-ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/vec3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/vec4-ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/struct/vec4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/types-struct.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/util.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/vec2-ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/vec2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/vec3-ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/vec3.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/vec4-ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/vec4.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cglm/version.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cgltf/cgltf.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cgltf/cgltf_write.h" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +148,7 @@
     </option>
     <option name="projectSyncType">
       <map>
-        <entry key="$PROJECT_DIR$" value="IMPORT" />
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
       </map>
     </option>
   </component>
@@ -85,22 +170,12 @@
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="preferences.general" />
   </component>
   <component name="RunManager">
     <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZeroClient" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/zero">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -120,6 +195,11 @@
       <workItem from="1617903607485" duration="9981000" />
       <workItem from="1618070111995" duration="6675000" />
       <workItem from="1618107975139" duration="806000" />
+      <workItem from="1618525111832" duration="142000" />
+      <workItem from="1618527290849" duration="605000" />
+      <workItem from="1618532640492" duration="1206000" />
+      <workItem from="1618669007744" duration="599000" />
+      <workItem from="1618693419625" duration="317000" />
     </task>
     <task id="LOCAL-00001" summary="Restructured code, implemented client socket, and created Vulkan base">
       <created>1617139707648</created>
