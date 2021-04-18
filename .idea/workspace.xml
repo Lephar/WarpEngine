@@ -16,22 +16,18 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="Removed external dependencies and made them system-wide libraries">
-      <change afterPath="$PROJECT_DIR$/contentManager.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="Changed source file names and Makefile structure">
+      <change afterPath="$PROJECT_DIR$/renderHelper.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base.c" beforeDir="false" afterPath="$PROJECT_DIR$/platformFramework.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base.h" beforeDir="false" afterPath="$PROJECT_DIR$/platformFramework.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content.h" beforeDir="false" afterPath="$PROJECT_DIR$/contentManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game.c" beforeDir="false" afterPath="$PROJECT_DIR$/gameLogic.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game.h" beforeDir="false" afterPath="$PROJECT_DIR$/gameLogic.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics.c" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics.h" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/zeroClient.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/network.c" beforeDir="false" afterPath="$PROJECT_DIR$/networkSystem.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/network.h" beforeDir="false" afterPath="$PROJECT_DIR$/networkSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contentManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/contentManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameLogic.h" beforeDir="false" afterPath="$PROJECT_DIR$/gameLogic.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networkSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/networkSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platformFramework.c" beforeDir="false" afterPath="$PROJECT_DIR$/platformBase.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platformFramework.h" beforeDir="false" afterPath="$PROJECT_DIR$/platformBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/renderSystem.c" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/renderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zeroClient.c" beforeDir="false" afterPath="$PROJECT_DIR$/zeroClient.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,6 +92,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="ObjectiveC" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.general" />
   </component>
@@ -139,7 +136,7 @@
       <workItem from="1618693419625" duration="5629000" />
       <workItem from="1618704524279" duration="255000" />
       <workItem from="1618704793005" duration="324000" />
-      <workItem from="1618705128079" duration="259000" />
+      <workItem from="1618705128079" duration="2620000" />
     </task>
     <task id="LOCAL-00001" summary="Restructured code, implemented client socket, and created Vulkan base">
       <created>1617139707648</created>
@@ -162,7 +159,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618694207967</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Changed source file names and Makefile structure">
+      <created>1618705408307</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1618705408307</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -185,7 +189,8 @@
     <MESSAGE value="Restructured code, implemented client socket, and created Vulkan base" />
     <MESSAGE value="Separated window system from renderer and formatted code" />
     <MESSAGE value="Removed external dependencies and made them system-wide libraries" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed external dependencies and made them system-wide libraries" />
+    <MESSAGE value="Changed source file names and Makefile structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed source file names and Makefile structure" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

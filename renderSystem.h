@@ -1,4 +1,5 @@
-#ifndef GRAPHICS_H
+#ifndef ZERO_CLIENT_RENDER_SYSTEM_H
+#define ZERO_CLIENT_RENDER_SYSTEM_H
 
 #include <vulkan/vulkan.h>
 

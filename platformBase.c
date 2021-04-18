@@ -1,4 +1,4 @@
-#include "platformFramework.h"
+#include "platformBase.h"
 #include <string.h>
 
 GLFWwindow *window;

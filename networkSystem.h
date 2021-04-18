@@ -1,4 +1,5 @@
-#ifndef NETWORK_H
+#ifndef ZERO_CLIENT_NETWORK_SYSTEM_H
+#define ZERO_CLIENT_NETWORK_SYSTEM_H
 
 void startDaemon(void);
 

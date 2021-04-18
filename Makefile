@@ -9,19 +9,19 @@ SLFLAGS = -O
 
 all: zeroClient shaders/vertex.spv shaders/fragment.spv
 
-zeroClient: zeroClient.o platformFramework.o networkSystem.o renderSystem.o contentManager.o gameLogic.o
-	$(CC) zeroClient.o platformFramework.o networkSystem.o renderSystem.o contentManager.o gameLogic.o -o zeroClient $(LDLIBS) $(CFLAGS)
+zeroClient: zeroClient.o platformBase.o networkSystem.o renderSystem.o contentManager.o gameLogic.o
+	$(CC) $^ -o $@ $(LDLIBS) $(CFLAGS)
 
-zeroClient.o: zeroClient.c platformFramework.h networkSystem.h renderSystem.h contentManager.h gameLogic.h
+zeroClient.o: zeroClient.c platformBase.h networkSystem.h renderSystem.h contentManager.h gameLogic.h
 	$(CC) -c $< $(CFLAGS)
 
-platformFramework.o: platformFramework.c platformFramework.h
+platformBase.o: platformBase.c platformBase.h
 	$(CC) -c $< $(CFLAGS)
 
 networkSystem.o: networkSystem.c networkSystem.h
 	$(CC) -c $< $(CFLAGS)
 
-renderSystem.o: renderSystem.c renderSystem.h
+renderSystem.o: renderSystem.c renderSystem.h renderHelper.h
 	$(CC) -c $< $(CFLAGS)
 
 contentManager.o: contentManager.c contentManager.h
