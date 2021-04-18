@@ -5,7 +5,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 
-#include "network.h"
+#include "networkSystem.h"
 
 #define UUID_STRING_SIZE 37
 

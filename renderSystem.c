@@ -1,4 +1,4 @@
-#include "graphics.h"
+#include "renderSystem.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -7,6 +7,9 @@ VkInstance instance;
 VkSurfaceKHR surface;
 VkPhysicalDevice physicalDevice;
 uint32_t queueFamilyIndex;
+VkDevice device;
+VkQueue queue;
+VkCommandPool commandPool;
 
 VkDebugUtilsMessengerEXT messenger;
 
@@ -108,13 +111,49 @@ uint32_t selectQueueFamily() {
 	return UINT32_MAX;
 }
 
-void startRenderer(void) {
+void createDevice() {
+    float queuePriority = 1.0f;
+    VkPhysicalDeviceFeatures deviceFeatures = {};
+
+    uint32_t extensionCount = 1u;
+    const char *extensionNames[] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+    VkDeviceQueueCreateInfo queueInfo = {
+            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+            .queueFamilyIndex = queueFamilyIndex,
+            .queueCount = 1,
+            .pQueuePriorities = &queuePriority
+    };
+
+    VkDeviceCreateInfo deviceInfo = {
+            .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+            .queueCreateInfoCount = 1,
+            .pQueueCreateInfos = &queueInfo,
+            .pEnabledFeatures = &deviceFeatures,
+            .enabledExtensionCount = extensionCount,
+            .ppEnabledExtensionNames = extensionNames
+    };
+
+    VkCommandPoolCreateInfo poolInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+            .queueFamilyIndex = queueFamilyIndex
+    };
+
+    vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
+    vkGetDeviceQueue(device, queueFamilyIndex, 0, &queue);
+    vkCreateCommandPool(device, &poolInfo, NULL, &commandPool);
+}
+
+void prepareRenderer(void) {
 	physicalDevice = pickPhysicalDevice();
 	queueFamilyIndex = selectQueueFamily();
+    createDevice();
 }
 
 void destroyRenderer(void) {
-	vkDestroySurfaceKHR(instance, surface, NULL);
+    vkDestroyCommandPool(device, commandPool, NULL);
+    vkDestroyDevice(device, NULL);
+    vkDestroySurfaceKHR(instance, surface, NULL);
 	PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT)
 			vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
 	destroyDebugUtilsMessenger(instance, messenger, NULL);

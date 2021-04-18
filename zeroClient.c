@@ -1,6 +1,6 @@
-#include "base.h"
-#include "graphics.h"
-#include "network.h"
+#include "platformFramework.h"
+#include "renderSystem.h"
+#include "networkSystem.h"
 
 void bindContext(void) {
 	uint32_t extensionCount;
@@ -25,7 +25,7 @@ int main(void) {
 	startDaemon();
 
 	bindContext();
-	startRenderer();
+    prepareRenderer();
 	gameLoop();
 	destroyRenderer();
 

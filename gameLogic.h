@@ -1,5 +1,5 @@
 #ifndef GAME_H
 
-#include "cglm/cglm.h"
+#include <cglm/cglm.h>
 
 #endif

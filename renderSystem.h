@@ -6,7 +6,7 @@ void createInstance(uint32_t, const char **, VkInstance *);
 
 void bindSurface(VkSurfaceKHR);
 
-void startRenderer(void);
+void prepareRenderer(void);
 
 void destroyRenderer(void);
 

@@ -7,34 +7,34 @@ SLFLAGS = -O
 
 .PHONY: all clean
 
-all: zero
+all: zeroClient shaders/vertex.spv shaders/fragment.spv
 
-zero: main.o base.o network.o graphics.o content.o game.o shaders/vertex.spv shaders/fragment.spv
-	$(CC) main.o base.o network.o graphics.o content.o game.o -o zero $(LDLIBS) $(CFLAGS)
+zeroClient: zeroClient.o platformFramework.o networkSystem.o renderSystem.o contentManager.o gameLogic.o
+	$(CC) zeroClient.o platformFramework.o networkSystem.o renderSystem.o contentManager.o gameLogic.o -o zeroClient $(LDLIBS) $(CFLAGS)
 
-main.o: main.c
-	$(CC) -c main.c $(CFLAGS)
+zeroClient.o: zeroClient.c platformFramework.h networkSystem.h renderSystem.h contentManager.h gameLogic.h
+	$(CC) -c $< $(CFLAGS)
 
-base.o: base.c base.h
-	$(CC) -c base.c $(CFLAGS)
+platformFramework.o: platformFramework.c platformFramework.h
+	$(CC) -c $< $(CFLAGS)
 
-network.o: network.c network.h
-	$(CC) -c network.c $(CFLAGS)
+networkSystem.o: networkSystem.c networkSystem.h
+	$(CC) -c $< $(CFLAGS)
 
-graphics.o: graphics.c graphics.h
-	$(CC) -c graphics.c $(CFLAGS)
+renderSystem.o: renderSystem.c renderSystem.h
+	$(CC) -c $< $(CFLAGS)
 
-content.o: content.c content.h
-	$(CC) -c content.c $(CFLAGS)
+contentManager.o: contentManager.c contentManager.h
+	$(CC) -c $< $(CFLAGS)
 
-game.o: game.c game.h
-	$(CC) -c game.c $(CFLAGS)
+gameLogic.o: gameLogic.c gameLogic.h
+	$(CC) -c $< $(CFLAGS)
 
 shaders/vertex.spv: shaders/vertex.vert
-	$(SLC) shaders/vertex.vert -o shaders/vertex.spv $(SLFLAGS)
+	$(SLC) $< -o $@ $(SLFLAGS)
 
 shaders/fragment.spv: shaders/fragment.frag
-	$(SLC) shaders/fragment.frag -o shaders/fragment.spv $(SLFLAGS)
+	$(SLC) $< -o $@ $(SLFLAGS)
 
 clean:
-	rm shaders/*.spv *.o zero
+	rm shaders/*.spv *.o zeroClient
