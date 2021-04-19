@@ -16,18 +16,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="Changed source file names and Makefile structure">
-      <change afterPath="$PROJECT_DIR$/renderHelper.h" afterDir="false" />
+    <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="Added helper functions for renderer and fixed include guards">
+      <change afterPath="$PROJECT_DIR$/renderInternal.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contentManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/contentManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gameLogic.h" beforeDir="false" afterPath="$PROJECT_DIR$/gameLogic.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/networkSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/networkSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformFramework.c" beforeDir="false" afterPath="$PROJECT_DIR$/platformBase.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformFramework.h" beforeDir="false" afterPath="$PROJECT_DIR$/platformBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/renderHelper.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/renderSystem.c" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/renderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/zeroClient.c" beforeDir="false" afterPath="$PROJECT_DIR$/zeroClient.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +38,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="dqnvghb2" />
@@ -94,17 +96,12 @@
     <property name="cidr.known.project.marker" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="ObjectiveC" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.general" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunManager">
     <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZeroClient" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/zeroClient">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
@@ -136,7 +133,9 @@
       <workItem from="1618693419625" duration="5629000" />
       <workItem from="1618704524279" duration="255000" />
       <workItem from="1618704793005" duration="324000" />
-      <workItem from="1618705128079" duration="2620000" />
+      <workItem from="1618705128079" duration="10691000" />
+      <workItem from="1618779437328" duration="1444000" />
+      <workItem from="1618797984774" duration="2095000" />
     </task>
     <task id="LOCAL-00001" summary="Restructured code, implemented client socket, and created Vulkan base">
       <created>1617139707648</created>
@@ -166,7 +165,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618705408307</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added helper functions for renderer and fixed include guards">
+      <created>1618707885713</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1618707885713</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -190,7 +196,8 @@
     <MESSAGE value="Separated window system from renderer and formatted code" />
     <MESSAGE value="Removed external dependencies and made them system-wide libraries" />
     <MESSAGE value="Changed source file names and Makefile structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed source file names and Makefile structure" />
+    <MESSAGE value="Added helper functions for renderer and fixed include guards" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added helper functions for renderer and fixed include guards" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -1,5 +1,5 @@
 #include "renderSystem.h"
-#include "renderHelper.h"
+#include "renderInternal.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -75,7 +75,7 @@ void bindSurface(VkSurfaceKHR surfaceHandle) {
 	surface = surfaceHandle;
 }
 
-void createDevice() {
+void createDevice(void) {
     float queuePriority = 1.0f;
     VkPhysicalDeviceFeatures deviceFeatures = {};
 

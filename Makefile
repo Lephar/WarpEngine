@@ -21,7 +21,7 @@ platformBase.o: platformBase.c platformBase.h
 networkSystem.o: networkSystem.c networkSystem.h
 	$(CC) -c $< $(CFLAGS)
 
-renderSystem.o: renderSystem.c renderSystem.h renderHelper.h
+renderSystem.o: renderSystem.c renderSystem.h renderInternal.h
 	$(CC) -c $< $(CFLAGS)
 
 contentManager.o: contentManager.c contentManager.h
