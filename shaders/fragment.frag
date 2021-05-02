@@ -20,3 +20,4 @@ void main()
 	
 	outputColor = vec4(pointLight + ambientLight, 1.0f) * texture(textureSampler, inputTexture);
 }
+

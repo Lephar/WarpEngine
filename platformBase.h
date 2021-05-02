@@ -7,9 +7,13 @@
 
 void createWindow(void);
 
-void getExtensions(uint32_t *, const char ***);
+const char ** getExtensions(uint32_t *);
 
-void createSurface(VkInstance, VkSurfaceKHR *);
+PFN_vkCreateDebugUtilsMessengerEXT getMessengerCreator(VkInstance);
+
+VkSurfaceKHR createSurface(VkInstance);
+
+PFN_vkDestroyDebugUtilsMessengerEXT getMessengerDestroyer(VkInstance);
 
 void destroyWindow(void);
 

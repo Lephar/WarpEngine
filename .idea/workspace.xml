@@ -16,12 +16,27 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="Added helper functions for renderer and fixed include guards">
-      <change afterPath="$PROJECT_DIR$/renderInternal.h" afterDir="false" />
+    <list default="true" id="b89411e6-3d2c-4fd4-a619-0685eeb14736" name="Default Changelist" comment="Added new helper functions for renderer">
+      <change afterPath="$PROJECT_DIR$/renderSystemCore.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/renderSystemCore.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/renderSystemDevice.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/renderSystemDevice.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/renderSystemMemory.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/renderSystemMemory.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/renderSystemSwapchain.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/renderSystemSwapchain.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ZeroClient.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/renderHelper.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/platformBase.c" beforeDir="false" afterPath="$PROJECT_DIR$/platformBase.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platformBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/platformBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/renderInternal.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/renderSystem.c" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/renderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/renderSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/fragment.frag" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/fragment.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/vertex.vert" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/vertex.vert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zeroClient.c" beforeDir="false" afterPath="$PROJECT_DIR$/zeroClient.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,6 +119,11 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -135,7 +155,15 @@
       <workItem from="1618704793005" duration="324000" />
       <workItem from="1618705128079" duration="10691000" />
       <workItem from="1618779437328" duration="1444000" />
-      <workItem from="1618797984774" duration="2095000" />
+      <workItem from="1618797984774" duration="2168000" />
+      <workItem from="1618840870387" duration="1258000" />
+      <workItem from="1618921286919" duration="630000" />
+      <workItem from="1619441260174" duration="37000" />
+      <workItem from="1619441451487" duration="1242000" />
+      <workItem from="1619880550651" duration="7965000" />
+      <workItem from="1619923687615" duration="3818000" />
+      <workItem from="1619959011956" duration="2006000" />
+      <workItem from="1619961028495" duration="12203000" />
     </task>
     <task id="LOCAL-00001" summary="Restructured code, implemented client socket, and created Vulkan base">
       <created>1617139707648</created>
@@ -172,7 +200,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618707885713</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added new helper functions for renderer">
+      <created>1618800140114</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1618800140114</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -197,7 +232,8 @@
     <MESSAGE value="Removed external dependencies and made them system-wide libraries" />
     <MESSAGE value="Changed source file names and Makefile structure" />
     <MESSAGE value="Added helper functions for renderer and fixed include guards" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added helper functions for renderer and fixed include guards" />
+    <MESSAGE value="Added new helper functions for renderer" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added new helper functions for renderer" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

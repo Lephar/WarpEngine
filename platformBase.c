@@ -1,5 +1,4 @@
 #include "platformBase.h"
-#include <string.h>
 
 GLFWwindow *window;
 
@@ -89,12 +88,22 @@ void createWindow(void) {
 	glfwGetCursorPos(window, &controls.mouseX, &controls.mouseY);
 }
 
-void getExtensions(uint32_t *count, const char ***names) {
-	*names = glfwGetRequiredInstanceExtensions(count);
+const char ** getExtensions(uint32_t *count) {
+	return glfwGetRequiredInstanceExtensions(count);
 }
 
-void createSurface(VkInstance instance, VkSurfaceKHR *surface) {
-	glfwCreateWindowSurface(instance, window, NULL, surface);
+PFN_vkCreateDebugUtilsMessengerEXT getMessengerCreator(VkInstance instance) {
+    return (PFN_vkCreateDebugUtilsMessengerEXT) glfwGetInstanceProcAddress(instance, "vkCreateDebugUtilsMessengerEXT");
+}
+
+VkSurfaceKHR createSurface(VkInstance instance) {
+    VkSurfaceKHR surface;
+	glfwCreateWindowSurface(instance, window, NULL, &surface);
+	return surface;
+}
+
+PFN_vkDestroyDebugUtilsMessengerEXT getMessengerDestroyer(VkInstance instance) {
+    return (PFN_vkDestroyDebugUtilsMessengerEXT) glfwGetInstanceProcAddress(instance, "vkDestroyDebugUtilsMessengerEXT");
 }
 
 void destroyWindow(void) {
