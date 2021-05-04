@@ -6,12 +6,15 @@
 struct zrBuffer {
     VkBuffer buffer;
     VkDeviceMemory memory;
-} typedef zrBuffer;
+};
 
 struct zrImage {
     VkImage image;
     VkImageView view;
     VkDeviceMemory memory;
-} typedef zrImage;
+};
+
+typedef struct zrBuffer zrBuffer;
+typedef struct zrImage zrImage;
 
 #endif

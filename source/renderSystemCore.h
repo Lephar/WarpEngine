@@ -7,7 +7,9 @@ struct zrCore {
     VkInstance instance;
     VkDebugUtilsMessengerEXT messenger;
     VkSurfaceKHR surface;
-} typedef zrCore;
+};
+
+typedef struct zrCore zrCore;
 
 zrCore createCore(void);
 void destroyCore(zrCore core);

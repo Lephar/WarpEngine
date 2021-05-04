@@ -8,7 +8,9 @@ struct zrDevice {
     VkPhysicalDevice physicalDevice;
     VkQueue queue;
     VkCommandPool commandPool;
-} typedef zrDevice;
+};
+
+typedef struct zrDevice zrDevice;
 
 zrDevice createDevice(zrCore);
 void destroyDevice(zrDevice);
