@@ -88,23 +88,27 @@ void createWindow(void) {
 	glfwGetCursorPos(window, &controls.mouseX, &controls.mouseY);
 }
 
+VkSurfaceKHR createSurface(VkInstance instance) {
+    VkSurfaceKHR surface;
+    glfwCreateWindowSurface(instance, window, NULL, &surface);
+    return surface;
+}
+
 const char ** getExtensions(uint32_t *count) {
 	return glfwGetRequiredInstanceExtensions(count);
 }
+
+#ifndef NDEBUG
 
 PFN_vkCreateDebugUtilsMessengerEXT getMessengerCreator(VkInstance instance) {
     return (PFN_vkCreateDebugUtilsMessengerEXT) glfwGetInstanceProcAddress(instance, "vkCreateDebugUtilsMessengerEXT");
 }
 
-VkSurfaceKHR createSurface(VkInstance instance) {
-    VkSurfaceKHR surface;
-	glfwCreateWindowSurface(instance, window, NULL, &surface);
-	return surface;
-}
-
 PFN_vkDestroyDebugUtilsMessengerEXT getMessengerDestroyer(VkInstance instance) {
     return (PFN_vkDestroyDebugUtilsMessengerEXT) glfwGetInstanceProcAddress(instance, "vkDestroyDebugUtilsMessengerEXT");
 }
+
+#endif //NDEBUG
 
 void destroyWindow(void) {
 	glfwDestroyWindow(window);

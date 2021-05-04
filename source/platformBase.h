@@ -7,14 +7,18 @@
 
 void createWindow(void);
 
-const char ** getExtensions(uint32_t *);
+VkSurfaceKHR createSurface(VkInstance);
+
+const char **getExtensions(uint32_t *);
+
+#ifndef NDEBUG
 
 PFN_vkCreateDebugUtilsMessengerEXT getMessengerCreator(VkInstance);
 
-VkSurfaceKHR createSurface(VkInstance);
-
 PFN_vkDestroyDebugUtilsMessengerEXT getMessengerDestroyer(VkInstance);
+
+#endif //NDEBUG
 
 void destroyWindow(void);
 
-#endif
+#endif //ZERO_CLIENT_PLATFORM_BASE_H

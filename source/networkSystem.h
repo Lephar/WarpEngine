@@ -5,4 +5,4 @@ void startDaemon(void);
 
 void stopDaemon(void);
 
-#endif
+#endif //ZERO_CLIENT_NETWORK_SYSTEM_H

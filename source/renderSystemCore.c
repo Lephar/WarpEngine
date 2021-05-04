@@ -1,6 +1,8 @@
 #include "platformBase.h"
 #include "renderSystemCore.h"
 
+#ifndef NDEBUG
+
 #include <stdio.h>
 #include <string.h>
 
@@ -31,16 +33,31 @@ VkDebugUtilsMessengerCreateInfoEXT getMessengerInfo(void) {
     };
 }
 
+VkDebugUtilsMessengerEXT createMessenger(VkInstance instance) {
+    VkDebugUtilsMessengerEXT messenger;
+    VkDebugUtilsMessengerCreateInfoEXT messengerInfo = getMessengerInfo();
+    PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = getMessengerCreator(instance);
+    createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
+    return messenger;
+}
+
+#endif //NDEBUG
+
 VkInstance createInstance(void) {
     uint32_t contextExtensionCount;
     const char **contextExtensionNames = getExtensions(&contextExtensionCount);
 
+#ifndef NDEBUG
     uint32_t layerCount = 1u, extensionCount = contextExtensionCount + 1;
     const char *layerNames[] = {"VK_LAYER_KHRONOS_validation"}, *extensionNames[extensionCount];
     memcpy(extensionNames, contextExtensionNames, (extensionCount - 1) * sizeof(const char *));
     extensionNames[extensionCount - 1] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
-
     VkDebugUtilsMessengerCreateInfoEXT messengerInfo = getMessengerInfo();
+#else
+    uint32_t layerCount = 0u, extensionCount = contextExtensionCount;
+    const char **layerNames = NULL, **extensionNames = contextExtensionNames;
+    VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {};
+#endif //NDEBUG
 
     VkApplicationInfo applicationInfo = {
             .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -66,26 +83,21 @@ VkInstance createInstance(void) {
     return instance;
 }
 
-VkDebugUtilsMessengerEXT createMessenger(VkInstance instance) {
-    VkDebugUtilsMessengerEXT messenger;
-    VkDebugUtilsMessengerCreateInfoEXT messengerInfo = getMessengerInfo();
-    PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = getMessengerCreator(instance);
-    createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
-    return messenger;
-}
-
-zrCore createCore(void) {
-    zrCore core;
+Core createCore(void) {
+    Core core;
     core.instance = createInstance();
+#ifndef NDEBUG
     core.messenger = createMessenger(core.instance);
+#endif //NDEBUG
     core.surface = createSurface(core.instance);
     return core;
 }
 
-void destroyCore(zrCore core) {
-    PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = getMessengerDestroyer(core.instance);
-
+void destroyCore(Core core) {
     vkDestroySurfaceKHR(core.instance, core.surface, NULL);
+#ifndef NDEBUG
+    PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = getMessengerDestroyer(core.instance);
     destroyDebugUtilsMessenger(core.instance, core.messenger, NULL);
+#endif //NDEBUG
     vkDestroyInstance(core.instance, NULL);
 }

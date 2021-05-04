@@ -3,15 +3,17 @@
 
 #include <vulkan/vulkan.h>
 
-struct zrCore {
+struct core {
     VkInstance instance;
+#ifndef NDEBUG
     VkDebugUtilsMessengerEXT messenger;
+#endif //NDEBUG
     VkSurfaceKHR surface;
 };
 
-typedef struct zrCore zrCore;
+typedef struct core Core;
 
-zrCore createCore(void);
-void destroyCore(zrCore core);
+Core createCore(void);
+void destroyCore(Core core);
 
-#endif
+#endif //ZERO_CLIENT_RENDER_SYSTEM_CORE_H

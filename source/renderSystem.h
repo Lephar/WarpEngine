@@ -5,4 +5,4 @@ void initializeRenderer(void);
 
 void destroyRenderer(void);
 
-#endif
+#endif //ZERO_CLIENT_RENDER_SYSTEM_H

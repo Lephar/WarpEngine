@@ -3,16 +3,22 @@
 
 #include "renderSystemCore.h"
 
-struct zrDevice {
+struct device {
     VkDevice device;
+    uint32_t queueFamilyIndex;
     VkPhysicalDevice physicalDevice;
     VkQueue queue;
     VkCommandPool commandPool;
 };
 
-typedef struct zrDevice zrDevice;
+typedef struct device Device;
 
-zrDevice createDevice(zrCore);
-void destroyDevice(zrDevice);
+Device createDevice(Core);
+
+VkCommandBuffer beginSingleTimeCommand(VkDevice, VkCommandPool);
+
+void endSingleTimeCommand(VkDevice, VkQueue, VkCommandPool, VkCommandBuffer);
+
+void destroyDevice(Device);
 
 #endif
