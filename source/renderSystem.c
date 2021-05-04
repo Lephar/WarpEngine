@@ -2,8 +2,8 @@
 #include "renderSystemCore.h"
 #include "renderSystemDevice.h"
 
-zrCore core;
-zrDevice device;
+Core core;
+Device device;
 
 void initializeRenderer(void) {
     core = createCore();

@@ -81,19 +81,50 @@ VkCommandPool createCommandPool(VkDevice logicalDevice, uint32_t queueFamilyInde
     return commandPool;
 }
 
-zrDevice createDevice(zrCore core) {
-    zrDevice device;
+Device createDevice(Core core) {
+    Device device;
     device.physicalDevice = pickPhysicalDevice(core.instance);
-    uint32_t queueFamilyIndex = selectQueueFamily(core.surface, device.physicalDevice);
-
-    device.device = createLogicalDevice(device.physicalDevice, queueFamilyIndex);
-    device.queue = getDeviceQueue(device.device, queueFamilyIndex);
-    device.commandPool = createCommandPool(device.device, queueFamilyIndex);
-
+    device.queueFamilyIndex = selectQueueFamily(core.surface, device.physicalDevice);
+    device.device = createLogicalDevice(device.physicalDevice, device.queueFamilyIndex);
+    device.queue = getDeviceQueue(device.device, device.queueFamilyIndex);
+    device.commandPool = createCommandPool(device.device, device.queueFamilyIndex);
     return device;
 }
 
-void destroyDevice(zrDevice device) {
+VkCommandBuffer beginSingleTimeCommand(VkDevice device, VkCommandPool commandPool) {
+    VkCommandBufferAllocateInfo allocateInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandPool = commandPool,
+            .commandBufferCount = 1
+    };
+
+    VkCommandBufferBeginInfo beginInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+    };
+
+    VkCommandBuffer commandBuffer;
+    vkAllocateCommandBuffers(device, &allocateInfo, &commandBuffer);
+    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+    return commandBuffer;
+}
+
+void endSingleTimeCommand(VkDevice device, VkQueue queue, VkCommandPool commandPool, VkCommandBuffer commandBuffer) {
+    vkEndCommandBuffer(commandBuffer);
+
+    VkSubmitInfo submitInfo = {
+            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+            .commandBufferCount = 1,
+            .pCommandBuffers = &commandBuffer
+    };
+
+    vkQueueSubmit(queue, 1, &submitInfo, NULL);
+    vkQueueWaitIdle(queue);
+    vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+}
+
+void destroyDevice(Device device) {
     vkDestroyCommandPool(device.device, device.commandPool, NULL);
     vkDestroyDevice(device.device, NULL);
 }

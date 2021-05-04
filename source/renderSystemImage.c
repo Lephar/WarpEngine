@@ -1,62 +1,5 @@
-#include "renderSystemMemory.h"
-
-void createImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags flags, uint32_t mipLevels,
-                     VkImageView *view) {
-    VkImageViewCreateInfo viewInfo = {
-            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-            .viewType = VK_IMAGE_VIEW_TYPE_2D,
-            .image = image,
-            .format = format,
-            .components = {
-                    .r = VK_COMPONENT_SWIZZLE_IDENTITY,
-                    .g = VK_COMPONENT_SWIZZLE_IDENTITY,
-                    .b = VK_COMPONENT_SWIZZLE_IDENTITY,
-                    .a = VK_COMPONENT_SWIZZLE_IDENTITY
-            },
-            .subresourceRange = {
-                    .aspectMask = flags,
-                    .levelCount = mipLevels,
-                    .baseMipLevel = 0,
-                    .layerCount = 1,
-                    .baseArrayLayer = 0
-            }
-    };
-
-    vkCreateImageView(device, &viewInfo, NULL, view);
-}
-
-uint32_t chooseMemoryType(VkPhysicalDevice physicalDevice, uint32_t filter, VkMemoryPropertyFlags flags) {
-    VkPhysicalDeviceMemoryProperties memoryProperties;
-    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
-
-    for (uint32_t index = 0u; index < memoryProperties.memoryTypeCount; index++)
-        if ((filter & (1 << index)) && (memoryProperties.memoryTypes[index].propertyFlags & flags) == flags)
-            return index;
-
-    return UINT32_MAX;
-}
-
-void createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage,
-                  VkMemoryPropertyFlags properties, VkBuffer *buffer, VkDeviceMemory *bufferMemory) {
-    VkBufferCreateInfo bufferInfo = {
-            .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-            .usage = usage,
-            .size = size
-    };
-
-    vkCreateBuffer(device, &bufferInfo, NULL, buffer);
-
-    VkMemoryRequirements memoryRequirements = {};
-    vkGetBufferMemoryRequirements(device, *buffer, &memoryRequirements);
-
-    VkMemoryAllocateInfo allocateInfo = {
-            .allocationSize = memoryRequirements.size,
-            .memoryTypeIndex = chooseMemoryType(physicalDevice, memoryRequirements.memoryTypeBits, properties)
-    };
-
-    vkAllocateMemory(device, &allocateInfo, NULL, bufferMemory);
-    vkBindBufferMemory(device, *buffer, *bufferMemory, 0);
-}
+#include "renderSystemImage.h"
+#include "renderSystemDevice.h"
 
 void createImage(VkPhysicalDevice physicalDevice, VkDevice device, uint32_t imageWidth, uint32_t imageHeight,
                  uint32_t mipLevels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling,
@@ -91,50 +34,29 @@ void createImage(VkPhysicalDevice physicalDevice, VkDevice device, uint32_t imag
     vkBindImageMemory(device, *image, *imageMemory, 0);
 }
 
-VkCommandBuffer beginSingleTimeCommand(VkDevice device, VkCommandPool commandPool) {
-    VkCommandBufferAllocateInfo allocateInfo = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandPool = commandPool,
-            .commandBufferCount = 1
+void createImageView(VkDevice device, VkImage image, VkFormat format, VkImageAspectFlags flags, uint32_t mipLevels,
+                     VkImageView *view) {
+    VkImageViewCreateInfo viewInfo = {
+            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+            .viewType = VK_IMAGE_VIEW_TYPE_2D,
+            .image = image,
+            .format = format,
+            .components = {
+                    .r = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .a = VK_COMPONENT_SWIZZLE_IDENTITY
+            },
+            .subresourceRange = {
+                    .aspectMask = flags,
+                    .levelCount = mipLevels,
+                    .baseMipLevel = 0,
+                    .layerCount = 1,
+                    .baseArrayLayer = 0
+            }
     };
 
-    VkCommandBufferBeginInfo beginInfo = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
-    };
-
-    VkCommandBuffer commandBuffer;
-    vkAllocateCommandBuffers(device, &allocateInfo, &commandBuffer);
-    vkBeginCommandBuffer(commandBuffer, &beginInfo);
-    return commandBuffer;
-}
-
-void endSingleTimeCommand(VkDevice device, VkQueue queue, VkCommandPool commandPool, VkCommandBuffer commandBuffer) {
-    vkEndCommandBuffer(commandBuffer);
-
-    VkSubmitInfo submitInfo = {
-            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .commandBufferCount = 1,
-            .pCommandBuffers = &commandBuffer
-    };
-
-    vkQueueSubmit(queue, 1, &submitInfo, NULL);
-    vkQueueWaitIdle(queue);
-    vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-}
-
-void copyBuffer(VkDevice device, VkQueue queue, VkCommandPool commandPool, VkBuffer srcBuffer, VkBuffer dstBuffer,
-                VkDeviceSize size) {
-    VkBufferCopy copyRegion = {
-            .srcOffset = 0,
-            .dstOffset = 0,
-            .size = size
-    };
-
-    VkCommandBuffer commandBuffer = beginSingleTimeCommand(device, commandPool);
-    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-    endSingleTimeCommand(device, queue, commandPool, commandBuffer);
+    vkCreateImageView(device, &viewInfo, NULL, view);
 }
 
 void copyBufferToImage(VkDevice device, VkQueue queue, VkCommandPool commandPool, VkBuffer buffer, VkImage image,
