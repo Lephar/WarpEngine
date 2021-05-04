@@ -1,62 +1,62 @@
-# C Compiler Options
 CC = gcc
-CFLAGS = -std=gnu17 -march=native -mtune=native -flto -O2 -Wall -Wextra
 LDLIBS = -lm -luuid -lpthread -lvulkan -lglfw
+CFLAGS = -std=gnu17 -march=native -mtune=native -Wall -Wextra
+DBGFLAGS = -g -Og
+RELFLAGS = -flto -O2 -DNDEBUG
 
-# Shader Compiler Options
 SLC = glslc
 SLFLAGS = -O
 
-# Targets
-SOURCES := $(wildcard *.c)
-VSHADERS := $(wildcard shaders/*.vert)
-FSHADERS := $(wildcard shaders/*.frag)
-OBJECTS := $(SOURCES:%.c=%.o)
-MODULES := $(VSHADERS:%.vert=%.spv) $(FSHADERS:%.frag=%.spv)
+MKDIR = mkdir
+MKFLAGS = -p
+
+SOURCEDIR = source
+SHADERDIR = shaders
+OBJECTDIR = build
+MODULEDIR = modules
+
+SOURCES := $(wildcard $(SOURCEDIR)/*.c)
+COMPSHADERS := $(wildcard $(SHADERDIR)/*.comp)
+VERTSHADERS := $(wildcard $(SHADERDIR)/*.vert)
+FRAGSHADERS := $(wildcard $(SHADERDIR)/*.frag)
+
+OUTDIRS := $(OBJECTDIR) $(MODULEDIR)
+OBJECTS := $(SOURCES:$(SOURCEDIR)/%.c=$(OBJECTDIR)/%.o)
+HEADERDEPS := $(OBJECTS:%.o=%.d)
+COMPMODULES := $(COMPSHADERS:$(SHADERDIR)/%.comp=$(MODULEDIR)/%.comp.spv)
+VERTMODULES := $(VERTSHADERS:$(SHADERDIR)/%.vert=$(MODULEDIR)/%.vert.spv)
+FRAGMODULES := $(FRAGSHADERS:$(SHADERDIR)/%.frag=$(MODULEDIR)/%.frag.spv)
 EXECUTABLE := zeroClient
 
-# Meta Rules
-.PHONY: all clean
-all: $(EXECUTABLE) $(MODULES) $(VSHADERS) $(FSHADERS)
-clean:
-	-rm $(OBJECTS) $(EXECUTABLE)
+.PHONY: all debug release clean
 
-# Main Program
+all: $(EXECUTABLE) $(COMPMODULES) $(VERTMODULES) $(FRAGMODULES)
+
+debug: $(OUTDIRS)
+	@$(MAKE) CFLAGS="$(CFLAGS) $(DBGFLAGS)" --no-print-directory
+
+release: $(OUTDIRS)
+	@$(MAKE) CFLAGS="$(CFLAGS) $(RELFLAGS)" --no-print-directory
+
+$(OUTDIRS):
+	@$(MKDIR) $(MKFLAGS) $@
+
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $^ -o $@ $(LDLIBS) $(CFLAGS)
-zeroClient.o: zeroClient.c platformBase.h networkSystem.h renderSystem.h contentManager.h gameLogic.h
-	$(CC) -c $< $(CFLAGS)
 
-# Game Logic
-gameLogic.o: gameLogic.c gameLogic.h
-	$(CC) -c $< $(CFLAGS)
+$(OBJECTS): $(OBJECTDIR)/%.o: $(SOURCEDIR)/%.c
+	$(CC) -c $< -o $@ -MMD -MF $(OBJECTDIR)/$*.d $(CFLAGS)
 
-# Windowing and Controls
-platformBase.o: platformBase.c platformBase.h
-	$(CC) -c $< $(CFLAGS)
-
-# Network System
-networkSystem.o: networkSystem.c networkSystem.h
-	$(CC) -c $< $(CFLAGS)
-
-# Content Manager
-contentManager.o: contentManager.c contentManager.h
-	$(CC) -c $< $(CFLAGS)
-
-# Rendering System
-renderSystem.o: renderSystem.c renderSystem.h renderSystemCore.h renderSystemDevice.h renderSystemMemory.h renderSystemSwapchain.h
-	$(CC) -c $< $(CFLAGS)
-renderSystemCore.o: renderSystemCore.c renderSystemCore.h platformBase.h
-	$(CC) -c $< $(CFLAGS)
-renderSystemDevice.o: renderSystemDevice.c renderSystemDevice.h
-	$(CC) -c $< $(CFLAGS)
-renderSystemMemory.o: renderSystemMemory.c renderSystemMemory.h
-	$(CC) -c $< $(CFLAGS)
-renderSystemSwapchain.o: renderSystemSwapchain.c renderSystemSwapchain.h
-	$(CC) -c $< $(CFLAGS)
-
-# Shaders
-shaders/vertex.spv: shaders/vertex.vert
+$(COMPMODULES): $(MODULEDIR)/%.comp.spv: $(SHADERDIR)/%.comp
 	$(SLC) $< -o $@ $(SLFLAGS)
-shaders/fragment.spv: shaders/fragment.frag
+
+$(VERTMODULES): $(MODULEDIR)/%.vert.spv: $(SHADERDIR)/%.vert
 	$(SLC) $< -o $@ $(SLFLAGS)
+
+$(FRAGMODULES): $(MODULEDIR)/%.frag.spv: $(SHADERDIR)/%.frag
+	$(SLC) $< -o $@ $(SLFLAGS)
+
+-include $(HEADERDEPS)
+
+clean:
+	-rm $(EXECUTABLE) $(OBJECTS) $(HEADERDEPS) $(COMPMODULES) $(VERTMODULES) $(FRAGMODULES)
