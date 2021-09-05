@@ -14,34 +14,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2b227e1-aaf6-4c1c-a9ce-9fa8dbf6f191" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/fragment.frag" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shaders/vertex.vert" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/contentManager.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/contentManager.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/gameLogic.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/gameLogic.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/main.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/networkSystem.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/networkSystem.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/platformBase.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/platformBase.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystem.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystem.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemBuffer.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemBuffer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemCore.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemCore.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemDevice.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemDevice.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemImage.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemImage.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemSwapchain.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/renderSystemSwapchain.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/system/system.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/system/system.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,11 +60,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -110,6 +80,7 @@
       <updated>1630819186061</updated>
       <workItem from="1630819188570" duration="18631000" />
       <workItem from="1630852711486" duration="204000" />
+      <workItem from="1630862123150" duration="969000" />
     </task>
     <servers />
   </component>

@@ -1,6 +1,9 @@
+#include <cstdio>
 #include "system.hpp"
 
 namespace zero::system {
+	uint32_t mask;
+	uint32_t flags[2];
 	xcb_atom_t protocol;
 	xcb_atom_t destroyEvent;
 
@@ -18,6 +21,18 @@ namespace zero::system {
 		const xcb_setup_t *setup = xcb_get_setup(connection);
 		screen = xcb_setup_roots_iterator(setup).data;
 
+		mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+		flags[0] = screen->black_pixel;
+		flags[1] = XCB_EVENT_MASK_EXPOSURE |
+				XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+				XCB_EVENT_MASK_ENTER_WINDOW |
+				XCB_EVENT_MASK_LEAVE_WINDOW |
+				XCB_EVENT_MASK_POINTER_MOTION |
+				XCB_EVENT_MASK_BUTTON_PRESS |
+				XCB_EVENT_MASK_BUTTON_RELEASE |
+				XCB_EVENT_MASK_KEY_PRESS |
+				XCB_EVENT_MASK_KEY_RELEASE;
+
 		protocol = requestAtom("WM_PROTOCOLS");
 		destroyEvent = requestAtom("WM_DELETE_WINDOW");
 	}
@@ -28,12 +43,6 @@ namespace zero::system {
 
 	xcb_window_t System::createWindow(const char *title, uint16_t width, uint16_t height) {
 		xcb_window_t window = xcb_generate_id(connection);
-		windows.emplace(std::piecewise_construct, std::forward_as_tuple(window),
-						std::forward_as_tuple(title, width, height));
-
-		uint32_t mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-		uint32_t flags[] = {screen->black_pixel, XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_STRUCTURE_NOTIFY};
-
 		xcb_create_window(connection, XCB_COPY_FROM_PARENT, window, screen->root, 0, 0, width, height, 0,
 						  XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual, mask, flags);
 
@@ -44,6 +53,9 @@ namespace zero::system {
 
 		xcb_map_window(connection, window);
 		xcb_flush(connection);
+
+		windows.emplace(std::piecewise_construct, std::forward_as_tuple(window),
+						std::forward_as_tuple(title, width, height));
 
 		return window;
 	}
@@ -56,6 +68,7 @@ namespace zero::system {
 				break;
 
 			uint8_t response = event->response_type & ~0x80; // Why is this the norm?..
+			printf("%d\n", response);
 
 			switch (response) {
 				case XCB_CONFIGURE_NOTIFY: {
