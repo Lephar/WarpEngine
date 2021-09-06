@@ -10,7 +10,7 @@ namespace zero::graphics {
 		Instance &instance;
 		vk::SurfaceKHR surface;
 	public:
-		Surface(Instance &instance, xcb_connection_t *connection, xcb_window_t window);
+		Surface(Instance &instance, system::Window &window);
 		vk::SurfaceKHR &get(void);
 		void destroy(void);
 	};

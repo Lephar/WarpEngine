@@ -1,8 +1,10 @@
 #include "system.hpp"
 
 namespace zero::system {
+	const uint32_t maskCount = 2;
+
 	uint32_t mask;
-	uint32_t flags[2];
+	uint32_t flags[maskCount];
 	xcb_atom_t protocol;
 	xcb_atom_t destroyEvent;
 
@@ -36,25 +38,21 @@ namespace zero::system {
 		destroyEvent = requestAtom("WM_DELETE_WINDOW");
 	}
 
-	xcb_connection_t *System::getConnection(void) {
-		return connection;
-	}
-
-	xcb_window_t System::createWindow(const char *title, uint16_t width, uint16_t height) {
-		xcb_window_t window = xcb_generate_id(connection);
-		xcb_create_window(connection, XCB_COPY_FROM_PARENT, window, screen->root, 0, 0, width, height, 0,
+	Window &System::createWindow(const char *title, uint16_t width, uint16_t height) {
+		xcb_window_t index = xcb_generate_id(connection);
+		xcb_create_window(connection, XCB_COPY_FROM_PARENT, index, screen->root, 0, 0, width, height, 0,
 						  XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual, mask, flags);
 
-		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, CHAR_BIT,
+		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, index, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, CHAR_BIT,
 							strlen(title), title);
-		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window, protocol, XCB_ATOM_ATOM,
+		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, index, protocol, XCB_ATOM_ATOM,
 							sizeof(xcb_atom_t) * CHAR_BIT, 1, &destroyEvent);
 
-		xcb_map_window(connection, window);
+		xcb_map_window(connection, index);
 		xcb_flush(connection);
 
-		windows.emplace(std::piecewise_construct, std::forward_as_tuple(window),
-						std::forward_as_tuple(title, width, height));
+		Window &window = windows.emplace(std::piecewise_construct, std::forward_as_tuple(index),
+										 std::forward_as_tuple(connection, index, title, width, height)).first->second;
 
 		return window;
 	}

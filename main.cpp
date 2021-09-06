@@ -3,11 +3,9 @@
 
 int main() {
 	zero::system::System system;
+	auto &window = system.createWindow("Zero", 800, 600);
 
-	auto connection = system.getConnection();
-	auto window = system.createWindow("Zero", 800, 600);
-
-	zero::graphics::Graphics graphics{connection};
+	zero::graphics::Graphics graphics;
 	auto &renderer = graphics.createRenderer(window);
 
 	system.mainLoop();

@@ -8,12 +8,11 @@
 namespace zero::graphics {
 	class Graphics {
 	private:
-		xcb_connection_t* connection;
 		Instance instance;
 		std::vector<Renderer> renderers;
 	public:
-		Graphics(xcb_connection_t* connection);
-		Renderer& createRenderer(xcb_window_t window);
+		Graphics(void);
+		Renderer &createRenderer(system::Window window);
 	};
 }
 

@@ -1,10 +1,10 @@
 #include "surface.hpp"
 
 namespace zero::graphics {
-	Surface::Surface(Instance &instance, xcb_connection_t *connection, xcb_window_t window) : instance(instance) {
+	Surface::Surface(Instance &instance, system::Window &window) : instance(instance) {
 		vk::XcbSurfaceCreateInfoKHR surfaceInfo{
-			.connection = connection,
-			.window = window
+			.connection = window.connection,
+			.window = window.window
 		};
 		surface = instance.get().createXcbSurfaceKHR(surfaceInfo);
 	}

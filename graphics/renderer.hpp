@@ -16,7 +16,7 @@ namespace zero::graphics {
 		Internals internals;
 		//Details details;
 	public:
-		Renderer(Instance& instance, xcb_connection_t* connection, xcb_window_t window);
+		Renderer(Instance &instance, system::Window &window);
 	};
 }
 
