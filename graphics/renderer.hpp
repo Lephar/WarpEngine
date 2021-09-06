@@ -11,10 +11,11 @@ namespace zero::graphics {
 	class Renderer {
 	public:
 	private:
-		Instance& instance;
+		system::Window &window;
+		Instance &instance;
 		Surface surface;
 		Internals internals;
-		//Details details;
+		Details details;
 	public:
 		Renderer(Instance &instance, system::Window &window);
 	};

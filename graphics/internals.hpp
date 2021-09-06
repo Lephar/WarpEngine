@@ -8,6 +8,7 @@
 namespace zero::graphics {
 	class Internals {
 	public:
+		Surface &surface;
 		vk::PhysicalDevice physicalDevice;
 		uint32_t transferQueueFamily;
 		uint32_t graphicsQueueFamily;

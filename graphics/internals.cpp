@@ -70,7 +70,7 @@ namespace zero::graphics {
 		return physicalDevices.front();
 	}
 
-	Internals::Internals(Instance &instance, Surface &surface) {
+	Internals::Internals(Instance &instance, Surface &surface) : surface(surface) {
 		physicalDevice = pickPhysicalDevice(instance.get());
 		transferQueueFamily = selectQueueFamily(physicalDevice, surface.get(), vk::QueueFlagBits::eTransfer, false);
 		graphicsQueueFamily = selectQueueFamily(physicalDevice, surface.get(),

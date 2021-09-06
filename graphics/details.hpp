@@ -2,6 +2,7 @@
 #define ZERO_CLIENT_GRAPHICS_DETAILS_HPP
 
 #include "header.hpp"
+#include "internals.hpp"
 
 namespace zero::graphics {
 	class Details {
@@ -14,19 +15,21 @@ namespace zero::graphics {
 		vk::PresentModeKHR presentMode;
 		vk::SurfaceTransformFlagBitsKHR swapchainTransform;
 
-		uint32_t uniformAlignment;
-		uint32_t uniformQueueStride;
-		uint32_t uniformFrameStride;
-		uint32_t uniformSize;
+		//uint32_t uniformAlignment;
+		//uint32_t uniformQueueStride;
+		//uint32_t uniformFrameStride;
+		//uint32_t uniformSize;
+
+		vk::Format imageFormat;
+		//vk::Format depthStencilFormat;
 
 		uint32_t mipLevels;
 		float maxAnisotropy;
-
-		vk::Format imageFormat;
 		vk::SampleCountFlagBits sampleCount;
+
 		vk::PhysicalDeviceMemoryProperties memoryProperties;
 
-		//Details(Internals &internals);
+		Details(Internals &internals);
 	};
 }
 
