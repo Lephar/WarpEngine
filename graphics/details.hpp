@@ -26,7 +26,7 @@ namespace zero::graphics {
 		vk::SampleCountFlagBits sampleCount;
 		vk::PhysicalDeviceMemoryProperties memoryProperties;
 
-		Details();
+		//Details(Internals &internals);
 	};
 }
 

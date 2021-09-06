@@ -14,26 +14,18 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2b227e1-aaf6-4c1c-a9ce-9fa8dbf6f191" name="Changes" comment="Update window system">
-      <change afterPath="$PROJECT_DIR$/graphics/details.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/details.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/graphics.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/graphics.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/header.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/instance.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/instance.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/internals.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/internals.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/renderer.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/renderer.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/surface.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/graphics/surface.hpp" afterDir="false" />
+    <list default="true" id="b2b227e1-aaf6-4c1c-a9ce-9fa8dbf6f191" name="Changes" comment="Started renderer system, completed instance and surface creation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/header.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/system/header.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/system.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/system/system.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/window.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/system/window.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/details.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/details.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/header.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/header.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/instance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/instance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/instance.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/instance.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/internals.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/internals.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/internals.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/internals.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/renderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/renderer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/renderer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/renderer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/surface.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/surface.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graphics/surface.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/surface.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +103,7 @@
       <updated>1630819186061</updated>
       <workItem from="1630819188570" duration="18631000" />
       <workItem from="1630852711486" duration="204000" />
-      <workItem from="1630862123150" duration="10758000" />
+      <workItem from="1630862123150" duration="20512000" />
     </task>
     <task id="LOCAL-00001" summary="Update window system">
       <created>1630863111186</created>
@@ -120,7 +112,14 @@
       <option name="project" value="LOCAL" />
       <updated>1630863111186</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Started renderer system, completed instance and surface creation">
+      <created>1630903852139</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1630903852139</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -139,7 +138,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Update window system" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update window system" />
+    <MESSAGE value="Started renderer system, completed instance and surface creation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Started renderer system, completed instance and surface creation" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -6,5 +6,6 @@
 #include <vulkan/vulkan.hpp>
 
 #include <iostream>
+#include <limits>
 
 #endif //ZERO_CLIENT_GRAPHICS_HEADER_HPP

@@ -13,7 +13,7 @@ namespace zero::graphics {
 #endif //NDEBUG
 	public:
 		Instance(const char* application, const char* engine, uint32_t version);
-		vk::Instance get(void);
+		vk::Instance &get(void);
 		void destroy(void);
 	};
 }

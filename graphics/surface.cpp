@@ -9,7 +9,7 @@ namespace zero::graphics {
 		surface = instance.get().createXcbSurfaceKHR(surfaceInfo);
 	}
 
-	vk::SurfaceKHR Surface::get(void) {
+	vk::SurfaceKHR &Surface::get(void) {
 		return surface;
 	}
 

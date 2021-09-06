@@ -14,7 +14,7 @@ namespace zero::graphics {
 		Instance& instance;
 		Surface surface;
 		Internals internals;
-		Details details;
+		//Details details;
 	public:
 		Renderer(Instance& instance, xcb_connection_t* connection, xcb_window_t window);
 	};

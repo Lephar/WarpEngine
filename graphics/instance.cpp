@@ -63,7 +63,7 @@ namespace zero::graphics {
 #endif //NDEBUG
 	}
 
-	vk::Instance Instance::get() {
+	vk::Instance &Instance::get() {
 		return instance;
 	}
 
