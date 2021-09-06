@@ -6,6 +6,7 @@
 #include "surface.hpp"
 #include "internals.hpp"
 #include "details.hpp"
+#include "device.hpp"
 
 namespace zero::graphics {
 	class Renderer {
@@ -16,6 +17,7 @@ namespace zero::graphics {
 		Surface surface;
 		Internals internals;
 		Details details;
+		Device device;
 	public:
 		Renderer(Instance &instance, system::Window &window);
 	};

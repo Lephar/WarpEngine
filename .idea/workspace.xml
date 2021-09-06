@@ -14,12 +14,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2b227e1-aaf6-4c1c-a9ce-9fa8dbf6f191" name="Changes" comment="Bind windowing system and graphics renderer">
+    <list default="true" id="b2b227e1-aaf6-4c1c-a9ce-9fa8dbf6f191" name="Changes" comment="Added code to decide on internal details">
+      <change afterPath="$PROJECT_DIR$/graphics/device.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/device.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/details.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/details.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/details.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/details.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/internals.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/internals.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/internals.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/internals.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graphics/renderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/renderer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graphics/renderer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/renderer.hpp" afterDir="false" />
     </list>
@@ -108,7 +107,7 @@
       <workItem from="1630819188570" duration="18631000" />
       <workItem from="1630852711486" duration="204000" />
       <workItem from="1630862123150" duration="22714000" />
-      <workItem from="1630930897329" duration="5459000" />
+      <workItem from="1630930897329" duration="6606000" />
     </task>
     <task id="LOCAL-00001" summary="Update window system">
       <created>1630863111186</created>
@@ -138,7 +137,14 @@
       <option name="project" value="LOCAL" />
       <updated>1630922158919</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added code to decide on internal details">
+      <created>1630937419931</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1630937419932</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,7 +167,8 @@
     <MESSAGE value="Started renderer system, completed instance and surface creation" />
     <MESSAGE value="Implemented physical device and queue family selection" />
     <MESSAGE value="Bind windowing system and graphics renderer" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bind windowing system and graphics renderer" />
+    <MESSAGE value="Added code to decide on internal details" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added code to decide on internal details" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
