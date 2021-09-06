@@ -4,6 +4,7 @@
     <generated>
       <config projectName="ZeroClient" targetName="ZeroClient" />
       <config projectName="ZeroClient" targetName="ZeroSystem" />
+      <config projectName="ZeroClient" targetName="ZeroGraphics" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
@@ -13,10 +14,26 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2b227e1-aaf6-4c1c-a9ce-9fa8dbf6f191" name="Changes" comment="">
+    <list default="true" id="b2b227e1-aaf6-4c1c-a9ce-9fa8dbf6f191" name="Changes" comment="Update window system">
+      <change afterPath="$PROJECT_DIR$/graphics/details.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/details.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/graphics.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/graphics.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/header.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/instance.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/instance.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/internals.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/internals.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/renderer.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/renderer.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/surface.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/surface.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/system/header.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/system/header.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/system/system.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/system/system.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/system/window.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/system/window.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +51,9 @@
     <option name="directoryName" value="oja7es8m" />
   </component>
   <component name="ProjectId" id="1xhtXHlbvRFq3ZSVYhLQUkq0Y7Q" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -50,7 +70,17 @@
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C/C++" />
   </component>
   <component name="RunManager" selected="CMake Application.ZeroClient">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ZeroClient" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZeroClient" TARGET_NAME="ZeroClient" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ZeroClient" RUN_TARGET_NAME="ZeroClient">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ZeroGraphics" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZeroClient" TARGET_NAME="ZeroGraphics" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -67,6 +97,7 @@
     </configuration>
     <list>
       <item itemvalue="CMake Application.ZeroClient" />
+      <item itemvalue="CMake Application.ZeroGraphics" />
       <item itemvalue="CMake Application.ZeroSystem" />
     </list>
   </component>
@@ -80,12 +111,35 @@
       <updated>1630819186061</updated>
       <workItem from="1630819188570" duration="18631000" />
       <workItem from="1630852711486" duration="204000" />
-      <workItem from="1630862123150" duration="969000" />
+      <workItem from="1630862123150" duration="10758000" />
     </task>
+    <task id="LOCAL-00001" summary="Update window system">
+      <created>1630863111186</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1630863111186</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Update window system" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update window system" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

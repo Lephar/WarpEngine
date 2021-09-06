@@ -9,4 +9,8 @@ add_library(ZeroSystem system/header.hpp system/window.cpp system/window.hpp sys
 target_precompile_headers(ZeroSystem PRIVATE system/header.hpp)
 target_link_libraries(ZeroSystem xcb)
 
-target_link_libraries(ZeroClient ZeroSystem)
+add_library(ZeroGraphics graphics/header.hpp graphics/graphics.cpp graphics/graphics.hpp graphics/instance.cpp graphics/instance.hpp graphics/renderer.cpp graphics/renderer.hpp graphics/surface.cpp graphics/surface.hpp graphics/details.cpp graphics/details.hpp graphics/internals.cpp graphics/internals.hpp)
+target_precompile_headers(ZeroGraphics PRIVATE graphics/header.hpp)
+target_link_libraries(ZeroGraphics xcb vulkan)
+
+target_link_libraries(ZeroClient ZeroSystem ZeroGraphics)

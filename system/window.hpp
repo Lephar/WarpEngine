@@ -5,7 +5,7 @@
 
 namespace zero::system {
 	class Window {
-	public:
+	public: //TODO: Change visibility and add callback fields
 		const char* title;
 		uint32_t width, height;
 		Window(const char* title, uint16_t width, uint16_t height);

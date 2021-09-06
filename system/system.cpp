@@ -1,4 +1,3 @@
-#include <cstdio>
 #include "system.hpp"
 
 namespace zero::system {
@@ -68,7 +67,6 @@ namespace zero::system {
 				break;
 
 			uint8_t response = event->response_type & ~0x80; // Why is this the norm?..
-			printf("%d\n", response);
 
 			switch (response) {
 				case XCB_CONFIGURE_NOTIFY: {
