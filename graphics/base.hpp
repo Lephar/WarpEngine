@@ -3,6 +3,7 @@
 
 #define VK_USE_PLATFORM_XCB_KHR
 #define VULKAN_HPP_NO_CONSTRUCTORS
+
 #include <vulkan/vulkan.hpp>
 
 #include <iostream>

@@ -4,9 +4,9 @@
 #include <xcb/xcb.h>
 
 #include <climits>
-#include <cstring>
 #include <cstdlib>
 
+#include <string>
 #include <unordered_map>
 
 #endif //ZERO_CLIENT_SYSTEM_HEADER_HPP

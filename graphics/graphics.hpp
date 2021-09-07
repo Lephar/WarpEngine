@@ -4,31 +4,37 @@
 #include "base.hpp"
 
 namespace zero::graphics {
-	class Graphics {
-	private:
-		vk::Instance instance;
+    class Graphics {
+    private:
+        vk::Instance instance;
 #ifndef NDEBUG
-		vk::DispatchLoaderDynamic loader;
-		vk::DebugUtilsMessengerEXT messenger;
+        vk::DispatchLoaderDynamic loader;
+        vk::DebugUtilsMessengerEXT messenger;
 #endif //NDEBUG
 
-		vk::PhysicalDevice physicalDevice;
-		uint32_t transferQueueFamily;
-		uint32_t graphicsQueueFamily;
+        vk::PhysicalDevice physicalDevice;
+        uint32_t transferQueueFamily{};
+        uint32_t graphicsQueueFamily{};
 
-		vk::Device device;
-		vk::Queue transferQueue;
-		vk::Queue graphicsQueue;
+        vk::Device device;
+        vk::Queue transferQueue;
+        vk::Queue graphicsQueue;
 
-		void createInstance(void);
-		void selectPhysicalDevice(void);
-		uint32_t selectQueueFamily(vk::QueueFlags queueFlags);
-		void selectQueueFamilies(void);
-		void createDevice(void);
-	public:
-		Graphics(void);
-		~Graphics(void);
-	};
+        void createInstance();
+
+        void selectPhysicalDevice();
+
+        uint32_t selectQueueFamily(vk::QueueFlags queueFlags);
+
+        void selectQueueFamilies();
+
+        void createDevice();
+
+    public:
+        Graphics();
+
+        ~Graphics();
+    };
 }
 
 #endif //ZERO_CLIENT_GRAPHICS_HPP
