@@ -8,6 +8,4 @@
 #include <iostream>
 #include <limits>
 
-#include "../system/window.hpp"
-
 #endif //ZERO_CLIENT_GRAPHICS_HEADER_HPP

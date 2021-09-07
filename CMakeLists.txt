@@ -6,12 +6,12 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_executable(ZeroClient main.cpp)
 
-add_library(ZeroSystem system/header.hpp system/window.cpp system/window.hpp system/system.cpp system/system.hpp)
-target_precompile_headers(ZeroSystem PRIVATE system/header.hpp)
+add_library(ZeroSystem system/base.hpp system/system.cpp system/system.hpp system/window.cpp system/window.hpp)
+target_precompile_headers(ZeroSystem PRIVATE system/base.hpp)
 target_link_libraries(ZeroSystem xcb)
 
-add_library(ZeroGraphics graphics/header.hpp graphics/graphics.cpp graphics/graphics.hpp graphics/instance.cpp graphics/instance.hpp graphics/renderer.cpp graphics/renderer.hpp graphics/surface.cpp graphics/surface.hpp graphics/details.cpp graphics/details.hpp graphics/internals.cpp graphics/internals.hpp graphics/device.cpp graphics/device.hpp)
-target_precompile_headers(ZeroGraphics PRIVATE graphics/header.hpp)
+add_library(ZeroGraphics graphics/base.hpp graphics/graphics.cpp graphics/graphics.hpp)
+target_precompile_headers(ZeroGraphics PRIVATE graphics/base.hpp)
 target_link_libraries(ZeroGraphics xcb vulkan)
 
 target_link_libraries(ZeroClient ZeroSystem ZeroGraphics)

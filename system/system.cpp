@@ -1,16 +1,10 @@
 #include "system.hpp"
 
 namespace zero::system {
-	const uint32_t maskCount = 2;
-
-	uint32_t mask;
-	uint32_t flags[maskCount];
-	xcb_atom_t protocol;
-	xcb_atom_t destroyEvent;
-
 	xcb_atom_t System::requestAtom(const char *message) {
 		xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, 0, strlen(message), message);
 		xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(connection, cookie, NULL);
+
 		xcb_atom_t atom = reply->atom;
 		free(reply);
 
@@ -22,9 +16,19 @@ namespace zero::system {
 		const xcb_setup_t *setup = xcb_get_setup(connection);
 		screen = xcb_setup_roots_iterator(setup).data;
 
-		mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-		flags[0] = screen->black_pixel;
-		flags[1] = XCB_EVENT_MASK_EXPOSURE |
+		protocol = requestAtom("WM_PROTOCOLS");
+		destroyEvent = requestAtom("WM_DELETE_WINDOW");
+	}
+
+	xcb_connection_t *System::getConnection(void) {
+		return connection;
+	}
+
+	xcb_window_t System::createWindow(const char *title, uint16_t width, uint16_t height) {
+		uint32_t mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+		uint32_t flags[] = {
+				screen->black_pixel,
+				XCB_EVENT_MASK_EXPOSURE |
 				XCB_EVENT_MASK_STRUCTURE_NOTIFY |
 				XCB_EVENT_MASK_ENTER_WINDOW |
 				XCB_EVENT_MASK_LEAVE_WINDOW |
@@ -32,27 +36,23 @@ namespace zero::system {
 				XCB_EVENT_MASK_BUTTON_PRESS |
 				XCB_EVENT_MASK_BUTTON_RELEASE |
 				XCB_EVENT_MASK_KEY_PRESS |
-				XCB_EVENT_MASK_KEY_RELEASE;
+				XCB_EVENT_MASK_KEY_RELEASE
+		};
 
-		protocol = requestAtom("WM_PROTOCOLS");
-		destroyEvent = requestAtom("WM_DELETE_WINDOW");
-	}
-
-	Window &System::createWindow(const char *title, uint16_t width, uint16_t height) {
-		xcb_window_t index = xcb_generate_id(connection);
-		xcb_create_window(connection, XCB_COPY_FROM_PARENT, index, screen->root, 0, 0, width, height, 0,
+		xcb_window_t window = xcb_generate_id(connection);
+		xcb_create_window(connection, XCB_COPY_FROM_PARENT, window, screen->root, 0, 0, width, height, 0,
 						  XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual, mask, flags);
 
-		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, index, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, CHAR_BIT,
+		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, CHAR_BIT,
 							strlen(title), title);
-		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, index, protocol, XCB_ATOM_ATOM,
+		xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window, protocol, XCB_ATOM_ATOM,
 							sizeof(xcb_atom_t) * CHAR_BIT, 1, &destroyEvent);
 
-		xcb_map_window(connection, index);
+		xcb_map_window(connection, window);
 		xcb_flush(connection);
 
-		Window &window = windows.emplace(std::piecewise_construct, std::forward_as_tuple(index),
-										 std::forward_as_tuple(connection, index, title, width, height)).first->second;
+		windows.emplace(std::piecewise_construct, std::forward_as_tuple(window),
+						std::forward_as_tuple(title, width, height));
 
 		return window;
 	}
@@ -102,8 +102,11 @@ namespace zero::system {
 	}
 
 	void System::mainLoop(void) {
-		while (!windows.empty()) {
+		while (true) {
 			processEvents();
+
+			if (windows.empty())
+				break;
 
 			//Draw loop here
 		}
@@ -112,14 +115,17 @@ namespace zero::system {
 	void System::destroyWindow(uint32_t index) {
 		xcb_destroy_window(connection, index);
 		xcb_flush(connection);
+
 		windows.erase(index);
 	}
 
 	System::~System(void) {
 		for (auto &window: windows)
 			xcb_destroy_window(connection, window.first);
+
 		xcb_flush(connection); // Is it necessary before disconnect?
 		xcb_disconnect(connection);
+
 		windows.clear();
 	}
 }
