@@ -15,7 +15,7 @@ namespace zero::system {
         xcb_atom_t protocol;
         xcb_atom_t destroyEvent;
 
-        xcb_atom_t requestAtom(const std::string &message);
+        xcb_atom_t requestAtom(const char *message);
 
         void processEvents();
 
@@ -24,7 +24,7 @@ namespace zero::system {
 
         xcb_connection_t *getConnection();
 
-        xcb_window_t createWindow(const std::string &title, uint16_t width, uint16_t height);
+        xcb_window_t createWindow(const char *title, uint16_t width, uint16_t height);
 
         void mainLoop();
 

@@ -1,8 +1,8 @@
 #include "system.hpp"
 
 namespace zero::system {
-    xcb_atom_t System::requestAtom(const std::string &message) {
-        xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, 0, message.length(), message.c_str());
+    xcb_atom_t System::requestAtom(const char *message) {
+        xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, 0, strlen(message), message);
         xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(connection, cookie, nullptr);
 
         xcb_atom_t atom = reply->atom;
@@ -24,9 +24,9 @@ namespace zero::system {
         return connection;
     }
 
-    xcb_window_t System::createWindow(const std::string &title, uint16_t width, uint16_t height) {
+    xcb_window_t System::createWindow(const char *title, uint16_t width, uint16_t height) {
         uint32_t mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-        std::array<uint32_t, 2> flags = {
+        uint32_t flags[] = {
                 screen->black_pixel,
                 XCB_EVENT_MASK_EXPOSURE |
                 XCB_EVENT_MASK_STRUCTURE_NOTIFY |
@@ -41,10 +41,10 @@ namespace zero::system {
 
         xcb_window_t window = xcb_generate_id(connection);
         xcb_create_window(connection, XCB_COPY_FROM_PARENT, window, screen->root, 0, 0, width, height, 0,
-                          XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual, mask, flags.data());
+                          XCB_WINDOW_CLASS_INPUT_OUTPUT, screen->root_visual, mask, flags);
 
         xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, CHAR_BIT,
-                            title.length(), title.c_str());
+                            strlen(title), title);
         xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window, protocol, XCB_ATOM_ATOM,
                             sizeof(xcb_atom_t) * CHAR_BIT, 1, &destroyEvent);
 
@@ -68,7 +68,7 @@ namespace zero::system {
 
             switch (response) {
                 case XCB_CONFIGURE_NOTIFY: {
-                    auto *configureNotify = reinterpret_cast<xcb_configure_notify_event_t *>(event);
+                    auto configureNotify = reinterpret_cast<xcb_configure_notify_event_t *>(event);
                     xcb_window_t index = configureNotify->window;
                     Window &window = windows.at(index);
 
@@ -83,7 +83,7 @@ namespace zero::system {
                     break;
                 }
                 case XCB_CLIENT_MESSAGE: {
-                    auto *clientMessage = reinterpret_cast<xcb_client_message_event_t *>(event);
+                    auto clientMessage = reinterpret_cast<xcb_client_message_event_t *>(event);
                     xcb_window_t index = clientMessage->window;
 
                     if (clientMessage->format == sizeof(destroyEvent) * CHAR_BIT &&
@@ -99,7 +99,7 @@ namespace zero::system {
                     break;
             }
 
-            std::free(event);
+            free(event);
         }
     }
 

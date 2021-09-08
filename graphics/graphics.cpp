@@ -94,6 +94,8 @@ namespace zero::graphics {
 
             // XOR two flags and then NOT the result to get the matching bits
             // Then get the count of 1's using GCC's built-in function to use it as the score
+            // The reason we do it is to select the most specialized queue family for the task
+            // We are not interested in other features, so we try to not pay for what we don't use
             uint32_t score = __builtin_popcount(static_cast<uint32_t>(~(supportedFlags ^ requiredFlags)));
 
             if (score > maxScore) {
