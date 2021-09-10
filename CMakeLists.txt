@@ -12,5 +12,9 @@ add_library(ZeroGraphics graphics/base.hpp graphics/graphics.cpp graphics/graphi
 target_precompile_headers(ZeroGraphics PRIVATE graphics/base.hpp)
 target_link_libraries(ZeroGraphics xcb vulkan)
 
+add_library(ZeroNetwork network/base.hpp network/network.cpp network/network.hpp network/server.cpp network/server.hpp)
+target_precompile_headers(ZeroNetwork PRIVATE network/base.hpp)
+target_link_libraries(ZeroNetwork uuid pthread)
+
 add_executable(ZeroClient main.cpp)
-target_link_libraries(ZeroClient ZeroSystem ZeroGraphics)
+target_link_libraries(ZeroClient ZeroSystem ZeroGraphics ZeroNetwork)
