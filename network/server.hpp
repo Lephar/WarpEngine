@@ -1,5 +1,5 @@
-#ifndef ZERO_SERVER_NETWORK_SERVER_HPP
-#define ZERO_SERVER_NETWORK_SERVER_HPP
+#ifndef ZERO_CLIENT_NETWORK_SERVER_HPP
+#define ZERO_CLIENT_NETWORK_SERVER_HPP
 
 #include "base.hpp"
 
@@ -10,7 +10,7 @@ namespace zero::network {
         sockaddr_in address;
 
         bool active;
-        pthread_rwlock_t lock;
+        pthread_rwlock_t lock; // TODO: Use atomics
 
         pthread_t receiver;
         pthread_t sender;
@@ -27,4 +27,4 @@ namespace zero::network {
     };
 }
 
-#endif //ZERO_SERVER_NETWORK_SERVER_HPP
+#endif //ZERO_CLIENT_NETWORK_SERVER_HPP

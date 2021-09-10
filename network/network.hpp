@@ -1,5 +1,5 @@
-#ifndef ZERO_SERVER_NETWORK_HPP
-#define ZERO_SERVER_NETWORK_HPP
+#ifndef ZERO_CLIENT_NETWORK_HPP
+#define ZERO_CLIENT_NETWORK_HPP
 
 #include "base.hpp"
 #include "server.hpp"
@@ -14,4 +14,4 @@ namespace zero::network {
     };
 }
 
-#endif //ZERO_SERVER_NETWORK_HPP
+#endif //ZERO_CLIENT_NETWORK_HPP

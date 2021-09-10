@@ -1,5 +1,5 @@
-#ifndef ZERO_SERVER_NETWORK_BASE_HPP
-#define ZERO_SERVER_NETWORK_BASE_HPP
+#ifndef ZERO_CLIENT_NETWORK_BASE_HPP
+#define ZERO_CLIENT_NETWORK_BASE_HPP
 
 #include <unistd.h>
 #include <pthread.h>
@@ -10,4 +10,4 @@
 
 #include <unordered_map>
 
-#endif //ZERO_SERVER_NETWORK_BASE_HPP
+#endif //ZERO_CLIENT_NETWORK_BASE_HPP
