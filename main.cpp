@@ -1,6 +1,7 @@
 #include "system/system.hpp"
 #include "graphics/graphics.hpp"
 #include "network/network.hpp"
+#include "game/game.hpp"
 
 int main() {
     zero::system::System system;
@@ -11,8 +12,8 @@ int main() {
 
     zero::network::Network network;
     auto &server = network.addServer("Game", "127.0.0.1", 7076);
-    server.connect();
 
+    zero::game::Game game;
     system.mainLoop();
 
     return 0;

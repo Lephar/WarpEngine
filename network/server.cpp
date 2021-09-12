@@ -35,23 +35,27 @@ namespace zero::network {
         pthread_rwlock_unlock(&lock);
     }
 
-    void *startReceiver(void *context) {
-        auto server = reinterpret_cast<Server *>(context);
+    void Server::receiveLoop() {
+        while (isActive()) {
 
-        while (server->isActive()) {
-            // Process updates here
         }
+    }
 
+    void Server::sendLoop() {
+        while (isActive()) {
+
+        }
+    }
+
+    void *receiverProxy(void *context) {
+        auto server = reinterpret_cast<Server *>(context);
+        server->receiveLoop();
         return nullptr;
     }
 
-    void *startSender(void *context) {
+    void *senderProxy(void *context) {
         auto server = reinterpret_cast<Server *>(context);
-
-        while (server->isActive()) {
-            // Send updates here
-        }
-
+        server->sendLoop();
         return nullptr;
     }
 
@@ -60,8 +64,8 @@ namespace zero::network {
 
         setActive(true);
 
-        pthread_create(&receiver, nullptr, startReceiver, this);
-        pthread_create(&sender, nullptr, startSender, this);
+        pthread_create(&receiver, nullptr, receiverProxy, this);
+        pthread_create(&sender, nullptr, senderProxy, this);
     }
 
     void Server::disconnect() {

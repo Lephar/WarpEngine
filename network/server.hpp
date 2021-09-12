@@ -21,6 +21,10 @@ namespace zero::network {
 
         void setActive(bool value);
 
+        void receiveLoop();
+
+        void sendLoop();
+
         void connect();
 
         void disconnect();
