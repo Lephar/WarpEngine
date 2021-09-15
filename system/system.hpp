@@ -26,6 +26,8 @@ namespace zero::system {
 
         xcb_window_t createWindow(const char *title, uint16_t width, uint16_t height);
 
+        Window &getWindowProperties(xcb_window_t window);
+
         void mainLoop();
 
         void destroyWindow(uint32_t index);

@@ -8,5 +8,6 @@
 
 #include <iostream>
 #include <limits>
+#include <list>
 
 #endif //ZERO_CLIENT_GRAPHICS_BASE_HPP

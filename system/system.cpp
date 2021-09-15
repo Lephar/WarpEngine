@@ -57,6 +57,10 @@ namespace zero::system {
         return window;
     }
 
+    Window &System::getWindowProperties(xcb_window_t window) {
+        return windows.at(window);
+    }
+
     void System::processEvents() {
         while (true) {
             xcb_generic_event_t *event = xcb_poll_for_event(connection);

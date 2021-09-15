@@ -8,7 +8,7 @@ add_library(ZeroSystem system/base.hpp system/system.cpp system/system.hpp syste
 target_precompile_headers(ZeroSystem PRIVATE system/base.hpp)
 target_link_libraries(ZeroSystem xcb)
 
-add_library(ZeroGraphics graphics/base.hpp graphics/graphics.cpp graphics/graphics.hpp)
+add_library(ZeroGraphics graphics/base.hpp graphics/graphics.cpp graphics/graphics.hpp graphics/renderer.cpp graphics/renderer.hpp)
 target_precompile_headers(ZeroGraphics PRIVATE graphics/base.hpp)
 target_link_libraries(ZeroGraphics xcb vulkan)
 

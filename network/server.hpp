@@ -10,7 +10,7 @@ namespace zero::network {
         sockaddr_in address;
 
         bool active;
-        pthread_rwlock_t lock; // TODO: Use atomics
+        pthread_rwlock_t lock; // TODO: Use atomics (maybe?)
 
         pthread_t receiver;
         pthread_t sender;
@@ -28,6 +28,8 @@ namespace zero::network {
         void connect();
 
         void disconnect();
+
+        ~Server();
     };
 }
 

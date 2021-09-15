@@ -3,6 +3,9 @@
 
 #include "base.hpp"
 
+#include "renderer.hpp"
+#include "../system/window.hpp"
+
 namespace zero::graphics {
     class Graphics {
     private:
@@ -20,6 +23,8 @@ namespace zero::graphics {
         vk::Queue transferQueue;
         vk::Queue graphicsQueue;
 
+        std::list<Renderer> renderers;
+
         void createInstance();
 
         void selectPhysicalDevice();
@@ -32,6 +37,8 @@ namespace zero::graphics {
 
     public:
         Graphics();
+
+        Renderer &createRenderer(xcb_connection_t *connection, xcb_window_t window, system::Window &properties);
 
         ~Graphics();
     };

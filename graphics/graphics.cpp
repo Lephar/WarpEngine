@@ -9,7 +9,7 @@ namespace zero::graphics {
         static_cast<void>(type);
         static_cast<void>(pUserData);
 
-        if (severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+        if (severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
             std::cout << pCallbackData->pMessage << std::endl;
 
         return VK_FALSE;
@@ -87,16 +87,19 @@ namespace zero::graphics {
             auto &supportedFlags = queueFamilies.at(index).queueFlags;
 
             // See if all the required bits are present in the supported bits
-            bool suitable = (supportedFlags & requiredFlags) == requiredFlags;
+            bool suitable = ((supportedFlags & requiredFlags) == requiredFlags);
 
             if (!suitable)
                 continue;
 
-            // XOR two flags and then NOT the result to get the matching bits
-            // Then get the count of 1's using GCC's built-in function to use it as the score
-            // The reason we do it is to select the most specialized queue family for the task
-            // We are not interested in other features, so we try not to pay for what we don't use
-            uint32_t score = __builtin_popcount(static_cast<uint32_t>(~(supportedFlags ^ requiredFlags)));
+            // XOR two flags and then NOT the result to get the matching flag bits
+            vk::QueueFlags matchingFlags = ~(supportedFlags ^ requiredFlags);
+
+            // Then get the count of 1 bits using GCC's built-in function to use it as the score
+            // The reason we do it is to select the most suitable queue family for the task
+            // We don't simply want the required features to be supported, we also want others not to be supported
+            // Because the more specialized the queue is, the more optimizations can be made by the driver
+            uint32_t score = __builtin_popcount(static_cast<uint32_t>(matchingFlags));
 
             if (score > maxScore) {
                 maxScore = score;
@@ -150,7 +153,14 @@ namespace zero::graphics {
         createDevice();
     }
 
+    Renderer &Graphics::createRenderer(xcb_connection_t *connection, xcb_window_t window, system::Window &properties) {
+        return renderers.emplace_back(instance, device, connection, window, properties);
+    }
+
     Graphics::~Graphics() {
+        for(auto &renderer : renderers)
+            renderer.destroy();
+
         device.destroy();
 
         instance.destroyDebugUtilsMessengerEXT(messenger, nullptr, loader);

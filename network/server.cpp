@@ -69,11 +69,18 @@ namespace zero::network {
     }
 
     void Server::disconnect() {
+        if(!isActive())
+            return;
+
         setActive(false);
 
         pthread_join(receiver, nullptr);
         pthread_join(sender, nullptr);
 
         close(server);
+    }
+
+    Server::~Server() {
+        disconnect();
     }
 }
