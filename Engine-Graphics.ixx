@@ -28,13 +28,11 @@ namespace Engine::Graphics {
 		vk::DeviceSize size;
 		vk::DeviceSize offset;
 		vk::DeviceMemory memory;
-		vk::DeviceSize alignOffset(vk::DeviceSize alignment);
-	public:
+		public:
 		Memory() = default;
 		Memory(unsigned int typeIndex, vk::DeviceSize allocationSize);
+		vk::DeviceSize alignOffset(vk::MemoryRequirements requirements);
 		vk::DeviceMemory& getMemoryHandle();
-		vk::DeviceSize bindBuffer(vk::Buffer& buffer);
-		vk::DeviceSize bindImage(vk::Image& image);
 		void free();
 	};
 
@@ -45,25 +43,28 @@ namespace Engine::Graphics {
 		vk::DeviceMemory& memory;
 		vk::Buffer buffer;
 		vk::BufferView view;
+		void createBuffer(vk::BufferUsageFlags usageFlags);
+		void bindBufferMemory(Memory& bufferMemory);
 	public:
 		Buffer() = default;
 		Buffer(vk::BufferUsageFlags usageFlags, vk::DeviceSize bufferSize, Memory& bufferMemory);
+		void destroy();
 	};
 
 	class Image {
 	private:
-		unsigned int width;
-		unsigned int height;
-		unsigned int levels;
-		vk::Format format;
-		vk::DeviceMemory& memory;
 		vk::Image image;
 		vk::ImageView view;
+		void createImage(unsigned int imageWidth, unsigned int imageHeight, unsigned int mipLevels,
+			vk::SampleCountFlagBits sampleCount, vk::Format imageFormat, vk::ImageUsageFlags usageFlags);
+		void createImageView(unsigned int mipLevels, vk::Format imageFormat, vk::ImageAspectFlags aspectFlags);
+		void bindImageMemory(Memory& imageMemory);
 	private:
 		Image() = default;
 		Image(unsigned int imageWidth, unsigned int imageHeight, unsigned int mipLevels,
 			vk::SampleCountFlagBits sampleCount, vk::Format imageFormat, vk::ImageUsageFlags usageFlags,
-			Memory& imageMemory);
+			vk::ImageAspectFlags aspectFlags, Memory& imageMemory);
+		void destroy();
 	};
 
 	class Swapchain {

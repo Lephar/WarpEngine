@@ -113,7 +113,7 @@
     <ClCompile Include="Engine-System.ixx" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Engine.ixx" />
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Zero.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine-Graphics.hpp" />
