@@ -16,6 +16,7 @@ namespace Engine::Graphics {
 	vk::SurfaceKHR surface;
 
 	vk::Device device;
+
 	Queue transferQueue;
 	Queue graphicsQueue;
 
@@ -23,6 +24,11 @@ namespace Engine::Graphics {
 	Memory deviceMemory;
 
 	Swapchain swapchain;
+
+	shaderc::Compiler shaderCompiler;
+	shaderc::CompileOptions shaderOptions;
+
+	Pipeline pipeline;
 
 #ifndef NDEBUG
 	VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
@@ -163,14 +169,23 @@ namespace Engine::Graphics {
 		swapchain = Swapchain{ imageCount, activeImageCount, deviceMemory };
 	}
 
+	void createPipelines() {
+		shaderOptions.SetOptimizationLevel(shaderc_optimization_level::shaderc_optimization_level_performance);
+
+		pipeline = Pipeline{ "vertex.vert", "fragment.frag" };
+	}
+
 	void initialize() {
 		createInstance();
 		createDevice();
 		allocateMemory();
 		createSwapchain();
+		createPipelines();
 	}
 
 	void terminate() {
+		pipeline.destroy();
+
 		swapchain.destroy();
 
 		sharedMemory.free();

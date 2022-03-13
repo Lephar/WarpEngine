@@ -9,6 +9,10 @@
 #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
 
 #include <vulkan/vulkan.hpp>
+#include <shaderc/shaderc.hpp>
+
+#include <fstream>
+#include <filesystem>
 
 #ifndef NDEBUG
 #include <iostream>

@@ -80,6 +80,22 @@ namespace Engine::Graphics {
 		void destroy();
 	};
 
+	class Pipeline {
+	private:
+		vk::ShaderModule vertexShader;
+		vk::ShaderModule fragmentShader;
+		vk::DescriptorSetLayout descriptorSetLayout;
+		vk::PipelineLayout pipelineLayout;
+		vk::Pipeline pipeline;
+		vk::ShaderModule loadShader(const char* name);
+		void createLayout();
+		void createPipeline();
+	public:
+		Pipeline() = default;
+		Pipeline(const char* vertexName, const char* fragmentName);
+		void destroy();
+	};
+
 	void initialize();
 	void terminate();
 }

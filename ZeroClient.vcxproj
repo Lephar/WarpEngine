@@ -72,7 +72,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(VK_SDK_PATH)\Lib;$(VK_SDK_PATH)\Third-Party\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;shaderc_shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,26 +98,27 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(VK_SDK_PATH)\Lib;$(VK_SDK_PATH)\Third-Party\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;shaderc_shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Graphics\Buffer.cpp" />
-    <ClCompile Include="Engine\Graphics\Image.cpp" />
-    <ClCompile Include="Engine\Graphics\Memory.cpp" />
-    <ClCompile Include="Engine\Graphics\Queue.cpp" />
-    <ClCompile Include="Engine\Graphics\Swapchain.cpp" />
-    <ClCompile Include="Engine\Graphics\Graphics.cpp" />
-    <ClCompile Include="Engine\Graphics\Graphics.ixx" />
-    <ClCompile Include="Engine\System\System.cpp" />
-    <ClCompile Include="Engine\System\System.ixx" />
-    <ClCompile Include="Engine\Engine.cpp" />
-    <ClCompile Include="Engine\Engine.ixx" />
+    <ClCompile Include="Graphics\Buffer.cpp" />
+    <ClCompile Include="Graphics\Image.cpp" />
+    <ClCompile Include="Graphics\Memory.cpp" />
+    <ClCompile Include="Graphics\Pipeline.cpp" />
+    <ClCompile Include="Graphics\Queue.cpp" />
+    <ClCompile Include="Graphics\Swapchain.cpp" />
+    <ClCompile Include="Graphics\Graphics.cpp" />
+    <ClCompile Include="Graphics\Graphics.ixx" />
+    <ClCompile Include="System\System.cpp" />
+    <ClCompile Include="System\System.ixx" />
+    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Engine.ixx" />
     <ClCompile Include="Zero.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Graphics\Graphics.hpp" />
-    <ClInclude Include="Engine\System\System.hpp" />
+    <ClInclude Include="Graphics\Graphics.hpp" />
+    <ClInclude Include="System\System.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
