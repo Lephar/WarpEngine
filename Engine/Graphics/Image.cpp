@@ -1,19 +1,23 @@
 module;
 
-#include "Engine-Graphics.hpp"
+#include "Graphics.hpp"
 
 module Engine:Graphics;
 
 namespace Engine::Graphics {
 	extern vk::Device device;
 
-	Image::Image(unsigned int imageWidth, unsigned int imageHeight, unsigned int mipLevels,
-		vk::SampleCountFlagBits sampleCount, vk::Format imageFormat, vk::ImageUsageFlags usageFlags,
-		vk::ImageAspectFlags aspectFlags, Memory& imageMemory) {
+	Image::Image(unsigned int imageWidth, unsigned int imageHeight, unsigned int mipLevels, vk::SampleCountFlagBits sampleCount,
+		vk::Format imageFormat, vk::ImageUsageFlags usageFlags, vk::ImageAspectFlags aspectFlags, Memory& imageMemory) {
 		
 		createImage(imageWidth, imageHeight, mipLevels, sampleCount, imageFormat, usageFlags);
 		bindImageMemory(imageMemory);
 		createImageView(mipLevels, imageFormat, aspectFlags);
+	}
+
+	Image::Image(vk::Image imageHandle, vk::Format imageFormat, vk::ImageAspectFlags aspectFlags, Memory& imageMemory)
+		: image(imageHandle) {
+		createImageView(1, imageFormat, aspectFlags);
 	}
 
 	void Image::createImage(unsigned int imageWidth, unsigned int imageHeight, unsigned int mipLevels,
@@ -66,6 +70,10 @@ namespace Engine::Graphics {
 		vk::DeviceSize offset = imageMemory.alignOffset(requirements);
 		vk::DeviceMemory& memory = imageMemory.getMemoryHandle();
 		device.bindImageMemory(image, memory, offset);
+	}
+
+	vk::ImageView& Image::getView() {
+		return view;
 	}
 
 	void Image::destroy() {

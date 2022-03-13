@@ -1,6 +1,6 @@
 module;
 
-#include "Engine-Graphics.hpp"
+#include "Graphics.hpp"
 
 module Engine:Graphics;
 

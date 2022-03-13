@@ -1,6 +1,6 @@
 module;
 
-#include "Engine-Graphics.hpp"
+#include "Graphics.hpp"
 
 module Engine:Graphics;
 
@@ -19,9 +19,8 @@ namespace Engine::Graphics {
 	Queue transferQueue;
 	Queue graphicsQueue;
 
-	Memory hostMemory;
+	Memory sharedMemory;
 	Memory deviceMemory;
-	Memory imageMemory;
 
 	Swapchain swapchain;
 
@@ -149,21 +148,33 @@ namespace Engine::Graphics {
 		graphicsQueue = Queue{ graphicsQueueFamilyIndex };
 	}
 
+	void allocateMemory() {
+		unsigned int deviceMemoryIndex = 7;
+		unsigned int sharedMemoryIndex = 10;
+
+		deviceMemory = Memory{ deviceMemoryIndex, 134217728 };
+		sharedMemory = Memory{ sharedMemoryIndex, 33554432 };
+	}
+
 	void createSwapchain() {
 		unsigned int imageCount = 3;
 		unsigned int activeImageCount = 2;
 
-		swapchain = Swapchain{ imageCount, activeImageCount };
+		swapchain = Swapchain{ imageCount, activeImageCount, deviceMemory };
 	}
 
 	void initialize() {
 		createInstance();
 		createDevice();
+		allocateMemory();
 		createSwapchain();
 	}
 
 	void terminate() {
 		swapchain.destroy();
+
+		sharedMemory.free();
+		deviceMemory.free();
 
 		graphicsQueue.destroy();
 		transferQueue.destroy();

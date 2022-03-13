@@ -1,6 +1,6 @@
 module;
 
-#include "Engine-Graphics.hpp"
+#include "Graphics.hpp"
 
 module Engine:Graphics;
 
@@ -27,6 +27,10 @@ namespace Engine::Graphics {
 		vk::MemoryRequirements requirements = device.getBufferMemoryRequirements(buffer);
 		offset = bufferMemory.alignOffset(requirements);
 		device.bindBufferMemory(buffer, memory, offset);
+	}
+
+	vk::Buffer& Buffer::getBufferHandle() {
+		return buffer;
 	}
 
 	void Buffer::destroy() {

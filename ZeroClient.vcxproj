@@ -102,22 +102,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine-Graphics-Buffer.cpp" />
-    <ClCompile Include="Engine-Graphics-Image.cpp" />
-    <ClCompile Include="Engine-Graphics-Memory.cpp" />
-    <ClCompile Include="Engine-Graphics-Queue.cpp" />
-    <ClCompile Include="Engine-Graphics-Swapchain.cpp" />
-    <ClCompile Include="Engine-Graphics.cpp" />
-    <ClCompile Include="Engine-Graphics.ixx" />
-    <ClCompile Include="Engine-System.cpp" />
-    <ClCompile Include="Engine-System.ixx" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Engine.ixx" />
+    <ClCompile Include="Engine\Graphics\Buffer.cpp" />
+    <ClCompile Include="Engine\Graphics\Image.cpp" />
+    <ClCompile Include="Engine\Graphics\Memory.cpp" />
+    <ClCompile Include="Engine\Graphics\Queue.cpp" />
+    <ClCompile Include="Engine\Graphics\Swapchain.cpp" />
+    <ClCompile Include="Engine\Graphics\Graphics.cpp" />
+    <ClCompile Include="Engine\Graphics\Graphics.ixx" />
+    <ClCompile Include="Engine\System\System.cpp" />
+    <ClCompile Include="Engine\System\System.ixx" />
+    <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\Engine.ixx" />
     <ClCompile Include="Zero.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine-Graphics.hpp" />
-    <ClInclude Include="Engine-System.hpp" />
+    <ClInclude Include="Engine\Graphics\Graphics.hpp" />
+    <ClInclude Include="Engine\System\System.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
