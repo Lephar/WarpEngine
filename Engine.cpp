@@ -8,7 +8,7 @@ namespace Engine {
 		System::initialize(title, width, height);
 		Graphics::initialize();
 
-		System::draw();
+		//System::draw();
 
 		Graphics::terminate();
 		System::terminate();

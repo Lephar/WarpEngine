@@ -102,14 +102,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Graphics\Buffer.cpp" />
-    <ClCompile Include="Graphics\Image.cpp" />
-    <ClCompile Include="Graphics\Memory.cpp" />
-    <ClCompile Include="Graphics\Pipeline.cpp" />
-    <ClCompile Include="Graphics\Queue.cpp" />
-    <ClCompile Include="Graphics\Swapchain.cpp" />
+    <ClCompile Include="Graphics\Core.cpp" />
+    <ClCompile Include="Graphics\Device.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="Graphics\Graphics.ixx" />
+    <ClCompile Include="Graphics\Memory.cpp" />
     <ClCompile Include="System\System.cpp" />
     <ClCompile Include="System\System.ixx" />
     <ClCompile Include="Engine.cpp" />
@@ -124,6 +121,8 @@
     <None Include=".gitignore" />
     <None Include="LICENSE" />
     <None Include="README.md" />
+    <None Include="Shaders\fragment.frag" />
+    <None Include="Shaders\vertex.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
