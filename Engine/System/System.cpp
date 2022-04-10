@@ -1,8 +1,4 @@
-module;
-
 #include "System.hpp"
-
-module Engine:System;
 
 namespace Engine::System {
 	const char* title;
@@ -11,27 +7,17 @@ namespace Engine::System {
 
 	SDL_Window* window;
 
-	void initialize(const char* title, unsigned int width, unsigned int height) {
-		System::title = title;
+	void initialize(const char* windowTitle, unsigned int& windowWidth, unsigned int& windowHeight) {
+		title = windowTitle;
 
 		SDL_InitSubSystem(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO);
 
-		window = SDL_CreateWindow(System::title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			width, height, SDL_WINDOW_VULKAN);
+		window = SDL_CreateWindow(System::title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_VULKAN);
 
-		SDL_Vulkan_GetDrawableSize(window, &System::width, &System::height);
-	}
+		SDL_Vulkan_GetDrawableSize(window, &width, &height);
 
-	const char* getTitle() {
-		return title;
-	}
-
-	unsigned int getWidth() {
-		return width;
-	}
-
-	unsigned int getHeight() {
-		return height;
+		windowWidth = width;
+		windowHeight = height;
 	}
 
 	void* getLoader() {
@@ -56,13 +42,15 @@ namespace Engine::System {
 		return surface;
 	}
 
-	void draw() {
+	void draw(void (*render)(void)) {
 		while (true) {
 			SDL_Event event;
 			SDL_PollEvent(&event);
 
 			if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
 				break;
+
+			render();
 		}
 	}
 

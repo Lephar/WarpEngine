@@ -1,10 +1,4 @@
-module;
-
 #include "Graphics.hpp"
-
-module Engine:Graphics;
-
-import :System;
 
 namespace Engine::Graphics {
 	PFN_vkGetInstanceProcAddr loader;
@@ -12,7 +6,7 @@ namespace Engine::Graphics {
 	vk::Instance instance;
 #ifndef NDEBUG
 	vk::DebugUtilsMessengerEXT messenger;
-#endif //NDEBUG
+#endif // NDEBUG
 	vk::SurfaceKHR surface;
 
 #ifndef NDEBUG
@@ -35,62 +29,21 @@ namespace Engine::Graphics {
 
 		return VK_FALSE;
 	}
-#endif //NDEBUG
+#endif // NDEBUG
 
-	void createInstance() {
-		loader = static_cast<PFN_vkGetInstanceProcAddr>(System::getLoader());
+	vk::Instance createInstance(const char* engineTitle, void* loaderFunction, std::vector<const char*> instanceExtensions) {
+		loader = static_cast<PFN_vkGetInstanceProcAddr>(loaderFunction);
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 
-		const char* title = System::getTitle();
-
 		std::vector<const char*> layers;
-		std::vector<const char*> extensions = System::getExtensions();
+		std::vector<const char*> extensions = instanceExtensions;
 
 #ifndef NDEBUG
 		layers.push_back("VK_LAYER_KHRONOS_validation");
 		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif //NDEBUG
+#endif // NDEBUG
 
 #ifndef NDEBUG
-		vk::DebugUtilsMessengerCreateInfoEXT messengerInfo{
-			.messageSeverity =
-				vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-				vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo |
-				vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
-				vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,
-			.messageType =
-				vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
-				vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
-				vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
-			.pfnUserCallback = messageCallback
-		};
-#endif //NDEBUG
-
-		vk::ApplicationInfo applicationInfo {
-			.pApplicationName = title,
-			.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 3),
-			.pEngineName = title,
-			.engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 3),
-			.apiVersion = VK_API_VERSION_1_3
-		};
-
-		vk::InstanceCreateInfo instanceInfo {
-#ifndef NDEBUG
-			.pNext = &messengerInfo,
-#endif //NDEBUG
-			.pApplicationInfo = &applicationInfo,
-			.enabledLayerCount = static_cast<unsigned int>(layers.size()),
-			.ppEnabledLayerNames = layers.data(),
-			.enabledExtensionCount = static_cast<unsigned int>(extensions.size()),
-			.ppEnabledExtensionNames = extensions.data()
-		};
-
-		instance = vk::createInstance(instanceInfo);
-		VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
-	}
-
-#ifndef NDEBUG
-	void createMessenger() {
 		vk::DebugUtilsMessengerCreateInfoEXT messengerInfo {
 			.messageSeverity =
 				vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
@@ -103,29 +56,46 @@ namespace Engine::Graphics {
 				vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
 			.pfnUserCallback = messageCallback
 		};
+#endif // NDEBUG
 
-		messenger = instance.createDebugUtilsMessengerEXT(messengerInfo);
-	}
-#endif //NDEBUG
+		vk::ApplicationInfo applicationInfo {
+			.pApplicationName = engineTitle,
+			.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
+			.pEngineName = engineTitle,
+			.engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
+			.apiVersion = VK_API_VERSION_1_3
+		};
 
-	void createSurface() {
-		VkSurfaceKHR surfaceHandle = System::createSurface(instance);
-		surface = vk::SurfaceKHR{ surfaceHandle };
-	}
-
-	void createCore() {
-		createInstance();
+		vk::InstanceCreateInfo instanceInfo {
 #ifndef NDEBUG
-		createMessenger();
-#endif //NDEBUG
-		createSurface();
+			.pNext = &messengerInfo,
+#endif // NDEBUG
+			.pApplicationInfo = &applicationInfo,
+			.enabledLayerCount = static_cast<unsigned int>(layers.size()),
+			.ppEnabledLayerNames = layers.data(),
+			.enabledExtensionCount = static_cast<unsigned int>(extensions.size()),
+			.ppEnabledExtensionNames = extensions.data()
+		};
+
+		instance = vk::createInstance(instanceInfo);
+		VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
+
+#ifndef NDEBUG
+		messenger = instance.createDebugUtilsMessengerEXT(messengerInfo);
+#endif // NDEBUG
+
+		return instance;
+	}
+
+	void registerSurface(vk::SurfaceKHR surfaceHandle) {
+		surface = surfaceHandle;
 	}
 
 	void destroyCore() {
 		instance.destroySurfaceKHR(surface);
 #ifndef NDEBUG
 		instance.destroyDebugUtilsMessengerEXT(messenger);
-#endif //NDEBUG
+#endif // NDEBUG
 		instance.destroy();
 
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);

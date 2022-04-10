@@ -18,39 +18,33 @@
     <ClCompile Include="Zero.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.ixx">
+    <ClCompile Include="Engine\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
+    <ClCompile Include="Engine\System\System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="System\System.cpp">
+    <ClCompile Include="Engine\Graphics\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Graphics.cpp">
+    <ClCompile Include="Engine\Graphics\Core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Graphics.ixx">
+    <ClCompile Include="Engine\Graphics\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="System\System.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\Core.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\Device.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\Memory.cpp">
+    <ClCompile Include="Engine\Graphics\Memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Graphics\Graphics.hpp">
+    <ClInclude Include="Engine\Graphics\Graphics.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="System\System.hpp">
+    <ClInclude Include="Engine\System\System.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Engine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
