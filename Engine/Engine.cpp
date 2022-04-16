@@ -11,13 +11,19 @@ namespace Engine {
 		auto surface = System::createSurface(instance);
 
 		Graphics::registerSurface(surface);
-		Graphics::createDevice();
 
-		Graphics::initialize();
+		Graphics::createDevice();
+		Graphics::createObjects();
+
+		Graphics::createSwapchain(width, height);
 
 		//System::draw();
 
-		Graphics::terminate();
+		Graphics::destroySwapchain();
+		Graphics::destroyObjects();
+		Graphics::destroyDevice();
+		Graphics::destroyCore();
+
 		System::terminate();
 	}
 }

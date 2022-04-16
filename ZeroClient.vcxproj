@@ -104,8 +104,8 @@
   <ItemGroup>
     <ClCompile Include="Engine\Graphics\Core.cpp" />
     <ClCompile Include="Engine\Graphics\Device.cpp" />
-    <ClCompile Include="Engine\Graphics\Graphics.cpp" />
     <ClCompile Include="Engine\Graphics\Memory.cpp" />
+    <ClCompile Include="Engine\Graphics\Swapchain.cpp" />
     <ClCompile Include="Engine\System\System.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Zero.cpp" />

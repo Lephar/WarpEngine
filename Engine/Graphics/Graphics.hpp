@@ -39,6 +39,11 @@ namespace Engine::Graphics {
 		std::vector<vk::CommandBuffer> commandBuffers;
 	};
 
+	struct Details {
+		vk::Format textureFormat;
+		unsigned int mipLevels;
+	};
+
 	struct Memory {
 		vk::DeviceSize size;
 		vk::DeviceSize offset;
@@ -60,6 +65,29 @@ namespace Engine::Graphics {
 		vk::ImageView view;
 	};
 
+	struct Framebuffer {
+		Image depthStencil;
+		Image color;
+		Image resolve;
+	};
+
+	struct Swapchain {
+		unsigned int imageCount;
+		unsigned int framebufferCount;
+
+		vk::Extent2D extent;
+		vk::Format depthStencilFormat;
+		vk::Format colorFormat;
+
+		vk::PresentModeKHR presentMode;
+		vk::SurfaceFormatKHR surfaceFormat;
+		vk::SampleCountFlagBits sampleCount;
+
+		vk::SwapchainKHR swapchain;
+		std::vector<vk::Image> images;
+		std::vector<Framebuffer> framebuffers;
+	};
+
 	vk::Instance createInstance(const char* engineTitle, void* loaderFunction, std::vector<const char*> instanceExtensions);
 	void registerSurface(vk::SurfaceKHR surfaceHandle);
 	void destroyCore();
@@ -74,6 +102,7 @@ namespace Engine::Graphics {
 	void destroyObjects();
 	void destroyImage(Image& image);
 
-	void initialize();
-	void terminate();
+	void createSwapchain(unsigned int width, unsigned int height);
+	void destroySwapchain();
+	void recreateSwapchain(unsigned int width, unsigned int height);
 }

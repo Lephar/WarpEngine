@@ -30,7 +30,6 @@ namespace Engine::Graphics {
 		auto physicalDevices = instance.enumeratePhysicalDevices();
 		bool physicalDeviceInitialized = false;
 
-
 		// TODO: Implement a better physical device selection
 		for (auto& physicalDeviceCandidate : physicalDevices) {
 			auto physicalDeviceCandidateDetails = generatePhysicalDeviceDetails(physicalDeviceCandidate);
