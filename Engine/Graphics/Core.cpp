@@ -73,9 +73,9 @@ namespace Engine::Graphics {
 			.pNext = &messengerInfo,
 #endif // NDEBUG
 			.pApplicationInfo = &applicationInfo,
-			.enabledLayerCount = static_cast<unsigned int>(layers.size()),
+			.enabledLayerCount = static_cast<unsigned>(layers.size()),
 			.ppEnabledLayerNames = layers.data(),
-			.enabledExtensionCount = static_cast<unsigned int>(extensions.size()),
+			.enabledExtensionCount = static_cast<unsigned>(extensions.size()),
 			.ppEnabledExtensionNames = extensions.data()
 		};
 

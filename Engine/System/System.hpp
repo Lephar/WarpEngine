@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace Engine::System {
-	void initialize(const char* title, unsigned int& width, unsigned int& height);
+	void initialize(const char* title, unsigned& width, unsigned& height);
 	void* getLoader();
 	std::vector<const char*> getExtensions();
 	VkSurfaceKHR createSurface(VkInstance instance);

@@ -4,5 +4,5 @@
 #include "Graphics/Graphics.hpp"
 
 namespace Engine {
-	void run(const char* title, unsigned int width, unsigned int height);
+	void run(const char* title, unsigned width, unsigned height);
 }

@@ -33,7 +33,7 @@ namespace Engine::Graphics {
 	};
 
 	struct Queue {
-		unsigned int familyIndex;
+		unsigned familyIndex;
 		vk::Queue queue;
 		vk::CommandPool commandPool;
 		std::vector<vk::CommandBuffer> commandBuffers;
@@ -41,7 +41,7 @@ namespace Engine::Graphics {
 
 	struct Details {
 		vk::Format textureFormat;
-		unsigned int mipLevels;
+		unsigned mipLevels;
 	};
 
 	struct Memory {
@@ -59,8 +59,8 @@ namespace Engine::Graphics {
 	};
 
 	struct Image {
-		unsigned int width;
-		unsigned int height;
+		unsigned width;
+		unsigned height;
 		vk::Image image;
 		vk::ImageView view;
 	};
@@ -72,8 +72,8 @@ namespace Engine::Graphics {
 	};
 
 	struct Swapchain {
-		unsigned int imageCount;
-		unsigned int framebufferCount;
+		unsigned imageCount;
+		unsigned framebufferCount;
 
 		vk::Extent2D extent;
 		vk::Format depthStencilFormat;
@@ -88,21 +88,37 @@ namespace Engine::Graphics {
 		std::vector<Framebuffer> framebuffers;
 	};
 
+	struct Pipeline {
+		unsigned mipLevels;
+		float maxAnisotropy;
+
+		vk::ShaderModule vertexShader;
+		vk::ShaderModule fragmentShader;
+
+		vk::DescriptorSetLayout descriptorSetLayout;
+		vk::PipelineLayout pipelineLayout;
+
+		vk::Sampler sampler;
+	};
+
 	vk::Instance createInstance(const char* engineTitle, void* loaderFunction, std::vector<const char*> instanceExtensions);
 	void registerSurface(vk::SurfaceKHR surfaceHandle);
 	void destroyCore();
 
-	void allocateCommandBuffers(Queue& queue, unsigned int commandBufferCount);
+	void allocateCommandBuffers(Queue& queue, unsigned commandBufferCount);
 	void createDevice();
 	void freeCommandBuffers(Queue& queue);
 	void destroyDevice();
 
 	void createObjects();
-	Image createImage(Memory& memory, unsigned int width, unsigned int height, unsigned int mips, vk::SampleCountFlagBits samples, vk::Format format, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspect);
+	Image createImage(Memory& memory, unsigned width, unsigned height, unsigned mips, vk::SampleCountFlagBits samples, vk::Format format, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspect);
 	void destroyObjects();
 	void destroyImage(Image& image);
 
-	void createSwapchain(unsigned int width, unsigned int height);
+	void createSwapchain(unsigned width, unsigned height);
 	void destroySwapchain();
-	void recreateSwapchain(unsigned int width, unsigned int height);
+	void recreateSwapchain(unsigned width, unsigned height);
+
+	void createPipeline();
+	void destroyPipeline();
 }

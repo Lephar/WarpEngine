@@ -14,17 +14,17 @@ namespace Engine::Graphics {
 		return (requiredFlags & subjectFlag) != subjectFlag && (supportedFlags & subjectFlag) == subjectFlag;
 	}
 
-	unsigned int selectMemoryType(std::vector<vk::MemoryPropertyFlags>& memoryPropertyPreferenceList) {
+	unsigned selectMemoryType(std::vector<vk::MemoryPropertyFlags>& memoryPropertyPreferenceList) {
 		for (auto& requiredFlags : memoryPropertyPreferenceList) {
-			unsigned int leastRedundancyScore = std::numeric_limits<unsigned int>::max();
-			unsigned int mostSuitableMemoryTypeIndex = std::numeric_limits<unsigned int>::max();
+			unsigned leastRedundancyScore = std::numeric_limits<unsigned>::max();
+			unsigned mostSuitableMemoryTypeIndex = std::numeric_limits<unsigned>::max();
 
-			for (unsigned int memoryTypeIndex = 0; memoryTypeIndex < physicalDevice.memoryProperties.memoryTypeCount; memoryTypeIndex++) {
+			for (unsigned memoryTypeIndex = 0; memoryTypeIndex < physicalDevice.memoryProperties.memoryTypeCount; memoryTypeIndex++) {
 				auto& supportedFlags = physicalDevice.memoryProperties.memoryTypes[memoryTypeIndex].propertyFlags;
 				bool suitable = (supportedFlags & requiredFlags) == requiredFlags;
 
 				if (suitable) {
-					unsigned int redundancyScore = 0;
+					unsigned redundancyScore = 0;
 
 					// TODO: These scores are arbitrary, change them to more meaningful values
 					if (isMemoryPropertyFlagRedundant(requiredFlags, supportedFlags, vk::MemoryPropertyFlagBits::eDeviceLocal))
@@ -52,7 +52,7 @@ namespace Engine::Graphics {
 		}
 
 		// TODO: Check the value in case no memory type is suitable
-		return std::numeric_limits<unsigned int>::max();
+		return std::numeric_limits<unsigned>::max();
 	}
 
 	Memory allocateMemory(vk::DeviceSize requiredSize, std::vector<vk::MemoryPropertyFlags> memoryPreferenceList) {
@@ -148,7 +148,7 @@ namespace Engine::Graphics {
 		deviceBuffer = createBuffer(deviceMemory, deviceBufferSize, deviceBufferUsageFlags);
 	}
 
-	Image createImage(Memory& memory, unsigned int width, unsigned int height, unsigned int mips, vk::SampleCountFlagBits samples, vk::Format format, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspect) {
+	Image createImage(Memory& memory, unsigned width, unsigned height, unsigned mips, vk::SampleCountFlagBits samples, vk::Format format, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspect) {
 		Image image{
 			.width = width,
 			.height = height

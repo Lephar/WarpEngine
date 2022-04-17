@@ -1,7 +1,7 @@
 #include "Engine.hpp"
 
 namespace Engine {
-	void run(const char* title, unsigned int width, unsigned int height) {
+	void run(const char* title, unsigned width, unsigned height) {
 		System::initialize(title, width, height);
 
 		auto loader = System::getLoader();
@@ -16,9 +16,11 @@ namespace Engine {
 		Graphics::createObjects();
 
 		Graphics::createSwapchain(width, height);
+		Graphics::createPipeline();
 
 		//System::draw();
 
+		Graphics::destroyPipeline();
 		Graphics::destroySwapchain();
 		Graphics::destroyObjects();
 		Graphics::destroyDevice();

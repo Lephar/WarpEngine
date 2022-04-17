@@ -54,16 +54,16 @@ namespace Engine::Graphics {
 		return (requiredFlags & subjectFlag) != subjectFlag && (supportedFlags & subjectFlag) == subjectFlag;
 	}
 
-	unsigned int selectMostSuitableQueueFamily(vk::QueueFlags requiredFlags) {
-		unsigned int leastRedundancyScore = std::numeric_limits<unsigned int>::max();
-		unsigned int mostSuitableQueueFamilyIndex = std::numeric_limits<unsigned int>::max();
+	unsigned selectMostSuitableQueueFamily(vk::QueueFlags requiredFlags) {
+		unsigned leastRedundancyScore = std::numeric_limits<unsigned>::max();
+		unsigned mostSuitableQueueFamilyIndex = std::numeric_limits<unsigned>::max();
 
-		for (unsigned int queueFamilyIndex = 0; queueFamilyIndex < physicalDevice.queueFamilyPropertiesList.size(); queueFamilyIndex++) {
+		for (unsigned queueFamilyIndex = 0; queueFamilyIndex < physicalDevice.queueFamilyPropertiesList.size(); queueFamilyIndex++) {
 			auto& supportedFlags = physicalDevice.queueFamilyPropertiesList.at(queueFamilyIndex).queueFlags;
 			bool suitable = (supportedFlags & requiredFlags) == requiredFlags;
 
 			if (suitable) {
-				unsigned int redundancyScore = 0;
+				unsigned redundancyScore = 0;
 
 				if (isQueueFlagRedundant(requiredFlags, supportedFlags, vk::QueueFlagBits::eGraphics))
 					redundancyScore += 5;
@@ -122,9 +122,9 @@ namespace Engine::Graphics {
 
 		vk::DeviceCreateInfo deviceInfo{
 			.pNext = &dynamicRenderingFeatures,
-			.queueCreateInfoCount = static_cast<unsigned int>(queueInfos.size()),
+			.queueCreateInfoCount = static_cast<unsigned>(queueInfos.size()),
 			.pQueueCreateInfos = queueInfos.data(),
-			.enabledExtensionCount = static_cast<unsigned int>(deviceExtensions.size()),
+			.enabledExtensionCount = static_cast<unsigned>(deviceExtensions.size()),
 			.ppEnabledExtensionNames = deviceExtensions.data(),
 			.pEnabledFeatures = &deviceFeatures
 		};
@@ -144,7 +144,7 @@ namespace Engine::Graphics {
 		queue.commandPool = device.createCommandPool(commandPoolInfo);
 	}
 
-	void allocateCommandBuffers(Queue& queue, unsigned int commandBufferCount) {
+	void allocateCommandBuffers(Queue& queue, unsigned commandBufferCount) {
 		vk::CommandBufferAllocateInfo commandBufferInfo{
 			.commandPool = queue.commandPool,
 			.level = vk::CommandBufferLevel::ePrimary,

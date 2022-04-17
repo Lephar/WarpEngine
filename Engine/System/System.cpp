@@ -7,7 +7,7 @@ namespace Engine::System {
 
 	SDL_Window* window;
 
-	void initialize(const char* windowTitle, unsigned int& windowWidth, unsigned int& windowHeight) {
+	void initialize(const char* windowTitle, unsigned& windowWidth, unsigned& windowHeight) {
 		title = windowTitle;
 
 		SDL_InitSubSystem(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO);
