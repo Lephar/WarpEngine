@@ -3,6 +3,7 @@
 namespace Engine::Graphics {
 	extern PhysicalDevice physicalDevice;
 	extern vk::Device device;
+	extern Swapchain swapchain;
 	
 	shaderc::Compiler shaderCompiler;
 	shaderc::CompileOptions shaderOptions;
@@ -70,7 +71,7 @@ namespace Engine::Graphics {
 		};
 
 		vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutInfo{
-			.bindingCount = descriptorSetLayoutBindings.size(),
+			.bindingCount = static_cast<unsigned>(descriptorSetLayoutBindings.size()),
 			.pBindings = descriptorSetLayoutBindings.data()
 		};
 
@@ -108,6 +109,184 @@ namespace Engine::Graphics {
 		pipeline.sampler = device.createSampler(samplerInfo);
 	}
 
+	void createPipelineObject() {
+		std::array<vk::PipelineShaderStageCreateInfo, 2> shaderStages{ 
+			vk::PipelineShaderStageCreateInfo{
+				.stage = vk::ShaderStageFlagBits::eVertex,
+				.module = pipeline.vertexShader,
+				.pName = "main",
+				.pSpecializationInfo = nullptr
+			},
+			vk::PipelineShaderStageCreateInfo{
+				.stage = vk::ShaderStageFlagBits::eFragment,
+				.module = pipeline.fragmentShader,
+				.pName = "main",
+				.pSpecializationInfo = nullptr
+			},
+		};
+
+		vk::VertexInputBindingDescription bindingDescription{
+			.binding = 0,
+			.stride = sizeof(Vertex),
+			.inputRate = vk::VertexInputRate::eVertex
+		};
+		
+		std::array<vk::VertexInputAttributeDescription, 2> attributeDescriptions{
+			vk::VertexInputAttributeDescription{
+				.location = 0,
+				.binding = 0,
+				.format = vk::Format::eR32G32B32Sfloat,
+				.offset = offsetof(Vertex, position)
+			},
+			vk::VertexInputAttributeDescription{
+				.location = 1,
+				.binding = 0,
+				.format = vk::Format::eR32G32Sfloat,
+				.offset = offsetof(Vertex, texture)
+			}
+		};
+
+		vk::PipelineVertexInputStateCreateInfo inputStateInfo{
+			.vertexBindingDescriptionCount = 1,
+			.pVertexBindingDescriptions = &bindingDescription,
+			.vertexAttributeDescriptionCount = static_cast<unsigned>(attributeDescriptions.size()),
+			.pVertexAttributeDescriptions = attributeDescriptions.data()
+		};
+		
+		vk::PipelineInputAssemblyStateCreateInfo assemblyInfo{
+			.topology = vk::PrimitiveTopology::eTriangleList,
+			.primitiveRestartEnable = false
+		};
+		
+		vk::PipelineRasterizationStateCreateInfo rasterizerInfo{
+			.depthClampEnable = false,
+			.rasterizerDiscardEnable = false,
+			.polygonMode = vk::PolygonMode::eFill,
+			.cullMode = vk::CullModeFlagBits::eBack,
+			.frontFace = vk::FrontFace::eClockwise,
+			.depthBiasEnable = false,
+			.depthBiasConstantFactor = 0.0f,
+			.depthBiasClamp = 0.0f,
+			.depthBiasSlopeFactor = 0.0f,
+			.lineWidth = 1.0f
+		};
+		
+		vk::PipelineMultisampleStateCreateInfo multisamplingInfo{
+			.rasterizationSamples = swapchain.sampleCount,
+			.sampleShadingEnable = false,
+			.minSampleShading = 1.0f,
+			.pSampleMask = nullptr,
+			.alphaToCoverageEnable = false,
+			.alphaToOneEnable = false 
+		};
+
+		vk::StencilOpState stencilOpState{
+			.failOp = vk::StencilOp::eKeep,
+			.passOp = vk::StencilOp::eKeep,
+			.depthFailOp = vk::StencilOp::eKeep,
+			.compareOp = vk::CompareOp::eEqual,
+			.compareMask = 0xFF,
+			.writeMask = 0xFF
+		};
+
+		vk::PipelineDepthStencilStateCreateInfo depthStencil{
+			.depthTestEnable = true,
+			.depthWriteEnable = true,
+			.depthCompareOp = vk::CompareOp::eLessOrEqual,
+			.depthBoundsTestEnable = false,
+			.stencilTestEnable = true,
+			.front = stencilOpState,
+			.back = vk::StencilOpState{},
+			.minDepthBounds = 0.0f,
+			.maxDepthBounds = 1.0f
+		};
+		
+		vk::PipelineColorBlendAttachmentState blendAttachment{
+			.blendEnable = true,
+			.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha,
+			.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha,
+			.colorBlendOp = vk::BlendOp::eAdd,
+			.srcAlphaBlendFactor = vk::BlendFactor::eOne,
+			.dstAlphaBlendFactor = vk::BlendFactor::eZero,
+			.alphaBlendOp = vk::BlendOp::eAdd,
+			.colorWriteMask =
+				vk::ColorComponentFlagBits::eR |
+				vk::ColorComponentFlagBits::eG |
+				vk::ColorComponentFlagBits::eB |
+				vk::ColorComponentFlagBits::eA,
+		};
+
+		vk::PipelineColorBlendStateCreateInfo blendInfo{
+			.logicOpEnable = VK_FALSE,
+			.logicOp = vk::LogicOp::eCopy,
+			.attachmentCount = 1,
+			.pAttachments = &blendAttachment,
+			.blendConstants = std::array<float, 4>{
+				0.0f,
+				0.0f,
+				0.0f,
+				0.0f
+			}
+		};
+		
+		vk::Viewport viewport{
+			.x = 0.0f,
+			.y = static_cast<float>(swapchain.extent.height),
+			.width = static_cast<float>(swapchain.extent.width),
+			.height = -static_cast<float>(swapchain.extent.height),
+			.minDepth = 0.0f,
+			.maxDepth = 1.0f
+		};
+		
+		vk::Rect2D scissor{
+			.offset = vk::Offset2D{
+				.x = 0,
+				.y = 0
+			},
+			.extent = swapchain.extent
+		};
+		
+		vk::PipelineViewportStateCreateInfo viewportInfo{
+			.viewportCount = 1,
+			.pViewports = &viewport,
+			.scissorCount = 1,
+			.pScissors = &scissor
+		};
+
+		std::array<vk::DynamicState, 5> dynamicStates{
+			vk::DynamicState::eStencilTestEnable,
+			vk::DynamicState::eStencilOp,
+			vk::DynamicState::eStencilCompareMask,
+			vk::DynamicState::eStencilReference,
+			vk::DynamicState::eStencilWriteMask
+		};
+
+		vk::PipelineDynamicStateCreateInfo dynamicInfo{
+			.dynamicStateCount = static_cast<unsigned>(dynamicStates.size()),
+			.pDynamicStates = dynamicStates.data()
+		};
+
+		vk::GraphicsPipelineCreateInfo graphicsPipelineInfo{
+			.stageCount = static_cast<unsigned>(shaderStages.size()),
+			.pStages = shaderStages.data(),
+			.pVertexInputState = &inputStateInfo,
+			.pInputAssemblyState = &assemblyInfo,
+			.pViewportState = &viewportInfo,
+			.pRasterizationState = &rasterizerInfo,
+			.pMultisampleState = &multisamplingInfo,
+			.pDepthStencilState = &depthStencil,
+			.pColorBlendState = &blendInfo,
+			.pDynamicState = &dynamicInfo,
+			.layout = pipeline.pipelineLayout,
+			.renderPass = nullptr,
+			.subpass = 0,
+			.basePipelineHandle = nullptr,
+			.basePipelineIndex = 0,
+		};
+
+		pipeline.pipeline = device.createGraphicsPipeline(nullptr, graphicsPipelineInfo).value;
+	}
+
 	void createPipeline() {
 		initializePipelineDetails();
 
@@ -116,11 +295,12 @@ namespace Engine::Graphics {
 
 		createLayouts();
 		createSampler();
-
-
+		createPipelineObject();
 	}
 
 	void destroyPipeline() {
+		device.destroyPipeline(pipeline.pipeline);
+
 		device.destroySampler(pipeline.sampler);
 
 		device.destroyPipelineLayout(pipeline.pipelineLayout);

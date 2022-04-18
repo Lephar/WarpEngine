@@ -11,6 +11,8 @@
 #include <vulkan/vulkan.hpp>
 #include <shaderc/shaderc.hpp>
 
+#include <glm/glm.hpp>
+
 #include <limits>
 
 #include <fstream>
@@ -21,6 +23,11 @@
 #endif //NDEBUG
 
 namespace Engine::Graphics {
+	struct Vertex {
+		glm::vec3 position;
+		glm::vec2 texture;
+	};
+
 	struct PhysicalDevice {
 		vk::PhysicalDevice physicalDevice;
 		vk::PhysicalDeviceProperties properties;
@@ -99,6 +106,8 @@ namespace Engine::Graphics {
 		vk::PipelineLayout pipelineLayout;
 
 		vk::Sampler sampler;
+
+		vk::Pipeline pipeline;
 	};
 
 	vk::Instance createInstance(const char* engineTitle, void* loaderFunction, std::vector<const char*> instanceExtensions);

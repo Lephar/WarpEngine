@@ -9,7 +9,12 @@ namespace Engine::Graphics {
 	Swapchain swapchain;
 
 	// TODO: Better swapchain details initialization
-	void initializeSwapchainDetails() {
+	void initializeSwapchainDetails(unsigned width, unsigned height) {
+		swapchain.extent = vk::Extent2D{
+			.width = width,
+			.height = height
+		};
+
 		swapchain.imageCount = 3;
 		swapchain.framebufferCount = 2;
 
@@ -24,26 +29,7 @@ namespace Engine::Graphics {
 		};
 	}
 
-	void createFramebuffers() {
-		for (unsigned framebufferIndex = 0; framebufferIndex < swapchain.imageCount; framebufferIndex++) {
-			Framebuffer framebuffer;
-
-			framebuffer.depthStencil = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil);
-			framebuffer.color = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransientAttachment, vk::ImageAspectFlagBits::eColor);
-			framebuffer.resolve = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc, vk::ImageAspectFlagBits::eColor);
-	
-			swapchain.framebuffers.push_back(framebuffer);
-		}
-	}
-
-	void createSwapchain(unsigned width, unsigned height) {
-		swapchain.extent = vk::Extent2D{
-			.width = width,
-			.height = height
-		};
-		
-		initializeSwapchainDetails();
-
+	void createSwapchainObject() {
 		vk::SwapchainCreateInfoKHR swapchainInfo{
 			.surface = surface,
 			.minImageCount = swapchain.imageCount,
@@ -63,7 +49,23 @@ namespace Engine::Graphics {
 		};
 
 		swapchain.swapchain = device.createSwapchainKHR(swapchainInfo);
+	}
 
+	void createFramebuffers() {
+		for (unsigned framebufferIndex = 0; framebufferIndex < swapchain.imageCount; framebufferIndex++) {
+			Framebuffer framebuffer;
+
+			framebuffer.depthStencil = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil);
+			framebuffer.color = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransientAttachment, vk::ImageAspectFlagBits::eColor);
+			framebuffer.resolve = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc, vk::ImageAspectFlagBits::eColor);
+	
+			swapchain.framebuffers.push_back(framebuffer);
+		}
+	}
+
+	void createSwapchain(unsigned width, unsigned height) {
+		initializeSwapchainDetails(width, height);
+		createSwapchainObject();
 		createFramebuffers();
 	}
 
