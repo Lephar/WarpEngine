@@ -4,6 +4,7 @@ namespace Engine::Graphics {
 	extern vk::SurfaceKHR surface;
 	extern PhysicalDevice physicalDevice;
 	extern vk::Device device;
+	extern Queue graphicsQueue;
 	extern Memory deviceMemory;
 
 	Swapchain swapchain;
@@ -52,13 +53,38 @@ namespace Engine::Graphics {
 	}
 
 	void createFramebuffers() {
-		for (unsigned framebufferIndex = 0; framebufferIndex < swapchain.imageCount; framebufferIndex++) {
+		unsigned framebufferCommandBufferCount = swapchain.imageCount + 1;
+		unsigned totalCommandBufferCount = swapchain.framebufferCount * framebufferCommandBufferCount;
+
+		auto commandBuffers = allocateCommandBuffers(graphicsQueue, totalCommandBufferCount);
+
+		for (unsigned framebufferIndex = 0; framebufferIndex < swapchain.framebufferCount; framebufferIndex++) {
 			Framebuffer framebuffer;
 
 			framebuffer.depthStencil = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil);
 			framebuffer.color = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransientAttachment, vk::ImageAspectFlagBits::eColor);
 			framebuffer.resolve = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc, vk::ImageAspectFlagBits::eColor);
 	
+			vk::SemaphoreCreateInfo semaphoreInfo{};
+
+			framebuffer.renderingSemaphore = device.createSemaphore(semaphoreInfo);
+			framebuffer.acquisitionSemaphore = device.createSemaphore(semaphoreInfo);
+			framebuffer.blittingSemaphore = device.createSemaphore(semaphoreInfo);
+
+			vk::FenceCreateInfo fenceInfo{
+				.flags = vk::FenceCreateFlagBits::eSignaled
+			};
+
+			framebuffer.renderingFence = device.createFence(fenceInfo);
+			framebuffer.blittingFence = device.createFence(fenceInfo);
+
+			unsigned commandBufferOffset = framebufferIndex * framebufferCommandBufferCount;
+
+			framebuffer.renderingCommandBuffer = commandBuffers.at(commandBufferOffset);
+
+			for (unsigned commandBufferIndex = 1; commandBufferIndex < framebufferCommandBufferCount; commandBufferIndex++)
+				framebuffer.blittingCommandBuffers.push_back(commandBuffers.at(commandBufferOffset + commandBufferIndex));
+
 			swapchain.framebuffers.push_back(framebuffer);
 		}
 	}
@@ -76,6 +102,16 @@ namespace Engine::Graphics {
 
 	void destroySwapchain() {
 		for (auto& framebuffer : swapchain.framebuffers) {
+			framebuffer.blittingCommandBuffers.push_back(framebuffer.renderingCommandBuffer);
+			freeCommandBuffers(graphicsQueue, framebuffer.blittingCommandBuffers);
+
+			device.destroyFence(framebuffer.blittingFence);
+			device.destroyFence(framebuffer.renderingFence);
+
+			device.destroySemaphore(framebuffer.blittingSemaphore);
+			device.destroySemaphore(framebuffer.acquisitionSemaphore);
+			device.destroySemaphore(framebuffer.renderingSemaphore);
+
 			destroyImage(framebuffer.resolve);
 			destroyImage(framebuffer.color);
 			destroyImage(framebuffer.depthStencil);

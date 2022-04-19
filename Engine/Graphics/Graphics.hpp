@@ -43,7 +43,6 @@ namespace Engine::Graphics {
 		unsigned familyIndex;
 		vk::Queue queue;
 		vk::CommandPool commandPool;
-		std::vector<vk::CommandBuffer> commandBuffers;
 	};
 
 	struct Details {
@@ -76,6 +75,16 @@ namespace Engine::Graphics {
 		Image depthStencil;
 		Image color;
 		Image resolve;
+
+		vk::Semaphore renderingSemaphore;
+		vk::Semaphore acquisitionSemaphore;
+		vk::Semaphore blittingSemaphore;
+
+		vk::Fence renderingFence;
+		vk::Fence blittingFence;
+
+		vk::CommandBuffer renderingCommandBuffer;
+		std::vector<vk::CommandBuffer> blittingCommandBuffers;
 	};
 
 	struct Swapchain {
@@ -114,9 +123,9 @@ namespace Engine::Graphics {
 	void registerSurface(vk::SurfaceKHR surfaceHandle);
 	void destroyCore();
 
-	void allocateCommandBuffers(Queue& queue, unsigned commandBufferCount);
+	std::vector<vk::CommandBuffer> allocateCommandBuffers(Queue& queue, unsigned commandBufferCount);
 	void createDevice();
-	void freeCommandBuffers(Queue& queue);
+	void freeCommandBuffers(Queue& queue, std::vector<vk::CommandBuffer>& commandBuffers);
 	void destroyDevice();
 
 	void createObjects();

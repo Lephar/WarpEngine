@@ -144,14 +144,14 @@ namespace Engine::Graphics {
 		queue.commandPool = device.createCommandPool(commandPoolInfo);
 	}
 
-	void allocateCommandBuffers(Queue& queue, unsigned commandBufferCount) {
+	std::vector<vk::CommandBuffer> allocateCommandBuffers(Queue& queue, unsigned commandBufferCount) {
 		vk::CommandBufferAllocateInfo commandBufferInfo{
 			.commandPool = queue.commandPool,
 			.level = vk::CommandBufferLevel::ePrimary,
 			.commandBufferCount = commandBufferCount
 		};
 
-		queue.commandBuffers = device.allocateCommandBuffers(commandBufferInfo);
+		return device.allocateCommandBuffers(commandBufferInfo);
 	}
 
 	void createQueueStructures() {
@@ -168,9 +168,8 @@ namespace Engine::Graphics {
 		createQueueStructures();
 	}
 
-	void freeCommandBuffers(Queue& queue) {
-		device.freeCommandBuffers(queue.commandPool, queue.commandBuffers);
-		queue.commandBuffers.clear();
+	void freeCommandBuffers(Queue& queue, std::vector<vk::CommandBuffer>& commandBuffers) {
+		device.freeCommandBuffers(queue.commandPool, commandBuffers);
 	}
 
 	void destroyDevice() {

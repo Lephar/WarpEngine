@@ -14,7 +14,7 @@ namespace Engine::Graphics {
 		pipeline.mipLevels = 8;
 		pipeline.maxAnisotropy = physicalDevice.properties.limits.maxSamplerAnisotropy;
 
-		shaderOptions.SetOptimizationLevel(shaderc_optimization_level::shaderc_optimization_level_performance);
+		//shaderOptions.SetOptimizationLevel(shaderc_optimization_level::shaderc_optimization_level_performance);
 	}
 
 	vk::ShaderModule loadShader(const char* name) {
@@ -253,20 +253,22 @@ namespace Engine::Graphics {
 			.pScissors = &scissor
 		};
 
-		std::array<vk::DynamicState, 5> dynamicStates{
-			vk::DynamicState::eStencilTestEnable,
-			vk::DynamicState::eStencilOp,
-			vk::DynamicState::eStencilCompareMask,
-			vk::DynamicState::eStencilReference,
-			vk::DynamicState::eStencilWriteMask
+		vk::DynamicState dynamicViewport = vk::DynamicState::eViewport;
+
+		vk::PipelineDynamicStateCreateInfo dynamicStateInfo{
+			.dynamicStateCount = 1,
+			.pDynamicStates = &dynamicViewport
 		};
 
-		vk::PipelineDynamicStateCreateInfo dynamicInfo{
-			.dynamicStateCount = static_cast<unsigned>(dynamicStates.size()),
-			.pDynamicStates = dynamicStates.data()
+		vk::PipelineRenderingCreateInfo renderingInfo{
+			.colorAttachmentCount = 1,
+			.pColorAttachmentFormats = &swapchain.colorFormat,
+			.depthAttachmentFormat = swapchain.depthStencilFormat,
+			.stencilAttachmentFormat = swapchain.depthStencilFormat
 		};
 
 		vk::GraphicsPipelineCreateInfo graphicsPipelineInfo{
+			.pNext = &renderingInfo,
 			.stageCount = static_cast<unsigned>(shaderStages.size()),
 			.pStages = shaderStages.data(),
 			.pVertexInputState = &inputStateInfo,
@@ -276,12 +278,12 @@ namespace Engine::Graphics {
 			.pMultisampleState = &multisamplingInfo,
 			.pDepthStencilState = &depthStencil,
 			.pColorBlendState = &blendInfo,
-			.pDynamicState = &dynamicInfo,
+			.pDynamicState = &dynamicStateInfo,
 			.layout = pipeline.pipelineLayout,
 			.renderPass = nullptr,
 			.subpass = 0,
 			.basePipelineHandle = nullptr,
-			.basePipelineIndex = 0,
+			.basePipelineIndex = 0
 		};
 
 		pipeline.pipeline = device.createGraphicsPipeline(nullptr, graphicsPipelineInfo).value;
