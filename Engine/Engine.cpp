@@ -3,6 +3,8 @@
 namespace Engine {
 	void run(const char* title, unsigned width, unsigned height) {
 		System::initialize(title, width, height);
+		Manager::initialize();
+		Manager::loadFile("Lantern.gltf");
 
 		auto loader = System::getLoader();
 		auto extensions = System::getExtensions();

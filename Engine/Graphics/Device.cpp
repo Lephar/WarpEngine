@@ -46,8 +46,6 @@ namespace Engine::Graphics {
 			auto& physicalDeviceHandle = physicalDevices.front();
 			physicalDevice = generatePhysicalDeviceDetails(physicalDeviceHandle);
 		}
-
-		std::cout << physicalDevice.properties.deviceName << std::endl;
 	}
 
 	bool isQueueFlagRedundant(vk::QueueFlags requiredFlags, vk::QueueFlags supportedFlags, vk::QueueFlagBits subjectFlag) {
@@ -84,7 +82,6 @@ namespace Engine::Graphics {
 		}
 
 		// TODO: Check the value in case no queue family is suitable
-		std::cout << "queueFamilyIndex: " << mostSuitableQueueFamilyIndex << std::endl;
 		return mostSuitableQueueFamilyIndex;
 	}
 

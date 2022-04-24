@@ -47,7 +47,6 @@ namespace Engine::Graphics {
 				}
 			}
 
-			std::cout << "memoryTypeIndex: " << mostSuitableMemoryTypeIndex << std::endl;
 			return mostSuitableMemoryTypeIndex;
 		}
 

@@ -10,11 +10,9 @@
 
 #include <vulkan/vulkan.hpp>
 #include <shaderc/shaderc.hpp>
-
 #include <glm/glm.hpp>
 
 #include <limits>
-
 #include <fstream>
 #include <filesystem>
 

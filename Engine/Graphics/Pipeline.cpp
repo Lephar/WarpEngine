@@ -5,6 +5,7 @@ namespace Engine::Graphics {
 	extern vk::Device device;
 	extern Swapchain swapchain;
 	
+	std::filesystem::path shaderFolder;
 	shaderc::Compiler shaderCompiler;
 	shaderc::CompileOptions shaderOptions;
 
@@ -14,11 +15,12 @@ namespace Engine::Graphics {
 		pipeline.mipLevels = 8;
 		pipeline.maxAnisotropy = physicalDevice.properties.limits.maxSamplerAnisotropy;
 
+		shaderFolder = std::filesystem::current_path() / "Shaders";
 		//shaderOptions.SetOptimizationLevel(shaderc_optimization_level::shaderc_optimization_level_performance);
 	}
 
 	vk::ShaderModule loadShader(const char* name) {
-		auto path = std::filesystem::current_path() / "Shaders" / name;
+		auto path = shaderFolder / name;
 		auto size = std::filesystem::file_size(path);
 
 		shaderc_shader_kind kind = shaderc_shader_kind::shaderc_glsl_compute_shader;
@@ -33,14 +35,16 @@ namespace Engine::Graphics {
 		file.read(code.data(), size);
 
 		auto shaderModule = shaderCompiler.CompileGlslToSpv(code.data(), code.size(), kind, name, "main", shaderOptions);
-
+		
 #ifndef NDEBUG
-		if (shaderModule.GetCompilationStatus() != shaderc_compilation_status::shaderc_compilation_status_success) {
+		auto status = shaderModule.GetCompilationStatus();
+
+		if (status != shaderc_compilation_status::shaderc_compilation_status_success) {
 			if (!shaderModule.GetErrorMessage().empty())
-				std::cout << "SHADERC Error: " << shaderModule.GetErrorMessage() << std::endl;
+				std::cerr << "Error loading shader named " << name << " with error code " << status << " and with message:\n" << shaderModule.GetErrorMessage() << std::endl;
 			return nullptr;
 		}
-#endif
+#endif // NDEBUF
 
 		std::vector<unsigned> data(shaderModule.cbegin(), shaderModule.cend());
 
