@@ -15,45 +15,45 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Zero.cpp">
+    <ClCompile Include="Source\Zero.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Engine.cpp">
+    <ClCompile Include="Source\Engine\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\System\System.cpp">
+    <ClCompile Include="Source\Engine\System\System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Core.cpp">
+    <ClCompile Include="Source\Engine\Graphics\Core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Device.cpp">
+    <ClCompile Include="Source\Engine\Graphics\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Memory.cpp">
+    <ClCompile Include="Source\Engine\Graphics\Memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Swapchain.cpp">
+    <ClCompile Include="Source\Engine\Graphics\Swapchain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Pipeline.cpp">
+    <ClCompile Include="Source\Engine\Graphics\Pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Manager\Manager.cpp">
+    <ClCompile Include="Source\Engine\Manager\Manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Graphics\Graphics.hpp">
+    <ClInclude Include="Source\Engine\Graphics\Graphics.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\System\System.hpp">
+    <ClInclude Include="Source\Engine\System\System.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Engine.hpp">
+    <ClInclude Include="Source\Engine\Engine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Manager\Manager.hpp">
+    <ClInclude Include="Source\Engine\Manager\Manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -102,21 +102,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Graphics\Core.cpp" />
-    <ClCompile Include="Engine\Graphics\Device.cpp" />
-    <ClCompile Include="Engine\Graphics\Memory.cpp" />
-    <ClCompile Include="Engine\Graphics\Pipeline.cpp" />
-    <ClCompile Include="Engine\Graphics\Swapchain.cpp" />
-    <ClCompile Include="Engine\Manager\Manager.cpp" />
-    <ClCompile Include="Engine\System\System.cpp" />
-    <ClCompile Include="Engine\Engine.cpp" />
-    <ClCompile Include="Zero.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\Core.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\Device.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\Memory.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\Pipeline.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\Swapchain.cpp" />
+    <ClCompile Include="Source\Engine\Manager\Manager.cpp" />
+    <ClCompile Include="Source\Engine\System\System.cpp" />
+    <ClCompile Include="Source\Engine\Engine.cpp" />
+    <ClCompile Include="Source\Zero.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Graphics\Graphics.hpp" />
-    <ClInclude Include="Engine\Manager\Manager.hpp" />
-    <ClInclude Include="Engine\System\System.hpp" />
-    <ClInclude Include="Engine\Engine.hpp" />
+    <ClInclude Include="Source\Engine\Graphics\Graphics.hpp" />
+    <ClInclude Include="Source\Engine\Manager\Manager.hpp" />
+    <ClInclude Include="Source\Engine\System\System.hpp" />
+    <ClInclude Include="Source\Engine\Engine.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
