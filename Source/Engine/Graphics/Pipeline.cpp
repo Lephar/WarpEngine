@@ -12,10 +12,12 @@ namespace Engine::Graphics {
 	Pipeline pipeline;
 
 	void initializePipelineDetails() {
+		pipeline.textureLimit = 256;
 		pipeline.mipLevels = 8;
 		pipeline.maxAnisotropy = physicalDevice.properties.limits.maxSamplerAnisotropy;
 
 		shaderFolder = std::filesystem::current_path() / "Shaders";
+		shaderOptions.SetLimit(shaderc_limit::shaderc_limit_max_combined_texture_image_units, pipeline.textureLimit);
 		//shaderOptions.SetOptimizationLevel(shaderc_optimization_level::shaderc_optimization_level_performance);
 	}
 

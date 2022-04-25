@@ -103,6 +103,7 @@ namespace Engine::Graphics {
 	};
 
 	struct Pipeline {
+		unsigned textureLimit;
 		unsigned mipLevels;
 		float maxAnisotropy;
 
