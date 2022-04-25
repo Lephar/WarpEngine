@@ -1,8 +1,7 @@
 #define CGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 
 #include "Manager.hpp"
-
-#include <iostream>
 
 namespace Engine::Manager {
 	std::filesystem::path assetFolder;

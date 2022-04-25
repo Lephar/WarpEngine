@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cgltf/cgltf.h>
+#include <stb/stb_image.h>
 #include <glm/glm.hpp>
-#include <SDL2/SDL_image.h>
 
 #include <filesystem>
 
