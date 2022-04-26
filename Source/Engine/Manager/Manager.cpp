@@ -7,15 +7,47 @@ namespace Engine::Manager {
 	std::filesystem::path assetFolder;
 	cgltf_options assetOptions;
 
+	std::unordered_map<std::string, Material> materials;
+	std::vector<Mesh> meshes;
+
 	void initialize() {
 		assetFolder = std::filesystem::current_path() / "Assets";
 	}
 
-	void loadMesh(cgltf_mesh*& mesh) {
-		for (unsigned primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
-			auto& primitive = mesh->primitives[primitiveIndex];
+	Image loadImage(const char* filename) {
+		auto path = assetFolder / filename;
+		
+		Image image{};
+		int width, height, channels;
 
-			Mesh mesh{};
+		image.data = stbi_load(path.string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
+
+		image.width = width;
+		image.height = height;
+		image.channels = channels;
+
+		return image;
+	}
+
+	void loadMaterial(cgltf_material& materialData) {
+		Material material{};
+
+		material.color = loadImage(materialData.pbr_metallic_roughness.base_color_texture.texture->image->uri);
+		material.normal = loadImage(materialData.normal_texture.texture->image->uri);
+		material.roughness = loadImage(materialData.pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri);
+		material.emissiveness = loadImage(materialData.emissive_texture.texture->image->uri);
+
+		materials.emplace(materialData.name, material);
+	}
+
+	void loadMesh(cgltf_mesh*& meshData, glm::mat4& transformation) {
+		for (unsigned primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
+			auto& primitive = meshData->primitives[primitiveIndex];
+
+			Mesh mesh{
+				.transformation = transformation,
+				.materialName = primitive.material->name
+			};
 			
 			for (unsigned attributeIndex = 0; attributeIndex < primitive.attributes_count; attributeIndex++) {
 				auto& attribute = primitive.attributes[attributeIndex];
@@ -43,24 +75,41 @@ namespace Engine::Manager {
 					std::memcpy(mesh.texcoords.data(), data, view->size);
 				}
 			}
+
+			meshes.push_back(mesh);
 		}
 	}
 
-	void loadNode(cgltf_node*& node) {
-		auto& mesh = node->mesh;
+	void loadNode(cgltf_node*& nodeData, glm::mat4 parentTransformation) {
+		auto& mesh = nodeData->mesh;
+
+		glm::mat4 transformation = parentTransformation;
+
+		// TODO: Implement this one!
+		if (nodeData->has_matrix) {
+			
+		}
+		else { // NOTICE: Don't change the order!
+			if (nodeData->has_scale) {
+
+			}
+			if (nodeData->has_rotation) {
+
+			}
+			if (nodeData->has_translation) {
+
+			}
+		}
 
 		if (mesh) {
 			std::cout << mesh->name << std::endl;
-			loadMesh(mesh);
+			loadMesh(mesh, transformation);
 		}
 
-		else
-			std::cout << node->name << std::endl;
+		for (unsigned childIndex = 0; childIndex < nodeData->children_count; childIndex++) {
+			auto& child = nodeData->children[childIndex];
 
-		for (unsigned childIndex = 0; childIndex < node->children_count; childIndex++) {
-			auto& child = node->children[childIndex];
-
-			loadNode(child);
+			loadNode(child, transformation);
 		}
 	}
 
@@ -85,6 +134,12 @@ namespace Engine::Manager {
 		}
 #endif // NDEBUF
 
+		for (unsigned materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
+			auto& material = data->materials[materialIndex];
+
+			loadMaterial(material);
+		}
+
 		result = cgltf_load_buffers(&assetOptions, data, path.string().c_str());
 
 #ifndef NDEBUG
@@ -100,8 +155,9 @@ namespace Engine::Manager {
 
 			for (unsigned nodeIndex = 0; nodeIndex < scene.nodes_count; nodeIndex++) {
 				auto& node = scene.nodes[nodeIndex];
+				glm::mat4 identityTransformation{1.0f};
 
-				loadNode(node);
+				loadNode(node, identityTransformation);
 			}
 		}
 
