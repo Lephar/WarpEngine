@@ -81,30 +81,18 @@ namespace Engine::Manager {
 	}
 
 	void loadNode(cgltf_node*& nodeData, glm::mat4 parentTransformation) {
+		cgltf_float transformationData[16]{};
+		cgltf_node_transform_local(nodeData, transformationData);
+		
+		glm::mat4 transformation{};
+		std::memcpy(&transformation, transformationData, sizeof(transformationData));
+
+		transformation = parentTransformation * transformation;
+		
 		auto& mesh = nodeData->mesh;
 
-		glm::mat4 transformation = parentTransformation;
-
-		// TODO: Implement this one!
-		if (nodeData->has_matrix) {
-			
-		}
-		else { // NOTICE: Don't change the order!
-			if (nodeData->has_scale) {
-
-			}
-			if (nodeData->has_rotation) {
-
-			}
-			if (nodeData->has_translation) {
-
-			}
-		}
-
-		if (mesh) {
-			std::cout << mesh->name << std::endl;
+		if (mesh)
 			loadMesh(mesh, transformation);
-		}
 
 		for (unsigned childIndex = 0; childIndex < nodeData->children_count; childIndex++) {
 			auto& child = nodeData->children[childIndex];

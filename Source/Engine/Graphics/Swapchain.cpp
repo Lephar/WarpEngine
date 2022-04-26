@@ -59,7 +59,7 @@ namespace Engine::Graphics {
 		auto commandBuffers = allocateCommandBuffers(graphicsQueue, totalCommandBufferCount);
 
 		for (unsigned framebufferIndex = 0; framebufferIndex < swapchain.framebufferCount; framebufferIndex++) {
-			Framebuffer framebuffer;
+			Framebuffer framebuffer{};
 
 			framebuffer.depthStencil = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil);
 			framebuffer.color = createImage(deviceMemory, swapchain.extent.width, swapchain.extent.height, 1, swapchain.sampleCount, swapchain.colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransientAttachment, vk::ImageAspectFlagBits::eColor);
