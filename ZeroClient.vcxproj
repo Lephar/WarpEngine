@@ -102,6 +102,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Graphics\Content.cpp" />
     <ClCompile Include="Source\Engine\Graphics\Core.cpp" />
     <ClCompile Include="Source\Engine\Graphics\Device.cpp" />
     <ClCompile Include="Source\Engine\Graphics\Memory.cpp" />

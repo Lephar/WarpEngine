@@ -123,12 +123,14 @@ namespace Engine::Graphics {
 	void destroyCore();
 
 	std::vector<vk::CommandBuffer> allocateCommandBuffers(Queue& queue, unsigned commandBufferCount);
+	vk::CommandBuffer& beginTransferCommand();
+	void submitTransferCommand();
 	void createDevice();
 	void freeCommandBuffers(Queue& queue, std::vector<vk::CommandBuffer>& commandBuffers);
 	void destroyDevice();
 
-	void createObjects();
 	Image createImage(Memory& memory, unsigned width, unsigned height, unsigned mips, vk::SampleCountFlagBits samples, vk::Format format, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspect);
+	void createObjects();
 	void destroyObjects();
 	void destroyImage(Image& image);
 

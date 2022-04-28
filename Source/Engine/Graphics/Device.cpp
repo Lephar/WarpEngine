@@ -11,6 +11,8 @@ namespace Engine::Graphics {
 	Queue transferQueue;
 	Queue graphicsQueue;
 
+	vk::CommandBuffer transferCommandBuffer;
+
 	PhysicalDevice generatePhysicalDeviceDetails(vk::PhysicalDevice& physicalDeviceHandle) {
 		PhysicalDevice physicaDevice{
 			.physicalDevice = physicalDeviceHandle,
@@ -151,11 +153,33 @@ namespace Engine::Graphics {
 		return device.allocateCommandBuffers(commandBufferInfo);
 	}
 
+	vk::CommandBuffer& beginTransferCommand() {
+		vk::CommandBufferBeginInfo beginInfo{
+			.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit
+		};
+
+		transferCommandBuffer.begin(beginInfo);
+
+		return transferCommandBuffer;
+	}
+
+	void submitTransferCommand() {
+		transferCommandBuffer.end();
+
+		vk::SubmitInfo submitInfo{
+			.commandBufferCount = 1,
+			.pCommandBuffers = &transferCommandBuffer
+		};
+
+		transferQueue.queue.submit(1, &submitInfo, nullptr);
+		transferQueue.queue.waitIdle();
+	}
+
 	void createQueueStructures() {
 		initializeQueue(transferQueue);
 		initializeQueue(graphicsQueue);
 
-		allocateCommandBuffers(transferQueue, 1);
+		transferCommandBuffer = allocateCommandBuffers(transferQueue, 1).front();
 	}
 
 	void createDevice() {

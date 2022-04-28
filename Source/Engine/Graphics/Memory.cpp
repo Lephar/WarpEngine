@@ -136,6 +136,18 @@ namespace Engine::Graphics {
 		return buffer;
 	}
 
+	void copyBuffer(Buffer& source, Buffer& destination, vk::DeviceSize sourceOffset, vk::DeviceSize destinationOffset, vk::DeviceSize size) {
+		vk::BufferCopy copyRegion{
+			.srcOffset = sourceOffset,
+			.dstOffset = destinationOffset,
+			.size = size
+		};
+
+		auto& commandBuffer = beginTransferCommand();
+		commandBuffer.copyBuffer(source.buffer, destination.buffer, 1, &copyRegion);
+		submitTransferCommand();
+	}
+
 	void createBuffers() {
 		vk::DeviceSize sharedBufferSize = 256;
 		vk::DeviceSize deviceBufferSize = 256;
@@ -200,6 +212,38 @@ namespace Engine::Graphics {
 		image.view = device.createImageView(viewInfo);
 
 		return image;
+	}
+
+	void copyBufferToImage(Buffer buffer, Image image, vk::DeviceSize bufferOffset) {
+		vk::Offset3D imageOffset{
+			.x = 0,
+			.y = 0,
+			.z = 0
+		};
+
+		vk::Extent3D imageExtent{
+			.width = image.width,
+			.height = image.height,
+			.depth = 1
+		};
+
+		vk::BufferImageCopy region{
+			.bufferOffset = bufferOffset,
+			.bufferRowLength = 0,
+			.bufferImageHeight = 0,
+			.imageSubresource = vk::ImageSubresourceLayers {
+				.aspectMask = vk::ImageAspectFlagBits::eColor,
+				.mipLevel = 0,
+				.baseArrayLayer = 0,
+				.layerCount = 1
+			},
+			.imageOffset = imageOffset,
+			.imageExtent = imageExtent
+		};
+
+		auto& commandBuffer = beginTransferCommand();
+		commandBuffer.copyBufferToImage(buffer.buffer, image.image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
+		submitTransferCommand();
 	}
 
 	void createObjects() {
