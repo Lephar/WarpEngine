@@ -15,10 +15,8 @@
 
 class Core {
 private:
-	int width;
-	int height;
-
 	SDL_Window* window;
+	vk::Extent2D extent;
 
 	PFN_vkGetInstanceProcAddr loader;
 
@@ -29,7 +27,7 @@ private:
 	vk::SurfaceKHR surface;
 
 public:
-	Core(const char* title, int windowWidth, int windowHeight);
+	Core(const char* title, int width, int height);
 
 	void draw(void (*render)(void));
 

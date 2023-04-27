@@ -1,4 +1,6 @@
 #include <Core.hpp>
+#include <SDL.h>
+#include <SDL_error.h>
 
 #ifndef NDEBUG
 #include <iostream>
@@ -30,19 +32,20 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 }
 #endif // NDEBUG
 
-Core::Core(const char* title, int windowWidth, int windowHeight) {
-	SDL_InitSubSystem(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO);
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_VULKAN);
-	SDL_Vulkan_GetDrawableSize(window, &this->width, &this->height);
+Core::Core(const char* title, int width, int height) {
+	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Vulkan_LoadLibrary(nullptr);
+
+	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
+	SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int *>(&extent.width), reinterpret_cast<int *>(&extent.height));
 
 	loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 
-	std::vector<const char*> layers;
-
 	uint32_t extensionCount;
 	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
 
+	std::vector<const char*> layers;
 	std::vector<const char*> extensions{ extensionCount };
 	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
 
@@ -120,5 +123,6 @@ Core::~Core() {
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 
 	SDL_DestroyWindow(window);
+	SDL_Vulkan_UnloadLibrary();
 	SDL_Quit();
 }
