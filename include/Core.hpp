@@ -15,6 +15,8 @@
 
 class Core {
 private:
+	std::string title;
+
 	SDL_Window* window;
 	vk::Extent2D extent;
 
@@ -26,8 +28,12 @@ private:
 #endif // NDEBUG
 	vk::SurfaceKHR surface;
 
+	void createWindow();
+	void createInstance();
+	void createSurface();
+
 public:
-	Core(const char* title, int width, int height);
+	Core(const char* title, unsigned int width, unsigned int height);
 
 	void draw(void (*render)(void));
 

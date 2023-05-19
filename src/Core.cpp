@@ -4,7 +4,7 @@
 
 #ifndef NDEBUG
 #include <iostream>
-#endif //NDEBUG
+#endif // NDEBUG
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE;
 
@@ -32,16 +32,24 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 }
 #endif // NDEBUG
 
-Core::Core(const char* title, int width, int height) {
+Core::Core(const char* title, unsigned int width, unsigned int height) : title(title), extent{width, height} {
+	createWindow();
+	createInstance();
+	createSurface();
+}
+
+void Core::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Vulkan_LoadLibrary(nullptr);
 
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
+	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
 	SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int *>(&extent.width), reinterpret_cast<int *>(&extent.height));
 
 	loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
+}
 
+void Core::createInstance() {
 	uint32_t extensionCount;
 	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
 
@@ -70,9 +78,9 @@ Core::Core(const char* title, int width, int height) {
 #endif // NDEBUG
 
 	vk::ApplicationInfo applicationInfo {
-		.pApplicationName = title,
+		.pApplicationName = title.c_str(),
 		.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-		.pEngineName = title,
+		.pEngineName = title.c_str(),
 		.engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
 		.apiVersion = VK_API_VERSION_1_3
 	};
@@ -94,7 +102,9 @@ Core::Core(const char* title, int width, int height) {
 #ifndef NDEBUG
 	messenger = instance.createDebugUtilsMessengerEXT(messengerInfo);
 #endif // NDEBUG
+}
 
+void Core::createSurface() {
 	VkSurfaceKHR surfaceHandle;
 	SDL_Vulkan_CreateSurface(window, instance, &surfaceHandle);
 	surface = surfaceHandle;
