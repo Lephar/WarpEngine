@@ -28,9 +28,17 @@ private:
 #endif // NDEBUG
 	vk::SurfaceKHR surface;
 
+	vk::Device device;
+
+	vk::Queue transferQueue;
+	vk::Queue graphicsQueue;
+
 	void createWindow();
 	void createInstance();
 	void createSurface();
+	vk::PhysicalDevice pickPhysicalDevice();
+	void selectQueueFamilies(vk::PhysicalDevice& physicalDevice, unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex);
+	void createDevice();
 
 public:
 	Core(const char* title, unsigned int width, unsigned int height);

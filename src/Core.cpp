@@ -1,6 +1,7 @@
 #include <Core.hpp>
 #include <SDL.h>
 #include <SDL_error.h>
+#include <vulkan/vulkan_core.h>
 
 #ifndef NDEBUG
 #include <iostream>
@@ -36,6 +37,7 @@ Core::Core(const char* title, unsigned int width, unsigned int height) : title(t
 	createWindow();
 	createInstance();
 	createSurface();
+	createDevice();
 }
 
 void Core::createWindow() {
@@ -90,9 +92,9 @@ void Core::createInstance() {
 		.pNext = &messengerInfo,
 #endif // NDEBUG
 		.pApplicationInfo = &applicationInfo,
-		.enabledLayerCount = static_cast<unsigned>(layers.size()),
+		.enabledLayerCount = static_cast<unsigned int>(layers.size()),
 		.ppEnabledLayerNames = layers.data(),
-		.enabledExtensionCount = static_cast<unsigned>(extensions.size()),
+		.enabledExtensionCount = static_cast<unsigned int>(extensions.size()),
 		.ppEnabledExtensionNames = extensions.data()
 	};
 
@@ -110,6 +112,128 @@ void Core::createSurface() {
 	surface = surfaceHandle;
 }
 
+vk::PhysicalDevice Core::pickPhysicalDevice() {
+	auto physicalDevices = instance.enumeratePhysicalDevices();
+
+	for (auto& physicalDevice : physicalDevices)
+		if (physicalDevice.getProperties().deviceType == vk::PhysicalDeviceType::eDiscreteGpu)
+			return physicalDevice;
+
+	return physicalDevices.front();
+}
+
+void Core::selectQueueFamilies(vk::PhysicalDevice& physicalDevice, unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex) {
+	auto queueFamilies = physicalDevice.getQueueFamilyProperties();
+
+	bool specializedTransferQueue = false;
+
+	for(unsigned int queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
+		auto& queueFamily = queueFamilies.at(queueFamilyIndex);
+		
+		if((queueFamily.queueFlags & vk::QueueFlagBits::eTransfer) && !(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)) {
+			transferQueueFamilyIndex = queueFamilyIndex;
+			specializedTransferQueue = true;
+			break;
+		}
+	}
+
+	if(!specializedTransferQueue) {
+		for(unsigned int queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
+			auto& queueFamily = queueFamilies.at(queueFamilyIndex);
+			
+			if(queueFamily.queueFlags & vk::QueueFlagBits::eTransfer) {
+				transferQueueFamilyIndex = queueFamilyIndex;
+				break;
+			}
+		}
+	}
+
+	for(unsigned int queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
+		auto& queueFamily = queueFamilies.at(queueFamilyIndex);
+
+		if(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
+			graphicsQueueFamilyIndex = queueFamilyIndex;
+			break;
+		}
+	}
+}
+
+void Core::createDevice() {
+	auto physicalDevice = pickPhysicalDevice();
+
+	unsigned int transferQueueFamilyIndex = 0;
+	unsigned int graphicsQueueFamilyIndex = 0;
+
+	selectQueueFamilies(physicalDevice, transferQueueFamilyIndex, graphicsQueueFamilyIndex);
+
+	bool sharedQueue = transferQueueFamilyIndex == graphicsQueueFamilyIndex;
+
+	vk::PhysicalDeviceFeatures deviceFeatures{};
+
+	std::vector<const char*> deviceExtensions {
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+		VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+		VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+		VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
+		VK_KHR_RAY_TRACING_MAINTENANCE_1_EXTENSION_NAME
+	};
+
+	vk::PhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures {
+		.dynamicRendering = true
+	};
+
+	std::vector<vk::DeviceQueueCreateInfo> queueInfos;
+	
+	if(sharedQueue) {
+		std::array<float, 2> queuePriorities{1.0f, 1.0f};
+		
+		vk::DeviceQueueCreateInfo queueInfo {
+			.queueFamilyIndex = graphicsQueueFamilyIndex,
+			.queueCount = 2,
+			.pQueuePriorities = queuePriorities.data()
+		};
+		
+		queueInfos.push_back(queueInfo);
+	} else {
+		float queuePriority = 1.0f;
+
+		vk::DeviceQueueCreateInfo transferQueueInfo{
+			.queueFamilyIndex = transferQueueFamilyIndex,
+			.queueCount = 1,
+			.pQueuePriorities = &queuePriority
+		};
+
+		queueInfos.push_back(transferQueueInfo);
+
+		vk::DeviceQueueCreateInfo graphicsQueueInfo {
+			.queueFamilyIndex = graphicsQueueFamilyIndex,
+			.queueCount = 1,
+			.pQueuePriorities = &queuePriority
+		};
+
+		queueInfos.push_back(graphicsQueueInfo);
+	}
+
+	vk::DeviceCreateInfo deviceInfo {
+		.pNext = &dynamicRenderingFeatures,
+		.queueCreateInfoCount = static_cast<unsigned int>(queueInfos.size()),
+		.pQueueCreateInfos = queueInfos.data(),
+		.enabledExtensionCount = static_cast<unsigned int>(deviceExtensions.size()),
+		.ppEnabledExtensionNames = deviceExtensions.data(),
+		.pEnabledFeatures = &deviceFeatures
+	};
+
+	device = physicalDevice.createDevice(deviceInfo);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(device);
+
+	transferQueue = device.getQueue(transferQueueFamilyIndex, 0);
+
+	if(sharedQueue)
+		graphicsQueue = device.getQueue(transferQueueFamilyIndex, 1);
+	else
+		graphicsQueue = device.getQueue(graphicsQueueFamilyIndex, 0);
+}
+
 void Core::draw(void (*render)(void)) {
 	while (true) {
 		SDL_Event event;
@@ -124,6 +248,10 @@ void Core::draw(void (*render)(void)) {
 }
 
 Core::~Core() {
+	device.destroy();
+
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
+
 	instance.destroySurfaceKHR(surface);
 #ifndef NDEBUG
 	instance.destroyDebugUtilsMessengerEXT(messenger);
