@@ -28,17 +28,24 @@ private:
 #endif // NDEBUG
 	vk::SurfaceKHR surface;
 
+	vk::PhysicalDevice physicalDevice;
 	vk::Device device;
 
 	vk::Queue transferQueue;
 	vk::Queue graphicsQueue;
 
+	vk::SwapchainKHR swapchain;
+	std::vector<vk::Image> swapchainImages;
+
 	void createWindow();
 	void createInstance();
 	void createSurface();
+
 	vk::PhysicalDevice pickPhysicalDevice();
-	void selectQueueFamilies(vk::PhysicalDevice& physicalDevice, unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex);
+	void selectQueueFamilies(unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex);
 	void createDevice();
+
+	void createSwapchain();
 
 public:
 	Core(const char* title, unsigned int width, unsigned int height);

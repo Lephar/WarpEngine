@@ -1,11 +1,6 @@
 #include <Core.hpp>
-#include <SDL.h>
-#include <SDL_error.h>
-#include <vulkan/vulkan_core.h>
 
-#ifndef NDEBUG
-#include <iostream>
-#endif // NDEBUG
+#include <algorithm>
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE;
 
@@ -13,21 +8,14 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE;
 VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
 	VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 	void* pUserData) {
-
-	switch (severity)
-	{
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-		//break;
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-		std::cout << pCallbackData->pMessage << std::endl;
-		break;
-	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-		std::cerr << pCallbackData->pMessage << std::endl;
-		break;
-	default:
-		break;
-	}
+	if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "%s\n", pCallbackData->pMessage);
+	else if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "%s\n", pCallbackData->pMessage);
+	else if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_WARN, "%s\n", pCallbackData->pMessage);
+	else if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_ERROR, "%s\n", pCallbackData->pMessage);
 
 	return VK_FALSE;
 }
@@ -38,11 +26,13 @@ Core::Core(const char* title, unsigned int width, unsigned int height) : title(t
 	createInstance();
 	createSurface();
 	createDevice();
+	createSwapchain();
 }
 
 void Core::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Vulkan_LoadLibrary(nullptr);
+	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
 	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
 	SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int *>(&extent.width), reinterpret_cast<int *>(&extent.height));
@@ -115,14 +105,14 @@ void Core::createSurface() {
 vk::PhysicalDevice Core::pickPhysicalDevice() {
 	auto physicalDevices = instance.enumeratePhysicalDevices();
 
-	for (auto& physicalDevice : physicalDevices)
-		if (physicalDevice.getProperties().deviceType == vk::PhysicalDeviceType::eDiscreteGpu)
-			return physicalDevice;
+	for (auto& physicalDeviceCandidate : physicalDevices)
+		if (physicalDeviceCandidate.getProperties().deviceType == vk::PhysicalDeviceType::eDiscreteGpu)
+			return physicalDeviceCandidate;
 
 	return physicalDevices.front();
 }
 
-void Core::selectQueueFamilies(vk::PhysicalDevice& physicalDevice, unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex) {
+void Core::selectQueueFamilies(unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex) {
 	auto queueFamilies = physicalDevice.getQueueFamilyProperties();
 
 	bool specializedTransferQueue = false;
@@ -159,12 +149,12 @@ void Core::selectQueueFamilies(vk::PhysicalDevice& physicalDevice, unsigned int&
 }
 
 void Core::createDevice() {
-	auto physicalDevice = pickPhysicalDevice();
+	physicalDevice = pickPhysicalDevice();
 
 	unsigned int transferQueueFamilyIndex = 0;
 	unsigned int graphicsQueueFamilyIndex = 0;
 
-	selectQueueFamilies(physicalDevice, transferQueueFamilyIndex, graphicsQueueFamilyIndex);
+	selectQueueFamilies(transferQueueFamilyIndex, graphicsQueueFamilyIndex);
 
 	bool sharedQueue = transferQueueFamilyIndex == graphicsQueueFamilyIndex;
 
@@ -234,6 +224,33 @@ void Core::createDevice() {
 		graphicsQueue = device.getQueue(graphicsQueueFamilyIndex, 0);
 }
 
+void Core::createSwapchain() {
+	auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface);
+	auto surfaceFormat = physicalDevice.getSurfaceFormatsKHR(surface).back();
+	auto presentMode = physicalDevice.getSurfacePresentModesKHR(surface).back();
+
+	vk::SwapchainCreateInfoKHR swapchainInfo {
+		.surface = surface,
+		.minImageCount = std::clamp(3u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount),
+		.imageFormat = surfaceFormat.format,
+		.imageColorSpace = surfaceFormat.colorSpace,
+		.imageExtent = extent,
+		.imageArrayLayers = 1,
+		.imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
+		.imageSharingMode = vk::SharingMode::eExclusive,
+		.queueFamilyIndexCount = 0,
+		.pQueueFamilyIndices = nullptr,
+		.preTransform = surfaceCapabilities.currentTransform,
+		.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque,
+		.presentMode = presentMode,
+		.clipped = true,
+		.oldSwapchain = nullptr
+	};
+
+	swapchain = device.createSwapchainKHR(swapchainInfo);
+	swapchainImages = device.getSwapchainImagesKHR(swapchain);
+}
+
 void Core::draw(void (*render)(void)) {
 	while (true) {
 		SDL_Event event;
@@ -248,6 +265,8 @@ void Core::draw(void (*render)(void)) {
 }
 
 Core::~Core() {
+	device.destroySwapchainKHR(swapchain);
+
 	device.destroy();
 
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
