@@ -1,7 +1,7 @@
-#include <Core.hpp>
+#include <Graphics.hpp>
 
 int main(int argc, char* args[])
 {
-	Core core{"Zero", 1280, 720};
-	core.draw(nullptr);
+	Graphics graphics{"Zero", 1280, 720};
+	graphics.draw(nullptr);
 }

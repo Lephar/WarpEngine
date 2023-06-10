@@ -1,4 +1,4 @@
-#include <Core.hpp>
+#include <Graphics.hpp>
 
 #include <algorithm>
 
@@ -21,7 +21,10 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 }
 #endif // NDEBUG
 
-Core::Core(const char* title, unsigned int width, unsigned int height) : title(title), extent{width, height} {
+Graphics::Graphics(const char* title, unsigned int width, unsigned int height) {
+	window.title = title;
+	window.extent = VkExtent2D{width, height};
+
 	createWindow();
 	createInstance();
 	createSurface();
@@ -29,25 +32,25 @@ Core::Core(const char* title, unsigned int width, unsigned int height) : title(t
 	createSwapchain();
 }
 
-void Core::createWindow() {
+void Graphics::createWindow() {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Vulkan_LoadLibrary(nullptr);
 	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
-	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
-	SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int *>(&extent.width), reinterpret_cast<int *>(&extent.height));
-
-	loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
+	window.window = SDL_CreateWindow(window.title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window.extent.width, window.extent.height, SDL_WINDOW_VULKAN);
+	SDL_Vulkan_GetDrawableSize(window.window, reinterpret_cast<int *>(&window.extent.width), reinterpret_cast<int *>(&window.extent.height));
 }
 
-void Core::createInstance() {
+void Graphics::createInstance() {
+	core.loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.loader);
+	
 	uint32_t extensionCount;
-	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
+	SDL_Vulkan_GetInstanceExtensions(window.window, &extensionCount, nullptr);
 
 	std::vector<const char*> layers;
 	std::vector<const char*> extensions{ extensionCount };
-	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
+	SDL_Vulkan_GetInstanceExtensions(window.window, &extensionCount, extensions.data());
 
 #ifndef NDEBUG
 	layers.push_back("VK_LAYER_KHRONOS_validation");
@@ -70,9 +73,9 @@ void Core::createInstance() {
 #endif // NDEBUG
 
 	vk::ApplicationInfo applicationInfo {
-		.pApplicationName = title.c_str(),
+		.pApplicationName = window.title.c_str(),
 		.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-		.pEngineName = title.c_str(),
+		.pEngineName = window.title.c_str(),
 		.engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
 		.apiVersion = VK_API_VERSION_1_3
 	};
@@ -88,22 +91,22 @@ void Core::createInstance() {
 		.ppEnabledExtensionNames = extensions.data()
 	};
 
-	instance = vk::createInstance(instanceInfo);
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
+	core.instance = vk::createInstance(instanceInfo);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.instance);
 
 #ifndef NDEBUG
-	messenger = instance.createDebugUtilsMessengerEXT(messengerInfo);
+	core.messenger = core.instance.createDebugUtilsMessengerEXT(messengerInfo);
 #endif // NDEBUG
 }
 
-void Core::createSurface() {
+void Graphics::createSurface() {
 	VkSurfaceKHR surfaceHandle;
-	SDL_Vulkan_CreateSurface(window, instance, &surfaceHandle);
-	surface = surfaceHandle;
+	SDL_Vulkan_CreateSurface(window.window, core.instance, &surfaceHandle);
+	core.surface = surfaceHandle;
 }
 
-vk::PhysicalDevice Core::pickPhysicalDevice() {
-	auto physicalDevices = instance.enumeratePhysicalDevices();
+vk::PhysicalDevice Graphics::pickPhysicalDevice() {
+	auto physicalDevices = core.instance.enumeratePhysicalDevices();
 
 	for (auto& physicalDeviceCandidate : physicalDevices)
 		if (physicalDeviceCandidate.getProperties().deviceType == vk::PhysicalDeviceType::eDiscreteGpu)
@@ -112,8 +115,8 @@ vk::PhysicalDevice Core::pickPhysicalDevice() {
 	return physicalDevices.front();
 }
 
-void Core::selectQueueFamilies(unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex) {
-	auto queueFamilies = physicalDevice.getQueueFamilyProperties();
+void Graphics::selectQueueFamilies(unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex) {
+	auto queueFamilies = device.physicalDevice.getQueueFamilyProperties();
 
 	bool specializedTransferQueue = false;
 
@@ -148,8 +151,8 @@ void Core::selectQueueFamilies(unsigned int& transferQueueFamilyIndex, unsigned 
 	}
 }
 
-void Core::createDevice() {
-	physicalDevice = pickPhysicalDevice();
+void Graphics::createDevice() {
+	device.physicalDevice = pickPhysicalDevice();
 
 	unsigned int transferQueueFamilyIndex = 0;
 	unsigned int graphicsQueueFamilyIndex = 0;
@@ -213,28 +216,28 @@ void Core::createDevice() {
 		.pEnabledFeatures = &deviceFeatures
 	};
 
-	device = physicalDevice.createDevice(deviceInfo);
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(device);
+	device.device = device.physicalDevice.createDevice(deviceInfo);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(device.device);
 
-	transferQueue = device.getQueue(transferQueueFamilyIndex, 0);
+	swapchain.transferQueue = device.device.getQueue(transferQueueFamilyIndex, 0);
 
 	if(sharedQueue)
-		graphicsQueue = device.getQueue(transferQueueFamilyIndex, 1);
+		swapchain.graphicsQueue = device.device.getQueue(transferQueueFamilyIndex, 1);
 	else
-		graphicsQueue = device.getQueue(graphicsQueueFamilyIndex, 0);
+		swapchain.graphicsQueue = device.device.getQueue(graphicsQueueFamilyIndex, 0);
 }
 
-void Core::createSwapchain() {
-	auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface);
-	auto surfaceFormat = physicalDevice.getSurfaceFormatsKHR(surface).back();
-	auto presentMode = physicalDevice.getSurfacePresentModesKHR(surface).back();
+void Graphics::createSwapchain() {
+	auto surfaceCapabilities = device.physicalDevice.getSurfaceCapabilitiesKHR(core.surface);
+	auto surfaceFormat = device.physicalDevice.getSurfaceFormatsKHR(core.surface).back();
+	auto presentMode = device.physicalDevice.getSurfacePresentModesKHR(core.surface).back();
 
 	vk::SwapchainCreateInfoKHR swapchainInfo {
-		.surface = surface,
+		.surface = core.surface,
 		.minImageCount = std::clamp(3u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
-		.imageExtent = extent,
+		.imageExtent = window.extent,
 		.imageArrayLayers = 1,
 		.imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
 		.imageSharingMode = vk::SharingMode::eExclusive,
@@ -247,11 +250,11 @@ void Core::createSwapchain() {
 		.oldSwapchain = nullptr
 	};
 
-	swapchain = device.createSwapchainKHR(swapchainInfo);
-	swapchainImages = device.getSwapchainImagesKHR(swapchain);
+	swapchain.swapchain = device.device.createSwapchainKHR(swapchainInfo);
+	swapchain.swapchainImages = device.device.getSwapchainImagesKHR(swapchain.swapchain);
 }
 
-void Core::draw(void (*render)(void)) {
+void Graphics::draw(void (*render)(void)) {
 	while (true) {
 		SDL_Event event;
 		SDL_PollEvent(&event);
@@ -264,22 +267,22 @@ void Core::draw(void (*render)(void)) {
 	}
 }
 
-Core::~Core() {
-	device.destroySwapchainKHR(swapchain);
+Graphics::~Graphics() {
+	device.device.destroySwapchainKHR(swapchain.swapchain);
 
-	device.destroy();
+	device.device.destroy();
 
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.instance);
 
-	instance.destroySurfaceKHR(surface);
+	core.instance.destroySurfaceKHR(core.surface);
 #ifndef NDEBUG
-	instance.destroyDebugUtilsMessengerEXT(messenger);
+	core.instance.destroyDebugUtilsMessengerEXT(core.messenger);
 #endif // NDEBUG
-	instance.destroy();
+	core.instance.destroy();
 
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.loader);
 
-	SDL_DestroyWindow(window);
+	SDL_DestroyWindow(window.window);
 	SDL_Vulkan_UnloadLibrary();
 	SDL_Quit();
 }

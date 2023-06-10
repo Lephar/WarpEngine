@@ -13,13 +13,14 @@
 
 #include <vulkan/vulkan.hpp>
 
-class Core {
-private:
+struct Window {
 	std::string title;
 
 	SDL_Window* window;
 	vk::Extent2D extent;
+};
 
+struct Core {
 	PFN_vkGetInstanceProcAddr loader;
 
 	vk::Instance instance;
@@ -27,7 +28,23 @@ private:
 	vk::DebugUtilsMessengerEXT messenger;
 #endif // NDEBUG
 	vk::SurfaceKHR surface;
+};
 
+struct Device {
+	vk::PhysicalDevice physicalDevice;
+	
+	vk::PhysicalDeviceProperties properties;
+	vk::PhysicalDeviceFeatures features;
+	std::vector<vk::QueueFamilyProperties> queueFamilyPropertiesList;
+	vk::PhysicalDeviceMemoryProperties memoryProperties;
+	vk::SurfaceCapabilitiesKHR surfaceCapabilities;
+	std::vector<vk::SurfaceFormatKHR> surfaceFormats;
+	std::vector<vk::PresentModeKHR> presentModes;
+
+	vk::Device device;
+};
+
+struct Swapchain {
 	vk::PhysicalDevice physicalDevice;
 	vk::Device device;
 
@@ -36,6 +53,14 @@ private:
 
 	vk::SwapchainKHR swapchain;
 	std::vector<vk::Image> swapchainImages;
+};
+
+class Graphics {
+private:
+	Window window;
+	Core core;
+	Device device;
+	Swapchain swapchain;
 
 	void createWindow();
 	void createInstance();
@@ -48,9 +73,9 @@ private:
 	void createSwapchain();
 
 public:
-	Core(const char* title, unsigned int width, unsigned int height);
+	Graphics(const char* title, unsigned int width, unsigned int height);
 
 	void draw(void (*render)(void));
 
-	~Core();
+	~Graphics();
 };
