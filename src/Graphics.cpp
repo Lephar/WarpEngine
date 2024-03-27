@@ -1,35 +1,18 @@
 #include <Graphics.hpp>
 
-#include <algorithm>
-
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE;
 
-#ifndef NDEBUG
-VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-	VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-	void* pUserData) {
-	if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "%s\n", pCallbackData->pMessage);
-	else if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "%s\n", pCallbackData->pMessage);
-	else if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_WARN, "%s\n", pCallbackData->pMessage);
-	else if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_ERROR, "%s\n", pCallbackData->pMessage);
-
-	return VK_FALSE;
-}
-#endif // NDEBUG
-
-Graphics::Graphics(const char* title, unsigned int width, unsigned int height) {
-	window.title = title;
-	window.extent = VkExtent2D{width, height};
+Graphics::Graphics(std::string title, uint32_t width, uint32_t height) {
+	this->title = title;
+	this->extent = VkExtent2D{width, height};
 
 	createWindow();
 	createInstance();
 	createSurface();
 	createDevice();
 	createSwapchain();
+	createFramebuffers();
+	createBuffers();
 }
 
 void Graphics::createWindow() {
@@ -37,20 +20,20 @@ void Graphics::createWindow() {
 	SDL_Vulkan_LoadLibrary(nullptr);
 	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
-	window.window = SDL_CreateWindow(window.title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window.extent.width, window.extent.height, SDL_WINDOW_VULKAN);
-	SDL_Vulkan_GetDrawableSize(window.window, reinterpret_cast<int *>(&window.extent.width), reinterpret_cast<int *>(&window.extent.height));
+	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
+	SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
 }
 
 void Graphics::createInstance() {
-	core.loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.loader);
+	loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 	
 	uint32_t extensionCount;
-	SDL_Vulkan_GetInstanceExtensions(window.window, &extensionCount, nullptr);
+	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
 
 	std::vector<const char*> layers;
 	std::vector<const char*> extensions{ extensionCount };
-	SDL_Vulkan_GetInstanceExtensions(window.window, &extensionCount, extensions.data());
+	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
 
 #ifndef NDEBUG
 	layers.push_back("VK_LAYER_KHRONOS_validation");
@@ -73,9 +56,9 @@ void Graphics::createInstance() {
 #endif // NDEBUG
 
 	vk::ApplicationInfo applicationInfo {
-		.pApplicationName = window.title.c_str(),
+		.pApplicationName = title.c_str(),
 		.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-		.pEngineName = window.title.c_str(),
+		.pEngineName = title.c_str(),
 		.engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
 		.apiVersion = VK_API_VERSION_1_3
 	};
@@ -85,159 +68,94 @@ void Graphics::createInstance() {
 		.pNext = &messengerInfo,
 #endif // NDEBUG
 		.pApplicationInfo = &applicationInfo,
-		.enabledLayerCount = static_cast<unsigned int>(layers.size()),
+		.enabledLayerCount = static_cast<uint32_t>(layers.size()),
 		.ppEnabledLayerNames = layers.data(),
-		.enabledExtensionCount = static_cast<unsigned int>(extensions.size()),
+		.enabledExtensionCount = static_cast<uint32_t>(extensions.size()),
 		.ppEnabledExtensionNames = extensions.data()
 	};
 
-	core.instance = vk::createInstance(instanceInfo);
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.instance);
+	instance = vk::createInstance(instanceInfo);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
 
 #ifndef NDEBUG
-	core.messenger = core.instance.createDebugUtilsMessengerEXT(messengerInfo);
+	messenger = instance.createDebugUtilsMessengerEXT(messengerInfo);
 #endif // NDEBUG
 }
 
 void Graphics::createSurface() {
 	VkSurfaceKHR surfaceHandle;
-	SDL_Vulkan_CreateSurface(window.window, core.instance, &surfaceHandle);
-	core.surface = surfaceHandle;
-}
-
-vk::PhysicalDevice Graphics::pickPhysicalDevice() {
-	auto physicalDevices = core.instance.enumeratePhysicalDevices();
-
-	for (auto& physicalDeviceCandidate : physicalDevices)
-		if (physicalDeviceCandidate.getProperties().deviceType == vk::PhysicalDeviceType::eDiscreteGpu)
-			return physicalDeviceCandidate;
-
-	return physicalDevices.front();
-}
-
-void Graphics::selectQueueFamilies(unsigned int& transferQueueFamilyIndex, unsigned int& graphicsQueueFamilyIndex) {
-	auto queueFamilies = device.physicalDevice.getQueueFamilyProperties();
-
-	bool specializedTransferQueue = false;
-
-	for(unsigned int queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
-		auto& queueFamily = queueFamilies.at(queueFamilyIndex);
-		
-		if((queueFamily.queueFlags & vk::QueueFlagBits::eTransfer) && !(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)) {
-			transferQueueFamilyIndex = queueFamilyIndex;
-			specializedTransferQueue = true;
-			break;
-		}
-	}
-
-	if(!specializedTransferQueue) {
-		for(unsigned int queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
-			auto& queueFamily = queueFamilies.at(queueFamilyIndex);
-			
-			if(queueFamily.queueFlags & vk::QueueFlagBits::eTransfer) {
-				transferQueueFamilyIndex = queueFamilyIndex;
-				break;
-			}
-		}
-	}
-
-	for(unsigned int queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
-		auto& queueFamily = queueFamilies.at(queueFamilyIndex);
-
-		if(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
-			graphicsQueueFamilyIndex = queueFamilyIndex;
-			break;
-		}
-	}
+	SDL_Vulkan_CreateSurface(window, instance, &surfaceHandle);
+	surface = vk::SurfaceKHR(surfaceHandle);
 }
 
 void Graphics::createDevice() {
-	device.physicalDevice = pickPhysicalDevice();
+	physicalDevice = pickPhysicalDevice();
+	auto queueFamilyIndex = selectQueueFamily();
 
-	unsigned int transferQueueFamilyIndex = 0;
-	unsigned int graphicsQueueFamilyIndex = 0;
-
-	selectQueueFamilies(transferQueueFamilyIndex, graphicsQueueFamilyIndex);
-
-	bool sharedQueue = transferQueueFamilyIndex == graphicsQueueFamilyIndex;
+	memoryProperties = physicalDevice.getMemoryProperties();
 
 	vk::PhysicalDeviceFeatures deviceFeatures{};
 
 	std::vector<const char*> deviceExtensions {
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-		VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-		VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
-		VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME,
-		VK_KHR_RAY_TRACING_MAINTENANCE_1_EXTENSION_NAME
+		VK_EXT_SHADER_OBJECT_EXTENSION_NAME
 	};
 
 	vk::PhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures {
 		.dynamicRendering = true
 	};
-
-	std::vector<vk::DeviceQueueCreateInfo> queueInfos;
 	
-	if(sharedQueue) {
-		std::array<float, 2> queuePriorities{1.0f, 1.0f};
-		
-		vk::DeviceQueueCreateInfo queueInfo {
-			.queueFamilyIndex = graphicsQueueFamilyIndex,
-			.queueCount = 2,
-			.pQueuePriorities = queuePriorities.data()
-		};
-		
-		queueInfos.push_back(queueInfo);
-	} else {
-		float queuePriority = 1.0f;
+	float queuePriority = 1.0f;
 
-		vk::DeviceQueueCreateInfo transferQueueInfo{
-			.queueFamilyIndex = transferQueueFamilyIndex,
-			.queueCount = 1,
-			.pQueuePriorities = &queuePriority
-		};
-
-		queueInfos.push_back(transferQueueInfo);
-
-		vk::DeviceQueueCreateInfo graphicsQueueInfo {
-			.queueFamilyIndex = graphicsQueueFamilyIndex,
-			.queueCount = 1,
-			.pQueuePriorities = &queuePriority
-		};
-
-		queueInfos.push_back(graphicsQueueInfo);
-	}
+	vk::DeviceQueueCreateInfo queueInfo {
+		.queueFamilyIndex = queueFamilyIndex,
+		.queueCount = 1,
+		.pQueuePriorities = &queuePriority
+	};
 
 	vk::DeviceCreateInfo deviceInfo {
 		.pNext = &dynamicRenderingFeatures,
-		.queueCreateInfoCount = static_cast<unsigned int>(queueInfos.size()),
-		.pQueueCreateInfos = queueInfos.data(),
-		.enabledExtensionCount = static_cast<unsigned int>(deviceExtensions.size()),
+		.queueCreateInfoCount = 1,
+		.pQueueCreateInfos = &queueInfo,
+		.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size()),
 		.ppEnabledExtensionNames = deviceExtensions.data(),
 		.pEnabledFeatures = &deviceFeatures
 	};
 
-	device.device = device.physicalDevice.createDevice(deviceInfo);
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(device.device);
+	device = physicalDevice.createDevice(deviceInfo);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(device);
 
-	swapchain.transferQueue = device.device.getQueue(transferQueueFamilyIndex, 0);
+	queue = device.getQueue(queueFamilyIndex, 0);
 
-	if(sharedQueue)
-		swapchain.graphicsQueue = device.device.getQueue(transferQueueFamilyIndex, 1);
-	else
-		swapchain.graphicsQueue = device.device.getQueue(graphicsQueueFamilyIndex, 0);
+	vk::CommandPoolCreateInfo commandPoolInfo {
+		.flags = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+		.queueFamilyIndex = queueFamilyIndex
+	};
+
+	commandPool = device.createCommandPool(commandPoolInfo);
+
+	vk::CommandBufferAllocateInfo commandBufferInfo {
+		.commandPool = commandPool,
+		.level = vk::CommandBufferLevel::ePrimary,
+		.commandBufferCount = 1
+	};
+
+	mainCommandBuffer = device.allocateCommandBuffers(commandBufferInfo).front();
 }
 
 void Graphics::createSwapchain() {
-	auto surfaceCapabilities = device.physicalDevice.getSurfaceCapabilitiesKHR(core.surface);
-	auto surfaceFormat = device.physicalDevice.getSurfaceFormatsKHR(core.surface).back();
-	auto presentMode = device.physicalDevice.getSurfacePresentModesKHR(core.surface).back();
+	auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface);
+	auto surfaceFormat = selectSurfaceFormat();
+	auto presentMode = selectPresentMode();
+
+	swapchainSize = std::clamp(3u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
 
 	vk::SwapchainCreateInfoKHR swapchainInfo {
-		.surface = core.surface,
-		.minImageCount = std::clamp(3u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount),
+		.surface = surface,
+		.minImageCount = swapchainSize,
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
-		.imageExtent = window.extent,
+		.imageExtent = extent,
 		.imageArrayLayers = 1,
 		.imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
 		.imageSharingMode = vk::SharingMode::eExclusive,
@@ -250,8 +168,79 @@ void Graphics::createSwapchain() {
 		.oldSwapchain = nullptr
 	};
 
-	swapchain.swapchain = device.device.createSwapchainKHR(swapchainInfo);
-	swapchain.swapchainImages = device.device.getSwapchainImagesKHR(swapchain.swapchain);
+	swapchain = device.createSwapchainKHR(swapchainInfo);
+	swapchainImages = device.getSwapchainImagesKHR(swapchain);
+
+	for(auto& swapchainImage : swapchainImages)
+		transitionImageLayout(swapchainImage, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR);
+}
+
+void Graphics::createFramebuffers() {
+	framebufferCount = 2;
+
+	sampleCount = vk::SampleCountFlagBits::e8;
+
+	depthStencilFormat = vk::Format::eD32SfloatS8Uint;
+	colorFormat = vk::Format::eR16G16B16A16Sfloat;
+
+	mipCount = 16;
+
+	auto temporaryImage = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eColorAttachment, vk::SampleCountFlagBits::e8, 1);
+	auto memoryRequirements = device.getImageMemoryRequirements(temporaryImage);
+
+	auto typeIndex = chooseMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+	auto heapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[typeIndex].heapIndex].size;
+	
+	device.destroy(temporaryImage);
+	
+	imageMemory.offset = 0;
+	imageMemory.size = heapSize / 2;
+	imageMemory.memory = allocateMemory(imageMemory.size, typeIndex);
+	
+	for(auto framebufferIndex = 0u; framebufferIndex < framebufferCount; framebufferIndex++) {
+		auto depthStencil = createImage(extent.width, extent.height, depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, sampleCount, 1);
+		auto color = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment, sampleCount, 1);
+		auto resolve = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc, vk::SampleCountFlagBits::e1, 1);
+
+		bindImageMemory(depthStencil);
+		bindImageMemory(color);
+		bindImageMemory(resolve);
+
+		transitionImageLayout(resolve, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal);
+
+		auto depthStencilView = createImageView(depthStencil, depthStencilFormat, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil, 1);
+		auto colorView = createImageView(color, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
+		auto resolveView = createImageView(resolve, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
+
+		Framebuffer frambuffer{
+			.depthStencil = Image {
+				.image = depthStencil,
+				.view = depthStencilView
+			},
+			.color = Image {
+				.image = color,
+				.view = colorView
+			},
+			.resolve = Image {
+				.image = resolve,
+				.view = resolveView
+			}
+		};
+
+		framebuffers.push_back(frambuffer);
+	}
+}
+
+void Graphics::createBuffers() {
+	auto temporaryHostBuffer = createBuffer(extent.width * extent.height * 4, vk::BufferUsageFlagBits::eTransferSrc);
+	auto hostMemoryRequirements = device.getBufferMemoryRequirements(temporaryHostBuffer);
+
+	auto hostTypeIndex = chooseMemoryType(hostMemoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
+	auto hostHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[hostTypeIndex].heapIndex].size;
+	
+	hostMemory.memory = allocateMemory(hostHeapSize / 2, hostTypeIndex);
+
+	device.destroyBuffer(temporaryHostBuffer);
 }
 
 void Graphics::draw(void (*render)(void)) {
@@ -268,21 +257,39 @@ void Graphics::draw(void (*render)(void)) {
 }
 
 Graphics::~Graphics() {
-	device.device.destroySwapchainKHR(swapchain.swapchain);
+	for(auto framebuffer : framebuffers) {
+		device.destroyImageView(framebuffer.resolve.view);
+		device.destroyImageView(framebuffer.color.view);
+		device.destroyImageView(framebuffer.depthStencil.view);
 
-	device.device.destroy();
+		device.destroyImage(framebuffer.resolve.image);
+		device.destroyImage(framebuffer.color.image);
+		device.destroyImage(framebuffer.depthStencil.image);
+	}
 
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.instance);
+	device.freeMemory(imageMemory.memory);
+	device.freeMemory(deviceMemory.memory);
+	device.freeMemory(hostMemory.memory);
 
-	core.instance.destroySurfaceKHR(core.surface);
+	device.destroySwapchainKHR(swapchain);
+
+	device.destroyCommandPool(commandPool);
+
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(instance);
+
+	device.destroy();
+
+	instance.destroySurfaceKHR(surface);
+
 #ifndef NDEBUG
-	core.instance.destroyDebugUtilsMessengerEXT(core.messenger);
+	instance.destroyDebugUtilsMessengerEXT(messenger);
 #endif // NDEBUG
-	core.instance.destroy();
 
-	VULKAN_HPP_DEFAULT_DISPATCHER.init(core.loader);
+	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 
-	SDL_DestroyWindow(window.window);
+	instance.destroy();
+
+	SDL_DestroyWindow(window);
 	SDL_Vulkan_UnloadLibrary();
 	SDL_Quit();
 }
