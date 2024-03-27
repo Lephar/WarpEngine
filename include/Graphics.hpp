@@ -42,8 +42,8 @@ public:
 		Image color;
 		Image resolve;
 
-		vk::CommandBuffer draw;
-		vk::CommandBuffer drawBuffer;
+		//vk::CommandBuffer draw;
+		//vk::CommandBuffer drawBuffer;
 	};
 
 private:
