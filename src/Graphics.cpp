@@ -27,7 +27,7 @@ void Graphics::createWindow() {
 void Graphics::createInstance() {
 	loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
-	
+
 	uint32_t extensionCount;
 	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
 
@@ -104,7 +104,7 @@ void Graphics::createDevice() {
 	vk::PhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures {
 		.dynamicRendering = true
 	};
-	
+
 	float queuePriority = 1.0f;
 
 	vk::DeviceQueueCreateInfo queueInfo {
@@ -190,13 +190,13 @@ void Graphics::createFramebuffers() {
 
 	auto typeIndex = chooseMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
 	auto heapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[typeIndex].heapIndex].size;
-	
+
 	device.destroy(temporaryImage);
-	
+
 	imageMemory.offset = 0;
 	imageMemory.size = heapSize / 2;
 	imageMemory.memory = allocateMemory(imageMemory.size, typeIndex);
-	
+
 	for(auto framebufferIndex = 0u; framebufferIndex < framebufferCount; framebufferIndex++) {
 		auto depthStencil = createImage(extent.width, extent.height, depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, sampleCount, 1);
 		auto color = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment, sampleCount, 1);
@@ -232,15 +232,23 @@ void Graphics::createFramebuffers() {
 }
 
 void Graphics::createBuffers() {
-	auto temporaryHostBuffer = createBuffer(extent.width * extent.height * 4, vk::BufferUsageFlagBits::eTransferSrc);
+	auto temporaryHostBuffer = createBuffer(extent.width * extent.height * 4, vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eUniformBuffer);
 	auto hostMemoryRequirements = device.getBufferMemoryRequirements(temporaryHostBuffer);
 
 	auto hostTypeIndex = chooseMemoryType(hostMemoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
 	auto hostHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[hostTypeIndex].heapIndex].size;
-	
+
 	hostMemory.memory = allocateMemory(hostHeapSize / 2, hostTypeIndex);
 
 	device.destroyBuffer(temporaryHostBuffer);
+
+	auto temporaryDeviceBuffer = createBuffer(extent.width * extent.height * 4, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eVertexBuffer);
+	auto deviceMemoryRequirements = device.getBufferMemoryRequirements(temporaryDeviceBuffer);
+
+	auto deviceTypeIndex = chooseMemoryType(deviceMemoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+	auto deviceHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[hostTypeIndex].heapIndex].size;
+
+	hostMemory.memory = allocateMemory(deviceHeapSize / 2, deviceTypeIndex);
 }
 
 void Graphics::draw(void (*render)(void)) {
