@@ -194,7 +194,7 @@ void Graphics::createFramebuffers() {
 	device.destroy(temporaryImage);
 
 	imageMemory.offset = 0;
-	imageMemory.size = heapSize / 2;
+	imageMemory.size = heapSize / 8;
 	imageMemory.memory = allocateMemory(imageMemory.size, typeIndex);
 
 	for(auto framebufferIndex = 0u; framebufferIndex < framebufferCount; framebufferIndex++) {
@@ -238,7 +238,7 @@ void Graphics::createBuffers() {
 	auto hostTypeIndex = chooseMemoryType(hostMemoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
 	auto hostHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[hostTypeIndex].heapIndex].size;
 
-	hostMemory.memory = allocateMemory(hostHeapSize / 2, hostTypeIndex);
+	hostMemory.memory = allocateMemory(hostHeapSize / 8, hostTypeIndex);
 
 	device.destroyBuffer(temporaryHostBuffer);
 
@@ -246,9 +246,11 @@ void Graphics::createBuffers() {
 	auto deviceMemoryRequirements = device.getBufferMemoryRequirements(temporaryDeviceBuffer);
 
 	auto deviceTypeIndex = chooseMemoryType(deviceMemoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
-	auto deviceHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[hostTypeIndex].heapIndex].size;
+	auto deviceHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[deviceTypeIndex].heapIndex].size;
 
-	hostMemory.memory = allocateMemory(deviceHeapSize / 2, deviceTypeIndex);
+	deviceMemory.memory = allocateMemory(deviceHeapSize / 8, deviceTypeIndex);
+
+	device.destroyBuffer(temporaryDeviceBuffer);
 }
 
 void Graphics::draw(void (*render)(void)) {
