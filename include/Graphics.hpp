@@ -20,12 +20,35 @@
 class Graphics {
 public:
 	struct Memory {
+		vk::Device *device;
 		vk::DeviceMemory memory;
 
 		vk::DeviceSize size;
 		vk::DeviceSize offset;
 
+		uint32_t chooseType(uint32_t filter, vk::MemoryPropertyFlags properties);
+		void allocate(vk::DeviceSize size, uint32_t index);
 		void align(vk::DeviceSize alignment);
+	};
+
+	struct Image {
+		Memory *memory;
+
+		uint32_t width;
+		uint32_t height;
+		vk::Format format;
+		vk::ImageUsageFlags usage;
+		vk::SampleCountFlagBits samples;
+		vk::ImageAspectFlags aspects;
+		uint32_t mips;
+
+		vk::Image image;
+		vk::ImageView view;
+
+		void createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::SampleCountFlagBits samples, uint32_t mips);
+		void bindImageMemory(void);
+		void createImageView(vk::Format format, vk::ImageAspectFlags aspects, uint32_t mips);
+		void transitionImageLayout(vk::ImageAspectFlags aspects, vk::ImageLayout oldLayout, vk::ImageLayout newLayout);
 	};
 
 	struct Buffer {
@@ -34,12 +57,11 @@ public:
 		vk::Buffer buffer;
 		vk::DeviceSize size;
 		vk::DeviceSize offset;
-	};
 
-	struct Image {
-		Memory &memory;
-		vk::Image image;
-		vk::ImageView view;
+		void create(vk::DeviceSize size, vk::BufferUsageFlags usage);
+		void bindBufferMemory(void);
+		void copy(Buffer &destination);
+		void copyToImage(Image &image);
 	};
 
 	struct Framebuffer {
@@ -108,16 +130,6 @@ private:
 
 	vk::CommandBuffer beginSingleTimeCommand();
 	void endSingleTimeCommand(vk::CommandBuffer commandBuffer);
-	uint32_t chooseMemoryType(uint32_t filter, vk::MemoryPropertyFlags properties);
-	vk::DeviceMemory allocateMemory(vk::DeviceSize size, uint32_t index);
-	vk::Buffer createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage);
-	void bindBufferMemory(Buffer &buffer);
-	void copyBuffer(vk::Buffer source, vk::Buffer destination, vk::DeviceSize size);
-	vk::Image createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::SampleCountFlagBits samples, uint32_t mips);
-	vk::ImageView createImageView(vk::Image image, vk::Format format, vk::ImageAspectFlags aspects, uint32_t mips);
-	void bindImageMemory(Image &image);
-	void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
-	void transitionImageLayout(vk::Image image, vk::ImageAspectFlags aspects, vk::ImageLayout oldLayout, vk::ImageLayout newLayout);
 
 	void createSwapchain();
 	void createFramebuffers();
