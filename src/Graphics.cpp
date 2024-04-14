@@ -1,5 +1,11 @@
 #include <Graphics.hpp>
 
+#include <glm/glm.hpp>
+
+#include <algorithm>
+#include <limits>
+#include <vulkan/vulkan.hpp>
+
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE;
 
 Graphics::Graphics(std::string title, uint32_t width, uint32_t height) {
@@ -194,7 +200,7 @@ void Graphics::createFramebuffers() {
 	device.destroy(temporaryImage);
 
 	imageMemory.offset = 0;
-	imageMemory.size = heapSize / 8;
+	imageMemory.size = std::clamp(1UL << 30, heapSize / 8, heapSize / 2);
 	imageMemory.memory = allocateMemory(imageMemory.size, typeIndex);
 
 	for(auto framebufferIndex = 0u; framebufferIndex < framebufferCount; framebufferIndex++) {
@@ -238,19 +244,31 @@ void Graphics::createBuffers() {
 	auto hostTypeIndex = chooseMemoryType(hostMemoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
 	auto hostHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[hostTypeIndex].heapIndex].size;
 
-	hostMemory.memory = allocateMemory(hostHeapSize / 8, hostTypeIndex);
-
-	device.destroyBuffer(temporaryHostBuffer);
-
 	auto temporaryDeviceBuffer = createBuffer(extent.width * extent.height * 4, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eVertexBuffer);
 	auto deviceMemoryRequirements = device.getBufferMemoryRequirements(temporaryDeviceBuffer);
 
 	auto deviceTypeIndex = chooseMemoryType(deviceMemoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
 	auto deviceHeapSize = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[deviceTypeIndex].heapIndex].size;
 
-	deviceMemory.memory = allocateMemory(deviceHeapSize / 8, deviceTypeIndex);
+	hostMemory.offset = 0;
+	hostMemory.size = std::clamp(1UL << 30, hostHeapSize / 8, hostHeapSize / 2);
+	hostMemory.memory = allocateMemory(hostMemory.size, hostTypeIndex);
 
+	deviceMemory.offset = 0;
+	deviceMemory.size = std::clamp(1UL << 30, deviceHeapSize / 8, deviceHeapSize / 2);
+	deviceMemory.memory = allocateMemory(deviceMemory.size, deviceTypeIndex);
+
+	device.destroyBuffer(temporaryHostBuffer);
 	device.destroyBuffer(temporaryDeviceBuffer);
+
+	vk::DeviceSize uniformBufferSize = 3 * sizeof(glm::mat4) * framebufferCount;
+	vk::DeviceSize elementBufferSize = 3 * sizeof(glm::vec3) * std::numeric_limits<unsigned short>::max();
+
+	auto uniformBuffer = createBuffer(uniformBufferSize, vk::BufferUsageFlagBits::eUniformBuffer);
+	auto stagingBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferSrc);
+	auto elementBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eVertexBuffer);
+
+	bindBufferMemory
 }
 
 void Graphics::draw(void (*render)(void)) {

@@ -109,7 +109,7 @@ uint32_t Graphics::selectQueueFamily() {
 
 	for(uint32_t queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
 		auto& queueFamily = queueFamilies.at(queueFamilyIndex);
-		
+
 		if(physicalDevice.getSurfaceSupportKHR(queueFamilyIndex, surface) &&
 			(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) &&
 			(queueFamily.queueFlags & vk::QueueFlagBits::eTransfer)) {
@@ -164,7 +164,7 @@ vk::CommandBuffer Graphics::beginSingleTimeCommand() {
 	};
 
 	auto commandBuffer = device.allocateCommandBuffers(allocateInfo).front();
-	
+
 	vk::CommandBufferBeginInfo beginInfo {
 		.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit
 	};
@@ -212,6 +212,14 @@ vk::Buffer Graphics::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usag
 	return device.createBuffer(bufferInfo);
 }
 
+void Graphics::bindBufferMemory(Buffer buffer, Memory &memory) {
+	auto requirements = device.getBufferMemoryRequirements(buffer.buffer);
+	memory.offset = align(memory.offset, requirements.alignment);
+	device.bindBufferMemory(buffer.buffer, memory.memory, memory.offset);
+
+	memory.offset += requirements.size;
+}
+
 void Graphics::copyBuffer(vk::Buffer source, vk::Buffer destination, vk::DeviceSize size) {
 	vk::BufferCopy bufferCopy {
 		.srcOffset = 0,
@@ -241,7 +249,7 @@ vk::Image Graphics::createImage(uint32_t width, uint32_t height, vk::Format form
 		.sharingMode = vk::SharingMode::eExclusive,
 		.initialLayout = vk::ImageLayout::eUndefined
 	};
-	
+
 	auto image = device.createImage(imageInfo);
 
 	return image;
@@ -272,12 +280,12 @@ vk::ImageView Graphics::createImageView(vk::Image image, vk::Format format, vk::
 	return imageView;
 }
 
-void Graphics::bindImageMemory(vk::Image image) {
-	auto requirements = device.getImageMemoryRequirements(image);
-	imageMemory.offset = align(imageMemory.offset, requirements.alignment);
-	device.bindImageMemory(image, imageMemory.memory, imageMemory.offset);
+void Graphics::bindImageMemory(Image &image, Memory &memory) {
+	auto requirements = device.getImageMemoryRequirements(image.image);
+	memory.offset = align(memory.offset, requirements.alignment);
+	device.bindImageMemory(image.image, memory.memory, memory.offset);
 
-	imageMemory.offset += requirements.size;
+	memory.offset += requirements.size;
 }
 
 void Graphics::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height) {
@@ -286,7 +294,7 @@ void Graphics::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t wi
 		.bufferRowLength = 0,
 		.bufferImageHeight = 0,
 		.imageSubresource = vk::ImageSubresourceLayers {
-			.aspectMask = vk::ImageAspectFlagBits::eColor,	
+			.aspectMask = vk::ImageAspectFlagBits::eColor,
 			.mipLevel = 0,
 			.baseArrayLayer = 0,
 			.layerCount = 1,
