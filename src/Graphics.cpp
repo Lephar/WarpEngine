@@ -204,33 +204,36 @@ void Graphics::createFramebuffers() {
 	imageMemory.memory = allocateMemory(imageMemory.size, typeIndex);
 
 	for(auto framebufferIndex = 0u; framebufferIndex < framebufferCount; framebufferIndex++) {
-		auto depthStencil = createImage(extent.width, extent.height, depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, sampleCount, 1);
-		auto color = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment, sampleCount, 1);
-		auto resolve = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc, vk::SampleCountFlagBits::e1, 1);
+		Image depthStencil {
+			.memory = imageMemory
+		};
+
+		Image color {
+			.memory = imageMemory
+		};
+
+		Image resolve {
+			.memory = imageMemory
+		};
+
+		depthStencil.image = createImage(extent.width, extent.height, depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, sampleCount, 1);
+		color.image = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment, sampleCount, 1);
+		resolve.image = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc, vk::SampleCountFlagBits::e1, 1);
 
 		bindImageMemory(depthStencil);
 		bindImageMemory(color);
 		bindImageMemory(resolve);
 
-		transitionImageLayout(resolve, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal);
+		depthStencil.view = createImageView(depthStencil.image, depthStencilFormat, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil, 1);
+		color.view = createImageView(color.image, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
+		resolve.view = createImageView(resolve.image, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
 
-		auto depthStencilView = createImageView(depthStencil, depthStencilFormat, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil, 1);
-		auto colorView = createImageView(color, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
-		auto resolveView = createImageView(resolve, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
+		transitionImageLayout(resolve.image, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal);
 
-		Framebuffer frambuffer{
-			.depthStencil = Image {
-				.image = depthStencil,
-				.view = depthStencilView
-			},
-			.color = Image {
-				.image = color,
-				.view = colorView
-			},
-			.resolve = Image {
-				.image = resolve,
-				.view = resolveView
-			}
+		Framebuffer frambuffer {
+			.depthStencil = depthStencil,
+			.color = color,
+			.resolve = resolve
 		};
 
 		framebuffers.push_back(frambuffer);
@@ -264,11 +267,9 @@ void Graphics::createBuffers() {
 	vk::DeviceSize uniformBufferSize = 3 * sizeof(glm::mat4) * framebufferCount;
 	vk::DeviceSize elementBufferSize = 3 * sizeof(glm::vec3) * std::numeric_limits<unsigned short>::max();
 
-	auto uniformBuffer = createBuffer(uniformBufferSize, vk::BufferUsageFlagBits::eUniformBuffer);
-	auto stagingBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferSrc);
-	auto elementBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eVertexBuffer);
-
-	bindBufferMemory
+	uniformBuffer = createBuffer(uniformBufferSize, vk::BufferUsageFlagBits::eUniformBuffer);
+	stagingBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferSrc);
+	elementBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eVertexBuffer);
 }
 
 void Graphics::draw(void (*render)(void)) {
@@ -285,6 +286,10 @@ void Graphics::draw(void (*render)(void)) {
 }
 
 Graphics::~Graphics() {
+	device.destroyBuffer(elementBuffer.buffer);
+	device.destroyBuffer(stagingBuffer.buffer);
+	device.destroyBuffer(uniformBuffer.buffer);
+
 	for(auto framebuffer : framebuffers) {
 		device.destroyImageView(framebuffer.resolve.view);
 		device.destroyImageView(framebuffer.color.view);
@@ -295,9 +300,9 @@ Graphics::~Graphics() {
 		device.destroyImage(framebuffer.depthStencil.image);
 	}
 
-	device.freeMemory(imageMemory.memory);
 	device.freeMemory(deviceMemory.memory);
 	device.freeMemory(hostMemory.memory);
+	device.freeMemory(imageMemory.memory);
 
 	device.destroySwapchainKHR(swapchain);
 

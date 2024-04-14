@@ -1,7 +1,9 @@
 #include "Graphics.hpp"
 
+#include <SDL_log.h>
 #include <fstream>
 #include <filesystem>
+#include <vulkan/vulkan_structs.hpp>
 
 #ifndef NDEBUG
 SDL_LogPriority convertLogSeverity(VkDebugUtilsMessageSeverityFlagBitsEXT severity) {
@@ -28,10 +30,6 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 	return VK_FALSE;
 }
 #endif // NDEBUG
-
-vk::DeviceSize align(vk::DeviceSize offset, vk::DeviceSize alignment) {
-	return (offset + alignment - 1) / alignment * alignment;
-}
 /*
 void Graphics::loadAsset(std::string fileName) {
 	auto filePath = std::filesystem::current_path() / "assets" / fileName;
@@ -202,6 +200,10 @@ vk::DeviceMemory Graphics::allocateMemory(vk::DeviceSize size, uint32_t index) {
 	return device.allocateMemory(memoryInfo);
 }
 
+void Graphics::alignMemory(Memory &memory, vk::DeviceSize alignment) {
+	memory.offset = (memory.offset + alignment - 1) / alignment * alignment;
+}
+
 vk::Buffer Graphics::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage) {
 	vk::BufferCreateInfo bufferInfo {
 		.size = size,
@@ -212,12 +214,15 @@ vk::Buffer Graphics::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usag
 	return device.createBuffer(bufferInfo);
 }
 
-void Graphics::bindBufferMemory(Buffer buffer, Memory &memory) {
+void Graphics::bindBufferMemory(Buffer &buffer) {
 	auto requirements = device.getBufferMemoryRequirements(buffer.buffer);
-	memory.offset = align(memory.offset, requirements.alignment);
-	device.bindBufferMemory(buffer.buffer, memory.memory, memory.offset);
 
-	memory.offset += requirements.size;
+	alignMemory(buffer.memory, requirements.alignment);
+	buffer.offset = buffer.memory.offset;
+
+	device.bindBufferMemory(buffer.buffer, buffer.memory.memory, buffer.memory.offset);
+	buffer.memory.offset += requirements.size;
+
 }
 
 void Graphics::copyBuffer(vk::Buffer source, vk::Buffer destination, vk::DeviceSize size) {
@@ -280,12 +285,15 @@ vk::ImageView Graphics::createImageView(vk::Image image, vk::Format format, vk::
 	return imageView;
 }
 
-void Graphics::bindImageMemory(Image &image, Memory &memory) {
+void Graphics::bindImageMemory(Image &image) {
+	SDL_Log("Before align: %lu\n", image.memory.offset);
 	auto requirements = device.getImageMemoryRequirements(image.image);
-	memory.offset = align(memory.offset, requirements.alignment);
-	device.bindImageMemory(image.image, memory.memory, memory.offset);
+	alignMemory(image.memory, requirements.alignment);
+	SDL_Log("After align: %lu\n", image.memory.offset);
 
-	memory.offset += requirements.size;
+	device.bindImageMemory(image.image, image.memory.memory, image.memory.offset);
+	image.memory.offset += requirements.size;
+	SDL_Log("After bind: %lu\n\n", image.memory.offset);
 }
 
 void Graphics::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height) {
