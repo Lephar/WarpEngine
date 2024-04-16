@@ -1,69 +1,20 @@
 #pragma once
 
-#define VULKAN_HPP_NO_SETTERS
-#define VULKAN_HPP_NO_SMART_HANDLE
-#define VULKAN_HPP_NO_CONSTRUCTORS
-#define VULKAN_HPP_NO_NODISCARD_WARNINGS
-#define VULKAN_HPP_NO_SPACESHIP_OPERATOR
+#include "Graphics.hpp"
 
-#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
-#include <shaderc/shaderc.hpp>
-#include <vulkan/vulkan.hpp>
+#include "Memory.hpp"
+#include "Image.hpp"
+#include "Buffer.hpp"
 
 #ifndef NDEBUG
 	VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 #endif // NDEBUG
 
-class Graphics {
-public:
-	struct Memory {
-		vk::Device *device;
-		vk::DeviceMemory memory;
-
-		vk::DeviceSize size;
-		vk::DeviceSize offset;
-
-		uint32_t chooseType(uint32_t filter, vk::MemoryPropertyFlags properties);
-		void allocate(vk::DeviceSize size, uint32_t index);
-		void align(vk::DeviceSize alignment);
-	};
-
-	struct Image {
-		Memory *memory;
-
-		uint32_t width;
-		uint32_t height;
-		vk::Format format;
-		vk::ImageUsageFlags usage;
-		vk::SampleCountFlagBits samples;
-		vk::ImageAspectFlags aspects;
-		uint32_t mips;
-
-		vk::Image image;
-		vk::ImageView view;
-
-		void createImage(uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::SampleCountFlagBits samples, uint32_t mips);
-		void bindImageMemory(void);
-		void createImageView(vk::Format format, vk::ImageAspectFlags aspects, uint32_t mips);
-		void transitionImageLayout(vk::ImageAspectFlags aspects, vk::ImageLayout oldLayout, vk::ImageLayout newLayout);
-	};
-
-	struct Buffer {
-		Memory *memory;
-
-		vk::Buffer buffer;
-		vk::DeviceSize size;
-		vk::DeviceSize offset;
-
-		void create(vk::DeviceSize size, vk::BufferUsageFlags usage);
-		void bindBufferMemory(void);
-		void copy(Buffer &destination);
-		void copyToImage(Image &image);
-	};
-
+class Renderer {
+	friend class Memory;
+	friend class Image;
+	friend class Buffer;
+	
 	struct Framebuffer {
 		Image depthStencil;
 		Image color;
@@ -136,9 +87,9 @@ private:
 
 	void createBuffers();
 public:
-	Graphics(std::string title, uint32_t width, uint32_t height);
+	Renderer(std::string title, uint32_t width, uint32_t height);
 
 	void draw(void (*render)(void) = nullptr);
 
-	~Graphics();
+	~Renderer();
 };
