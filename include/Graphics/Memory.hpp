@@ -13,9 +13,7 @@ private:
     vk::DeviceSize offset;
 
 public:
-    void initialize(Renderer *owner);
-    void chooseType(uint32_t filter, vk::MemoryPropertyFlags properties);
-    void allocate(vk::DeviceSize size);
+    void allocate(Renderer *owner, uint32_t filter, vk::MemoryPropertyFlags properties, vk::DeviceSize size);
     void align(vk::DeviceSize alignment);
     vk::DeviceSize bind(vk::Buffer &buffer);
     vk::DeviceSize bind(vk::Image &image);

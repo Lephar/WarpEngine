@@ -1,25 +1,18 @@
 #include "Graphics/Memory.hpp"
 #include "Graphics/Renderer.hpp"
 
-void Memory::initialize(Renderer *owner) {
+void Memory::allocate(Renderer *owner, uint32_t filter, vk::MemoryPropertyFlags properties, vk::DeviceSize size) {
     this->owner = owner;
+	this->size = size;
+	offset = 0;
 
-    type = std::numeric_limits<uint32_t>::max();
-
-    size = 0;
-    offset = 0;
-}
-
-void Memory::chooseType(uint32_t filter, vk::MemoryPropertyFlags properties) {
 	for (auto index = 0u; index < owner->memoryProperties.memoryTypeCount; index++) {
 		if ((filter & (1 << index)) && (owner->memoryProperties.memoryTypes[index].propertyFlags & properties) == properties) {
 			type = index;
             break;
         }
     }
-}
 
-void Memory::allocate(vk::DeviceSize size) {
 	vk::MemoryAllocateInfo memoryInfo {
 		.allocationSize = size,
 		.memoryTypeIndex = type
