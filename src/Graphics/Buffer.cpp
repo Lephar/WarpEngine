@@ -39,7 +39,7 @@ void Buffer::copy(Buffer &destination) {
 	owner->endSingleTimeCommand(commandBuffer);
 }
 
-void Buffer::copyToImage(Image &image) {
+void Buffer::copyToImage(Image &destination) {
 	vk::BufferImageCopy region {
 		.bufferOffset = 0,
 		.bufferRowLength = 0,
@@ -56,14 +56,14 @@ void Buffer::copyToImage(Image &image) {
 			.z = 0
 		},
 		.imageExtent = vk::Extent3D {
-			.width = image.width,
-			.height = image.height,
+			.width = destination.width,
+			.height = destination.height,
 			.depth = 1
 		}
 	};
 
 	auto commandBuffer = owner->beginSingleTimeCommand();
-	commandBuffer.copyBufferToImage(buffer, image.image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
+	commandBuffer.copyBufferToImage(buffer, destination.image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
 	owner->endSingleTimeCommand(commandBuffer);
 }
 

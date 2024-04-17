@@ -16,6 +16,6 @@ public:
 	void create(vk::DeviceSize size, vk::BufferUsageFlags usage);
 	void bindMemory(Memory *memory);
 	void copy(Buffer &destination);
-	void copyToImage(Image &image);
+	void copyToImage(Image &destination);
 	void destroy();
 };
