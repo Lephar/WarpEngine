@@ -1,11 +1,15 @@
 #include "Graphics/Image.hpp"
 #include "Graphics/Renderer.hpp"
 
-void Image::initialize(Renderer *owner) {
+void Image::initialize(Renderer *owner, uint32_t width, uint32_t height) {
     this->owner = owner;
+    memory = nullptr;
+
+    this->width = width;
+    this->height = height;
 }
 
-void Image::create(uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::SampleCountFlagBits samples, uint32_t mips) {
+void Image::create(vk::Format format, vk::ImageUsageFlags usage, vk::SampleCountFlagBits samples, uint32_t mips) {
 	vk::ImageCreateInfo imageInfo {
 		.imageType = vk::ImageType::e2D,
 		.format = format,
@@ -75,4 +79,12 @@ void Image::transitionLayout(vk::ImageAspectFlags aspectFlags, vk::ImageLayout o
     auto commandBuffer = owner->beginSingleTimeCommand();
 	commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eBottomOfPipe, vk::DependencyFlags{}, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
     owner->endSingleTimeCommand(commandBuffer);
+}
+
+void Image::destroy() {
+    owner->device.destroyImageView(view);
+    owner->device.destroyImage(image);
+
+    memory = nullptr;
+    owner = nullptr;
 }
