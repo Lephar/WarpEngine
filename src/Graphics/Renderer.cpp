@@ -190,7 +190,7 @@ void Graphics::createFramebuffers() {
 
 	mipCount = 16;
 
-	auto temporaryImage = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eColorAttachment, vk::SampleCountFlagBits::e8, 1);
+	auto temporaryImage = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eColorAttachment, sampleCount, 1);
 	auto memoryRequirements = device.getImageMemoryRequirements(temporaryImage);
 
 	auto typeIndex = chooseMemoryType(memoryRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);

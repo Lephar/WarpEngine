@@ -5,6 +5,7 @@
 #include "Memory.hpp"
 #include "Image.hpp"
 #include "Buffer.hpp"
+#include "Framebuffer.hpp"
 
 #ifndef NDEBUG
 	VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
@@ -14,15 +15,6 @@ class Renderer {
 	friend class Memory;
 	friend class Image;
 	friend class Buffer;
-	
-	struct Framebuffer {
-		Image depthStencil;
-		Image color;
-		Image resolve;
-
-		//vk::CommandBuffer draw;
-		//vk::CommandBuffer drawBuffer;
-	};
 
 private:
 	std::string title;
