@@ -19,6 +19,8 @@ void Memory::allocate(Renderer *owner, uint32_t filter, vk::MemoryPropertyFlags 
 	};
 
 	memory = owner->device.allocateMemory(memoryInfo);
+
+	allocated = true;
 }
 
 void Memory::align(vk::DeviceSize alignment) {
@@ -51,6 +53,8 @@ vk::DeviceSize Memory::bind(vk::Image &image) {
 
 void Memory::destroy() {
 	owner->device.freeMemory(memory);
+	
+	allocated = false;
 
     offset = 0;
     size = 0;

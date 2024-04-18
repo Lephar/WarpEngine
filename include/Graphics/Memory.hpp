@@ -6,9 +6,10 @@ class Memory {
 private:
     Renderer *owner;
 
-    vk::DeviceMemory memory;
+    bool allocated;
 
     uint32_t type;
+    vk::DeviceMemory memory;
     vk::DeviceSize size;
     vk::DeviceSize offset;
 
