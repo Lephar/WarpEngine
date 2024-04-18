@@ -1,17 +1,10 @@
-#include <Graphics.hpp>
-
-#include <glm/glm.hpp>
-
-#include <algorithm>
-#include <limits>
+#include "Graphics/Renderer.hpp"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE;
 
-Graphics::Graphics(std::string title, uint32_t width, uint32_t height) {
-	this->title = title;
-	this->extent = VkExtent2D{width, height};
+void Renderer::initialize(Window *window) {
+	this->window = window;
 
-	createWindow();
 	createInstance();
 	createSurface();
 	createDevice();
@@ -20,25 +13,14 @@ Graphics::Graphics(std::string title, uint32_t width, uint32_t height) {
 	createBuffers();
 }
 
-void Graphics::createWindow() {
-	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_Vulkan_LoadLibrary(nullptr);
-	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+void Renderer::createInstance() {
+	auto title = window->getTitle();
 
-	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
-	SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
-}
-
-void Graphics::createInstance() {
-	loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
+	loader = window->getLoader();
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 
-	uint32_t extensionCount;
-	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
-
 	std::vector<const char*> layers;
-	std::vector<const char*> extensions{ extensionCount };
-	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
+	std::vector<const char*> extensions = window->getExtensions();
 
 #ifndef NDEBUG
 	layers.push_back("VK_LAYER_KHRONOS_validation");
@@ -61,9 +43,9 @@ void Graphics::createInstance() {
 #endif // NDEBUG
 
 	vk::ApplicationInfo applicationInfo {
-		.pApplicationName = title.c_str(),
+		.pApplicationName = title,
 		.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-		.pEngineName = title.c_str(),
+		.pEngineName = title,
 		.engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
 		.apiVersion = VK_API_VERSION_1_3
 	};
@@ -87,13 +69,11 @@ void Graphics::createInstance() {
 #endif // NDEBUG
 }
 
-void Graphics::createSurface() {
-	VkSurfaceKHR surfaceHandle;
-	SDL_Vulkan_CreateSurface(window, instance, &surfaceHandle);
-	surface = vk::SurfaceKHR(surfaceHandle);
+void Renderer::createSurface() {
+	surface = window->createSurface(instance);
 }
 
-void Graphics::createDevice() {
+void Renderer::createDevice() {
 	physicalDevice = pickPhysicalDevice();
 	auto queueFamilyIndex = selectQueueFamily();
 

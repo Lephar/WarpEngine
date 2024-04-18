@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Graphics.hpp"
+#include "System/Window.hpp"
 
+#include "Device.hpp"
 #include "Memory.hpp"
 #include "Image.hpp"
 #include "Buffer.hpp"
@@ -12,15 +13,8 @@
 #endif // NDEBUG
 
 class Renderer {
-	friend class Memory;
-	friend class Image;
-	friend class Buffer;
-
 private:
-	std::string title;
-
-	SDL_Window* window;
-	vk::Extent2D extent;
+	Window *window;
 
 	PFN_vkGetInstanceProcAddr loader;
 
@@ -30,15 +24,8 @@ private:
 #endif // NDEBUG
 	vk::SurfaceKHR surface;
 
+	Device device;
 	vk::PhysicalDevice physicalDevice;
-	vk::Device device;
-
-	vk::Queue queue;
-
-	vk::CommandPool commandPool;
-	vk::CommandBuffer mainCommandBuffer;
-
-	vk::PhysicalDeviceMemoryProperties memoryProperties;
 
 	Memory hostMemory;
 	Memory deviceMemory;
@@ -71,17 +58,20 @@ private:
 	vk::SurfaceFormatKHR selectSurfaceFormat();
 	vk::PresentModeKHR selectPresentMode();
 
-	vk::CommandBuffer beginSingleTimeCommand();
-	void endSingleTimeCommand(vk::CommandBuffer commandBuffer);
-
 	void createSwapchain();
 	void createFramebuffers();
 
 	void createBuffers();
 public:
-	Renderer(std::string title, uint32_t width, uint32_t height);
+	void initialize(Window *window);
+
+	vk::Instance getInstance();
+	vk::Device getDevice();
+	
+	vk::CommandBuffer beginSingleTimeCommand();
+	void endSingleTimeCommand(vk::CommandBuffer commandBuffer);
 
 	void draw(void (*render)(void) = nullptr);
 
-	~Renderer();
+	void destroy();
 };

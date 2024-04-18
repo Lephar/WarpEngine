@@ -1,8 +1,4 @@
-#include "Graphics.hpp"
-
-#include <SDL_log.h>
-#include <fstream>
-#include <filesystem>
+#include "Graphics/Renderer.hpp"
 
 #ifndef NDEBUG
 SDL_LogPriority convertLogSeverity(VkDebugUtilsMessageSeverityFlagBitsEXT severity) {
@@ -91,7 +87,7 @@ vk::ShaderModule Graphics::loadShader(std::string fileName, shaderc_shader_kind 
 	return device.createShaderModule(shaderModuleInfo);
 }
 */
-vk::PhysicalDevice Graphics::pickPhysicalDevice() {
+vk::PhysicalDevice Renderer::pickPhysicalDevice() {
 	auto physicalDevices = instance.enumeratePhysicalDevices();
 
 	for (auto& physicalDeviceCandidate : physicalDevices)
@@ -101,7 +97,7 @@ vk::PhysicalDevice Graphics::pickPhysicalDevice() {
 	return physicalDevices.front();
 }
 
-uint32_t Graphics::selectQueueFamily() {
+uint32_t Renderer::selectQueueFamily() {
 	auto queueFamilies = physicalDevice.getQueueFamilyProperties();
 
 	for(uint32_t queueFamilyIndex = 0; queueFamilyIndex < queueFamilies.size(); queueFamilyIndex++) {
