@@ -1,17 +1,10 @@
 #include "Graphics/Buffer.hpp"
 #include "Graphics/Renderer.hpp"
 
-void Buffer::initalize(Renderer *owner) {
-    this->owner = owner;
-
-    memory = nullptr;
-
-    size = 0;
-    offset = 0;
-}
-
-void Buffer::create(vk::DeviceSize size, vk::BufferUsageFlags usage) {
+void Buffer::create(Renderer *owner, vk::DeviceSize size, vk::BufferUsageFlags usage) {
+	this->owner = owner;
     this->size = size;
+    offset = 0;
 
 	vk::BufferCreateInfo bufferInfo {
 		.size = size,
@@ -20,14 +13,24 @@ void Buffer::create(vk::DeviceSize size, vk::BufferUsageFlags usage) {
 	};
 
 	buffer = owner->device.createBuffer(bufferInfo);
+
+	created = true;
 }
 
 void Buffer::bindMemory(Memory *memory) {
+	if(!created)
+		return;
+
     this->memory = memory;
     offset = memory->bind(buffer);
+
+	bound = true;
 }
 
 void Buffer::copy(Buffer &destination) {
+	if(!bound)
+		return;
+
 	vk::BufferCopy bufferCopy {
 		.srcOffset = 0,
 		.dstOffset = 0,
@@ -40,34 +43,16 @@ void Buffer::copy(Buffer &destination) {
 }
 
 void Buffer::copyToImage(Image &destination) {
-	vk::BufferImageCopy region {
-		.bufferOffset = 0,
-		.bufferRowLength = 0,
-		.bufferImageHeight = 0,
-		.imageSubresource = vk::ImageSubresourceLayers {
-			.aspectMask = vk::ImageAspectFlagBits::eColor,
-			.mipLevel = 0,
-			.baseArrayLayer = 0,
-			.layerCount = 1,
-		},
-		.imageOffset = vk::Offset3D {
-			.x = 0,
-			.y = 0,
-			.z = 0
-		},
-		.imageExtent = vk::Extent3D {
-			.width = destination.width,
-			.height = destination.height,
-			.depth = 1
-		}
-	};
-
-	auto commandBuffer = owner->beginSingleTimeCommand();
-	commandBuffer.copyBufferToImage(buffer, destination.image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
-	owner->endSingleTimeCommand(commandBuffer);
+	if(!bound)
+		return;
+	
+	destination.copyFromBuffer(buffer);
 }
 
 void Buffer::destroy() {
+	if(!created)
+		return;
+	
 	owner->device.destroyBuffer(buffer);
 
     offset = 0;
@@ -75,4 +60,7 @@ void Buffer::destroy() {
 
     memory = nullptr;
     owner = nullptr;
+
+	bound = false;
+	created = false;
 }

@@ -7,13 +7,15 @@ private:
 	Renderer *owner;
 	Memory *memory;
 
+	bool created;
+	bool bound;
+
 	vk::Buffer buffer;
 	vk::DeviceSize size;
 	vk::DeviceSize offset;
 
 public:
-	void initalize(Renderer *owner);
-	void create(vk::DeviceSize size, vk::BufferUsageFlags usage);
+	void create(Renderer *owner, vk::DeviceSize size, vk::BufferUsageFlags usage);
 	void bindMemory(Memory *memory);
 	void copy(Buffer &destination);
 	void copyToImage(Image &destination);

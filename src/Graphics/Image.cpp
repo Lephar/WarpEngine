@@ -1,15 +1,17 @@
 #include "Graphics/Image.hpp"
 #include "Graphics/Renderer.hpp"
 
-void Image::initialize(Renderer *owner, uint32_t width, uint32_t height) {
+void Image::create(Renderer *owner, uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspects, vk::SampleCountFlagBits samples, uint32_t mips) {
     this->owner = owner;
-    memory = nullptr;
 
     this->width = width;
     this->height = height;
-}
+	this->format = format;
+    this->usage = usage;
+    this->aspects = aspects;
+    this->samples = samples;
+    this->mips = mips;
 
-void Image::create(vk::Format format, vk::ImageUsageFlags usage, vk::SampleCountFlagBits samples, uint32_t mips) {
 	vk::ImageCreateInfo imageInfo {
 		.imageType = vk::ImageType::e2D,
 		.format = format,
@@ -28,9 +30,23 @@ void Image::create(vk::Format format, vk::ImageUsageFlags usage, vk::SampleCount
 	};
 
 	image = owner->device.createImage(imageInfo);
+
+	imageCreated = true;
 }
 
-void Image::createView(vk::Format format, vk::ImageAspectFlags aspects, uint32_t mips) {
+void Image::bindMemory(Memory *memory) {
+	if(!imageCreated)
+		return;
+
+	memory->bind(image);
+
+	memoryBound = true;
+}
+
+void Image::createView() {
+	if(!memoryBound)
+		return;
+
 	vk::ImageViewCreateInfo viewInfo {
 		.image = image,
 		.viewType = vk::ImageViewType::e2D,
@@ -51,14 +67,45 @@ void Image::createView(vk::Format format, vk::ImageAspectFlags aspects, uint32_t
 	};
 
 	view = owner->device.createImageView(viewInfo);
+
+	viewCreated = true;
 }
 
-void Image::bindMemory(Memory *memory) {
-    this->memory = memory;
-	memory->bind(image);
+void Image::copyFromBuffer(vk::Buffer &source) {
+	if(!memoryBound)
+		return;
+
+	vk::BufferImageCopy region {
+		.bufferOffset = 0,
+		.bufferRowLength = 0,
+		.bufferImageHeight = 0,
+		.imageSubresource = vk::ImageSubresourceLayers {
+			.aspectMask = aspects,
+			.mipLevel = 0,
+			.baseArrayLayer = 0,
+			.layerCount = 1,
+		},
+		.imageOffset = vk::Offset3D {
+			.x = 0,
+			.y = 0,
+			.z = 0
+		},
+		.imageExtent = vk::Extent3D {
+			.width = width,
+			.height = height,
+			.depth = 1
+		}
+	};
+
+	auto commandBuffer = owner->beginSingleTimeCommand();
+	commandBuffer.copyBufferToImage(source, image, vk::ImageLayout::eTransferDstOptimal, 1, &region);
+	owner->endSingleTimeCommand(commandBuffer);
 }
 
-void Image::transitionLayout(vk::ImageAspectFlags aspectFlags, vk::ImageLayout oldLayout, vk::ImageLayout newLayout) {
+void Image::transitionLayout(vk::ImageLayout oldLayout, vk::ImageLayout newLayout) {
+	if(!memoryBound)
+		return;
+
 	vk::ImageMemoryBarrier imageMemoryBarrier {
 		.srcAccessMask = vk::AccessFlags{},
 		.dstAccessMask = vk::AccessFlags{},
@@ -68,9 +115,9 @@ void Image::transitionLayout(vk::ImageAspectFlags aspectFlags, vk::ImageLayout o
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.image = image,
 		.subresourceRange = vk::ImageSubresourceRange {
-			.aspectMask = aspectFlags,
+			.aspectMask = aspects,
 			.baseMipLevel = 0,
-			.levelCount = 1,
+			.levelCount = mips,
 			.baseArrayLayer = 0,
 			.layerCount = 1
 		}
@@ -82,9 +129,17 @@ void Image::transitionLayout(vk::ImageAspectFlags aspectFlags, vk::ImageLayout o
 }
 
 void Image::destroy() {
-    owner->device.destroyImageView(view);
-    owner->device.destroyImage(image);
+	if(viewCreated) {
+    	owner->device.destroyImageView(view);
+		viewCreated = false;
+	}
 
-    memory = nullptr;
+    if(imageCreated) {
+    	owner->device.destroyImage(image);
+		imageCreated = false;
+	}
+
+	memoryBound = false;
+
     owner = nullptr;
 }
