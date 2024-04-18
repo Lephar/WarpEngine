@@ -29,7 +29,7 @@ void Image::create(Renderer *owner, uint32_t width, uint32_t height, vk::Format 
 		.initialLayout = vk::ImageLayout::eUndefined
 	};
 
-	image = owner->device.createImage(imageInfo);
+	image = owner->getDevice().createImage(imageInfo);
 
 	imageCreated = true;
 }
@@ -66,7 +66,7 @@ void Image::createView() {
 		}
 	};
 
-	view = owner->device.createImageView(viewInfo);
+	view = owner->getDevice().createImageView(viewInfo);
 
 	viewCreated = true;
 }
@@ -130,12 +130,12 @@ void Image::transitionLayout(vk::ImageLayout oldLayout, vk::ImageLayout newLayou
 
 void Image::destroy() {
 	if(viewCreated) {
-    	owner->device.destroyImageView(view);
+    	owner->getDevice().destroyImageView(view);
 		viewCreated = false;
 	}
 
     if(imageCreated) {
-    	owner->device.destroyImage(image);
+    	owner->getDevice().destroyImage(image);
 		imageCreated = false;
 	}
 

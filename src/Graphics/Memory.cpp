@@ -1,13 +1,13 @@
 #include "Graphics/Memory.hpp"
 #include "Graphics/Renderer.hpp"
 
-void Memory::allocate(Renderer *owner, uint32_t filter, vk::MemoryPropertyFlags properties, vk::DeviceSize size) {
+void Memory::allocate(Renderer *owner, vk::PhysicalDeviceMemoryProperties memoryProperties, uint32_t filter, vk::MemoryPropertyFlags properties, vk::DeviceSize size) {
     this->owner = owner;
 	this->size = size;
 	offset = 0;
 
-	for (auto index = 0u; index < owner->memoryProperties.memoryTypeCount; index++) {
-		if ((filter & (1 << index)) && (owner->memoryProperties.memoryTypes[index].propertyFlags & properties) == properties) {
+	for (auto index = 0u; index < memoryProperties.memoryTypeCount; index++) {
+		if ((filter & (1 << index)) && (memoryProperties.memoryTypes[index].propertyFlags & properties) == properties) {
 			type = index;
             break;
         }
@@ -18,7 +18,7 @@ void Memory::allocate(Renderer *owner, uint32_t filter, vk::MemoryPropertyFlags 
 		.memoryTypeIndex = type
 	};
 
-	memory = owner->device.allocateMemory(memoryInfo);
+	memory = owner->getDevice().allocateMemory(memoryInfo);
 
 	allocated = true;
 }
@@ -28,31 +28,31 @@ void Memory::align(vk::DeviceSize alignment) {
 }
 
 vk::DeviceSize Memory::bind(vk::Buffer &buffer) {
-	auto requirements = owner->device.getBufferMemoryRequirements(buffer);
+	auto requirements = owner->getDevice().getBufferMemoryRequirements(buffer);
 
 	align(requirements.alignment);
     auto bufferOffset = offset;
 
-	owner->device.bindBufferMemory(buffer, memory, offset);
+	owner->getDevice().bindBufferMemory(buffer, memory, offset);
 	offset += requirements.size;
 
 	return bufferOffset;
 }
 
 vk::DeviceSize Memory::bind(vk::Image &image) {
-	auto requirements = owner->device.getImageMemoryRequirements(image);
+	auto requirements = owner->getDevice().getImageMemoryRequirements(image);
 
 	align(requirements.alignment);
     auto imageOffset = offset;
     
-	owner->device.bindImageMemory(image, memory, offset);
+	owner->getDevice().bindImageMemory(image, memory, offset);
 	offset += requirements.size;
 
 	return imageOffset;
 }
 
 void Memory::destroy() {
-	owner->device.freeMemory(memory);
+	owner->getDevice().freeMemory(memory);
 	
 	allocated = false;
 

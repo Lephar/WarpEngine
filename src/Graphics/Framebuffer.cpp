@@ -1,8 +1,6 @@
 #include "Graphics/Framebuffer.hpp"
 #include "Graphics/Renderer.hpp"
 
-#include <vector>
-
 void Framebuffer::create(Renderer *owner, Memory *memory, uint32_t width, uint32_t height, size_t size, vk::SampleCountFlagBits samples, vk::Format depthStencilFormat, vk::Format colorFormat) {
     this->owner = owner;
     this->size = size;

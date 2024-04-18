@@ -12,7 +12,7 @@ void Buffer::create(Renderer *owner, vk::DeviceSize size, vk::BufferUsageFlags u
 		.sharingMode = vk::SharingMode::eExclusive
 	};
 
-	buffer = owner->device.createBuffer(bufferInfo);
+	buffer = owner->getDevice().createBuffer(bufferInfo);
 
 	created = true;
 }
@@ -53,7 +53,7 @@ void Buffer::destroy() {
 	if(!created)
 		return;
 	
-	owner->device.destroyBuffer(buffer);
+	owner->getDevice().destroyBuffer(buffer);
 
     offset = 0;
     size = 0;

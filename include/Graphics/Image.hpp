@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics.hpp"
+#include "Renderer.hpp"
 
 class Image {
     friend class Framebuffer;
