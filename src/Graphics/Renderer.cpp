@@ -77,8 +77,6 @@ void Renderer::createDevice() {
 	physicalDevice = pickPhysicalDevice();
 	auto queueFamilyIndex = selectQueueFamily();
 
-	memoryProperties = physicalDevice.getMemoryProperties();
-
 	vk::PhysicalDeviceFeatures deviceFeatures{};
 
 	std::vector<const char*> deviceExtensions {

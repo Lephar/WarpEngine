@@ -2,7 +2,7 @@
 
 #include "System/Window.hpp"
 
-#include "Device.hpp"
+#include "DeviceInfo.hpp"
 #include "Memory.hpp"
 #include "Image.hpp"
 #include "Buffer.hpp"
@@ -24,30 +24,30 @@ private:
 #endif // NDEBUG
 	vk::SurfaceKHR surface;
 
-	Device device;
-	vk::PhysicalDevice physicalDevice;
+	DeviceInfo deviceInfo;
+    vk::PhysicalDevice physicalDevice;
+    vk::Device device;
+	vk::Queue queue;
+	vk::CommandPool commandPool;
 
 	Memory hostMemory;
 	Memory deviceMemory;
 	Memory imageMemory;
 
-	uint32_t swapchainSize;
-	vk::SwapchainKHR swapchain;
-	std::vector<vk::Image> swapchainImages;
-
-	uint32_t framebufferCount;
-	vk::SampleCountFlagBits sampleCount;
-	vk::Format depthStencilFormat;
-	vk::Format colorFormat;
-	uint32_t mipCount;
-
-	std::vector<Framebuffer> framebuffers;
-
 	Buffer uniformBuffer;
 	Buffer stagingBuffer;
 	Buffer elementBuffer;
 
-	void createWindow();
+	uint32_t swapchainSize;
+	vk::SwapchainKHR swapchain;
+	std::vector<vk::Image> swapchainImages;
+
+	vk::SampleCountFlagBits sampleCount;
+	vk::Format depthStencilFormat;
+	vk::Format colorFormat;
+	uint32_t mipCount;
+	std::vector<Framebuffer> framebuffers;
+
 	void createInstance();
 	void createSurface();
 

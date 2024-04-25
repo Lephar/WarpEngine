@@ -3,7 +3,7 @@
 #include "Main.hpp"
 
 class Renderer;
-class Graphics;
+class DeviceInfo;
 class Memory;
 class Image;
 class Buffer;
