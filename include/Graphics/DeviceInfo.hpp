@@ -14,5 +14,5 @@ class DeviceInfo {
 	std::vector<vk::PresentModeKHR> presentModes;
 	std::vector<vk::Bool32> queueFamilySurfaceSupport;
 
-    void initialize(vk::PhysicalDevice &physicalDevice, vk::SurfaceKHR &surface);
+	void populate(vk::PhysicalDevice &physicalDevice, vk::SurfaceKHR &surface);
 };

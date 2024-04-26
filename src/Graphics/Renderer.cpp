@@ -74,8 +74,44 @@ void Renderer::createSurface() {
 }
 
 void Renderer::createDevice() {
-	physicalDevice = pickPhysicalDevice();
-	auto queueFamilyIndex = selectQueueFamily();
+	auto discreteDeviceFound = false;
+	auto physicalDevices = instance.enumeratePhysicalDevices();
+
+	std::vector<DeviceInfo> deviceInfoList;
+
+	for(auto deviceIndex = 0u; deviceIndex < physicalDevices.size(); deviceIndex++)
+		deviceInfoList.at(deviceIndex).populate(physicalDevices.at(deviceIndex), surface);
+
+	for(auto deviceIndex = 0u; deviceIndex < physicalDevices.size(); deviceIndex++) {
+		auto &deviceCandidate = physicalDevices.at(deviceIndex);
+		auto &candidateInfo = deviceInfoList.at(deviceIndex);
+
+		if (candidateInfo.deviceProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu) {
+			physicalDevice = deviceCandidate;
+			deviceInfo = candidateInfo;
+			discreteDeviceFound = true;
+
+			break;
+		}
+	}
+
+	if(!discreteDeviceFound) {
+		physicalDevice = physicalDevices.front();
+		deviceInfo = deviceInfoList.front();
+	}
+
+	auto queueFamilyIndex = std::numeric_limits<uint32_t>::max();
+
+	for(queueFamilyIndex = 0; queueFamilyIndex < deviceInfo.queueFamilyProperties.size(); queueFamilyIndex++) {
+		auto &queueFamily = deviceInfo.queueFamilyProperties.at(queueFamilyIndex);
+		auto &queueFamilySurfaceSupport = deviceInfo.queueFamilySurfaceSupport.at(queueFamilyIndex);
+
+		if(queueFamilySurfaceSupport &&
+			(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) &&
+			(queueFamily.queueFlags & vk::QueueFlagBits::eTransfer)) {
+			break;
+		}
+	}
 
 	vk::PhysicalDeviceFeatures deviceFeatures{};
 
@@ -116,17 +152,9 @@ void Renderer::createDevice() {
 	};
 
 	commandPool = device.createCommandPool(commandPoolInfo);
-
-	vk::CommandBufferAllocateInfo commandBufferInfo {
-		.commandPool = commandPool,
-		.level = vk::CommandBufferLevel::ePrimary,
-		.commandBufferCount = 1
-	};
-
-	mainCommandBuffer = device.allocateCommandBuffers(commandBufferInfo).front();
 }
 
-void Graphics::createSwapchain() {
+void Renderer::createSwapchain() {
 	auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface);
 	auto surfaceFormat = selectSurfaceFormat();
 	auto presentMode = selectPresentMode();
@@ -158,7 +186,7 @@ void Graphics::createSwapchain() {
 		transitionImageLayout(swapchainImage, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR);
 }
 
-void Graphics::createFramebuffers() {
+void Renderer::createFramebuffers() {
 	framebufferCount = 2;
 
 	sampleCount = vk::SampleCountFlagBits::e8;
@@ -217,7 +245,7 @@ void Graphics::createFramebuffers() {
 	}
 }
 
-void Graphics::createBuffers() {
+void Renderer::createBuffers() {
 	auto temporaryHostBuffer = createBuffer(extent.width * extent.height * 4, vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eUniformBuffer);
 	auto hostMemoryRequirements = device.getBufferMemoryRequirements(temporaryHostBuffer);
 
@@ -249,7 +277,7 @@ void Graphics::createBuffers() {
 	elementBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eVertexBuffer);
 }
 
-void Graphics::draw(void (*render)(void)) {
+void Renderer::draw(void (*render)(void)) {
 	while (true) {
 		SDL_Event event;
 		SDL_PollEvent(&event);

@@ -67,7 +67,7 @@ public:
 
 	vk::Instance getInstance();
 	vk::Device getDevice();
-	
+
 	vk::CommandBuffer beginSingleTimeCommand();
 	void endSingleTimeCommand(vk::CommandBuffer commandBuffer);
 
