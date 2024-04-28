@@ -77,7 +77,7 @@ void Renderer::createDevice() {
 	auto discreteDeviceFound = false;
 	auto physicalDevices = instance.enumeratePhysicalDevices();
 
-	std::vector<DeviceInfo> deviceInfoList;
+	std::vector<DeviceInfo> deviceInfoList{physicalDevices.size()};
 
 	for(auto deviceIndex = 0u; deviceIndex < physicalDevices.size(); deviceIndex++)
 		deviceInfoList.at(deviceIndex).populate(physicalDevices.at(deviceIndex), surface);
@@ -155,9 +155,57 @@ void Renderer::createDevice() {
 }
 
 void Renderer::createSwapchain() {
-	auto surfaceCapabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface);
-	auto surfaceFormat = selectSurfaceFormat();
-	auto presentMode = selectPresentMode();
+	auto extent = window->getExtent();
+
+	auto surfaceCapabilities = deviceInfo.surfaceCapabilities;
+
+	auto surfaceFormatChoosen = false;
+	auto supportedSurfaceFormats = deviceInfo.surfaceFormats;
+	auto surfaceFormat = supportedSurfaceFormats.front();
+
+	std::vector<vk::SurfaceFormatKHR> preferredSurfaceFormats {
+		vk::SurfaceFormatKHR {
+			vk::Format::eB8G8R8A8Srgb,
+			vk::ColorSpaceKHR::eSrgbNonlinear
+		}
+	};
+
+	for(auto preferredSurfaceFormat : preferredSurfaceFormats) {
+		for(auto supportedSurfaceFormat : supportedSurfaceFormats) {
+			if(preferredSurfaceFormat.format == supportedSurfaceFormat.format && preferredSurfaceFormat.colorSpace == supportedSurfaceFormat.colorSpace) {
+				surfaceFormat = preferredSurfaceFormat;
+				surfaceFormatChoosen = true;
+				break;
+			}
+		}
+
+		if(surfaceFormatChoosen)
+			break;
+	}
+
+	auto presentModeChoosen = false;
+	auto supportedPresentModes = deviceInfo.presentModes;
+	auto presentMode = supportedPresentModes.front();
+
+	std::vector<vk::PresentModeKHR> preferredPresentModes {
+		vk::PresentModeKHR::eMailbox,
+		vk::PresentModeKHR::eImmediate,
+		vk::PresentModeKHR::eFifoRelaxed,
+		vk::PresentModeKHR::eFifo
+	};
+
+	for(auto& preferredPresentMode : preferredPresentModes) {
+		for(auto& supportedPresentMode : supportedPresentModes) {
+			if(preferredPresentMode == supportedPresentMode) {
+				presentMode = preferredPresentMode;
+				presentModeChoosen = true;
+				break;
+			}
+		}
+
+		if(presentModeChoosen)
+			break;
+	}
 
 	swapchainSize = std::clamp(3u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
 
