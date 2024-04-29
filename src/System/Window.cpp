@@ -38,3 +38,16 @@ vk::SurfaceKHR Window::createSurface(vk::Instance &instance) {
 	SDL_Vulkan_CreateSurface(window, instance, &surface);
 	return surface;
 }
+
+void Window::draw(void (*render)(void)) {
+	while (true) {
+		SDL_Event event;
+		SDL_PollEvent(&event);
+
+		if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+			break;
+
+		if(render)
+			render();
+	}
+}

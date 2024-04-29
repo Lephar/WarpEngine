@@ -15,4 +15,5 @@ public:
     std::vector<const char *> getExtensions();
     vk::Extent2D getExtent();
     vk::SurfaceKHR createSurface(vk::Instance &instance);
+    void draw(void (*render)(void));
 };
