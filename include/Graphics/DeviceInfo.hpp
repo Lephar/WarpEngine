@@ -4,6 +4,7 @@
 
 class DeviceInfo {
 	friend class Renderer;
+	friend class Swapchain;
 
 	vk::PhysicalDeviceProperties deviceProperties;
 	vk::PhysicalDeviceFeatures deviceFeatures;
