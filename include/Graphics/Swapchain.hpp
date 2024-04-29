@@ -14,6 +14,6 @@ class Swapchain {
 
     bool created;
 
-    void create(Renderer *owner, size_t size, vk::Extent2D extent, DeviceInfo deviceInfo);
-    
+    void create(Renderer *owner, DeviceInfo deviceInfo, vk::SurfaceKHR surface, vk::Extent2D extent);
+    Image getImage(size_t index);
 };

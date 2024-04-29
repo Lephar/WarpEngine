@@ -1,7 +1,7 @@
 #include "Graphics/Swapchain.hpp"
 #include "Graphics/Renderer.hpp"
 
-void Swapchain::create(Renderer *owner, size_t size, vk::Extent2D extent, DeviceInfo deviceInfo) {
+void Swapchain::create(Renderer *owner, DeviceInfo deviceInfo, vk::SurfaceKHR surface, vk::Extent2D extent) {
     auto surfaceCapabilities = deviceInfo.surfaceCapabilities;
 
 	auto surfaceFormatChoosen = false;
@@ -56,7 +56,7 @@ void Swapchain::create(Renderer *owner, size_t size, vk::Extent2D extent, Device
 
 	vk::SwapchainCreateInfoKHR swapchainInfo {
 		.surface = surface,
-		.minImageCount = size,
+		.minImageCount = static_cast<uint32_t>(size),
 		.imageFormat = surfaceFormat.format,
 		.imageColorSpace = surfaceFormat.colorSpace,
 		.imageExtent = extent,
@@ -84,4 +84,8 @@ void Swapchain::create(Renderer *owner, size_t size, vk::Extent2D extent, Device
 		swapchainImage.wrap(owner, swapchainImageHandle, extent.width, extent.height, surfaceFormat.format, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferDst, vk::ImageAspectFlagBits::eColor, vk::SampleCountFlagBits::e1, 1);
 		swapchainImage.transitionLayout(vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR);
 	}
+}
+
+Image Swapchain::getImage(size_t index) {
+    return images.at(index);
 }
