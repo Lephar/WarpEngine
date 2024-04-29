@@ -34,6 +34,22 @@ void Image::create(Renderer *owner, uint32_t width, uint32_t height, vk::Format 
 	imageCreated = true;
 }
 
+void Image::wrap(Renderer *owner, vk::Image image, uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspects, vk::SampleCountFlagBits samples, uint32_t mips) {
+	this->owner = owner;
+	this->image = image;
+	
+    this->width = width;
+    this->height = height;
+	this->format = format;
+    this->usage = usage;
+    this->aspects = aspects;
+    this->samples = samples;
+    this->mips = mips;
+
+	imageCreated = true;
+	memoryBound = true;
+}
+    
 void Image::bindMemory(Memory *memory) {
 	if(!imageCreated)
 		return;
