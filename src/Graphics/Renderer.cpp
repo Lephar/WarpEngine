@@ -228,10 +228,17 @@ void Renderer::createSwapchain() {
 	};
 
 	swapchain = device.createSwapchainKHR(swapchainInfo);
-	swapchainImages = device.getSwapchainImagesKHR(swapchain);
+	swapchainImageHandles = device.getSwapchainImagesKHR(swapchain);
 
-	for(auto& swapchainImage : swapchainImages)
-		transitionImageLayout(swapchainImage, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR);
+	std::vector<Image> swapchainImages{swapchainSize};
+
+	for(auto imageIndex = 0u; imageIndex < swapchainSize; imageIndex++) {
+		auto &swapchainImageHandle = swapchainImageHandles.at(imageIndex);
+		auto &swapchainImage = swapchainImages.at(imageIndex);
+
+		swapchainImage.wrap(this, swapchainImageHandle, extent.width, extent.height, surfaceFormat.format, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferDst, vk::ImageAspectFlagBits::eColor, vk::SampleCountFlagBits::e1, 1);
+		swapchainImage.transitionLayout(vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR);
+	}
 }
 
 void Renderer::createFramebuffers() {
@@ -323,19 +330,6 @@ void Renderer::createBuffers() {
 	uniformBuffer = createBuffer(uniformBufferSize, vk::BufferUsageFlagBits::eUniformBuffer);
 	stagingBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferSrc);
 	elementBuffer = createBuffer(elementBufferSize, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer | vk::BufferUsageFlagBits::eVertexBuffer);
-}
-
-void Renderer::draw(void (*render)(void)) {
-	while (true) {
-		SDL_Event event;
-		SDL_PollEvent(&event);
-
-		if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
-			break;
-
-		if(render)
-			render();
-	}
 }
 
 Graphics::~Graphics() {

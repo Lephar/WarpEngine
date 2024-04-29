@@ -40,7 +40,7 @@ private:
 
 	uint32_t swapchainSize;
 	vk::SwapchainKHR swapchain;
-	std::vector<vk::Image> swapchainImages;
+	std::vector<vk::Image> swapchainImageHandles;
 
 	vk::SampleCountFlagBits sampleCount;
 	vk::Format depthStencilFormat;
