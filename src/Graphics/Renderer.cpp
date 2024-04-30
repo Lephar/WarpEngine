@@ -163,82 +163,7 @@ void Renderer::createSwapchain() {
 	auto supportedSurfaceFormats = deviceInfo.surfaceFormats;
 	auto surfaceFormat = supportedSurfaceFormats.front();
 
-	std::vector<vk::SurfaceFormatKHR> preferredSurfaceFormats {
-		vk::SurfaceFormatKHR {
-			vk::Format::eB8G8R8A8Srgb,
-			vk::ColorSpaceKHR::eSrgbNonlinear
-		}
-	};
-
-	for(auto preferredSurfaceFormat : preferredSurfaceFormats) {
-		for(auto supportedSurfaceFormat : supportedSurfaceFormats) {
-			if(preferredSurfaceFormat.format == supportedSurfaceFormat.format && preferredSurfaceFormat.colorSpace == supportedSurfaceFormat.colorSpace) {
-				surfaceFormat = preferredSurfaceFormat;
-				surfaceFormatChoosen = true;
-				break;
-			}
-		}
-
-		if(surfaceFormatChoosen)
-			break;
-	}
-
-	auto presentModeChoosen = false;
-	auto supportedPresentModes = deviceInfo.presentModes;
-	auto presentMode = supportedPresentModes.front();
-
-	std::vector<vk::PresentModeKHR> preferredPresentModes {
-		vk::PresentModeKHR::eMailbox,
-		vk::PresentModeKHR::eImmediate,
-		vk::PresentModeKHR::eFifoRelaxed,
-		vk::PresentModeKHR::eFifo
-	};
-
-	for(auto& preferredPresentMode : preferredPresentModes) {
-		for(auto& supportedPresentMode : supportedPresentModes) {
-			if(preferredPresentMode == supportedPresentMode) {
-				presentMode = preferredPresentMode;
-				presentModeChoosen = true;
-				break;
-			}
-		}
-
-		if(presentModeChoosen)
-			break;
-	}
-
-	swapchainSize = std::clamp(3u, surfaceCapabilities.minImageCount, surfaceCapabilities.maxImageCount);
-
-	vk::SwapchainCreateInfoKHR swapchainInfo {
-		.surface = surface,
-		.minImageCount = swapchainSize,
-		.imageFormat = surfaceFormat.format,
-		.imageColorSpace = surfaceFormat.colorSpace,
-		.imageExtent = extent,
-		.imageArrayLayers = 1,
-		.imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
-		.imageSharingMode = vk::SharingMode::eExclusive,
-		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = nullptr,
-		.preTransform = surfaceCapabilities.currentTransform,
-		.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque,
-		.presentMode = presentMode,
-		.clipped = true,
-		.oldSwapchain = nullptr
-	};
-
-	swapchain = device.createSwapchainKHR(swapchainInfo);
-	swapchainImageHandles = device.getSwapchainImagesKHR(swapchain);
-
-	std::vector<Image> swapchainImages{swapchainSize};
-
-	for(auto imageIndex = 0u; imageIndex < swapchainSize; imageIndex++) {
-		auto &swapchainImageHandle = swapchainImageHandles.at(imageIndex);
-		auto &swapchainImage = swapchainImages.at(imageIndex);
-
-		swapchainImage.wrap(this, swapchainImageHandle, extent.width, extent.height, surfaceFormat.format, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferDst, vk::ImageAspectFlagBits::eColor, vk::SampleCountFlagBits::e1, 1);
-		swapchainImage.transitionLayout(vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR);
-	}
+	
 }
 
 void Renderer::createFramebuffers() {
@@ -263,40 +188,7 @@ void Renderer::createFramebuffers() {
 	imageMemory.size = std::clamp(1UL << 30, heapSize / 8, heapSize / 2);
 	imageMemory.memory = allocateMemory(imageMemory.size, typeIndex);
 
-	for(auto framebufferIndex = 0u; framebufferIndex < framebufferCount; framebufferIndex++) {
-		Image depthStencil {
-			.memory = imageMemory
-		};
-
-		Image color {
-			.memory = imageMemory
-		};
-
-		Image resolve {
-			.memory = imageMemory
-		};
-
-		depthStencil.image = createImage(extent.width, extent.height, depthStencilFormat, vk::ImageUsageFlagBits::eDepthStencilAttachment, sampleCount, 1);
-		color.image = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment, sampleCount, 1);
-		resolve.image = createImage(extent.width, extent.height, colorFormat, vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferSrc, vk::SampleCountFlagBits::e1, 1);
-
-		bindImageMemory(depthStencil);
-		bindImageMemory(color);
-		bindImageMemory(resolve);
-
-		depthStencil.view = createImageView(depthStencil.image, depthStencilFormat, vk::ImageAspectFlagBits::eDepth | vk::ImageAspectFlagBits::eStencil, 1);
-		color.view = createImageView(color.image, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
-		resolve.view = createImageView(resolve.image, colorFormat, vk::ImageAspectFlagBits::eColor, 1);
-
-		transitionImageLayout(resolve.image, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eUndefined, vk::ImageLayout::eColorAttachmentOptimal);
-
-		Framebuffer frambuffer {
-			.depthStencil = depthStencil,
-			.color = color,
-			.resolve = resolve
-		};
-
-		framebuffers.push_back(frambuffer);
+	
 	}
 }
 
