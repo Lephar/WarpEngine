@@ -12,8 +12,7 @@
 	VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 #endif // NDEBUG
 
-class Renderer {
-private:
+struct Renderer {
 	Window *window;
 
 	PFN_vkGetInstanceProcAddr loader;
@@ -62,16 +61,4 @@ private:
 	void createFramebuffers();
 
 	void createBuffers();
-public:
-	void initialize(Window *window);
-
-	vk::Instance getInstance();
-	vk::Device getDevice();
-
-	vk::CommandBuffer beginSingleTimeCommand();
-	void endSingleTimeCommand(vk::CommandBuffer commandBuffer);
-
-	void draw(void (*render)(void) = nullptr);
-
-	void destroy();
 };

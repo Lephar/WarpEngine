@@ -11,10 +11,6 @@ void Window::initialize(std::string title, int width, int height) {
 	SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
 }
 
-const char *Window::getTitle() {
-    return title.c_str();
-}
-
 PFN_vkGetInstanceProcAddr Window::getLoader() {
     return reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 }
@@ -27,10 +23,6 @@ std::vector<const char *> Window::getExtensions() {
 	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
 
     return extensions;
-}
-
-vk::Extent2D Window::getExtent() {
-    return extent;
 }
 
 vk::SurfaceKHR Window::createSurface(vk::Instance &instance) {

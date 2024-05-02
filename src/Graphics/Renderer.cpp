@@ -187,9 +187,6 @@ void Renderer::createFramebuffers() {
 	imageMemory.offset = 0;
 	imageMemory.size = std::clamp(1UL << 30, heapSize / 8, heapSize / 2);
 	imageMemory.memory = allocateMemory(imageMemory.size, typeIndex);
-
-	
-	}
 }
 
 void Renderer::createBuffers() {
