@@ -1,16 +1,13 @@
 #pragma once
 
-#define VULKAN_HPP_NO_SETTERS
-#define VULKAN_HPP_NO_SMART_HANDLE
-#define VULKAN_HPP_NO_CONSTRUCTORS
-#define VULKAN_HPP_NO_NODISCARD_WARNINGS
-#define VULKAN_HPP_NO_SPACESHIP_OPERATOR
-
-#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-
-#include <vulkan/vulkan.hpp>
-
 namespace Graphics {
+    class Renderer;
+    class DeviceInfo;
+    class Memory;
+    class Image;
+    class Buffer;
+    class Framebuffer;
+
 	void initialize();
 
 	vk::Instance getInstance();
@@ -18,6 +15,8 @@ namespace Graphics {
 
 	vk::CommandBuffer beginSingleTimeCommand();
 	void endSingleTimeCommand(vk::CommandBuffer commandBuffer);
+
+	void draw(void (*render)(void) = nullptr);
 
 	void destroy();
 }
