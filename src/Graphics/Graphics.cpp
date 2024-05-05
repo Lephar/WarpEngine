@@ -1,5 +1,10 @@
 #include "Graphics/Graphics.hpp"
 
+#include "Graphics/Device.hpp"
+#include "Graphics/Memory.hpp"
+#include "Graphics/Buffer.hpp"
+#include "Graphics/Framebuffer.hpp"
+
 namespace Graphics {
     PFN_vkGetInstanceProcAddr loader;
 
