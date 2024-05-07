@@ -1,8 +1,14 @@
 #include "System/Window.hpp"
 
+namespace Window {
+	std::string title;
+	SDL_Window* window;
+	vk::Extent2D extent;
+}
+
 void Window::initialize(std::string title, int width, int height) {
 	this->title = title;
-    
+
     SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Vulkan_LoadLibrary(nullptr);
 	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
@@ -18,7 +24,7 @@ PFN_vkGetInstanceProcAddr Window::getLoader() {
 std::vector<const char *> Window::getExtensions() {
     uint32_t extensionCount;
 	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
-    
+
     std::vector<const char *> extensions{ extensionCount };
 	SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
 
