@@ -2,7 +2,7 @@
 
 #include "System.hpp"
 
-namespace System {
+namespace Window {
     void initialize(std::string title, int width, int height);
 
     PFN_vkGetInstanceProcAddr getLoader();
@@ -12,9 +12,3 @@ namespace System {
 
     void draw(void (*render)(void));
 }
-
-
-struct Window {
-
-
-};
