@@ -2,18 +2,18 @@
 
 #include "Graphics.hpp"
 
-class DeviceInfo {
-	friend class Renderer;
-	friend class Swapchain;
+namespace Graphics {
+	class DeviceInfo {
+	public:
+		vk::PhysicalDeviceProperties deviceProperties;
+		vk::PhysicalDeviceFeatures deviceFeatures;
+		vk::PhysicalDeviceMemoryProperties memoryProperties;
+		std::vector<vk::QueueFamilyProperties> queueFamilyProperties;
+		vk::SurfaceCapabilitiesKHR surfaceCapabilities;
+		std::vector<vk::SurfaceFormatKHR> surfaceFormats;
+		std::vector<vk::PresentModeKHR> presentModes;
+		std::vector<vk::Bool32> queueFamilySurfaceSupport;
 
-	vk::PhysicalDeviceProperties deviceProperties;
-	vk::PhysicalDeviceFeatures deviceFeatures;
-	vk::PhysicalDeviceMemoryProperties memoryProperties;
-	std::vector<vk::QueueFamilyProperties> queueFamilyProperties;
-	vk::SurfaceCapabilitiesKHR surfaceCapabilities;
-	std::vector<vk::SurfaceFormatKHR> surfaceFormats;
-	std::vector<vk::PresentModeKHR> presentModes;
-	std::vector<vk::Bool32> queueFamilySurfaceSupport;
-
-	void populate(vk::PhysicalDevice &physicalDevice, vk::SurfaceKHR &surface);
-};
+		void populate(vk::PhysicalDevice &physicalDevice, vk::SurfaceKHR &surface);
+	};
+}
