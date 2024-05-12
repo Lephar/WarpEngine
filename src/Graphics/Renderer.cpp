@@ -163,7 +163,7 @@ void Renderer::createSwapchain() {
 	auto supportedSurfaceFormats = deviceInfo.surfaceFormats;
 	auto surfaceFormat = supportedSurfaceFormats.front();
 
-	
+
 }
 
 void Renderer::createFramebuffers() {
@@ -257,8 +257,4 @@ Graphics::~Graphics() {
 	VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 
 	instance.destroy();
-
-	SDL_DestroyWindow(window);
-	SDL_Vulkan_UnloadLibrary();
-	SDL_Quit();
 }

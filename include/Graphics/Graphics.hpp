@@ -1,6 +1,6 @@
 #pragma once
 
-#include "System.hpp"
+#include "Zero.hpp"
 
 namespace Graphics {
 	void initialize();

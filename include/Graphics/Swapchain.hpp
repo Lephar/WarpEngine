@@ -2,18 +2,17 @@
 
 #include "Graphics.hpp"
 #include "Image.hpp"
-#include <vulkan/vulkan_handles.hpp>
 
-class Swapchain {
-    Renderer *owner;
+namespace Graphics {
+    struct Swapchain {
+        size_t size;
 
-    size_t size;
+        vk::SwapchainKHR swapchain;
+        std::vector<Image> images;
 
-    vk::SwapchainKHR swapchain;
-	std::vector<Image> images;
+        bool created;
 
-    bool created;
-
-    void create(Renderer *owner, DeviceInfo deviceInfo, vk::SurfaceKHR surface, vk::Extent2D extent);
-    Image getImage(size_t index);
-};
+        void create(DeviceInfo deviceInfo, vk::SurfaceKHR surface, vk::Extent2D extent);
+        Image getImage(size_t index);
+    };
+}

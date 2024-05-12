@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Graphics.hpp"
+#include "Zero.hpp"
+
 #include "Memory.hpp"
 #include "Image.hpp"
 
