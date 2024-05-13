@@ -1,4 +1,6 @@
-#include "System.hpp"
+#pragma once
+
+#include "Zero.hpp"
 
 namespace System {
 	struct Window {
