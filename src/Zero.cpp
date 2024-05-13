@@ -1,3 +1,4 @@
+#include "Zero.hpp"
 #include "System/System.hpp"
 
 int main(int argc, char* args[])
