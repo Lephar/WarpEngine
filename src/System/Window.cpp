@@ -18,7 +18,7 @@ namespace System {
         return surface;
     }
 
-    void draw(void (*render)(void)) {
+    void Window::draw(void (*render)(void)) {
         while (true) {
             SDL_Event event;
             SDL_PollEvent(&event);
