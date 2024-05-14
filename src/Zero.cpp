@@ -1,12 +1,11 @@
-#include <Graphics.hpp>
+#include "System/System.hpp"
 
 int main(int argc, char* args[])
 {
 	static_cast<void>(argc);
 	static_cast<void>(args);
 
-	Renderer graphics{"Zero", 1280, 720};
-	graphics.draw();
+	System::initialize();
 
 	return EXIT_SUCCESS;
 }
