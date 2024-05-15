@@ -3,46 +3,51 @@
 
 namespace System {
 	PFN_vkGetInstanceProcAddr loader;
-	std::vector<const char *> extensions;
+	std::vector<Window> windows;
+	vk::Instance instance;
 
-	void initialize() {
+	Window &initialize(const char *title, int32_t width, int32_t height) {
 		SDL_Init(SDL_INIT_EVERYTHING);
 		SDL_Vulkan_LoadLibrary(nullptr);
 		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
 		loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 
-		SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_VULKAN | SDL_WINDOW_HIDDEN);
-
-		uint32_t extensionCount;
-        SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
-
-        extensions.resize(extensionCount);
-        SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
-
-		SDL_DestroyWindow(window);
+		return createWindow(title, width, height);
 	}
 
-	PFN_vkGetInstanceProcAddr getLoader() {
+	Window &createWindow(const char *title, int32_t width, int32_t height) {
+		return windows.emplace_back(title, width, height);
+	}
+
+	void registerInstance(const vk::Instance &instance) {
+		System::instance = instance;
+	}
+
+	PFN_vkGetInstanceProcAddr &getLoader() {
 		return loader;
 	}
 
-	std::vector<const char *> getExtensions() {
-        return extensions;
-    }
-
-	Window createWindow(std::string title, int width, int height) {
-		Window window;
-
-		window.title = title;
-		window.window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
-		SDL_Vulkan_GetDrawableSize(window.window, reinterpret_cast<int32_t *>(&window.extent.width), reinterpret_cast<int32_t *>(&window.extent.height));
-
-		return window;
+	Window &getWindow(size_t index) {
+		return windows.at(index);
 	}
 
-	void destroyWindow(Window window) {
-		SDL_DestroyWindow(window.window);
+	std::vector<const char *> getExtensions(size_t index) {
+		return windows.at(index).getExtensions();
+	}
+
+	void destroyWindow(Window &window) {
+		auto position = std::find(windows.begin(), windows.end(), window);
+
+		if(position != windows.end()) {
+			windows.erase(position);
+		}
+	}
+
+	void destroyWindow(size_t index) {
+		if(index < windows.size()) {
+			windows.erase(windows.begin() + index);
+		}
 	}
 
 	void quit() {

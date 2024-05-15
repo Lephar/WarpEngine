@@ -3,15 +3,19 @@
 #include "Zero.hpp"
 
 namespace System {
-	struct Window;
+	class Window;
 
-	void initialize();
+	Window &initialize(const char *title, int32_t width, int32_t height);
 
-	PFN_vkGetInstanceProcAddr getLoader();
-	std::vector<const char *> getExtensions();
+	Window &createWindow(const char *title, int32_t width, int32_t height);
+	void registerInstance(const vk::Instance &instance);
 
-	Window createWindow(std::string title, int width, int height);
-	void destroyWindow(Window window);
+	PFN_vkGetInstanceProcAddr &getLoader();
+	Window &getWindow(size_t index = 0);
+	std::vector<const char *> getExtensions(size_t index = 0);
+
+	void destroyWindow(Window &window);
+	void destroyWindow(size_t index = 0);
 
 	void quit();
 }
