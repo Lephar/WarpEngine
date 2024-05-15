@@ -1,33 +1,56 @@
 #include "System/Window.hpp"
 
 namespace System {
-    std::vector<const char *> Window::getExtensions() {
-        uint32_t extensionCount;
-        SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
+	extern vk::Instance instance;
 
-        std::vector<const char *> extensions{ extensionCount };
-        SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
+	Window::Window(const char *title, int32_t width, int32_t height) : title(title) {
+		window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
+		SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
+	}
 
-        return extensions;
-    }
+	bool Window::operator==(const Window &other) {
+		return window == other.window;
+	}
 
-    vk::SurfaceKHR Window::createSurface(vk::Instance &instance) {
-        VkSurfaceKHR surface;
-        SDL_Vulkan_CreateSurface(window, instance, &surface);
+	std::vector<const char *> Window::getExtensions() {
+		uint32_t extensionCount;
+		SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
 
-        return surface;
-    }
+		std::vector<const char *> extensions{ extensionCount };
+		SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions.data());
 
-    void Window::draw(void (*render)(void)) {
-        while (true) {
-            SDL_Event event;
-            SDL_PollEvent(&event);
+		return extensions;
+	}
 
-            if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
-                break;
+	vk::SurfaceKHR Window::createSurface() {
+		VkSurfaceKHR surfaceHandle;
 
-            if(render)
-                render();
-        }
-    }
+		SDL_Vulkan_CreateSurface(window, instance, &surfaceHandle);
+
+		surface = surfaceHandle;
+
+		return surface;
+	}
+
+	void Window::draw(void (*render)(void)) {
+		while (true) {
+			SDL_Event event;
+			SDL_PollEvent(&event);
+
+			if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+				break;
+
+			if(render)
+				render();
+		}
+	}
+
+	Window::~Window() {
+		SDL_DestroyWindow(window);
+		window = nullptr;
+
+		extent.height = 0;
+		extent.width = 0;
+		title = "";
+	}
 }
