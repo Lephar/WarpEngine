@@ -1,5 +1,4 @@
 #include "Graphics/Graphics.hpp"
-#include "System/System.hpp"
 
 //#include "Graphics/Device.hpp"
 #include "Graphics/Memory.hpp"
@@ -67,12 +66,11 @@ namespace Graphics {
 	}
 #endif
 
-	void createInstance() {
-		loader = System::getLoader();
+	void initialize(const char *title, PFN_vkGetInstanceProcAddr loader, std::vector<const char *> extensions) {
+		Graphics::loader = loader;
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(loader);
 
 		std::vector<const char*> layers;
-		std::vector<const char*> extensions = System::getExtensions();
 
 #ifndef NDEBUG
 		layers.push_back("VK_LAYER_KHRONOS_validation");
@@ -95,9 +93,9 @@ namespace Graphics {
 #endif // NDEBUG
 
 		vk::ApplicationInfo applicationInfo {
-			.pApplicationName = "Zero",
+			.pApplicationName = title,
 			.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-			.pEngineName = "Zero Engine",
+			.pEngineName = title,
 			.engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
 			.apiVersion = VK_API_VERSION_1_3
 		};
@@ -119,5 +117,13 @@ namespace Graphics {
 #ifndef NDEBUG
 		messenger = instance.createDebugUtilsMessengerEXT(messengerInfo);
 #endif // NDEBUG
+	}
+
+	vk::Instance getInstance(void) {
+		return instance;
+	}
+
+	void registerSurface(vk::SurfaceKHR surface) {
+		Graphics::surface = surface;
 	}
 }

@@ -8,11 +8,12 @@
 
 #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_vulkan.h>
 #include <vulkan/vulkan.hpp>
 
-#include <SDL_log.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_vulkan.h>
+#include <SDL2/SDL_log.h>
+
 #include <glm/glm.hpp>
 
 #include <fstream>
