@@ -1,13 +1,15 @@
 #pragma once
 
-#include "System/Window.hpp"
+#include "Zero.hpp"
 
-#include "DeviceInfo.hpp"
-#include "Memory.hpp"
-#include "Image.hpp"
-#include "Buffer.hpp"
-#include "Framebuffer.hpp"
+class Renderer {
+	Surface *surface;
+	Device *device;
 
+};
+
+
+/*
 #ifndef NDEBUG
 	VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 #endif // NDEBUG
@@ -62,3 +64,4 @@ struct Renderer {
 
 	void createBuffers();
 };
+*/
