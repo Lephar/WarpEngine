@@ -8,10 +8,6 @@ namespace System {
 		SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
 	}
 
-	bool Window::operator==(const Window &other) {
-		return window == other.window;
-	}
-
 	std::vector<const char *> Window::getExtensions() {
 		uint32_t extensionCount;
 		SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
@@ -22,12 +18,9 @@ namespace System {
 		return extensions;
 	}
 
-	vk::SurfaceKHR Window::createSurface() {
-		VkSurfaceKHR surfaceHandle;
-
-		SDL_Vulkan_CreateSurface(window, instance, &surfaceHandle);
-
-		surface = surfaceHandle;
+	vk::SurfaceKHR Window::createSurface(vk::Instance instance) {
+		VkSurfaceKHR surface;
+		SDL_Vulkan_CreateSurface(window, instance, &surface);
 
 		return surface;
 	}

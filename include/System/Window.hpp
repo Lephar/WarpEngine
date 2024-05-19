@@ -8,11 +8,9 @@ namespace System {
 		const char *title;
 		vk::Extent2D extent;
 		SDL_Window* window;
-		vk::SurfaceKHR surface;
 
 	public:
 		Window(const char *title, int32_t width, int32_t height);
-		bool operator==(const Window &other);
 
 		const char *getTitle();
 		vk::Extent2D getExtent();
@@ -20,7 +18,7 @@ namespace System {
 		uint32_t getHeight();
 		std::vector<const char *> getExtensions();
 
-		vk::SurfaceKHR createSurface();
+		vk::SurfaceKHR createSurface(vk::Instance instance);
 
 		void draw(void (*render)(void));
 
