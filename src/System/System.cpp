@@ -3,10 +3,9 @@
 
 namespace System {
 	PFN_vkGetInstanceProcAddr loader;
-	std::vector<Window> windows;
-	vk::Instance instance;
+	std::vector<Window *> windows;
 
-	Window &initialize(const char *title, int32_t width, int32_t height) {
+	Window *initialize(const char *title, int32_t width, int32_t height) {
 		SDL_Init(SDL_INIT_EVERYTHING);
 		SDL_Vulkan_LoadLibrary(nullptr);
 		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
@@ -16,27 +15,26 @@ namespace System {
 		return createWindow(title, width, height);
 	}
 
-	Window &createWindow(const char *title, int32_t width, int32_t height) {
-		return windows.emplace_back(title, width, height);
+	Window *createWindow(const char *title, int32_t width, int32_t height) {
+		Window *window = new Window(title, width, height);
+		windows.push_back(window);
+
+		return window;
 	}
 
-	void registerInstance(const vk::Instance &instance) {
-		System::instance = instance;
-	}
-
-	PFN_vkGetInstanceProcAddr &getLoader() {
+	PFN_vkGetInstanceProcAddr getLoader() {
 		return loader;
 	}
 
-	Window &getWindow(size_t index) {
+	Window *getWindow(size_t index) {
 		return windows.at(index);
 	}
 
 	std::vector<const char *> getExtensions(size_t index) {
-		return windows.at(index).getExtensions();
+		return windows.at(index)->getExtensions();
 	}
 
-	void destroyWindow(Window &window) {
+	void destroyWindow(Window *window) {
 		auto position = std::find(windows.begin(), windows.end(), window);
 
 		if(position != windows.end()) {
