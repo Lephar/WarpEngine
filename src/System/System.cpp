@@ -2,15 +2,12 @@
 #include "System/Window.hpp"
 
 namespace System {
-	PFN_vkGetInstanceProcAddr loader;
 	std::vector<Window *> windows;
 
 	Window *initialize(const char *title, int32_t width, int32_t height) {
 		SDL_Init(SDL_INIT_EVERYTHING);
 		SDL_Vulkan_LoadLibrary(nullptr);
 		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-
-		loader = reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 
 		return createWindow(title, width, height);
 	}
@@ -23,7 +20,7 @@ namespace System {
 	}
 
 	PFN_vkGetInstanceProcAddr getLoader() {
-		return loader;
+		return reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 	}
 
 	Window *getWindow(size_t index) {

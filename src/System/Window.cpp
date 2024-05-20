@@ -3,7 +3,7 @@
 namespace System {
 	extern vk::Instance instance;
 
-	Window::Window(const char *title, int32_t width, int32_t height) : title(title) {
+	Window::Window(const char *title, int32_t width, int32_t height) {
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
 		SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
 	}
@@ -44,6 +44,5 @@ namespace System {
 
 		extent.height = 0;
 		extent.width = 0;
-		title = "";
 	}
 }

@@ -5,9 +5,8 @@
 namespace System {
 	class Window {
 	private:
-		const char *title;
 		vk::Extent2D extent;
-		SDL_Window* window;
+		SDL_Window *window;
 
 	public:
 		Window(const char *title, int32_t width, int32_t height);
