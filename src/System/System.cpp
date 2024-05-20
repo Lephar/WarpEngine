@@ -24,28 +24,35 @@ namespace System {
 	}
 
 	Window *getWindow(size_t index) {
-		return windows.at(index);
+		return index >= 0 && index < windows.size() ? windows.at(index) : nullptr;
 	}
 
 	std::vector<const char *> getExtensions(size_t index) {
-		return windows.at(index)->getExtensions();
+		return index >= 0 && index < windows.size() ? windows.at(index)->getExtensions() : std::vector<const char *>();
 	}
 
 	void destroyWindow(Window *window) {
 		auto position = std::find(windows.begin(), windows.end(), window);
 
 		if(position != windows.end()) {
+			delete *position;
 			windows.erase(position);
 		}
 	}
 
 	void destroyWindow(size_t index) {
 		if(index < windows.size()) {
+			delete windows.at(index);
 			windows.erase(windows.begin() + index);
 		}
 	}
 
 	void quit() {
+		while(!windows.empty()) {
+			delete windows.back();
+			windows.pop_back();
+		}
+
 		SDL_Vulkan_UnloadLibrary();
 		SDL_Quit();
 	}
