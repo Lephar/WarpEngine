@@ -8,7 +8,11 @@ namespace System {
 		SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
 	}
 
-	std::vector<const char *> Window::getExtensions() {
+	vk::Extent2D Window::getExtent(void) {
+		return extent;
+	}
+
+	std::vector<const char *> Window::getExtensions(void) {
 		uint32_t extensionCount;
 		SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
 
@@ -38,7 +42,7 @@ namespace System {
 		}
 	}
 
-	Window::~Window() {
+	Window::~Window(void) {
 		SDL_DestroyWindow(window);
 		window = nullptr;
 
