@@ -11,16 +11,13 @@ namespace System {
 	public:
 		Window(const char *title, int32_t width, int32_t height);
 
-		const char *getTitle();
-		vk::Extent2D getExtent();
-		uint32_t getWidth();
-		uint32_t getHeight();
+		vk::Extent2D getExtent(void);
 		std::vector<const char *> getExtensions();
 
 		vk::SurfaceKHR createSurface(vk::Instance instance);
 
 		void draw(void (*render)(void));
 
-		~Window();
+		~Window(void);
 	};
 }

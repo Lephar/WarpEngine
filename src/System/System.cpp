@@ -19,7 +19,7 @@ namespace System {
 		return window;
 	}
 
-	PFN_vkGetInstanceProcAddr getLoader() {
+	PFN_vkGetInstanceProcAddr getLoader(void) {
 		return reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
 	}
 
@@ -47,7 +47,7 @@ namespace System {
 		}
 	}
 
-	void quit() {
+	void quit(void) {
 		while(!windows.empty()) {
 			delete windows.back();
 			windows.pop_back();
