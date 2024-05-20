@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Zero.hpp"
+#include <SDL2/SDL.h>
+#include <vulkan/vulkan_core.h>
+#include <vector>
 
 namespace System {
 	class Window;
