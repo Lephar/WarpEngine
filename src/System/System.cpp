@@ -1,6 +1,9 @@
 #include "System/System.hpp"
 #include "System/Window.hpp"
 
+#include <SDL2/SDL_vulkan.h>
+#include <algorithm>
+
 namespace System {
 	std::vector<Window *> windows;
 

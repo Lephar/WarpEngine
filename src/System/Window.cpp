@@ -1,14 +1,14 @@
 #include "System/Window.hpp"
 
-namespace System {
-	extern vk::Instance instance;
+#include <SDL2/SDL_vulkan.h>
 
+namespace System {
 	Window::Window(const char *title, int32_t width, int32_t height) {
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
 		SDL_Vulkan_GetDrawableSize(window, reinterpret_cast<int32_t *>(&extent.width), reinterpret_cast<int32_t *>(&extent.height));
 	}
 
-	vk::Extent2D Window::getExtent(void) {
+	VkExtent2D Window::getExtent(void) {
 		return extent;
 	}
 
@@ -22,7 +22,7 @@ namespace System {
 		return extensions;
 	}
 
-	vk::SurfaceKHR Window::createSurface(vk::Instance instance) {
+	VkSurfaceKHR Window::createSurface(VkInstance instance) {
 		VkSurfaceKHR surface;
 		SDL_Vulkan_CreateSurface(window, instance, &surface);
 
