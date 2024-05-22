@@ -83,5 +83,7 @@ namespace Graphics {
 #ifndef NDEBUG
 		messenger = new vk::raii::DebugUtilsMessengerEXT(*instance, messengerInfo);
 #endif // NDEBUG
+
+		vk::raii::PhysicalDevices physicalDevices(*instance);
 	}
 }
