@@ -3,7 +3,9 @@
 #include <vector>
 
 namespace Graphics {
-	void initialize(const char *title, std::vector<const char *> extensions);
+	class Device;
 
+	void initialize(const char *title, std::vector<const char *> extensions);
+	Device *getDevice(size_t index = 0);
 	void destroy(void);
 }
