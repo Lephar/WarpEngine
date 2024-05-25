@@ -6,6 +6,7 @@ namespace Graphics {
     class Device;
 
     void initialize(const char *title, std::vector<const char *> extensions);
-    Device *getDevice(size_t index = 0);
+    Device *getDevice(size_t index);
+    Device *getDefaultDevice(void);
     void destroy(void);
 }

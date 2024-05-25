@@ -13,8 +13,7 @@ namespace Graphics {
 #endif
 
     std::vector<Device *> devices;
-    Device *integrated;
-    Device *discrete;
+    Device *defaultDevice;
 
 #ifndef NDEBUG
     SDL_LogPriority convertLogSeverity(VkDebugUtilsMessageSeverityFlagBitsEXT severity) {
@@ -96,5 +95,13 @@ namespace Graphics {
             auto device = new Device(physicalDevice);
             devices.push_back(device);
         }
+    }
+
+    Device *getDevice(size_t index) {
+        return devices.at(index);
+    }
+
+    Device *getDefaultDevice(void) {
+        return devices.front();
     }
 }

@@ -30,6 +30,10 @@ namespace System {
         return index >= 0 && index < windows.size() ? windows.at(index) : nullptr;
     }
 
+    Window *getMainWindow(void) {
+        return windows.front();
+    }
+
     std::vector<const char *> getExtensions(size_t index) {
         return index >= 0 && index < windows.size() ? windows.at(index)->getExtensions() : std::vector<const char *>();
     }
