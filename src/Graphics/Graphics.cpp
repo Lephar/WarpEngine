@@ -13,7 +13,6 @@ namespace Graphics {
 #endif
 
     std::vector<Device *> devices;
-    Device *defaultDevice;
 
 #ifndef NDEBUG
     SDL_LogPriority convertLogSeverity(VkDebugUtilsMessageSeverityFlagBitsEXT severity) {
@@ -41,9 +40,7 @@ namespace Graphics {
     }
 #endif
 
-    void initialize(const char *title, std::vector<const char *> extensions) {
-        std::vector<const char *> layers;
-
+    void initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
 #ifndef NDEBUG
         layers.push_back("VK_LAYER_KHRONOS_validation");
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -84,15 +81,15 @@ namespace Graphics {
 #endif // NDEBUG
         };
 
-        instance = new vk::raii::Instance(*context, instanceInfo);
+        instance = new vk::raii::Instance{*context, instanceInfo};
 #ifndef NDEBUG
-        messenger = new vk::raii::DebugUtilsMessengerEXT(*instance, messengerInfo);
+        messenger = new vk::raii::DebugUtilsMessengerEXT{*instance, messengerInfo};
 #endif // NDEBUG
 
-        vk::raii::PhysicalDevices physicalDevices(*instance);
+        vk::raii::PhysicalDevices physicalDevices{*instance};
 
         for(auto physicalDevice : physicalDevices) {
-            auto device = new Device(physicalDevice);
+            auto device = new Device{physicalDevice};
             devices.push_back(device);
         }
     }
