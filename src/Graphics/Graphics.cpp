@@ -6,7 +6,8 @@
 #include "Graphics/Device.hpp"
 
 namespace Graphics {
-    vk::raii::Context *context;
+    vk::raii::Context context;
+
     vk::raii::Instance *instance;
 #ifndef NDEBUG
     vk::raii::DebugUtilsMessengerEXT *messenger;
@@ -29,8 +30,9 @@ namespace Graphics {
     }
 
     VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-        VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData) {
+                                                   VkDebugUtilsMessageTypeFlagsEXT type,
+                                                   const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                   void* pUserData) {
         static_cast<void>(type);
         static_cast<void>(pUserData);
 
@@ -41,8 +43,6 @@ namespace Graphics {
 #endif
 
     Device *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
-        context = new vk::raii::Context();
-
 #ifndef NDEBUG
         layers.push_back("VK_LAYER_KHRONOS_validation");
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -83,7 +83,7 @@ namespace Graphics {
 #endif // NDEBUG
         };
 
-        instance = new vk::raii::Instance{*context, instanceInfo};
+        instance = new vk::raii::Instance{context, instanceInfo};
 #ifndef NDEBUG
         messenger = new vk::raii::DebugUtilsMessengerEXT{*instance, messengerInfo};
 #endif // NDEBUG
