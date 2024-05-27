@@ -41,6 +41,8 @@ namespace Graphics {
 #endif
 
     Device *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
+        context = new vk::raii::Context();
+
 #ifndef NDEBUG
         layers.push_back("VK_LAYER_KHRONOS_validation");
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
