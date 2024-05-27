@@ -1,8 +1,6 @@
 #include "Graphics/Device.hpp"
-#include <limits>
-#include <vulkan/vulkan_enums.hpp>
+
 #include <vulkan/vulkan_raii.hpp>
-#include <vulkan/vulkan_structs.hpp>
 
 namespace Graphics {
     Device::Device(vk::raii::PhysicalDevice physicalDevice)	: physicalDevice(physicalDevice)
@@ -22,63 +20,100 @@ namespace Graphics {
         vk::PhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures {
             true
         };
+        /*
+        std::vector<float> queuePriorities{1.0f, 1.0f, 1.0f};
 
-        float queuePriority = 1.0f;
-
-        uint32_t graphicsQueueFamilyIndex = std::numeric_limits<uint32_t>::max();
-        uint32_t computeQueueFamilyIndex  = std::numeric_limits<uint32_t>::max();
-        uint32_t transferQueueFamilyIndex = std::numeric_limits<uint32_t>::max();
+        std::optional<vk::DeviceQueueCreateInfo> graphicsQueueFamilyInfo;
+        std::optional<vk::DeviceQueueCreateInfo> computeQueueFamilyInfo;
+        std::optional<vk::DeviceQueueCreateInfo> transferQueueFamilyInfo;
 
         for(size_t index = 0; index < queueFamilyProperties.size(); index++) {
             auto &queueFamily = queueFamilyProperties.at(index);
 
-            if(graphicsQueueFamilyIndex  == std::numeric_limits<uint32_t>::max() &&
-               queueFamily.queueFlags    &  vk::QueueFlagBits::eGraphics) {
-                graphicsQueueFamilyIndex =  index;
+            if(!graphicsQueueFamilyInfo.has_value()                     &&
+               (queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)) {
+                graphicsQueueFamilyInfo.emplace(
+                    vk::DeviceQueueCreateFlags{},
+                    index,
+                    1,
+                    queuePriorities.data()
+                );
             }
 
-            if(computeQueueFamilyIndex   == std::numeric_limits<uint32_t>::max() &&
-              (queueFamily.queueFlags    &  vk::QueueFlagBits::eCompute) &&
-             !(queueFamily.queueFlags    &  vk::QueueFlagBits::eGraphics)) {
-                computeQueueFamilyIndex  =  index;
+            if(!computeQueueFamilyInfo.has_value()                      &&
+               (queueFamily.queueFlags & vk::QueueFlagBits::eCompute )  &&
+              !(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)) {
+                computeQueueFamilyInfo.emplace(
+                    vk::DeviceQueueCreateFlags{},
+                    index,
+                    1,
+                    queuePriorities.data()
+                );
             }
 
-            if(transferQueueFamilyIndex  == std::numeric_limits<uint32_t>::max() &&
-              (queueFamily.queueFlags    &  vk::QueueFlagBits::eTransfer) &&
-             !(queueFamily.queueFlags    &  vk::QueueFlagBits::eCompute)  &&
-             !(queueFamily.queueFlags    &  vk::QueueFlagBits::eGraphics)) {
-                transferQueueFamilyIndex =  index;
+            if(!transferQueueFamilyInfo.has_value() &&
+               (queueFamily.queueFlags & vk::QueueFlagBits::eTransfer)  &&
+              !(queueFamily.queueFlags & vk::QueueFlagBits::eCompute )  &&
+              !(queueFamily.queueFlags & vk::QueueFlagBits::eGraphics)) {
+                transferQueueFamilyInfo.emplace(
+                    vk::DeviceQueueCreateFlags{},
+                    index,
+                    1,
+                    queuePriorities.data()
+                );
             }
         }
 
+        if(!graphicsQueueFamilyInfo.has_value()) {
+            throw std::runtime_error("System doesn't support graphics operations!");
+        }
 
+        if(!computeQueueFamilyInfo.has_value()) {
+            graphicsQueueFamilyInfo->queueCount++;
+        }
 
+        if(!transferQueueFamilyInfo.has_value()) {
+            if(computeQueueFamilyInfo.has_value()) {
+                computeQueueFamilyInfo->queueCount++;
+            } else {
+                graphicsQueueFamilyInfo->queueCount++;
+            }
+        }
 
+        std::vector<vk::DeviceQueueCreateInfo> queueInfos{graphicsQueueFamilyInfo.value()};
 
+        if(computeQueueFamilyInfo.has_value()) {
+            queueInfos.push_back(computeQueueFamilyInfo.value());
+        }
 
+        if(transferQueueFamilyInfo.has_value()) {
+            queueInfos.push_back(transferQueueFamilyInfo.value());
+        }
+        */
+        float queuePriority = 1.0f;
 
-        vk::DeviceQueueCreateInfo queueInfo {
+        vk::DeviceQueueCreateInfo graphicsQueueInfo(
             vk::DeviceQueueCreateFlags{},
-            static_cast<uint32_t>(graphicsQueueFamilyIndex),
+            0,
             1,
             &queuePriority
-        };
+        );
 
-        std::vector<vk::DeviceQueueCreateInfo> queueInfos{queueInfo};
+        vk::DeviceQueueCreateInfo computeQueueInfo(
+            vk::DeviceQueueCreateFlags{},
+            1,
+            1,
+            &queuePriority
+        );
 
-        if(computeQueueFamilyIndex == graphicsQueueFamilyIndex) {
-            queueInfos.back().queueCount++;
-        } else {
-            queueInfo.queueFamilyIndex = computeQueueFamilyIndex;
-            queueInfos.push_back(queueInfo);
-        }
+        vk::DeviceQueueCreateInfo transferQueueInfo(
+            vk::DeviceQueueCreateFlags{},
+            2,
+            1,
+            &queuePriority
+        );
 
-        if(transferQueueFamilyIndex == computeQueueFamilyIndex) {
-            queueInfos.back().queueCount++;
-        } else {
-            queueInfo.queueFamilyIndex = transferQueueFamilyIndex;
-            queueInfos.push_back(queueInfo);
-        }
+        std::vector<vk::DeviceQueueCreateInfo> queueInfos{graphicsQueueInfo, computeQueueInfo, transferQueueInfo};
 
         vk::DeviceCreateInfo deviceInfo {
             vk::DeviceCreateFlags{},
