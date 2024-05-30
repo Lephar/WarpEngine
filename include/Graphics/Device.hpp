@@ -10,7 +10,7 @@ namespace Graphics {
         vk::PhysicalDeviceProperties properties;
         vk::PhysicalDeviceFeatures features;
         vk::PhysicalDeviceMemoryProperties memoryProperties;
-        std::vector<vk::QueueFamilyProperties> queueFamilyProperties;
+        std::vector<vk::QueueFamilyProperties> queueFamilyPropertiesList;
 
         vk::raii::Device *device;
     public:
