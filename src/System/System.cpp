@@ -27,7 +27,7 @@ namespace System {
     }
 
     Window *getWindow(size_t index) {
-        return index >= 0 && index < windows.size() ? windows.at(index) : nullptr;
+        return windows.at(index);
     }
 
     Window *getMainWindow(void) {
@@ -35,7 +35,7 @@ namespace System {
     }
 
     std::vector<const char *> getExtensions(size_t index) {
-        return index >= 0 && index < windows.size() ? windows.at(index)->getExtensions() : std::vector<const char *>();
+        return windows.at(index)->getExtensions();
     }
 
     void destroyWindow(Window *window) {
