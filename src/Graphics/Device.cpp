@@ -29,6 +29,10 @@ namespace Graphics {
         uint32_t computeQueueFamilyIndex  = Queue::chooseQueueFamily(queueFamilyPropertiesList, vk::QueueFlagBits::eCompute );
         uint32_t transferQueueFamilyIndex = Queue::chooseQueueFamily(queueFamilyPropertiesList, vk::QueueFlagBits::eTransfer);
 
+        uint32_t graphicsQueueIndex = 0;
+        uint32_t computeQueueIndex  = 0;
+        uint32_t transferQueueIndex = 0;
+
         vk::DeviceQueueCreateInfo queueInfo {
             vk::DeviceQueueCreateFlags{},
             graphicsQueueFamilyIndex,
@@ -39,16 +43,19 @@ namespace Graphics {
         std::vector<vk::DeviceQueueCreateInfo> queueInfos{queueInfo};
 
         if(computeQueueFamilyIndex == graphicsQueueFamilyIndex) {
+            computeQueueIndex = graphicsQueueIndex + 1;
             queueInfos.front().queueCount++;
         } else {
             queueInfo.queueFamilyIndex = computeQueueFamilyIndex;
             queueInfos.push_back(queueInfo);
         }
 
-        if(transferQueueFamilyIndex == graphicsQueueFamilyIndex) {
-            queueInfos.front().queueCount++;
-        } else if(transferQueueFamilyIndex == computeQueueFamilyIndex) {
+        if(transferQueueFamilyIndex == computeQueueFamilyIndex) {
+            transferQueueIndex = computeQueueIndex + 1;
             queueInfos.back().queueCount++;
+        } else if(transferQueueFamilyIndex == graphicsQueueFamilyIndex) {
+            transferQueueIndex = graphicsQueueIndex + 1;
+            queueInfos.front().queueCount++;
         } else {
             queueInfo.queueFamilyIndex = transferQueueFamilyIndex;
             queueInfos.push_back(queueInfo);
@@ -67,5 +74,9 @@ namespace Graphics {
         };
 
         device = new vk::raii::Device(physicalDevice, deviceInfo);
+
+        auto graphicsQueue = device->getQueue(graphicsQueueFamilyIndex, graphicsQueueIndex);
+        auto computeQueue  = device->getQueue(computeQueueFamilyIndex , computeQueueIndex );
+        auto transferQueue = device->getQueue(transferQueueFamilyIndex, transferQueueIndex);
     }
 }
