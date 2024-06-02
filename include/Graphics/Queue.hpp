@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <vulkan/vulkan_raii.hpp>
 
 namespace Graphics {
