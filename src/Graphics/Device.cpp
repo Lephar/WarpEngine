@@ -1,9 +1,6 @@
 #include "Graphics/Device.hpp"
 #include "Graphics/Queue.hpp"
 
-#include <SDL_log.h>
-#include <vulkan/vulkan_raii.hpp>
-
 namespace Graphics {
     Device::Device(vk::raii::PhysicalDevice physicalDevice)	: physicalDevice(physicalDevice)
                                                             , properties(physicalDevice.getProperties())
@@ -75,8 +72,8 @@ namespace Graphics {
 
         device = new vk::raii::Device(physicalDevice, deviceInfo);
 
-        auto graphicsQueue = device->getQueue(graphicsQueueFamilyIndex, graphicsQueueIndex);
-        auto computeQueue  = device->getQueue(computeQueueFamilyIndex , computeQueueIndex );
-        auto transferQueue = device->getQueue(transferQueueFamilyIndex, transferQueueIndex);
+        graphicsQueue = new Queue(device, graphicsQueueFamilyIndex, graphicsQueueIndex);
+        computeQueue  = new Queue(device, computeQueueFamilyIndex , computeQueueIndex );
+        transferQueue = new Queue(device, transferQueueFamilyIndex, transferQueueIndex);
     }
 }

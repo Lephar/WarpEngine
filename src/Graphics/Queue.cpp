@@ -4,6 +4,24 @@
 #include <limits>
 
 namespace Graphics {
+    Queue::Queue(vk::raii::Device *device, uint32_t queueFamilyIndex, uint32_t queueIndex) :
+        queueFamilyIndex(queueFamilyIndex),
+        queueIndex(queueIndex),
+        queue(device->getQueue(queueFamilyIndex, queueIndex)),
+        commandPool(*device, vk::CommandPoolCreateInfo {
+            vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+            queueFamilyIndex
+        }),
+        commandBuffer(std::move(vk::raii::CommandBuffers {
+            *device,
+            vk::CommandBufferAllocateInfo {
+                *commandPool,
+                vk::CommandBufferLevel::ePrimary,
+                1
+            }
+        }.front())) {
+    }
+
     uint32_t Queue::chooseQueueFamily(std::vector<vk::QueueFamilyProperties> queueFamilyPropertiesList, vk::QueueFlags requiredFlags) {
         uint32_t mostSuitedScore = 0;
         uint32_t mostSuitedIndex = std::numeric_limits<uint32_t>::max();
