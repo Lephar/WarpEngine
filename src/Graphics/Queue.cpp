@@ -26,6 +26,10 @@ namespace Graphics {
         return queue;
     }
 
+    vk::raii::Queue Queue::operator->() {
+        return queue;
+    }
+
     uint32_t Queue::chooseQueueFamily(std::vector<vk::QueueFamilyProperties> queueFamilyPropertiesList, vk::QueueFlags requiredFlags) {
         uint32_t mostSuitedScore = 0;
         uint32_t mostSuitedIndex = std::numeric_limits<uint32_t>::max();
