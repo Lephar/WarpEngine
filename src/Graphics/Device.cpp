@@ -80,4 +80,8 @@ namespace Graphics {
     vk::raii::Device *Device::operator*() {
         return device;
     }
+
+    vk::raii::Device *Device::operator->() {
+        return device;
+    }
 }
