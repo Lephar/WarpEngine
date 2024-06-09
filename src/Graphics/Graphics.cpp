@@ -42,7 +42,7 @@ namespace Graphics {
     }
 #endif
 
-    Device *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
+    vk::raii::Instance *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
 #ifndef NDEBUG
         layers.push_back("VK_LAYER_KHRONOS_validation");
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -95,7 +95,7 @@ namespace Graphics {
             devices.push_back(device);
         }
 
-        return devices.front();
+        return instance;
     }
 
     Device *getDevice(size_t index) {
