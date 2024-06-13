@@ -27,6 +27,10 @@ namespace Graphics {
     return nullptr;
     }
 
+    Instance *getInstance() {
+        return instance;
+    }
+
     Device *getDevice(size_t index) {
         return devices.at(index);
     }
