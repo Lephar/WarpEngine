@@ -71,4 +71,10 @@ namespace Graphics {
         messenger = new vk::raii::DebugUtilsMessengerEXT{*instance, messengerInfo};
 #endif // NDEBUG
     }
+
+    Instance::~Instance() {
+        delete messenger;
+        delete instance;
+        delete context;
+    }
 }

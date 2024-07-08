@@ -13,5 +13,6 @@ namespace Graphics {
 #endif
     public:
         Instance(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions);
+        ~Instance();
     };
 }
