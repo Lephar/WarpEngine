@@ -9,6 +9,6 @@ namespace Graphics {
 
     Instance *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions);
     Device *getDevice(size_t index);
-    Device *getDefaultDevice(void);
-    void destroy(void);
+    Device *getDefaultDevice();
+    void destroy();
 }

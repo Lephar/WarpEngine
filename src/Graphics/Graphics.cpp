@@ -35,7 +35,7 @@ namespace Graphics {
         return devices.at(index);
     }
 
-    Device *getDefaultDevice(void) {
+    Device *getDefaultDevice() {
         return devices.front();
     }
 }

@@ -21,8 +21,6 @@ namespace Graphics {
         Queue *transferQueue;
     public:
         Device(vk::raii::PhysicalDevice physicalDevice);
-        vk::raii::Device *operator*();
-        vk::raii::Device *operator->();
-        ~Device(void);
+        ~Device();
     };
 }
