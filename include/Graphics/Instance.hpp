@@ -5,7 +5,7 @@
 namespace Graphics {
     class Instance {
     private:
-        vk::raii::Context context;
+        vk::raii::Context *context;
 
         vk::raii::Instance *instance;
 #ifndef NDEBUG

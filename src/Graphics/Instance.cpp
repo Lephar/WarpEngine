@@ -30,7 +30,9 @@ namespace Graphics {
     }
 #endif
 
-        Instance::Instance(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
+    Instance::Instance(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
+        context = new vk::raii::Context{};
+
 #ifndef NDEBUG
         vk::DebugUtilsMessengerCreateInfoEXT messengerInfo {
             vk::DebugUtilsMessengerCreateFlagsEXT{},
@@ -66,7 +68,7 @@ namespace Graphics {
 #endif // NDEBUG
         };
 
-        instance = new vk::raii::Instance{context, instanceInfo};
+        instance = new vk::raii::Instance{*context, instanceInfo};
 #ifndef NDEBUG
         messenger = new vk::raii::DebugUtilsMessengerEXT{*instance, messengerInfo};
 #endif // NDEBUG
