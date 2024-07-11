@@ -34,6 +34,9 @@ namespace Graphics {
         context = new vk::raii::Context{};
 
 #ifndef NDEBUG
+        layers.push_back("VK_LAYER_KHRONOS_validation");
+        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
         vk::DebugUtilsMessengerCreateInfoEXT messengerInfo {
             vk::DebugUtilsMessengerCreateFlagsEXT{},
             vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |

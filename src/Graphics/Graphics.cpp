@@ -10,11 +10,6 @@ namespace Graphics {
     std::vector<Device *> devices;
 
     Instance *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
-#ifndef NDEBUG
-        layers.push_back("VK_LAYER_KHRONOS_validation");
-        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif // NDEBUG
-
         instance = new Instance(title, layers, extensions);
 /*
         vk::raii::PhysicalDevices physicalDevices{*instance};
