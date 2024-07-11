@@ -19,7 +19,7 @@ namespace Graphics {
             devices.push_back(device);
         }
 */
-    return nullptr;
+        return nullptr;
     }
 
     Instance *getInstance() {
