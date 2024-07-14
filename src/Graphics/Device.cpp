@@ -2,18 +2,18 @@
 #include "Graphics/Queue.hpp"
 
 namespace Graphics {
-    Device::Device(vk::raii::PhysicalDevice physicalDevice)	: physicalDevice(physicalDevice)
-                                                            , properties(physicalDevice.getProperties())
-                                                            , features(physicalDevice.getFeatures())
-                                                            , memoryProperties(physicalDevice.getMemoryProperties())
-                                                            , queueFamilyPropertiesList(physicalDevice.getQueueFamilyProperties())
+    Device::Device(vk::raii::PhysicalDevice physicalDevice)	: physicalDevice{physicalDevice}
+                                                            , properties{physicalDevice.getProperties()}
+                                                            , features{physicalDevice.getFeatures()}
+                                                            , memoryProperties{physicalDevice.getMemoryProperties()}
+                                                            , queueFamilyPropertiesList{physicalDevice.getQueueFamilyProperties()}
                                                             {
-        vk::PhysicalDeviceFeatures deviceFeatures {
-        };
-
         std::vector<const char*> deviceExtensions {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME,
             VK_EXT_SHADER_OBJECT_EXTENSION_NAME
+        };
+
+        vk::PhysicalDeviceFeatures deviceFeatures {
         };
 
         vk::PhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures {
