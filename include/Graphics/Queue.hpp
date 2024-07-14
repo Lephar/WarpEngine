@@ -13,8 +13,6 @@ namespace Graphics {
         vk::raii::CommandBuffer commandBuffer;
     public:
         Queue(vk::raii::Device *device, uint32_t queueFamilyIndex, uint32_t queueIndex);
-        vk::raii::Queue operator*();
-        vk::raii::Queue operator->();
         static uint32_t chooseQueueFamily(std::vector<vk::QueueFamilyProperties> queueFamilyPropertiesList, vk::QueueFlags requiredFlags);
     };
 }

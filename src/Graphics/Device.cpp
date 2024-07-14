@@ -76,12 +76,4 @@ namespace Graphics {
         computeQueue  = new Queue(device, computeQueueFamilyIndex , computeQueueIndex );
         transferQueue = new Queue(device, transferQueueFamilyIndex, transferQueueIndex);
     }
-
-    vk::raii::Device *Device::operator*() {
-        return device;
-    }
-
-    vk::raii::Device *Device::operator->() {
-        return device;
-    }
 }
