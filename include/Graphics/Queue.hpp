@@ -14,5 +14,6 @@ namespace Graphics {
     public:
         Queue(vk::raii::Device *device, uint32_t queueFamilyIndex, uint32_t queueIndex);
         static uint32_t chooseQueueFamily(std::vector<vk::QueueFamilyProperties> queueFamilyPropertiesList, vk::QueueFlags requiredFlags);
+        ~Queue();
     };
 }

@@ -49,4 +49,10 @@ namespace Graphics {
 
         return mostSuitedIndex;
     }
+
+    Queue::~Queue() {
+        delete commandBuffer;
+        delete commandPool;
+        delete queue;
+    }
 }
