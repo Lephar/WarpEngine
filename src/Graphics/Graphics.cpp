@@ -33,4 +33,8 @@ namespace Graphics {
     Device *getDefaultDevice() {
         return devices.front();
     }
+
+    void destroy() {
+        delete instance;
+    }
 }
