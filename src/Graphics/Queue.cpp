@@ -4,30 +4,26 @@
 #include <limits>
 
 namespace Graphics {
-    Queue::Queue(vk::raii::Device *device, uint32_t queueFamilyIndex, uint32_t queueIndex) :
-        queueFamilyIndex(queueFamilyIndex),
-        queueIndex(queueIndex),
-        queue(device->getQueue(queueFamilyIndex, queueIndex)),
-        commandPool(*device, vk::CommandPoolCreateInfo {
+    Queue::Queue(vk::raii::Device *device, uint32_t queueFamilyIndex, uint32_t queueIndex) : queueFamilyIndex{queueFamilyIndex},
+                                                                                             queueIndex{queueIndex} {
+        queue = new vk::raii::Queue{device->getQueue(queueFamilyIndex, queueIndex)};
+
+        vk::CommandPoolCreateInfo commandPoolInfo {
             vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
             queueFamilyIndex
-        }),
-        commandBuffer(std::move(vk::raii::CommandBuffers {
-            *device,
-            vk::CommandBufferAllocateInfo {
-                *commandPool,
-                vk::CommandBufferLevel::ePrimary,
-                1
-            }
-        }.front())) {
-    }
+        };
 
-    vk::raii::Queue Queue::operator*() {
-        return queue;
-    }
+        commandPool = new vk::raii::CommandPool{*device, commandPoolInfo};
 
-    vk::raii::Queue Queue::operator->() {
-        return queue;
+        vk::CommandBufferAllocateInfo commandBufferInfo {
+            *commandPool,
+            vk::CommandBufferLevel::ePrimary,
+            1
+        };
+
+        vk::raii::CommandBuffers commandBuffers{*device, commandBufferInfo};
+
+        commandBuffer = new vk::raii::CommandBuffer{std::move(commandBuffers.front())};
     }
 
     uint32_t Queue::chooseQueueFamily(std::vector<vk::QueueFamilyProperties> queueFamilyPropertiesList, vk::QueueFlags requiredFlags) {
