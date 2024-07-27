@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SDL2/SDL.h>
 #include <vulkan/vulkan_core.h>
 #include <vector>
 
@@ -10,13 +9,13 @@ namespace System {
     Window *initialize(const char *title, int32_t width, int32_t height);
     Window *createWindow(const char *title, int32_t width, int32_t height);
 
-    PFN_vkGetInstanceProcAddr getLoader(void);
+    PFN_vkGetInstanceProcAddr getLoader();
     Window *getWindow(size_t index);
-    Window *getMainWindow(void);
+    Window *getMainWindow();
     std::vector<const char *> getRequiredExtensions(size_t index = 0);
 
     void destroyWindow(Window *window);
     void destroyWindow(size_t index = 0);
 
-    void quit(void);
+    void quit();
 }

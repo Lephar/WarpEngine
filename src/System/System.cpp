@@ -1,6 +1,7 @@
 #include "System/System.hpp"
 #include "System/Window.hpp"
 
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 #include <algorithm>
 
@@ -22,7 +23,7 @@ namespace System {
         return window;
     }
 
-    PFN_vkGetInstanceProcAddr getLoader(void) {
+    PFN_vkGetInstanceProcAddr getLoader() {
         return reinterpret_cast<PFN_vkGetInstanceProcAddr>(SDL_Vulkan_GetVkGetInstanceProcAddr());
     }
 
@@ -30,7 +31,7 @@ namespace System {
         return windows.at(index);
     }
 
-    Window *getMainWindow(void) {
+    Window *getMainWindow() {
         return windows.front();
     }
 
@@ -54,7 +55,7 @@ namespace System {
         }
     }
 
-    void quit(void) {
+    void quit() {
         while(!windows.empty()) {
             delete windows.back();
             windows.pop_back();
