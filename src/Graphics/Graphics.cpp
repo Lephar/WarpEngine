@@ -1,25 +1,28 @@
 #include "Graphics/Graphics.hpp"
 
+#include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_raii.hpp>
 
 #include "Graphics/Instance.hpp"
 #include "Graphics/Device.hpp"
+#include "Graphics/Surface.hpp"
 
 namespace Graphics {
     Instance *instance;
     std::vector<Device *> devices;
+    Surface *surface;
 
     Instance *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
         instance = new Instance(title, layers, extensions);
-/*
-        vk::raii::PhysicalDevices physicalDevices{*instance};
+
+        vk::raii::PhysicalDevices physicalDevices{*instance->getInstance()};
 
         for(auto physicalDevice : physicalDevices) {
             auto device = new Device{physicalDevice};
             devices.push_back(device);
         }
-*/
-        return nullptr;
+
+        return instance;
     }
 
     Instance *getInstance() {
@@ -32,6 +35,10 @@ namespace Graphics {
 
     Device *getDefaultDevice() {
         return devices.front();
+    }
+
+    void registerSurface(VkSurfaceKHR surface) {
+        Graphics::surface = new Surface{vk::raii::SurfaceKHR{*instance->getInstance(), surface}};
     }
 
     void destroy() {

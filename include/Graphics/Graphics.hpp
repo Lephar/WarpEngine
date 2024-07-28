@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <vulkan/vulkan_raii.hpp>
+#include <vulkan/vulkan_core.h>
 
 namespace Graphics {
     class Instance;
@@ -11,5 +11,6 @@ namespace Graphics {
     Instance *getInstance();
     Device *getDevice(size_t index);
     Device *getDefaultDevice();
+    void registerSurface(VkSurfaceKHR surface);
     void destroy();
 }
