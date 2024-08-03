@@ -5,7 +5,7 @@
 namespace Graphics {
     class Instance {
     private:
-        vk::raii::Context *context;
+        vk::raii::Context context;
 
         vk::raii::Instance *instance;
 #ifndef NDEBUG
@@ -13,6 +13,7 @@ namespace Graphics {
 #endif
     public:
         Instance(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions);
+        vk::raii::Instance *getInstance();
         ~Instance();
     };
 }

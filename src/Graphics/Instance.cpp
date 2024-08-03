@@ -31,8 +31,6 @@ namespace Graphics {
 #endif
 
     Instance::Instance(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
-        context = new vk::raii::Context{};
-
 #ifndef NDEBUG
         layers.push_back("VK_LAYER_KHRONOS_validation");
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -71,15 +69,18 @@ namespace Graphics {
 #endif // NDEBUG
         };
 
-        instance = new vk::raii::Instance{*context, instanceInfo};
+        instance = new vk::raii::Instance{context, instanceInfo};
 #ifndef NDEBUG
         messenger = new vk::raii::DebugUtilsMessengerEXT{*instance, messengerInfo};
 #endif // NDEBUG
     }
 
+    vk::raii::Instance *Instance::getInstance() {
+        return instance;
+    }
+
     Instance::~Instance() {
         delete messenger;
         delete instance;
-        delete context;
     }
 }
