@@ -8,7 +8,7 @@ namespace Graphics {
         uint32_t queueFamilyIndex;
         uint32_t queueIndex;
 
-        vk::raii::Queue *queue;
+        vk::raii::Queue queue;
         vk::raii::CommandPool *commandPool;
         vk::raii::CommandBuffer *commandBuffer;
     public:

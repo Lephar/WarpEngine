@@ -5,9 +5,8 @@
 
 namespace Graphics {
     Queue::Queue(vk::raii::Device *device, uint32_t queueFamilyIndex, uint32_t queueIndex) : queueFamilyIndex{queueFamilyIndex},
-                                                                                             queueIndex{queueIndex} {
-        queue = new vk::raii::Queue{device->getQueue(queueFamilyIndex, queueIndex)};
-
+                                                                                             queueIndex{queueIndex},
+                                                                                             queue{device->getQueue(queueFamilyIndex, queueIndex)} {
         vk::CommandPoolCreateInfo commandPoolInfo {
             vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
             queueFamilyIndex
@@ -49,6 +48,5 @@ namespace Graphics {
     Queue::~Queue() {
         delete commandBuffer;
         delete commandPool;
-        delete queue;
     }
 }
