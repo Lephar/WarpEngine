@@ -10,7 +10,6 @@
 namespace Graphics {
     Instance *instance;
     std::vector<Device *> devices;
-    Surface *surface;
 
     Instance *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
         instance = new Instance(title, layers, extensions);
@@ -35,10 +34,6 @@ namespace Graphics {
 
     Device *getDefaultDevice() {
         return devices.front();
-    }
-
-    void registerSurface(VkSurfaceKHR surface) {
-        Graphics::surface = new Surface{vk::raii::SurfaceKHR{*instance->getInstance(), surface}};
     }
 
     void destroy() {

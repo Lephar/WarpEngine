@@ -21,6 +21,7 @@ namespace Graphics {
         Queue *transferQueue;
     public:
         Device(vk::raii::PhysicalDevice physicalDevice);
+        void registerSurface(vk::raii::SurfaceKHR surface);
         ~Device();
     };
 }
