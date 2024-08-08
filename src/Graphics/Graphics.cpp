@@ -1,42 +1,29 @@
 #include "Graphics/Graphics.hpp"
+#include "Graphics/Instance.hpp"
 
-#include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_raii.hpp>
 
-#include "Graphics/Instance.hpp"
-#include "Graphics/Device.hpp"
-#include "Graphics/Surface.hpp"
-
 namespace Graphics {
-    Instance *instance;
-    std::vector<Device *> devices;
+    vk::raii::Context context;
+    std::vector<Instance *> instances;
 
-    Instance *initialize(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
-        instance = new Instance(title, layers, extensions);
-
-        vk::raii::PhysicalDevices physicalDevices{*instance->getInstance()};
-
-        for(auto physicalDevice : physicalDevices) {
-            auto device = new Device{physicalDevice};
-            devices.push_back(device);
-        }
-
+    Instance *createInstance(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
+        auto instance = new Instance(context, title, layers, extensions);
+        instances.push_back(instance);
         return instance;
     }
 
-    Instance *getInstance() {
-        return instance;
+    Instance *getInstance(size_t index) {
+        return instances.at(index);
     }
 
-    Device *getDevice(size_t index) {
-        return devices.at(index);
-    }
-
-    Device *getDefaultDevice() {
-        return devices.front();
+    Instance *getDefaultInstance() {
+        return instances.front();
     }
 
     void destroy() {
-        delete instance;
+        for(auto instance : instances) {
+            delete instance;
+        }
     }
 }
