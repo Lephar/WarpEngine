@@ -1,4 +1,5 @@
 #include "Graphics/Instance.hpp"
+#include "Graphics/Device.hpp"
 
 #include <SDL2/SDL_log.h>
 
@@ -30,7 +31,7 @@ namespace Graphics {
     }
 #endif
 
-    Instance::Instance(const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
+    Instance::Instance(vk::raii::Context &context, const char *title, std::vector<const char *> layers, std::vector<const char *> extensions) {
 #ifndef NDEBUG
         layers.push_back("VK_LAYER_KHRONOS_validation");
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -73,13 +74,37 @@ namespace Graphics {
 #ifndef NDEBUG
         messenger = new vk::raii::DebugUtilsMessengerEXT{*instance, messengerInfo};
 #endif // NDEBUG
+
+        defaultDeviceIndex = 0;
+        vk::raii::PhysicalDevices physicalDevices{*instance};
+
+        for(size_t deviceIndex = 0; deviceIndex < physicalDevices.size(); deviceIndex++) {
+            auto device = new Device{physicalDevices.at(deviceIndex)};
+            devices.push_back(device);
+
+            if(device->isDiscrete()) {
+                defaultDeviceIndex = deviceIndex;
+            }
+        }
     }
 
-    vk::raii::Instance *Instance::getInstance() {
+    vk::raii::Instance *Instance::getInstanceHandle() {
         return instance;
     }
 
+    Device *Instance::getDevice(size_t index) {
+        return devices.at(index);
+    }
+
+    Device *Instance::getDefaultDevice() {
+        return devices.at(defaultDeviceIndex);
+    }
+
     Instance::~Instance() {
+        for(auto device : devices) {
+            delete device;
+        }
+
         delete messenger;
         delete instance;
     }
