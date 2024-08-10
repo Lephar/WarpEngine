@@ -4,6 +4,7 @@
 
 namespace Graphics {
     class Queue;
+    class Surface;
 
     class Device {
     private:
@@ -19,9 +20,15 @@ namespace Graphics {
         Queue *graphicsQueue;
         Queue *computeQueue ;
         Queue *transferQueue;
+
+        std::vector<Surface *> surfaces;
+
     public:
         Device(vk::raii::PhysicalDevice physicalDevice);
-        void registerSurface(vk::raii::SurfaceKHR surface);
+        bool isDiscrete();
+        void registerSurface(vk::raii::SurfaceKHR surface, vk::Extent2D extent);
+        Surface *getSurface(size_t index);
+        Surface *getDefaultSurface();
         ~Device();
     };
 }

@@ -1,5 +1,6 @@
 #include "Graphics/Device.hpp"
 #include "Graphics/Queue.hpp"
+#include "Graphics/Surface.hpp"
 
 namespace Graphics {
     Device::Device(vk::raii::PhysicalDevice physicalDevice)	: physicalDevice{physicalDevice}
@@ -75,5 +76,33 @@ namespace Graphics {
         graphicsQueue = new Queue(device, graphicsQueueFamilyIndex, graphicsQueueIndex);
         computeQueue  = new Queue(device, computeQueueFamilyIndex , computeQueueIndex );
         transferQueue = new Queue(device, transferQueueFamilyIndex, transferQueueIndex);
+    }
+
+    bool Device::isDiscrete() {
+        return properties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu;
+    }
+
+    void Device::registerSurface(vk::raii::SurfaceKHR surface, vk::Extent2D extent) {
+        surfaces.push_back(new Surface{std::move(surface), extent});
+    }
+
+    Surface *Device::getSurface(size_t index) {
+        return surfaces.at(index);
+    }
+
+    Surface *Device::getDefaultSurface() {
+        return surfaces.front();
+    }
+
+    Device::~Device() {
+        for(auto surface : surfaces) {
+            delete surface;
+        }
+
+        delete transferQueue;
+        delete computeQueue;
+        delete graphicsQueue;
+
+        delete device;
     }
 }
