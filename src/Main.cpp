@@ -10,11 +10,11 @@ int main(int argc, char* args[])
     static_cast<void>(args);
 
     auto window = System::initialize("Zero", 800, 600);
-    auto instance = Graphics::initialize("Zero", std::vector<const char *>{}, window->getExtensions());
-    auto device = Graphics::getDefaultDevice();
+    auto instance = Graphics::createInstance("Zero", std::vector<const char *>{}, window->getExtensions());
+    auto device = instance->getDefaultDevice();
 
-    auto surface = window->createSurface(**instance->getInstance());
-    device->registerSurface(vk::raii::SurfaceKHR{*instance->getInstance(), surface});
+    auto surface = window->createSurface(**instance->getInstanceHandle());
+    device->registerSurface(vk::raii::SurfaceKHR{*instance->getInstanceHandle(), surface}, window->getExtent());
 
     Graphics::destroy();
     System::quit();
