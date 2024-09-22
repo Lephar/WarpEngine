@@ -1,5 +1,6 @@
 #include "helper.h"
 
+#ifndef NDEBUG
 SDL_LogPriority convertLogSeverity(VkDebugUtilsMessageSeverityFlagBitsEXT severity) {
     if(severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         return SDL_LOG_PRIORITY_ERROR;
@@ -13,10 +14,10 @@ SDL_LogPriority convertLogSeverity(VkDebugUtilsMessageSeverityFlagBitsEXT severi
         return SDL_LOG_PRIORITY_DEBUG;
 }
 
-VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-                                               VkDebugUtilsMessageTypeFlagsEXT type,
-                                               const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                               void* pUserData) {
+VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+                                                VkDebugUtilsMessageTypeFlagsEXT type,
+                                                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                void* pUserData) {
     (void)type;
     (void)pUserData;
 
@@ -24,3 +25,4 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 
     return VK_FALSE;
 }
+#endif // NDEBUG
