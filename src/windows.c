@@ -75,6 +75,12 @@ void draw(void (*render)(void)) {
     }
 }
 
+void destroySurface() {
+    vkDestroySurfaceKHR(instance, surface, NULL);
+
+    surfaceCreated = SDL_FALSE;
+}
+
 void destroyWindow() {
     if(surfaceCreated || !windowCreated)
         return;
