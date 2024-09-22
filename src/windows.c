@@ -63,15 +63,24 @@ void draw(void (*render)(void)) {
     if(!surfaceCreated)
         return;
 
+    SDL_bool drawing = SDL_TRUE;
+    SDL_Event event;
+
     while (true) {
-        SDL_Event event;
-        SDL_PollEvent(&event);
+        while(SDL_PollEvent(&event)) {
+            if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
+                drawing = SDL_FALSE;
+                break;
+            }
+        }
 
-        if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+        if(!drawing) {
             break;
+        }
 
-        if(render)
+        if(render) {
             render();
+        }
     }
 }
 
