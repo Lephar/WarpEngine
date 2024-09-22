@@ -5,11 +5,12 @@ SDL_bool windowCreated = SDL_FALSE;
 SDL_bool surfaceCreated = SDL_FALSE;
 SDL_bool drawing = SDL_FALSE;
 
+PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 const char *title = NULL;
 SDL_Window *window = NULL;
 VkExtent2D extent = {};
-uint32_t extensionCount = 0;
-const char **extensions = NULL;
+uint32_t instanceExtensionCount = 0;
+const char **instanceExtensionNames = NULL;
 
 extern VkInstance instance;
 extern VkSurfaceKHR surface;
@@ -20,14 +21,10 @@ void initialize() {
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Vulkan_LoadLibrary(NULL);
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+    
+    getInstanceProcAddr = SDL_Vulkan_GetVkGetInstanceProcAddr();
 
     systemInitialized = SDL_TRUE;
-}
-
-PFN_vkGetInstanceProcAddr getLoader() {
-    assert(systemInitialized);
-
-    return (PFN_vkGetInstanceProcAddr)SDL_Vulkan_GetVkGetInstanceProcAddr();
 }
 
 void createWindow(const char *name, int32_t width, int32_t height) {
@@ -38,24 +35,12 @@ void createWindow(const char *name, int32_t width, int32_t height) {
     window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
     SDL_Vulkan_GetDrawableSize(window, (int32_t *)&extent.width, (int32_t *)&extent.height);
 
-    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, NULL);
+    SDL_Vulkan_GetInstanceExtensions(window, &instanceExtensionCount, NULL);
 
-    extensions = malloc(extensionCount * sizeof(const char *));
-    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions);
+    instanceExtensionNames = malloc(instanceExtensionCount * sizeof(const char *));
+    SDL_Vulkan_GetInstanceExtensions(window, &instanceExtensionCount, instanceExtensionNames);
     
     windowCreated = SDL_TRUE;
-}
-
-int getExtensionCount() {
-    assert(windowCreated);
-
-    return extensionCount;
-}
-
-const char **getExtensions() {
-    assert(windowCreated);
-
-    return extensions;
 }
 
 void createSurface() {
@@ -102,8 +87,8 @@ void destroySurface() {
 void destroyWindow() {
     assert(!surfaceCreated && windowCreated);
 
-    free(extensions);
-    extensionCount = 0;
+    free(instanceExtensionNames);
+    instanceExtensionCount = 0;
     
     SDL_DestroyWindow(window);
     window = NULL;
@@ -117,6 +102,7 @@ void destroyWindow() {
 void quit() {
     assert(!windowCreated && systemInitialized);
 
+    getInstanceProcAddr = NULL;
     SDL_Vulkan_UnloadLibrary();
     SDL_Quit();
 
