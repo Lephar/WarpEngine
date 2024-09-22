@@ -14,10 +14,12 @@ VkDebugUtilsMessengerEXT messenger;
 
 void createInstance() {
     uint32_t layerCount = 0;
+    // Reserve extra space for Validation Layers just in case
     const char **layerNames = malloc((layerCount + 1) * sizeof(const char *));
     layerNames[layerCount] = NULL;
     
     uint32_t extensionCount = instanceExtensionCount;
+    // Reserve extra space for Validation Layers extension just in case
     const char **extensionNames = malloc((extensionCount + 1) * sizeof(const char *));
     memcpy(extensionNames, instanceExtensionNames, extensionCount * sizeof(const char *));
     extensionNames[extensionCount] = NULL;
@@ -76,6 +78,9 @@ void createInstance() {
     PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = (PFN_vkCreateDebugUtilsMessengerEXT)getInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
 #endif // NDEBUG
+
+    free(extensionNames);
+    free(layerNames);
 }
 
 void desroyInstance() {
