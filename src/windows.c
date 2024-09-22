@@ -1,4 +1,4 @@
-#include "zero.h"
+#include "window.h"
 
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
