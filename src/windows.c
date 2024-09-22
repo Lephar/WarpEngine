@@ -7,6 +7,8 @@ SDL_bool surfaceCreated = SDL_FALSE;
 const char *title = NULL;
 SDL_Window *window = NULL;
 VkExtent2D extent = {};
+uint32_t extensionCount = 0;
+const char **extensions = NULL;
 
 extern VkInstance instance;
 extern VkSurfaceKHR surface;
@@ -27,27 +29,24 @@ PFN_vkGetInstanceProcAddr getLoader() {
 }
 
 void createWindow(const char *name, int32_t width, int32_t height) {
-    if(!systemInitialized || windowCreated)
-        return;
-    
     title = name;
 
     window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
     SDL_Vulkan_GetDrawableSize(window, (int32_t *)&extent.width, (int32_t *)&extent.height);
+
+    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
+
+    extensions = malloc(extensionCount * sizeof(const char *));
+    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions);
     
     windowCreated = SDL_TRUE;
 }
 
+int getExtensionCount() {
+    return extensionCount;
+}
+
 const char **getExtensions() {
-    if(!windowCreated)
-        return NULL;
-
-    uint32_t extensionCount;
-    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, NULL);
-
-    const char **extensions = malloc(extensionCount * sizeof(const char *));
-    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions);
-
     return extensions;
 }
 
@@ -80,6 +79,9 @@ void destroyWindow() {
     if(surfaceCreated || !windowCreated)
         return;
 
+    free(extensions);
+    extensionCount = 0;
+
     SDL_DestroyWindow(window);
     window = NULL;
 
@@ -92,7 +94,7 @@ void destroyWindow() {
 void quit() {
     if(windowCreated || !systemInitialized)
         return;
-    
+
     SDL_Vulkan_UnloadLibrary();
     SDL_Quit();
 
