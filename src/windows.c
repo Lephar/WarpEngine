@@ -38,7 +38,7 @@ void createWindow(const char *name, int32_t width, int32_t height) {
     window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
     SDL_Vulkan_GetDrawableSize(window, (int32_t *)&extent.width, (int32_t *)&extent.height);
 
-    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
+    SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, NULL);
 
     extensions = malloc(extensionCount * sizeof(const char *));
     SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensions);
