@@ -3,4 +3,4 @@
 #include "zero.h"
 
 void createInstance();
-void desroyInstance();
+void destroyInstance();

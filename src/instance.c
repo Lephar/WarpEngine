@@ -83,7 +83,7 @@ void createInstance() {
     free(layerNames);
 }
 
-void desroyInstance() {
+void destroyInstance() {
 #ifndef NDEBUG
     PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT)getInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     destroyDebugUtilsMessenger(instance, messenger, NULL);
