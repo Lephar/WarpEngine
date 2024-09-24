@@ -134,3 +134,7 @@ void createDevice() {
 
     vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
 }
+
+void destroyDevice() {
+    vkDestroyDevice(device, NULL);
+}

@@ -4,3 +4,4 @@
 
 void selectPhysicalDevice();
 void createDevice();
+void destroyDevice();

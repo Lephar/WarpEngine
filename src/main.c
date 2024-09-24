@@ -12,9 +12,10 @@ int main(int argc, char *argv[]) {
     createSurface();
     selectPhysicalDevice();
     createDevice();
-    
+
     //draw(NULL);
 
+    destroyDevice();
     destroySurface();
     destroyInstance();
     destroyWindow();
