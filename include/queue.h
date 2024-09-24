@@ -10,3 +10,4 @@ struct queue {
     VkCommandBuffer commandBuffer;
 } typedef Queue;
 
+uint32_t chooseQueueFamily(VkQueueFlags requiredFlags);
