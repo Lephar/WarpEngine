@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     selectPhysicalDevice();
     createDevice();
 
-    //draw(NULL);
+    draw(NULL);
 
     destroyDevice();
     destroySurface();

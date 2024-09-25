@@ -51,7 +51,7 @@ void createSurface() {
     surfaceCreated = SDL_TRUE;
 }
 
-void draw(void (*render)(void)) {
+void draw(void (*render)()) {
     assert(surfaceCreated && !drawing);
     
     drawing = SDL_TRUE;
