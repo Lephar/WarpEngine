@@ -79,7 +79,32 @@ void createDevice() {
     computeQueue .queueFamilyIndex = chooseQueueFamily(VK_QUEUE_COMPUTE_BIT );
     transferQueue.queueFamilyIndex = chooseQueueFamily(VK_QUEUE_TRANSFER_BIT);
 
+    Queue *queues[] = {
+        &graphicsQueue,
+        &computeQueue,
+        &transferQueue
+    };
+
+    uint32_t queueCount = sizeof(queues) / sizeof(Queue *);
+
     distinctQueueFamilyCount = 1;
+
+    for(uint32_t queueIndex = 1; queueIndex < queueCount; queueIndex++) {
+        VkBool32 queueDistinct = VK_TRUE;
+
+        for(uint32_t comparisonIndex = queueIndex - 1; comparisonIndex >= 0; comparisonIndex--) {
+            if(queues[queueIndex]->queueFamilyIndex == queues[comparisonIndex]->queueFamilyIndex) {
+                queues[queueIndex]->queueInfoIndex = queues[comparisonIndex]->queueInfoIndex;
+                queues[queueIndex]->queueIndex = queues[comparisonIndex]->queueIndex + 1;
+                queueDistinct = VK_FALSE;
+                break;
+            }
+        }
+
+        if(queueDistinct) {
+            distinctQueueFamilyCount++;
+        }
+    }
 
     if(computeQueue.queueFamilyIndex == graphicsQueue.queueFamilyIndex) {
         computeQueue.queueIndex++;
@@ -110,11 +135,11 @@ void createDevice() {
     }
 
     queueInfos[graphicsQueue.queueInfoIndex].queueFamilyIndex = graphicsQueue.queueFamilyIndex;
-    queueInfos[computeQueue.queueInfoIndex ].queueFamilyIndex = computeQueue .queueFamilyIndex;
+    queueInfos[computeQueue .queueInfoIndex].queueFamilyIndex = computeQueue .queueFamilyIndex;
     queueInfos[transferQueue.queueInfoIndex].queueFamilyIndex = transferQueue.queueFamilyIndex;
 
     queueInfos[graphicsQueue.queueInfoIndex].queueCount++;
-    queueInfos[computeQueue.queueInfoIndex ].queueCount++;
+    queueInfos[computeQueue .queueInfoIndex].queueCount++;
     queueInfos[transferQueue.queueInfoIndex].queueCount++;
 
     VkDeviceCreateInfo deviceInfo = {

@@ -1,6 +1,8 @@
 #include "queue.h"
 #include "helper.h"
 
+extern VkDevice device;
+
 uint32_t queueFamilyCount;
 VkQueueFamilyProperties *queueFamilyProperties;
 
@@ -27,5 +29,17 @@ uint32_t chooseQueueFamily(VkQueueFlags requiredFlags) {
 
     assert(mostSuitedIndex < queueFamilyCount);
     return mostSuitedIndex;
+}
+
+uint32_t retrieveQueues() {
+    VkDeviceQueueInfo2 graphicsQueueInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2,
+        .pNext = NULL,
+        .flags = 0,
+        .queueFamilyIndex = graphicsQueue.queueFamilyIndex,
+        .queueIndex = graphicsQueue.queueIndex
+    };
+
+    vkGetDeviceQueue2(device, &graphicsQueueInfo, &graphicsQueue.queue);
 }
 
