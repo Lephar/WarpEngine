@@ -76,48 +76,46 @@ void createDevice() {
     };
 
     graphicsQueue.queueFamilyIndex = chooseQueueFamily(VK_QUEUE_GRAPHICS_BIT);
-    computeQueue.queueFamilyIndex  = chooseQueueFamily(VK_QUEUE_COMPUTE_BIT);
+    computeQueue .queueFamilyIndex = chooseQueueFamily(VK_QUEUE_COMPUTE_BIT );
     transferQueue.queueFamilyIndex = chooseQueueFamily(VK_QUEUE_TRANSFER_BIT);
 
-    VkDeviceQueueCreateInfo queueInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-        .pNext = NULL,
-        .flags = {},
-        .queueFamilyIndex = UINT32_MAX,
-        .queueCount = 1,
-        .pQueuePriorities = queuePriorities
-    };
-
-    VkDeviceQueueCreateInfo queueInfos[] = {
-        queueInfo,
-        queueInfo,
-        queueInfo
-    };
-
-    queueInfos[0].queueFamilyIndex = graphicsQueue.queueFamilyIndex;
-    queueInfos[1].queueFamilyIndex = computeQueue.queueFamilyIndex;
-    queueInfos[2].queueFamilyIndex = transferQueue.queueFamilyIndex;
-
     distinctQueueFamilyCount = 1;
-    
+
     if(computeQueue.queueFamilyIndex == graphicsQueue.queueFamilyIndex) {
-        computeQueue.queueIndex = graphicsQueue.queueIndex + 1;
-        queueInfos[0].queueCount++;
+        computeQueue.queueIndex++;
     } else {
-        queueInfo.queueFamilyIndex = computeQueue.queueFamilyIndex;
+        computeQueue.queueInfoIndex++;
         distinctQueueFamilyCount++;
     }
 
     if(transferQueue.queueFamilyIndex == computeQueue.queueFamilyIndex) {
+        transferQueue.queueInfoIndex = computeQueue.queueInfoIndex;
         transferQueue.queueIndex = computeQueue.queueIndex + 1;
-        queueInfos[distinctQueueFamilyCount - 1].queueCount++;
     } else if(transferQueue.queueFamilyIndex == graphicsQueue.queueFamilyIndex) {
+        transferQueue.queueInfoIndex = graphicsQueue.queueInfoIndex;
         transferQueue.queueIndex = graphicsQueue.queueIndex + 1;
-        queueInfos[0].queueCount++;
     } else {
-        queueInfo.queueFamilyIndex = transferQueue.queueFamilyIndex;
+        transferQueue.queueInfoIndex = computeQueue.queueInfoIndex + 1;
         distinctQueueFamilyCount++;
     }
+    
+    VkDeviceQueueCreateInfo *queueInfos = malloc(distinctQueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
+    
+    for(uint32_t queueInfoIndex = 0; queueInfoIndex < distinctQueueFamilyCount; queueInfoIndex++) {
+        queueInfos[queueInfoIndex].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueInfos[queueInfoIndex].pNext = NULL;
+        queueInfos[queueInfoIndex].flags = 0;
+        queueInfos[queueInfoIndex].queueCount = 0,
+        queueInfos[queueInfoIndex].pQueuePriorities = queuePriorities;
+    }
+
+    queueInfos[graphicsQueue.queueInfoIndex].queueFamilyIndex = graphicsQueue.queueFamilyIndex;
+    queueInfos[computeQueue.queueInfoIndex ].queueFamilyIndex = computeQueue .queueFamilyIndex;
+    queueInfos[transferQueue.queueInfoIndex].queueFamilyIndex = transferQueue.queueFamilyIndex;
+
+    queueInfos[graphicsQueue.queueInfoIndex].queueCount++;
+    queueInfos[computeQueue.queueInfoIndex ].queueCount++;
+    queueInfos[transferQueue.queueInfoIndex].queueCount++;
 
     VkDeviceCreateInfo deviceInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
@@ -133,6 +131,8 @@ void createDevice() {
     };
 
     vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
+
+    free(queueInfos);
 }
 
 void destroyDevice() {
