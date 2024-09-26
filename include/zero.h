@@ -1,5 +1,11 @@
 #pragma once
 
+#ifndef NDEBUG
+#define DEBUG 1u
+#else
+#define DEBUG 0u
+#endif // NDEBUG
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_vulkan.h>
