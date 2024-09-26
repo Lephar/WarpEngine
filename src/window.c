@@ -3,7 +3,7 @@
 
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
-SDL_bool surfaceCreated = SDL_FALSE;
+extern SDL_bool surfaceCreated;
 SDL_bool drawing = SDL_FALSE;
 
 PFN_vkGetInstanceProcAddr getInstanceProcAddr;
@@ -46,15 +46,6 @@ void createWindow(const char *name, int32_t width, int32_t height) {
     debug("Window created");
 }
 
-void createSurface() {
-    assert(windowCreated && !surfaceCreated);
-
-    SDL_Vulkan_CreateSurface(window, instance, &surface);
-
-    surfaceCreated = SDL_TRUE;
-    debug("Surface created");
-}
-
 void draw(void (*render)()) {
     assert(surfaceCreated && !drawing);
     
@@ -81,15 +72,6 @@ void draw(void (*render)()) {
     }
     
     debug("Draw loop ended");
-}
-
-void destroySurface() {
-    assert(surfaceCreated);
-
-    vkDestroySurfaceKHR(instance, surface, NULL);
-
-    surfaceCreated = SDL_FALSE;
-    debug("Surface destroyed");
 }
 
 void destroyWindow() {
