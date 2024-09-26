@@ -20,7 +20,10 @@ extern Queue graphicsQueue;
 extern Queue computeQueue;
 extern Queue transferQueue;
 
-uint32_t distinctQueueFamilyCount;
+extern Queue *queues[];
+
+extern uint32_t queueCount;
+extern uint32_t distinctQueueFamilyCount;
 
 void selectPhysicalDevice() {
     uint32_t deviceCount;
@@ -77,65 +80,14 @@ void createDevice() {
         .dynamicRendering = VK_TRUE
     };
 
-    float queuePriorities[] = {
-        1.0f,
-        1.0f,
-        1.0f
-    };
+    float *queuePriorities = malloc(queueCount * sizeof(float));
 
-    graphicsQueue.queueFamilyIndex = chooseQueueFamily(VK_QUEUE_GRAPHICS_BIT);
-    computeQueue .queueFamilyIndex = chooseQueueFamily(VK_QUEUE_COMPUTE_BIT );
-    transferQueue.queueFamilyIndex = chooseQueueFamily(VK_QUEUE_TRANSFER_BIT);
-
-    debug("Graphics queue family index: %d", graphicsQueue.queueFamilyIndex);
-    debug("Compute  queue family index: %d", computeQueue .queueFamilyIndex);
-    debug("Transfer queue family index: %d", transferQueue.queueFamilyIndex);
-
-    Queue *queues[] = {
-        &graphicsQueue,
-        &computeQueue,
-        &transferQueue
-    };
-
-    uint32_t queueCount = sizeof(queues) / sizeof(Queue *);
-
-    distinctQueueFamilyCount = 1;
-
-    for(uint32_t queueIndex = 1; queueIndex < queueCount; queueIndex++) {
-        VkBool32 queueDistinct = VK_TRUE;
-        uint32_t comparisonIndex = queueIndex - 1;
-
-        while(1) {
-            if(queues[queueIndex]->queueFamilyIndex == queues[comparisonIndex]->queueFamilyIndex) {
-                queues[queueIndex]->queueInfoIndex = queues[comparisonIndex]->queueInfoIndex;
-                queues[queueIndex]->queueIndex = queues[comparisonIndex]->queueIndex + 1;
-
-                queueDistinct = VK_FALSE;
-                break;
-            }
-
-            if(!comparisonIndex--){
-                break;
-            }
-        }
-
-        if(queueDistinct) {
-            queues[queueIndex]->queueInfoIndex = distinctQueueFamilyCount++;
-        }
+    for(uint32_t index = 0; index < queueCount; index++) {
+        queuePriorities[index] = 1.0f;
     }
 
-    debug("Graphics queue index: %d", graphicsQueue.queueIndex);
-    debug("Compute  queue index: %d", computeQueue .queueIndex);
-    debug("Transfer queue index: %d", transferQueue.queueIndex);
-
-    debug("Graphics queue info index: %d", graphicsQueue.queueInfoIndex);
-    debug("Compute  queue info index: %d", computeQueue .queueInfoIndex);
-    debug("Transfer queue info index: %d", transferQueue.queueInfoIndex);
-
-    debug("Distinct queue family count: %d", distinctQueueFamilyCount);
-
     VkDeviceQueueCreateInfo *queueInfos = malloc(distinctQueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
-    
+
     for(uint32_t queueInfoIndex = 0; queueInfoIndex < distinctQueueFamilyCount; queueInfoIndex++) {
         queueInfos[queueInfoIndex].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         queueInfos[queueInfoIndex].pNext = NULL;
@@ -166,6 +118,7 @@ void createDevice() {
     debug("Device created");
 
     free(queueInfos);
+    free(queuePriorities);
 }
 
 void destroyDevice() {
