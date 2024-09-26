@@ -4,8 +4,8 @@
 
 extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 extern const char *title;
-extern uint32_t instanceExtensionCount;
-extern const char **instanceExtensionNames;
+extern uint32_t requiredInstanceExtensionCount;
+extern const char **requiredInstanceExtensionNames;
 
 VkInstance instance;
 #ifndef NDEBUG
@@ -18,10 +18,10 @@ void createInstance() {
     const char **layerNames = malloc((layerCount + 1) * sizeof(const char *));
     layerNames[layerCount] = NULL;
     
-    uint32_t extensionCount = instanceExtensionCount;
+    uint32_t extensionCount = requiredInstanceExtensionCount;
     // Reserve extra space for Validation Layers extension just in case
     const char **extensionNames = malloc((extensionCount + 1) * sizeof(const char *));
-    memcpy(extensionNames, instanceExtensionNames, extensionCount * sizeof(const char *));
+    memcpy(extensionNames, requiredInstanceExtensionNames, extensionCount * sizeof(const char *));
     extensionNames[extensionCount] = NULL;
     
     void *instanceNext = NULL;

@@ -10,8 +10,8 @@ PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 const char *title = NULL;
 SDL_Window *window = NULL;
 VkExtent2D extent = {};
-uint32_t instanceExtensionCount = 0;
-const char **instanceExtensionNames = NULL;
+uint32_t requiredInstanceExtensionCount = 0;
+const char **requiredInstanceExtensionNames = NULL;
 
 extern VkInstance instance;
 extern VkSurfaceKHR surface;
@@ -37,10 +37,10 @@ void createWindow(const char *name, int32_t width, int32_t height) {
     window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
     SDL_Vulkan_GetDrawableSize(window, (int32_t *)&extent.width, (int32_t *)&extent.height);
 
-    SDL_Vulkan_GetInstanceExtensions(window, &instanceExtensionCount, NULL);
+    SDL_Vulkan_GetInstanceExtensions(window, &requiredInstanceExtensionCount, NULL);
 
-    instanceExtensionNames = malloc(instanceExtensionCount * sizeof(const char *));
-    SDL_Vulkan_GetInstanceExtensions(window, &instanceExtensionCount, instanceExtensionNames);
+    requiredInstanceExtensionNames = malloc(requiredInstanceExtensionCount * sizeof(const char *));
+    SDL_Vulkan_GetInstanceExtensions(window, &requiredInstanceExtensionCount, requiredInstanceExtensionNames);
     
     windowCreated = SDL_TRUE;
     debug("Window created");
@@ -63,7 +63,7 @@ void draw(void (*render)()) {
 
     while (true) {
         SDL_Event event;
-        
+
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
                 drawing = SDL_FALSE;
@@ -95,8 +95,8 @@ void destroySurface() {
 void destroyWindow() {
     assert(!surfaceCreated && windowCreated);
 
-    free(instanceExtensionNames);
-    instanceExtensionCount = 0;
+    free(requiredInstanceExtensionNames);
+    requiredInstanceExtensionCount = 0;
     
     SDL_DestroyWindow(window);
     window = NULL;
