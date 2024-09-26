@@ -61,9 +61,9 @@ void draw(void (*render)()) {
     drawing = SDL_TRUE;
     debug("Draw loop started");
 
-    SDL_Event event;
-
     while (true) {
+        SDL_Event event;
+        
         while(SDL_PollEvent(&event)) {
             if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
                 drawing = SDL_FALSE;
