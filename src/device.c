@@ -102,28 +102,11 @@ void createDevice() {
         }
 
         if(queueDistinct) {
+            queues[queueIndex]->queueInfoIndex++;
             distinctQueueFamilyCount++;
         }
     }
 
-    if(computeQueue.queueFamilyIndex == graphicsQueue.queueFamilyIndex) {
-        computeQueue.queueIndex++;
-    } else {
-        computeQueue.queueInfoIndex++;
-        distinctQueueFamilyCount++;
-    }
-
-    if(transferQueue.queueFamilyIndex == computeQueue.queueFamilyIndex) {
-        transferQueue.queueInfoIndex = computeQueue.queueInfoIndex;
-        transferQueue.queueIndex = computeQueue.queueIndex + 1;
-    } else if(transferQueue.queueFamilyIndex == graphicsQueue.queueFamilyIndex) {
-        transferQueue.queueInfoIndex = graphicsQueue.queueInfoIndex;
-        transferQueue.queueIndex = graphicsQueue.queueIndex + 1;
-    } else {
-        transferQueue.queueInfoIndex = computeQueue.queueInfoIndex + 1;
-        distinctQueueFamilyCount++;
-    }
-    
     VkDeviceQueueCreateInfo *queueInfos = malloc(distinctQueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
     
     for(uint32_t queueInfoIndex = 0; queueInfoIndex < distinctQueueFamilyCount; queueInfoIndex++) {
@@ -134,13 +117,10 @@ void createDevice() {
         queueInfos[queueInfoIndex].pQueuePriorities = queuePriorities;
     }
 
-    queueInfos[graphicsQueue.queueInfoIndex].queueFamilyIndex = graphicsQueue.queueFamilyIndex;
-    queueInfos[computeQueue .queueInfoIndex].queueFamilyIndex = computeQueue .queueFamilyIndex;
-    queueInfos[transferQueue.queueInfoIndex].queueFamilyIndex = transferQueue.queueFamilyIndex;
-
-    queueInfos[graphicsQueue.queueInfoIndex].queueCount++;
-    queueInfos[computeQueue .queueInfoIndex].queueCount++;
-    queueInfos[transferQueue.queueInfoIndex].queueCount++;
+    for(uint32_t queueIndex = 1; queueIndex < queueCount; queueIndex++) {
+        queueInfos[queues[queueIndex]->queueInfoIndex].queueFamilyIndex = queues[queueIndex]->queueFamilyIndex;
+        queueInfos[queues[queueIndex]->queueInfoIndex].queueCount++;
+    }
 
     VkDeviceCreateInfo deviceInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
