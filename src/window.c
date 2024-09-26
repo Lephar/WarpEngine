@@ -22,7 +22,7 @@ void initialize() {
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Vulkan_LoadLibrary(NULL);
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-    
+
     getInstanceProcAddr = SDL_Vulkan_GetVkGetInstanceProcAddr();
 
     systemInitialized = SDL_TRUE;
@@ -41,14 +41,14 @@ void createWindow(const char *name, int32_t width, int32_t height) {
 
     requiredInstanceExtensionNames = malloc(requiredInstanceExtensionCount * sizeof(const char *));
     SDL_Vulkan_GetInstanceExtensions(window, &requiredInstanceExtensionCount, requiredInstanceExtensionNames);
-    
+
     windowCreated = SDL_TRUE;
     debug("Window created");
 }
 
 void draw(void (*render)()) {
     assert(surfaceCreated && !drawing);
-    
+
     drawing = SDL_TRUE;
     debug("Draw loop started");
 
@@ -70,7 +70,7 @@ void draw(void (*render)()) {
             render();
         }
     }
-    
+
     debug("Draw loop ended");
 }
 
@@ -79,7 +79,7 @@ void destroyWindow() {
 
     free(requiredInstanceExtensionNames);
     requiredInstanceExtensionCount = 0;
-    
+
     SDL_DestroyWindow(window);
     window = NULL;
 

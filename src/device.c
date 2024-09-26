@@ -36,7 +36,7 @@ void selectPhysicalDevice() {
     for(uint32_t deviceIndex = 1; deviceIndex < deviceCount; deviceIndex++) {
         VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(devices[deviceIndex], &properties);
-        
+
         if(properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
             selectedIndex = deviceIndex;
         }

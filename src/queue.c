@@ -53,7 +53,7 @@ void generateQueueDetails() {
     debug("Transfer queue family index: %d", transferQueue.queueFamilyIndex);
 
     distinctQueueFamilyCount = 1;
-    
+
     for(uint32_t queueIndex = 1; queueIndex < queueCount; queueIndex++) {
         VkBool32 queueDistinct = VK_TRUE;
         uint32_t comparisonIndex = queueIndex - 1;
@@ -90,7 +90,7 @@ void generateQueueDetails() {
 
 void retrieveQueues() {
     VkDeviceQueueInfo2 *queueInfos = malloc(queueCount * sizeof(VkDeviceQueueInfo2));
-    
+
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         queueInfos[queueIndex].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
         queueInfos[queueIndex].pNext = NULL;
