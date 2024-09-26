@@ -7,7 +7,7 @@
             clock_gettime(CLOCK_REALTIME, &timespec); \
             char timestamp[20]; \
             strftime(timestamp, 20, "%Y-%m-%d %H:%M:%S", localtime(&(time_t){timespec.tv_sec})); \
-            printf("%s %7.3Lf %s:%d:%s(): ", timestamp, timespec.tv_nsec / 1e6L, __FILE__, __LINE__, __func__); \
+            printf("%s %7.3Lf %s:%d:%s():\t", timestamp, timespec.tv_nsec / 1e6L, __FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__); \
             printf("\n"); \
         } \

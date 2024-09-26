@@ -8,7 +8,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagB
     (void)type;
     (void)pUserData;
 
-    debug("Validation Layers:\t%s", pCallbackData->pMessage);
+    debug("Validation Layers: %s", pCallbackData->pMessage);
 
     return VK_FALSE;
 }
