@@ -32,14 +32,30 @@ uint32_t chooseQueueFamily(VkQueueFlags requiredFlags) {
 }
 
 void retrieveQueues() {
-    VkDeviceQueueInfo2 graphicsQueueInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2,
-        .pNext = NULL,
-        .flags = 0,
-        .queueFamilyIndex = graphicsQueue.queueFamilyIndex,
-        .queueIndex = graphicsQueue.queueIndex
+    Queue queues[] = {
+        graphicsQueue,
+        computeQueue,
+        transferQueue
     };
 
-    vkGetDeviceQueue2(device, &graphicsQueueInfo, &graphicsQueue.queue);
+    uint32_t queueCount = sizeof(queues) / sizeof(Queue);
+
+    VkDeviceQueueInfo2 *queueInfos = malloc(queueCount * sizeof(VkDeviceQueueInfo2));
+    
+    for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
+        queueInfos[queueIndex].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
+        queueInfos[queueIndex].pNext = NULL;
+        queueInfos[queueIndex].flags = 0;
+        queueInfos[queueIndex].queueFamilyIndex = queues[queueIndex].queueFamilyIndex;
+        queueInfos[queueIndex].queueIndex = queues[queueIndex].queueIndex;
+    }
+
+    vkGetDeviceQueue2(device, &queueInfos[0], &graphicsQueue.queue);
+    vkGetDeviceQueue2(device, &queueInfos[1], & computeQueue.queue);
+    vkGetDeviceQueue2(device, &queueInfos[2], &transferQueue.queue);
+
+    debug("%d device queues retrieved", queueCount);
+
+    free(queueInfos);
 }
 

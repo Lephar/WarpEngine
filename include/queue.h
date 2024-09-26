@@ -12,3 +12,4 @@ struct queue {
 } typedef Queue;
 
 uint32_t chooseQueueFamily(VkQueueFlags requiredFlags);
+void retrieveQueues();

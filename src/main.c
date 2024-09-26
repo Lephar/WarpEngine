@@ -2,6 +2,7 @@
 #include "instance.h"
 #include "surface.h"
 #include "device.h"
+#include "queue.h"
 
 int main(int argc, char *argv[]) {
     (void)argc;
@@ -12,6 +13,7 @@ int main(int argc, char *argv[]) {
     createSurface();
     selectPhysicalDevice();
     createDevice();
+    retrieveQueues();
 
     draw(NULL);
 
