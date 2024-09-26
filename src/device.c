@@ -91,19 +91,24 @@ void createDevice() {
 
     for(uint32_t queueIndex = 1; queueIndex < queueCount; queueIndex++) {
         VkBool32 queueDistinct = VK_TRUE;
+        uint32_t comparisonIndex = queueIndex - 1;
 
-        for(uint32_t comparisonIndex = queueIndex - 1; comparisonIndex >= 0; comparisonIndex--) {
+        while(1) {
             if(queues[queueIndex]->queueFamilyIndex == queues[comparisonIndex]->queueFamilyIndex) {
                 queues[queueIndex]->queueInfoIndex = queues[comparisonIndex]->queueInfoIndex;
                 queues[queueIndex]->queueIndex = queues[comparisonIndex]->queueIndex + 1;
+
                 queueDistinct = VK_FALSE;
+                break;
+            }
+
+            if(!comparisonIndex--){
                 break;
             }
         }
 
         if(queueDistinct) {
-            queues[queueIndex]->queueInfoIndex++;
-            distinctQueueFamilyCount++;
+            queues[queueIndex]->queueInfoIndex = distinctQueueFamilyCount++;
         }
     }
 
@@ -117,7 +122,7 @@ void createDevice() {
         queueInfos[queueInfoIndex].pQueuePriorities = queuePriorities;
     }
 
-    for(uint32_t queueIndex = 1; queueIndex < queueCount; queueIndex++) {
+    for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         queueInfos[queues[queueIndex]->queueInfoIndex].queueFamilyIndex = queues[queueIndex]->queueFamilyIndex;
         queueInfos[queues[queueIndex]->queueInfoIndex].queueCount++;
     }
