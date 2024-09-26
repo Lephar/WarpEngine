@@ -72,11 +72,23 @@ void createInstance() {
         .ppEnabledExtensionNames = extensionNames
     };
 
+    debug("Instance layers (count = %d)", layerCount);
+    for(uint32_t index = 0; index < layerCount; index++) {
+        debug("\t%s", layerNames[index]);
+    }
+
+    debug("Instance extensions (count = %d)", extensionCount);
+    for(uint32_t index = 0; index < extensionCount; index++) {
+        debug("\t%s", extensionNames[index]);
+    }
+
     vkCreateInstance(&instanceInfo, NULL, &instance);
-    
+    debug("Instance created");
+
 #ifndef NDEBUG
     PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = (PFN_vkCreateDebugUtilsMessengerEXT)getInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
+    debug("Messenger created");
 #endif // NDEBUG
 
     free(extensionNames);
@@ -87,7 +99,9 @@ void destroyInstance() {
 #ifndef NDEBUG
     PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT)getInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     destroyDebugUtilsMessenger(instance, messenger, NULL);
+    debug("Messenger destroyed");
 #endif // NDEBUG
 
     vkDestroyInstance(instance, NULL);
+    debug("Instance destroyed");
 }

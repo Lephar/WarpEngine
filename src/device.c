@@ -1,5 +1,6 @@
 #include "device.h"
 #include "queue.h"
+#include "helper.h"
 
 extern VkInstance instance;
 
@@ -49,6 +50,8 @@ void selectPhysicalDevice() {
     queueFamilyProperties = malloc(queueFamilyCount * sizeof(VkQueueFamilyProperties));
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilyProperties);
 
+    debug("Device selected: %s", physicalDeviceProperties.deviceName);
+
     free(devices);
 }
 
@@ -59,6 +62,11 @@ void createDevice() {
     };
 
     uint32_t extensionCount = sizeof(extensionNames) / sizeof(const char *);
+
+    debug("Device extensions (count = %d)", extensionCount);
+    for(uint32_t index = 0; index < extensionCount; index++) {
+        debug("\t%s", extensionNames[index]);
+    }
 
     VkPhysicalDeviceFeatures deviceFeatures = {
     };
@@ -78,6 +86,10 @@ void createDevice() {
     graphicsQueue.queueFamilyIndex = chooseQueueFamily(VK_QUEUE_GRAPHICS_BIT);
     computeQueue .queueFamilyIndex = chooseQueueFamily(VK_QUEUE_COMPUTE_BIT );
     transferQueue.queueFamilyIndex = chooseQueueFamily(VK_QUEUE_TRANSFER_BIT);
+
+    debug("Graphics queue family index: %d", graphicsQueue.queueFamilyIndex);
+    debug("Compute  queue family index: %d", computeQueue .queueFamilyIndex);
+    debug("Transfer queue family index: %d", transferQueue.queueFamilyIndex);
 
     Queue *queues[] = {
         &graphicsQueue,
@@ -112,6 +124,16 @@ void createDevice() {
         }
     }
 
+    debug("Graphics queue index: %d", graphicsQueue.queueIndex);
+    debug("Compute  queue index: %d", computeQueue .queueIndex);
+    debug("Transfer queue index: %d", transferQueue.queueIndex);
+
+    debug("Graphics queue info index: %d", graphicsQueue.queueInfoIndex);
+    debug("Compute  queue info index: %d", computeQueue .queueInfoIndex);
+    debug("Transfer queue info index: %d", transferQueue.queueInfoIndex);
+
+    debug("Distinct queue family count: %d", distinctQueueFamilyCount);
+
     VkDeviceQueueCreateInfo *queueInfos = malloc(distinctQueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
     
     for(uint32_t queueInfoIndex = 0; queueInfoIndex < distinctQueueFamilyCount; queueInfoIndex++) {
@@ -141,10 +163,12 @@ void createDevice() {
     };
 
     vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
+    debug("Device created");
 
     free(queueInfos);
 }
 
 void destroyDevice() {
     vkDestroyDevice(device, NULL);
+    debug("Device destroyed");
 }

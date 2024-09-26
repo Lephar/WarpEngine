@@ -1,4 +1,5 @@
 #include "window.h"
+#include "helper.h"
 
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
@@ -25,6 +26,7 @@ void initialize() {
     getInstanceProcAddr = SDL_Vulkan_GetVkGetInstanceProcAddr();
 
     systemInitialized = SDL_TRUE;
+    debug("System initialized");
 }
 
 void createWindow(const char *name, int32_t width, int32_t height) {
@@ -41,6 +43,7 @@ void createWindow(const char *name, int32_t width, int32_t height) {
     SDL_Vulkan_GetInstanceExtensions(window, &instanceExtensionCount, instanceExtensionNames);
     
     windowCreated = SDL_TRUE;
+    debug("Window created");
 }
 
 void createSurface() {
@@ -49,12 +52,14 @@ void createSurface() {
     SDL_Vulkan_CreateSurface(window, instance, &surface);
 
     surfaceCreated = SDL_TRUE;
+    debug("Surface created");
 }
 
 void draw(void (*render)()) {
     assert(surfaceCreated && !drawing);
     
     drawing = SDL_TRUE;
+    debug("Draw loop started");
 
     SDL_Event event;
 
@@ -74,6 +79,8 @@ void draw(void (*render)()) {
             render();
         }
     }
+    
+    debug("Draw loop ended");
 }
 
 void destroySurface() {
@@ -82,6 +89,7 @@ void destroySurface() {
     vkDestroySurfaceKHR(instance, surface, NULL);
 
     surfaceCreated = SDL_FALSE;
+    debug("Surface destroyed");
 }
 
 void destroyWindow() {
@@ -97,6 +105,7 @@ void destroyWindow() {
     extent.width = 0;
 
     windowCreated = SDL_FALSE;
+    debug("Window destroyed");
 }
 
 void quit() {
@@ -107,4 +116,5 @@ void quit() {
     SDL_Quit();
 
     systemInitialized = SDL_FALSE;
+    debug("System quitted");
 }

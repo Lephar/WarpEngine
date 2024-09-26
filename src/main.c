@@ -4,7 +4,7 @@
 #include "device.h"
 
 int main(int argc, char *argv[]) {
-    (void) argc;
+    (void)argc;
 
     initialize();
     createWindow(argv[0], 800, 600);
@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     selectPhysicalDevice();
     createDevice();
 
-    //draw(NULL);
+    draw(NULL);
 
     destroyDevice();
     destroySurface();
