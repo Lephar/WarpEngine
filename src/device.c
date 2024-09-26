@@ -170,5 +170,6 @@ void createDevice() {
 
 void destroyDevice() {
     vkDestroyDevice(device, NULL);
+    free(queueFamilyProperties);
     debug("Device destroyed");
 }
