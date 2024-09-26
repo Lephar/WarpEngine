@@ -31,7 +31,7 @@ uint32_t chooseQueueFamily(VkQueueFlags requiredFlags) {
     return mostSuitedIndex;
 }
 
-uint32_t retrieveQueues() {
+void retrieveQueues() {
     VkDeviceQueueInfo2 graphicsQueueInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2,
         .pNext = NULL,
