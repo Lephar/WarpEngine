@@ -3,9 +3,10 @@
 #include "zero.h"
 
 struct queue {
-    uint32_t queueInfoIndex;
+    VkQueueFlags requiredFlags;
     uint32_t queueFamilyIndex;
     uint32_t queueIndex;
+    uint32_t queueInfoIndex;
     VkQueue queue;
     VkCommandPool commandPool;
     VkCommandBuffer commandBuffer;
@@ -13,3 +14,4 @@ struct queue {
 
 void generateQueueDetails();
 void retrieveQueues();
+void createCommandStructures();

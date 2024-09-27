@@ -20,7 +20,7 @@ extern Queue graphicsQueue;
 extern Queue computeQueue;
 extern Queue transferQueue;
 
-extern Queue *queues[];
+extern Queue *queueReferences[];
 
 extern uint32_t queueCount;
 extern uint32_t distinctQueueFamilyCount;
@@ -97,8 +97,8 @@ void createDevice() {
     }
 
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
-        queueInfos[queues[queueIndex]->queueInfoIndex].queueFamilyIndex = queues[queueIndex]->queueFamilyIndex;
-        queueInfos[queues[queueIndex]->queueInfoIndex].queueCount++;
+        queueInfos[queueReferences[queueIndex]->queueInfoIndex].queueFamilyIndex = queueReferences[queueIndex]->queueFamilyIndex;
+        queueInfos[queueReferences[queueIndex]->queueInfoIndex].queueCount++;
     }
 
     VkDeviceCreateInfo deviceInfo = {
