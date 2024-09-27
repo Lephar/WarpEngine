@@ -1,9 +1,9 @@
 #pragma once
 
 #ifndef NDEBUG
-#define DEBUG 1u
+#define DEBUG 1
 #else
-#define DEBUG 0u
+#define DEBUG 0
 #endif // NDEBUG
 
 #include <SDL2/SDL.h>
