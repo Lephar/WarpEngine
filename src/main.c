@@ -3,6 +3,7 @@
 #include "surface.h"
 #include "device.h"
 #include "queue.h"
+#include "memory.h"
 
 int main(int argc, char *argv[]) {
     (void)argc;
@@ -15,6 +16,7 @@ int main(int argc, char *argv[]) {
     generateQueueDetails();
     createDevice();
     retrieveQueues();
+    allocateMemories();
 
     draw(NULL);
 
