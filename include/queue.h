@@ -15,3 +15,4 @@ struct queue {
 void generateQueueDetails();
 void retrieveQueues();
 void createCommandStructures();
+void destroyCommandStructures();

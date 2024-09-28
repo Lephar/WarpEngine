@@ -97,5 +97,20 @@ void retrieveQueues() {
 }
 
 void createCommandStructures() {
+    for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
+        VkCommandPoolCreateInfo commandPoolInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+            .pNext = NULL,
+            .flags = 0,
+            .queueFamilyIndex = queueReferences[queueIndex]->queueFamilyIndex
+        };
 
+        vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReferences[queueIndex]->commandPool);
+    }
+}
+
+void destroyCommandStructures() {
+    for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
+        vkDestroyCommandPool(device, queueReferences[queueIndex]->commandPool, NULL);
+    }
 }
