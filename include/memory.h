@@ -9,5 +9,6 @@ struct memory {
     VkDeviceSize offset;
 } typedef Memory;
 
+void generateMemoryDetails();
 void allocateMemories();
 void freeMemories();
