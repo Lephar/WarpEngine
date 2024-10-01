@@ -106,11 +106,13 @@ void createCommandStructures() {
         };
 
         vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReferences[queueIndex]->commandPool);
+        debug("Command pool %d created", queueIndex);
     }
 }
 
 void destroyCommandStructures() {
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         vkDestroyCommandPool(device, queueReferences[queueIndex]->commandPool, NULL);
+        debug("Command pool %d destroy", queueIndex);
     }
 }
