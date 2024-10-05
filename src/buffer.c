@@ -3,24 +3,29 @@
 
 extern VkDevice device;
 
-void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer *buffer, VkDeviceMemory *bufferMemory)
+Buffer createBuffer(VkDeviceSize size, VkBufferUsageFlags usage)
 {
-	VkBufferCreateInfo bufferInfo = {};
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	bufferInfo.usage = usage;
-	bufferInfo.size = size;
+	Buffer buffer = {
+		.bufferCreated = VK_TRUE,
+		.size = size,
+		.buffer = {},
+		.memoryBound = VK_FALSE,
+		.memoryOffset = 0,
+		.memory = NULL
+	};
+	
+	VkBufferCreateInfo bufferInfo = {
+		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		.pNext = NULL,
+		.flags = 0,
+		.size = size,
+		.usage = usage,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.queueFamilyIndexCount = 0,
+		.pQueueFamilyIndices = NULL
+	};
+	
+	vkCreateBuffer(device, &bufferInfo, NULL, &buffer.buffer);
 
-	vkCreateBuffer(device, &bufferInfo, NULL, buffer);
-
-	VkMemoryRequirements memoryRequirements;
-	vkGetBufferMemoryRequirements(device, *buffer, &memoryRequirements);
-
-	VkMemoryAllocateInfo allocateInfo = {};
-	allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocateInfo.allocationSize = memoryRequirements.size;
-	allocateInfo.memoryTypeIndex = chooseMemoryType(memoryRequirements.memoryTypeBits, properties);
-
-	vkAllocateMemory(device, &allocateInfo, NULL, bufferMemory);
-	vkBindBufferMemory(device, *buffer, *bufferMemory, 0);
+	return buffer;
 }
