@@ -29,3 +29,12 @@ Buffer createBuffer(VkDeviceSize size, VkBufferUsageFlags usage)
 
 	return buffer;
 }
+
+void bindBufferMemory(Buffer *buffer, Memory *memory) {
+	buffer->memory = memory;
+	buffer->memoryOffset = memory->offset;
+	buffer->memoryBound = VK_TRUE;
+	memory->offset += buffer->size;
+
+	vkBindBufferMemory(device, buffer->buffer, memory->memory, buffer->memoryOffset);
+}
