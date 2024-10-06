@@ -12,6 +12,14 @@ Memory *memoryReferences[] = {
     &deviceMemory
 };
 
+VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
+	VkDeviceSize bindOffset = (memory->offset + memoryRequirements.alignment - 1) / memoryRequirements.alignment * memoryRequirements.alignment;
+
+	memory->offset = bindOffset + memoryRequirements.size;
+
+	return bindOffset;
+}
+
 uint32_t chooseMemoryType(uint32_t filter, VkMemoryPropertyFlags flags)
 {
 	for(uint32_t index = 0; index < memoryProperties.memoryTypeCount; index++)

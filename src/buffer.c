@@ -6,7 +6,7 @@ extern VkDevice device;
 Buffer createBuffer(VkDeviceSize size, VkBufferUsageFlags usage)
 {
 	Buffer buffer = {
-		.bufferCreated = VK_TRUE,
+		.bufferCreated = VK_FALSE,
 		.size = size,
 		.buffer = {},
 		.memoryRequirements = {},
@@ -29,14 +29,15 @@ Buffer createBuffer(VkDeviceSize size, VkBufferUsageFlags usage)
 	vkCreateBuffer(device, &bufferInfo, NULL, &buffer.buffer);
 	vkGetBufferMemoryRequirements(device, buffer.buffer, &buffer.memoryRequirements);
 
+	buffer.bufferCreated = VK_TRUE;
+
 	return buffer;
 }
 
 void bindBufferMemory(Buffer *buffer, Memory *memory) {
 	buffer->memory = memory;
-	buffer->memoryOffset = memory->offset;
-	buffer->memoryBound = VK_TRUE;
-	memory->offset += buffer->size;
+	buffer->memoryOffset = alignMemory(memory, buffer->memoryRequirements);
 
 	vkBindBufferMemory(device, buffer->buffer, memory->memory, buffer->memoryOffset);
+	buffer->memoryBound = VK_TRUE;
 }
