@@ -3,10 +3,11 @@
 #include "zero.h"
 
 struct memory {
-    uint32_t type;
-    VkDeviceMemory memory;
+    VkBool32 allocated;
+    uint32_t typeIndex;
     VkDeviceSize size;
     VkDeviceSize offset;
+    VkDeviceMemory memory;
 } typedef Memory;
 
 uint32_t chooseMemoryType(uint32_t filter, VkMemoryPropertyFlags flags);
