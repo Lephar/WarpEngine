@@ -69,6 +69,10 @@ void generateQueueDetails() {
         }
     }
 
+    for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
+        queueReferences[queueIndex]->queueFamilySelected = VK_TRUE;
+    }
+
     debug("Distinct queue family count: %d", distinctQueueFamilyCount);
 
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
@@ -90,6 +94,7 @@ void retrieveQueues() {
         queueInfos[queueIndex].queueIndex = queueReferences[queueIndex]->queueIndex;
 
         vkGetDeviceQueue2(device, &queueInfos[queueIndex], &queueReferences[queueIndex]->queue);
+        queueReferences[queueIndex]->queueRetrieved = VK_TRUE;
         debug("Device queue %d retrieved", queueIndex);
     }
 
@@ -106,6 +111,7 @@ void createCommandStructures() {
         };
 
         vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReferences[queueIndex]->commandPool);
+        queueReferences[queueIndex]->commandStructuresCreated = VK_TRUE;
         debug("Command pool %d created", queueIndex);
     }
 }
@@ -113,6 +119,7 @@ void createCommandStructures() {
 void destroyCommandStructures() {
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         vkDestroyCommandPool(device, queueReferences[queueIndex]->commandPool, NULL);
+        queueReferences[queueIndex]->commandStructuresCreated = VK_FALSE;
         debug("Command pool %d destroy", queueIndex);
     }
 }
