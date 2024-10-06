@@ -9,11 +9,12 @@ Buffer createBuffer(VkDeviceSize size, VkBufferUsageFlags usage)
 		.bufferCreated = VK_TRUE,
 		.size = size,
 		.buffer = {},
+		.memoryRequirements = {},
 		.memoryBound = VK_FALSE,
 		.memoryOffset = 0,
 		.memory = NULL
 	};
-	
+
 	VkBufferCreateInfo bufferInfo = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 		.pNext = NULL,
@@ -24,8 +25,9 @@ Buffer createBuffer(VkDeviceSize size, VkBufferUsageFlags usage)
 		.queueFamilyIndexCount = 0,
 		.pQueueFamilyIndices = NULL
 	};
-	
+
 	vkCreateBuffer(device, &bufferInfo, NULL, &buffer.buffer);
+	vkGetBufferMemoryRequirements(device, buffer.buffer, &buffer.memoryRequirements);
 
 	return buffer;
 }
