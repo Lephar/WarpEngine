@@ -4,6 +4,7 @@
 
 struct memory {
     VkBool32 allocated;
+    VkMemoryPropertyFlags requiredProperties;
     uint32_t typeIndex;
     VkDeviceSize size;
     VkDeviceSize offset;

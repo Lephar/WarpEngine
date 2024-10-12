@@ -37,7 +37,7 @@ void createImage(uint32_t imageWidth, uint32_t imageHeight, uint32_t levels, VkS
     VkMemoryAllocateInfo allocateInfo = {};
     allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocateInfo.allocationSize = memoryRequirements.size;
-    allocateInfo.memoryTypeIndex = chooseMemoryType(memoryRequirements.memoryTypeBits, properties);
+    //allocateInfo.memoryTypeIndex = chooseMemoryType(memoryRequirements.memoryTypeBits, properties);
 
     vkAllocateMemory(device, &allocateInfo, NULL, memory);
     vkBindImageMemory(device, *image, *memory, 0);

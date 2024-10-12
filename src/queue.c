@@ -6,9 +6,9 @@ extern VkDevice device;
 uint32_t queueFamilyCount;
 VkQueueFamilyProperties *queueFamilyProperties;
 
-Queue graphicsQueue = {.requiredFlags = VK_QUEUE_GRAPHICS_BIT};
-Queue  computeQueue = {.requiredFlags = VK_QUEUE_COMPUTE_BIT };
-Queue transferQueue = {.requiredFlags = VK_QUEUE_TRANSFER_BIT};
+Queue graphicsQueue;
+Queue  computeQueue;
+Queue transferQueue;
 
 Queue *queueReferences[] = {
     &graphicsQueue,
@@ -20,6 +20,10 @@ uint32_t queueCount;
 uint32_t distinctQueueFamilyCount;
 
 void generateQueueDetails() {
+    graphicsQueue.requiredFlags = VK_QUEUE_GRAPHICS_BIT;
+     computeQueue.requiredFlags = VK_QUEUE_COMPUTE_BIT ;
+    transferQueue.requiredFlags = VK_QUEUE_TRANSFER_BIT;
+
     queueCount = sizeof(queueReferences) / sizeof(Queue*);
     debug("Queue count: %d", queueCount);
 

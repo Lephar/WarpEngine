@@ -4,14 +4,14 @@ extern VkDevice device;
 
 VkPhysicalDeviceMemoryProperties memoryProperties;
 
-Memory imageMemory;
-Memory hostMemory;
+Memory  imageMemory;
 Memory deviceMemory;
+Memory   hostMemory;
 
 Memory *memoryReferences[] = {
-    &imageMemory,
-    &hostMemory,
-    &deviceMemory
+    & imageMemory,
+    &deviceMemory,
+    &  hostMemory
 };
 
 Memory allocateMemory(uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
@@ -52,7 +52,10 @@ VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements
 }
 
 void generateMemoryDetails() {
-
+     imageMemory.requiredProperties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT ;
+    deviceMemory.requiredProperties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT ;
+      hostMemory.requiredProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 }
 
 void allocateMemories() {
