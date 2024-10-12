@@ -66,7 +66,7 @@ void createDevice() {
 
     uint32_t extensionCount = sizeof(extensionNames) / sizeof(const char *);
 
-    debug("Device extensions (count = %d)", extensionCount);
+    debug("Device extensions (count = %d):", extensionCount);
     for(uint32_t index = 0; index < extensionCount; index++) {
         debug("\t%s", extensionNames[index]);
     }
