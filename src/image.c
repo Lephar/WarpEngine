@@ -3,10 +3,7 @@
 
 extern VkDevice device;
 
-void createImage(uint32_t imageWidth, uint32_t imageHeight, uint32_t levels, VkSampleCountFlagBits samples,
- VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
- VkImage *image, VkDeviceMemory *memory)
-{
+VkImage createImage(uint32_t imageWidth, uint32_t imageHeight, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage) {
     VkImageCreateInfo imageInfo = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .pNext = NULL,
@@ -29,16 +26,7 @@ void createImage(uint32_t imageWidth, uint32_t imageHeight, uint32_t levels, VkS
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
     };
 
-    vkCreateImage(device, &imageInfo, NULL, image);
-
-    VkMemoryRequirements memoryRequirements;
-    vkGetImageMemoryRequirements(device, *image, &memoryRequirements);
-
-    VkMemoryAllocateInfo allocateInfo = {};
-    allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocateInfo.allocationSize = memoryRequirements.size;
-    //allocateInfo.memoryTypeIndex = chooseMemoryType(memoryRequirements.memoryTypeBits, properties);
-
-    vkAllocateMemory(device, &allocateInfo, NULL, memory);
-    vkBindImageMemory(device, *image, *memory, 0);
+    VkImage image;
+    vkCreateImage(device, &imageInfo, NULL, &image);
+    return image;
 }
