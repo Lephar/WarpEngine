@@ -8,39 +8,27 @@ Memory  imageMemory;
 Memory deviceMemory;
 Memory   hostMemory;
 
-Memory *memoryReferences[] = {
-    & imageMemory,
-    &deviceMemory,
-    &  hostMemory
-};
-
-Memory allocateMemory(uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
-    Memory memory = {
-        .allocated = VK_FALSE,
-        .typeIndex = UINT32_MAX,
-        .size = size,
-        .offset = 0,
-        .memory = {}
-    };
+void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
+    memory->requiredProperties = requiredProperties;
+    memory->typeIndex = UINT32_MAX;
+    memory->size = size;
+    memory->offset = 0;
 
     for(uint32_t memoryIndex = 0; memoryIndex < memoryProperties.memoryTypeCount; memoryIndex++) {
         if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
-            memory.typeIndex = memoryIndex; // TODO: Implement an actual logic
+            memory->typeIndex = memoryIndex; // TODO: Implement an actual logic
             break;
         }
     }
 
-    assert(memory.typeIndex < memoryProperties.memoryTypeCount);
+    assert(memory->typeIndex < memoryProperties.memoryTypeCount);
 
     VkMemoryAllocateInfo memoryInfo = {
-        .allocationSize = memory.size,
-        .memoryTypeIndex = memory.typeIndex
+        .allocationSize = memory->size,
+        .memoryTypeIndex = memory->typeIndex
     };
 
-    vkAllocateMemory(device, &memoryInfo, NULL, &memory.memory);
-    memory.allocated = VK_TRUE;
-
-    return memory;
+    vkAllocateMemory(device, &memoryInfo, NULL, &memory->memory);
 }
 
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
