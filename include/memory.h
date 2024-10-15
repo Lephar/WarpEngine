@@ -14,4 +14,5 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements);
 void generateMemoryDetails();
 void allocateMemories();
+void freeMemory(Memory *memory);
 void freeMemories();

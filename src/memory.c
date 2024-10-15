@@ -50,6 +50,15 @@ void allocateMemories() {
 
 }
 
+void freeMemory(Memory *memory) {
+    vkFreeMemory(device, memory->memory, NULL);
+
+    memory->requiredProperties = 0;
+    memory->typeIndex = UINT32_MAX;
+    memory->size = 0;
+    memory->offset = 0;
+}
+
 void freeMemories() {
 
 }
