@@ -1,6 +1,11 @@
 #include "memory.h"
 
+#include "buffer.h"
+#include "image.h"
+
+extern VkExtent2D extent;
 extern VkDevice device;
+extern VkSurfaceFormatKHR surfaceFormat;
 
 VkPhysicalDeviceMemoryProperties memoryProperties;
 
@@ -16,14 +21,13 @@ VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements
     return bindOffset;
 }
 
-void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
+void allocateMemory(Memory *memory, VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags requiredProperties) {
     memory->requiredProperties = requiredProperties;
     memory->typeIndex = UINT32_MAX;
-    memory->size = size;
     memory->offset = 0;
 
     for(uint32_t memoryIndex = 0; memoryIndex < memoryProperties.memoryTypeCount; memoryIndex++) {
-        if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
+        if((memoryRequirements.memoryTypeBits & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
             memory->typeIndex = memoryIndex; // TODO: Implement an actual logic
             break;
         }
@@ -31,7 +35,12 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
 
     assert(memory->typeIndex < memoryProperties.memoryTypeCount);
 
+    // TODO: Size is arbitrary, implement real logic
+    memory->size = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size / 4;
+
     VkMemoryAllocateInfo memoryInfo = {
+        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .pNext = NULL,
         .allocationSize = memory->size,
         .memoryTypeIndex = memory->typeIndex
     };
@@ -40,10 +49,30 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
 }
 
 void allocateMemories() {
-     imageMemory.requiredProperties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT ;
-    deviceMemory.requiredProperties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT ;
-      hostMemory.requiredProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    Image image;
+    Buffer buffer;
+    VkDeviceSize size;
+    VkMemoryRequirements memoryRequirements;
+
+    createImage(&image, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, surfaceFormat.format,
+        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    vkGetImageMemoryRequirements(device, image.image, &memoryRequirements);
+    size = memoryRequirements.size;
+
+    allocateMemory(&imageMemory, memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    destroyImage(&image);
+
+    createBuffer(&buffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, size);
+    vkGetBufferMemoryRequirements(device, buffer.buffer, &memoryRequirements);
+
+    allocateMemory(&deviceMemory, memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    destroyBuffer(&buffer);
+
+    createBuffer(&buffer, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, size);
+    vkGetBufferMemoryRequirements(device, buffer.buffer, &memoryRequirements);
+
+    allocateMemory(&hostMemory, memoryRequirements, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    destroyBuffer(&buffer);
 }
 
 void freeMemory(Memory *memory) {
@@ -56,5 +85,7 @@ void freeMemory(Memory *memory) {
 }
 
 void freeMemories() {
-
+    freeMemory(&  hostMemory);
+    freeMemory(&deviceMemory);
+    freeMemory(& imageMemory);
 }
