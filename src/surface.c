@@ -48,6 +48,12 @@ void generateSurfaceDetails() {
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
 
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities);
+
+    // TODO: Add actual selection logic
+    surfaceFormat = surfaceFormats[0];
+    presentMode = presentModes[0];
+    extent = surfaceCapabilities.currentExtent;
+    imageCount = surfaceCapabilities.minImageCount + 1;
 }
 
 void destroySurface() {

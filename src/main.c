@@ -17,10 +17,12 @@ int main(int argc, char *argv[]) {
     createDevice();
     retrieveQueues();
     createCommandStructures();
+    generateSurfaceDetails();
     allocateMemories();
 
     draw(NULL);
 
+    freeMemories();
     destroyCommandStructures();
     destroyDevice();
     destroySurface();
