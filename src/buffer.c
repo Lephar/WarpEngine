@@ -41,7 +41,5 @@ void bindBufferMemory(Buffer *buffer, Memory *memory) {
 void destroyBuffer(Buffer *buffer) {
     vkDestroyBuffer(device, buffer->buffer, NULL);
 
-    buffer->usage = 0;
-    buffer->size = 0;
-    buffer->memoryOffset = 0;
+    buffer->memory = NULL;
 }
