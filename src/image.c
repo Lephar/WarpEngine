@@ -36,17 +36,10 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
 
 void bindImageMemory(Image *image, Memory *memory) {
     image->memory = memory;
+
     image->memoryOffset = alignMemory(memory, image->memoryRequirements);
 
-    VkBindImageMemoryInfo bindInfo = {
-        .sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO,
-        .pNext = NULL,
-        .image = image->image,
-        .memory = memory->memory,
-        .memoryOffset = image->memoryOffset
-    };
-
-    vkBindImageMemory2(device, 1, &bindInfo);
+    vkBindImageMemory(device, image->image, memory->memory, image->memoryOffset);
 }
 
 void destroyImage(Image *image) {
