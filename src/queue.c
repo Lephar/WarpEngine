@@ -44,7 +44,10 @@ void generateQueueDetails() {
             }
         }
 
+        queueReferences[queueIndex]->queueInfoIndex = 0;
+        queueReferences[queueIndex]->queueIndex = 0;
         queueReferences[queueIndex]->queueFamilyIndex = mostSuitedIndex;
+
         assert(queueReferences[queueIndex]->queueFamilyIndex < queueFamilyCount);
     }
 
