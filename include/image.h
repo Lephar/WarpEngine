@@ -5,8 +5,10 @@
 typedef struct memory Memory;
 
 struct image {
-    VkDeviceSize offset;
+    VkImageUsageFlags usage;
     VkDeviceSize size;
     VkImage image;
+    VkMemoryRequirements memoryRequirements;
+    VkDeviceSize offset;
     Memory *memory;
 } typedef Image;
