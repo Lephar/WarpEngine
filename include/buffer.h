@@ -5,11 +5,14 @@
 typedef struct memory Memory;
 
 struct buffer {
-    VkBool32 bufferCreated;
+    VkBufferUsageFlags usage;
     VkDeviceSize size;
     VkBuffer buffer;
     VkMemoryRequirements memoryRequirements;
-    VkBool32 memoryBound;
     VkDeviceSize memoryOffset;
     Memory *memory;
 } typedef Buffer;
+
+void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size);
+void bindBufferMemory(Buffer *buffer, Memory *memory);
+void destroyBuffer(Buffer *buffer);
