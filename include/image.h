@@ -5,10 +5,17 @@
 typedef struct memory Memory;
 
 struct image {
+    VkExtent3D size;
+    uint32_t levels;
+    VkSampleCountFlagBits samples;
+    VkFormat format;
     VkImageUsageFlags usage;
-    VkDeviceSize size;
     VkImage image;
     VkMemoryRequirements memoryRequirements;
-    VkDeviceSize offset;
+    VkDeviceSize memoryOffset;
     Memory *memory;
 } typedef Image;
+
+void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage);
+void bindBufferMemory(Image *image, Memory *memory);
+void destroyBuffer(Image *image);
