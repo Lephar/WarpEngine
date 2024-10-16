@@ -24,3 +24,7 @@ uint32_t popcount(uint32_t value) {
 
     return count;
 }
+
+uint32_t byte_to_binary(uint8_t value) {
+    return (value == 0 || value == 1 ? value : ((value % 2) + 10 * byte_to_binary(value / 2)));
+}
