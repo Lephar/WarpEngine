@@ -25,17 +25,10 @@ void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size)
 
 void bindBufferMemory(Buffer *buffer, Memory *memory) {
     buffer->memory = memory;
+
     buffer->memoryOffset = alignMemory(memory, buffer->memoryRequirements);
 
-    VkBindBufferMemoryInfo bindInfo = {
-        .sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO,
-        .pNext = NULL,
-        .buffer = buffer->buffer,
-        .memory = memory->memory,
-        .memoryOffset = buffer->memoryOffset
-    };
-
-    vkBindBufferMemory2(device, 1, &bindInfo);
+    vkBindBufferMemory(device, buffer->buffer, memory->memory, buffer->memoryOffset);
 }
 
 void destroyBuffer(Buffer *buffer) {
