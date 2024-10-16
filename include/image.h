@@ -17,5 +17,5 @@ struct image {
 } typedef Image;
 
 void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage);
-void bindBufferMemory(Image *image, Memory *memory);
-void destroyBuffer(Image *image);
+void bindImageMemory(Image *image, Memory *memory);
+void destroyImage(Image *image);

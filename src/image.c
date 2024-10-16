@@ -34,7 +34,7 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
     vkGetImageMemoryRequirements(device, image->image, &image->memoryRequirements);
 }
 
-void bindBufferMemory(Image *image, Memory *memory) {
+void bindImageMemory(Image *image, Memory *memory) {
     image->memory = memory;
     image->memoryOffset = alignMemory(memory, image->memoryRequirements);
 
@@ -49,7 +49,7 @@ void bindBufferMemory(Image *image, Memory *memory) {
     vkBindImageMemory2(device, 1, &bindInfo);
 }
 
-void destroyBuffer(Image *image) {
+void destroyImage(Image *image) {
     vkDestroyImage(device, image->image, NULL);
 
     image->memory = NULL;
