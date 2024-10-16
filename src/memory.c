@@ -1,5 +1,6 @@
 #include "memory.h"
 
+#include "helper.h"
 #include "buffer.h"
 #include "image.h"
 
@@ -62,17 +63,29 @@ void allocateMemories() {
     allocateMemory(&imageMemory, memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     destroyImage(&image);
 
+    debug("Image memory allocated: %ld bytes", imageMemory.size);
+    debug("\tSuitable type indices:\t%08u", byte_to_binary(memoryRequirements.memoryTypeBits));
+    debug("\tSelected type index:\t%u", imageMemory.typeIndex);
+
     createBuffer(&buffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, size);
     vkGetBufferMemoryRequirements(device, buffer.buffer, &memoryRequirements);
 
     allocateMemory(&deviceMemory, memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     destroyBuffer(&buffer);
 
+    debug("Device memory allocated: %ld bytes", deviceMemory.size);
+    debug("\tSuitable type indices:\t%08u", byte_to_binary(memoryRequirements.memoryTypeBits));
+    debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
+
     createBuffer(&buffer, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, size);
     vkGetBufferMemoryRequirements(device, buffer.buffer, &memoryRequirements);
 
     allocateMemory(&hostMemory, memoryRequirements, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     destroyBuffer(&buffer);
+
+    debug("Host memory allocated: %ld bytes", hostMemory.size);
+    debug("\tSuitable type indices:\t%08u", byte_to_binary(memoryRequirements.memoryTypeBits));
+    debug("\tSelected type index:\t%u", hostMemory.typeIndex);
 }
 
 void freeMemory(Memory *memory) {
@@ -86,6 +99,11 @@ void freeMemory(Memory *memory) {
 
 void freeMemories() {
     freeMemory(&  hostMemory);
+    debug("Host memory freed");
+
     freeMemory(&deviceMemory);
+    debug("Device memory freed");
+
     freeMemory(& imageMemory);
+    debug("Image memory freed");
 }
