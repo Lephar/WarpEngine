@@ -79,28 +79,18 @@ void generateQueueDetails() {
     debug("Distinct queue family count: %d", distinctQueueFamilyCount);
 
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
-        debug(  "Queue %d:", queueIndex);
-        debug(  "\tQueue Family Index: %d", queueReferences[queueIndex]->queueFamilyIndex);
-        debug(  "\tQueue Index:        %d", queueReferences[queueIndex]->queueIndex);
-        debug(  "\tQueue Info Index:   %d", queueReferences[queueIndex]->queueInfoIndex);
+        debug("Queue %d:", queueIndex);
+        debug("\tQueue Family Index: %d", queueReferences[queueIndex]->queueFamilyIndex);
+        debug("\tQueue Index:        %d", queueReferences[queueIndex]->queueIndex);
+        debug("\tQueue Info Index:   %d", queueReferences[queueIndex]->queueInfoIndex);
     }
 }
 
 void retrieveQueues() {
-    VkDeviceQueueInfo2 *queueInfos = malloc(queueCount * sizeof(VkDeviceQueueInfo2));
-
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
-        queueInfos[queueIndex].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
-        queueInfos[queueIndex].pNext = NULL;
-        queueInfos[queueIndex].flags = 0;
-        queueInfos[queueIndex].queueFamilyIndex = queueReferences[queueIndex]->queueFamilyIndex;
-        queueInfos[queueIndex].queueIndex = queueReferences[queueIndex]->queueIndex;
-
-        vkGetDeviceQueue2(device, &queueInfos[queueIndex], &queueReferences[queueIndex]->queue);
+        vkGetDeviceQueue(device, queueReferences[queueIndex]->queueFamilyIndex, queueReferences[queueIndex]->queueIndex, &queueReferences[queueIndex]->queue);
         debug("Device queue %d retrieved", queueIndex);
     }
-
-    free(queueInfos);
 }
 
 void createCommandStructures() {
