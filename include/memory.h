@@ -10,9 +10,8 @@ struct memory {
     VkDeviceMemory memory;
 } typedef Memory;
 
-void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size);
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements);
-void generateMemoryDetails();
+void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size);
 void allocateMemories();
 void freeMemory(Memory *memory);
 void freeMemories();

@@ -8,6 +8,14 @@ Memory  imageMemory;
 Memory deviceMemory;
 Memory   hostMemory;
 
+VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
+    VkDeviceSize bindOffset = (memory->offset + memoryRequirements.alignment - 1) / memoryRequirements.alignment * memoryRequirements.alignment;
+
+    memory->offset = bindOffset + memoryRequirements.size;
+
+    return bindOffset;
+}
+
 void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
     memory->requiredProperties = requiredProperties;
     memory->typeIndex = UINT32_MAX;
@@ -31,23 +39,11 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags r
     vkAllocateMemory(device, &memoryInfo, NULL, &memory->memory);
 }
 
-VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
-    VkDeviceSize bindOffset = (memory->offset + memoryRequirements.alignment - 1) / memoryRequirements.alignment * memoryRequirements.alignment;
-
-    memory->offset = bindOffset + memoryRequirements.size;
-
-    return bindOffset;
-}
-
-void generateMemoryDetails() {
+void allocateMemories() {
      imageMemory.requiredProperties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT ;
     deviceMemory.requiredProperties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT ;
       hostMemory.requiredProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
                                       VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-}
-
-void allocateMemories() {
-
 }
 
 void freeMemory(Memory *memory) {
