@@ -4,9 +4,11 @@
 #include "buffer.h"
 #include "image.h"
 
+#include "swapchain.h"
+
 extern VkExtent2D extent;
 extern VkDevice device;
-extern VkSurfaceFormatKHR surfaceFormat;
+extern Swapchain swapchain;
 
 VkPhysicalDeviceMemoryProperties memoryProperties;
 
@@ -55,7 +57,7 @@ void allocateMemories() {
     VkDeviceSize size;
     VkMemoryRequirements memoryRequirements;
 
-    createImage(&image, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, surfaceFormat.format,
+    createImage(&image, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     vkGetImageMemoryRequirements(device, image.image, &memoryRequirements);
     size = memoryRequirements.size;
