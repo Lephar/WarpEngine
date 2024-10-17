@@ -21,10 +21,6 @@ uint32_t presentModeCount;
 VkPresentModeKHR *presentModes;
 VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
-uint32_t imageCount;
-VkSurfaceFormatKHR surfaceFormat;
-VkPresentModeKHR presentMode;
-
 void createSurface() {
     assert(windowCreated && !surfaceCreated);
 
@@ -32,10 +28,7 @@ void createSurface() {
 
     surfaceCreated = SDL_TRUE;
     debug("Surface created");
-}
 
-void generateSurfaceDetails() {
-    assert(surfaceCreated);
     vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, graphicsQueue.queueFamilyIndex, surface, &surfaceSupport);
     assert(surfaceSupport);
 
@@ -48,12 +41,12 @@ void generateSurfaceDetails() {
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
 
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities);
-
-    // TODO: Add actual selection logic
-    surfaceFormat = surfaceFormats[0];
-    presentMode = presentModes[0];
     extent = surfaceCapabilities.currentExtent;
-    imageCount = surfaceCapabilities.minImageCount + 1;
+
+    debug("Surface details set:");
+    debug("\tSurface extent: %d %d", extent.width, extent.height);
+    debug("\tSurface format count: %d", surfaceFormatCount);
+    debug("\tPresent mode count: %d", presentModeCount);
 }
 
 void destroySurface() {
