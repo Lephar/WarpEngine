@@ -122,6 +122,7 @@ void createDevice() {
 }
 
 void destroyDevice() {
+    vkDeviceWaitIdle(device);
     vkDestroyDevice(device, NULL);
     free(queueFamilyProperties);
     debug("Device destroyed");

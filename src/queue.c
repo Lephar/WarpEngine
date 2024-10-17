@@ -109,6 +109,7 @@ void createCommandStructures() {
 
 void destroyCommandStructures() {
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
+        vkQueueWaitIdle(queueReferences[queueIndex]->queue);
         vkDestroyCommandPool(device, queueReferences[queueIndex]->commandPool, NULL);
         debug("Command pool %d destroy", queueIndex);
     }
