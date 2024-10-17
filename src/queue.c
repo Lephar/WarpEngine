@@ -86,15 +86,11 @@ void generateQueueDetails() {
     }
 }
 
-void retrieveQueues() {
+void getQueues() {
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         vkGetDeviceQueue(device, queueReferences[queueIndex]->queueFamilyIndex, queueReferences[queueIndex]->queueIndex, &queueReferences[queueIndex]->queue);
         debug("Device queue %d retrieved", queueIndex);
-    }
-}
 
-void createCommandStructures() {
-    for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         VkCommandPoolCreateInfo commandPoolInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
             .pNext = NULL,
@@ -107,7 +103,7 @@ void createCommandStructures() {
     }
 }
 
-void destroyCommandStructures() {
+void clearQueues() {
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         vkQueueWaitIdle(queueReferences[queueIndex]->queue);
         vkDestroyCommandPool(device, queueReferences[queueIndex]->commandPool, NULL);
