@@ -1,8 +1,9 @@
 #include "window.h"
 #include "instance.h"
-#include "surface.h"
 #include "device.h"
 #include "queue.h"
+#include "surface.h"
+#include "swapchain.h"
 #include "memory.h"
 
 int main(int argc, char *argv[]) {
@@ -11,21 +12,21 @@ int main(int argc, char *argv[]) {
     initialize();
     createWindow(argv[0], 800, 600);
     createInstance();
-    createSurface();
     selectPhysicalDevice();
     generateQueueDetails();
     createDevice();
-    retrieveQueues();
-    createCommandStructures();
-    generateSurfaceDetails();
+    getQueues();
+    createSurface();
+    createSwapchain();
     allocateMemories();
 
     draw(NULL);
 
     freeMemories();
-    destroyCommandStructures();
-    destroyDevice();
+    destroySwapchain();
     destroySurface();
+    clearQueues();
+    destroyDevice();
     destroyInstance();
     destroyWindow();
     quit();
