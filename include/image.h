@@ -16,6 +16,6 @@ struct image {
     Memory *memory;
 } typedef Image;
 
-void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage);
+void createImage(Image *image, VkExtent2D extent, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage);
 void bindImageMemory(Image *image, Memory *memory);
 void destroyImage(Image *image);
