@@ -7,4 +7,4 @@ struct framebuffer {
     Image depthStencil;
     Image color;
     Image resolve;
-} typedef Frambuffer;
+} typedef Framebuffer;
