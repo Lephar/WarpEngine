@@ -39,7 +39,7 @@ void allocateMemory(Memory *memory, VkMemoryRequirements memoryRequirements, VkM
     assert(memory->typeIndex < memoryProperties.memoryTypeCount);
 
     // TODO: Size is arbitrary, implement real logic
-    memory->size = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size / 4;
+    memory->size = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size / 16;
 
     VkMemoryAllocateInfo memoryInfo = {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -57,7 +57,7 @@ void allocateMemories() {
     VkDeviceSize size;
     VkMemoryRequirements memoryRequirements;
 
-    createImage(&image, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format,
+    createImage(&image, extent, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     vkGetImageMemoryRequirements(device, image.image, &memoryRequirements);
     size = memoryRequirements.size;
