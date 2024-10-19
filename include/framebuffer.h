@@ -8,3 +8,6 @@ struct framebuffer {
     Image color;
     Image resolve;
 } typedef Framebuffer;
+
+void createFramebuffers();
+void destroyFramebuffers();

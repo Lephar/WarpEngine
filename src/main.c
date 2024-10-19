@@ -3,8 +3,9 @@
 #include "device.h"
 #include "queue.h"
 #include "surface.h"
-#include "swapchain.h"
 #include "memory.h"
+#include "swapchain.h"
+#include "framebuffer.h"
 
 int main(int argc, char *argv[]) {
     (void)argc;
@@ -19,9 +20,11 @@ int main(int argc, char *argv[]) {
     createSurface();
     createSwapchain();
     allocateMemories();
+    createFramebuffers();
 
     draw(NULL);
 
+    destroyFramebuffers();
     freeMemories();
     destroySwapchain();
     destroySurface();
