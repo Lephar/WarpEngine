@@ -14,5 +14,7 @@ struct buffer {
 } typedef Buffer;
 
 void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size);
+void createBuffers();
 void bindBufferMemory(Buffer *buffer, Memory *memory);
 void destroyBuffer(Buffer *buffer);
+void destroyBuffers();

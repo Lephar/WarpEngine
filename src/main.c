@@ -5,6 +5,7 @@
 #include "surface.h"
 #include "memory.h"
 #include "swapchain.h"
+#include "buffer.h"
 #include "framebuffer.h"
 
 int main(int argc, char *argv[]) {
@@ -18,15 +19,17 @@ int main(int argc, char *argv[]) {
     createDevice();
     getQueues();
     createSurface();
-    createSwapchain();
     allocateMemories();
+    createBuffers();
+    createSwapchain();
     createFramebufferSet();
 
     draw(NULL);
 
     destroyFramebufferSet();
-    freeMemories();
     destroySwapchain();
+    destroyBuffers();
+    freeMemories();
     destroySurface();
     clearQueues();
     destroyDevice();

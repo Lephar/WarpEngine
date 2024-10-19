@@ -3,6 +3,12 @@
 
 extern VkDevice device;
 
+extern Memory deviceMemory;
+extern Memory sharedMemory;
+
+Buffer deviceBuffer;
+Buffer sharedBuffer;
+
 void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size)
 {
     buffer->usage = usage;
@@ -31,8 +37,21 @@ void bindBufferMemory(Buffer *buffer, Memory *memory) {
     vkBindBufferMemory(device, buffer->buffer, memory->memory, buffer->memoryOffset);
 }
 
+void createBuffers() {
+    createBuffer(&deviceBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, deviceMemory.size / 2);
+    bindBufferMemory(&deviceBuffer, &deviceMemory);
+
+    createBuffer(&sharedBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, sharedMemory.size);
+    bindBufferMemory(&sharedBuffer, &sharedMemory);
+}
+
 void destroyBuffer(Buffer *buffer) {
     vkDestroyBuffer(device, buffer->buffer, NULL);
 
     buffer->memory = NULL;
+}
+
+void destroyBuffers() {
+    destroyBuffer(&sharedBuffer);
+    destroyBuffer(&deviceBuffer);
 }
