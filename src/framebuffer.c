@@ -1,9 +1,11 @@
 #include "framebuffer.h"
 
 #include "swapchain.h"
+#include "memory.h"
 
 extern VkExtent2D extent;
 extern Swapchain swapchain;
+extern Memory imageMemory;
 
 FramebufferSet framebufferSet;
 FramebufferSet oldFramebufferSet;
@@ -12,6 +14,14 @@ void createFramebuffer(Framebuffer *framebuffer) {
     createImage(&framebuffer->depthStencil, extent, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     createImage(&framebuffer->color, extent, 1, framebufferSet.sampleCount, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
     createImage(&framebuffer->resolve, extent, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.resolveFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+
+    bindImageMemory(&framebuffer->depthStencil, &imageMemory);
+    bindImageMemory(&framebuffer->color, &imageMemory);
+    bindImageMemory(&framebuffer->resolve, &imageMemory);
+
+    createImageView(&framebuffer->depthStencil, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
+    createImageView(&framebuffer->color, VK_IMAGE_ASPECT_COLOR_BIT);
+    createImageView(&framebuffer->resolve, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 void createFramebufferSet() {
@@ -31,6 +41,10 @@ void createFramebufferSet() {
 }
 
 void destroyFramebuffer(Framebuffer *framebuffer) {
+    destroyImageView(&framebuffer->resolve);
+    destroyImageView(&framebuffer->color);
+    destroyImageView(&framebuffer->depthStencil);
+
     destroyImage(&framebuffer->resolve);
     destroyImage(&framebuffer->color);
     destroyImage(&framebuffer->depthStencil);
