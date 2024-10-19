@@ -3,9 +3,9 @@
 
 extern VkDevice device;
 
-void createImage(Image *image, VkExtent2D extent, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
-    image->size.width = extent.width;
-    image->size.height = extent.height;
+void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
+    image->size.width = width;
+    image->size.height = height;
     image->size.depth = 1;
     image->levels = levels;
     image->samples = samples;
