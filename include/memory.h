@@ -11,7 +11,7 @@ struct memory {
 } typedef Memory;
 
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements);
-void allocateMemory(Memory *memory, VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags requiredProperties);
+void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size);
 void allocateMemories();
 void freeMemory(Memory *memory);
 void freeMemories();

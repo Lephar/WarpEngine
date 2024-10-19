@@ -4,17 +4,12 @@
 #include "buffer.h"
 #include "image.h"
 
-#include "swapchain.h"
-
-extern VkExtent2D extent;
 extern VkDevice device;
-extern Swapchain swapchain;
 
 VkPhysicalDeviceMemoryProperties memoryProperties;
 
-Memory  imageMemory;
 Memory deviceMemory;
-Memory   hostMemory;
+Memory sharedMemory;
 
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
     VkDeviceSize bindOffset = (memory->offset + memoryRequirements.alignment - 1) / memoryRequirements.alignment * memoryRequirements.alignment;
@@ -24,22 +19,21 @@ VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements
     return bindOffset;
 }
 
-void allocateMemory(Memory *memory, VkMemoryRequirements memoryRequirements, VkMemoryPropertyFlags requiredProperties) {
+void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
     memory->requiredProperties = requiredProperties;
     memory->typeIndex = UINT32_MAX;
     memory->offset = 0;
+    memory->size = size;
 
     for(uint32_t memoryIndex = 0; memoryIndex < memoryProperties.memoryTypeCount; memoryIndex++) {
-        if((memoryRequirements.memoryTypeBits & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
+        if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
             memory->typeIndex = memoryIndex; // TODO: Implement an actual logic
             break;
         }
     }
 
     assert(memory->typeIndex < memoryProperties.memoryTypeCount);
-
-    // TODO: Size is arbitrary, implement real logic
-    memory->size = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size / 16;
+    assert(memory->size < memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size); // TODO: Take used memory into account
 
     VkMemoryAllocateInfo memoryInfo = {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -52,42 +46,47 @@ void allocateMemory(Memory *memory, VkMemoryRequirements memoryRequirements, VkM
 }
 
 void allocateMemories() {
-    Image image;
-    Buffer buffer;
-    VkDeviceSize size;
-    VkMemoryRequirements memoryRequirements;
+    Image temporaryImage;
+    VkMemoryRequirements imageMemoryRequirements;
 
-    createImage(&image, extent, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format,
+    Buffer temporaryBuffer;
+    VkMemoryRequirements bufferMemoryRequirements;
+
+    uint32_t typeFilter;
+
+    createImage(&temporaryImage, 800, 600, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
-    vkGetImageMemoryRequirements(device, image.image, &memoryRequirements);
-    size = memoryRequirements.size;
+    vkGetImageMemoryRequirements(device, temporaryImage.image, &imageMemoryRequirements);
 
-    allocateMemory(&imageMemory, memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    destroyImage(&image);
+    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 1L << 20);
+    vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
-    debug("Image memory allocated: %ld bytes", imageMemory.size);
-    debug("\tSuitable type indices:\t%08u", byte_to_binary(memoryRequirements.memoryTypeBits));
-    debug("\tSelected type index:\t%u", imageMemory.typeIndex);
+    typeFilter = imageMemoryRequirements.memoryTypeBits & bufferMemoryRequirements.memoryTypeBits;
 
-    createBuffer(&buffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, size);
-    vkGetBufferMemoryRequirements(device, buffer.buffer, &memoryRequirements);
+    debug("Image type filter:\t%08u", byte_to_binary(imageMemoryRequirements.memoryTypeBits));
+    debug("Buffer type filter:\t%08u", byte_to_binary(bufferMemoryRequirements.memoryTypeBits));
+    debug("Combined type filter:\t%08u", byte_to_binary(typeFilter));
 
-    allocateMemory(&deviceMemory, memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    destroyBuffer(&buffer);
+    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 2L << 30);
+    destroyBuffer(&temporaryBuffer);
+    destroyImage(&temporaryImage);
 
-    debug("Device memory allocated: %ld bytes", deviceMemory.size);
-    debug("\tSuitable type indices:\t%08u", byte_to_binary(memoryRequirements.memoryTypeBits));
+    debug("Device local memory allocated: %ld bytes", deviceMemory.size);
+    debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
     debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
 
-    createBuffer(&buffer, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, size);
-    vkGetBufferMemoryRequirements(device, buffer.buffer, &memoryRequirements);
+    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 1L << 20);
+    vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
-    allocateMemory(&hostMemory, memoryRequirements, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    destroyBuffer(&buffer);
+    typeFilter = bufferMemoryRequirements.memoryTypeBits;
 
-    debug("Host memory allocated: %ld bytes", hostMemory.size);
-    debug("\tSuitable type indices:\t%08u", byte_to_binary(memoryRequirements.memoryTypeBits));
-    debug("\tSelected type index:\t%u", hostMemory.typeIndex);
+    allocateMemory(&sharedMemory, typeFilter,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 1L << 30);
+    destroyBuffer(&temporaryBuffer);
+
+    debug("Host visible memory allocated: %ld bytes", sharedMemory.size);
+    debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
+    debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
 }
 
 void freeMemory(Memory *memory) {
@@ -100,12 +99,9 @@ void freeMemory(Memory *memory) {
 }
 
 void freeMemories() {
-    freeMemory(&  hostMemory);
-    debug("Host memory freed");
+    freeMemory(&sharedMemory);
+    debug("Host visible memory freed");
 
     freeMemory(&deviceMemory);
-    debug("Device memory freed");
-
-    freeMemory(& imageMemory);
-    debug("Image memory freed");
+    debug("Device local memory freed");
 }
