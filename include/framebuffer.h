@@ -9,5 +9,17 @@ struct framebuffer {
     Image resolve;
 } typedef Framebuffer;
 
-void createFramebuffers();
-void destroyFramebuffers();
+struct framebufferSet {
+    uint32_t framebufferImageCount;
+
+    VkSampleCountFlags sampleCount;
+
+    VkFormat depthStencilFormat;
+    VkFormat colorFormat;
+    VkFormat resolveFormat;
+
+    Framebuffer *framebuffers;
+} typedef FramebufferSet;
+
+void createFramebufferSet();
+void destroyFramebufferSet();

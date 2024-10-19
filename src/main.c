@@ -20,11 +20,11 @@ int main(int argc, char *argv[]) {
     createSurface();
     createSwapchain();
     allocateMemories();
-    createFramebuffers();
+    createFramebufferSet();
 
     draw(NULL);
 
-    destroyFramebuffers();
+    destroyFramebufferSet();
     freeMemories();
     destroySwapchain();
     destroySurface();
