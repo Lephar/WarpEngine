@@ -28,9 +28,9 @@ void createFramebuffer(Framebuffer *framebuffer) {
 void createFramebufferSet() {
     framebufferSet.framebufferImageCount = 3;
 
-    framebufferSet.sampleCount = VK_SAMPLE_COUNT_2_BIT;
+    framebufferSet.sampleCount = VK_SAMPLE_COUNT_4_BIT;
 
-    framebufferSet.depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT;
+    framebufferSet.depthStencilFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
     framebufferSet.colorFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
     framebufferSet.resolveFormat = swapchain.surfaceFormat.format;
 

@@ -62,6 +62,10 @@ void generateQueueDetails() {
                 queueReferences[queueIndex]->queueInfoIndex = queueReferences[comparisonIndex]->queueInfoIndex;
                 queueReferences[queueIndex]->queueIndex = queueReferences[comparisonIndex]->queueIndex + 1;
 
+                if(queueReferences[queueIndex]->queueIndex >= queueFamilyProperties[queueReferences[queueIndex]->queueFamilyIndex].queueCount) {
+                    queueReferences[queueIndex]->queueIndex = queueFamilyProperties[queueReferences[queueIndex]->queueFamilyIndex].queueCount - 1;
+                }
+
                 queueDistinct = VK_FALSE;
                 break;
             }

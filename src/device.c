@@ -74,12 +74,6 @@ void createDevice() {
     VkPhysicalDeviceFeatures deviceFeatures = {
     };
 
-    VkPhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
-        .pNext = NULL,
-        .dynamicRendering = VK_TRUE
-    };
-
     float *queuePriorities = malloc(queueCount * sizeof(float));
 
     for(uint32_t index = 0; index < queueCount; index++) {
@@ -97,9 +91,25 @@ void createDevice() {
     }
 
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
-        queueInfos[queueReferences[queueIndex]->queueInfoIndex].queueFamilyIndex = queueReferences[queueIndex]->queueFamilyIndex;
-        queueInfos[queueReferences[queueIndex]->queueInfoIndex].queueCount++;
+        VkDeviceQueueCreateInfo *queueInfo = &queueInfos[queueReferences[queueIndex]->queueInfoIndex];
+        queueInfo->queueFamilyIndex = queueReferences[queueIndex]->queueFamilyIndex;
+
+        if(queueInfo->queueCount < queueFamilyProperties[queueInfo->queueFamilyIndex].queueCount) {
+            queueInfo->queueCount++;
+        }
     }
+
+    VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
+        .pNext = NULL,
+        .shaderObject = VK_TRUE
+    };
+
+    VkPhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
+        .pNext = &shaderObjectFeatures,
+        .dynamicRendering = VK_TRUE
+    };
 
     VkDeviceCreateInfo deviceInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
