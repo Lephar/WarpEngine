@@ -42,6 +42,38 @@ void bindImageMemory(Image *image, Memory *memory) {
     vkBindImageMemory(device, image->image, memory->memory, image->memoryOffset);
 }
 
+void createImageView(Image *image, VkImageAspectFlags aspects) {
+    image->aspects = aspects;
+
+    VkImageViewCreateInfo imageViewInfo = {
+        .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .image = image->image,
+        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+        .format = image->format,
+        .components = {
+            .r = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+            .a = VK_COMPONENT_SWIZZLE_IDENTITY
+        },
+        .subresourceRange = {
+            .aspectMask = image->aspects,
+            .baseMipLevel = 0,
+            .levelCount = image->levels,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        }
+    };
+
+    vkCreateImageView(device, &imageViewInfo, NULL, &image->view);
+}
+
+void destroyImageView(Image *image) {
+    vkDestroyImageView(device, image->view, NULL);
+}
+
 void destroyImage(Image *image) {
     vkDestroyImage(device, image->image, NULL);
 
