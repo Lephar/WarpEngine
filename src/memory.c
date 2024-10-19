@@ -63,10 +63,6 @@ void allocateMemories() {
 
     typeFilter = imageMemoryRequirements.memoryTypeBits & bufferMemoryRequirements.memoryTypeBits;
 
-    debug("Image type filter:\t%08u", byte_to_binary(imageMemoryRequirements.memoryTypeBits));
-    debug("Buffer type filter:\t%08u", byte_to_binary(bufferMemoryRequirements.memoryTypeBits));
-    debug("Combined type filter:\t%08u", byte_to_binary(typeFilter));
-
     allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 2L << 30);
     destroyBuffer(&temporaryBuffer);
     destroyImage(&temporaryImage);

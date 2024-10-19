@@ -1,7 +1,8 @@
 #include "framebuffer.h"
 
-#include "swapchain.h"
+#include "helper.h"
 #include "memory.h"
+#include "swapchain.h"
 
 extern VkExtent2D extent;
 extern Swapchain swapchain;
@@ -37,6 +38,7 @@ void createFramebufferSet() {
 
     for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.framebufferImageCount; framebufferIndex++) {
         createFramebuffer(&framebufferSet.framebuffers[framebufferIndex]);
+        debug("Framebuffer %d created", framebufferIndex);
     }
 }
 
@@ -53,5 +55,6 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
 void destroyFramebufferSet() {
     for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.framebufferImageCount; framebufferIndex++) {
         destroyFramebuffer(&framebufferSet.framebuffers[framebufferIndex]);
+        debug("Framebuffer %d destroyed", framebufferIndex);
     }
 }

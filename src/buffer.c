@@ -1,4 +1,6 @@
 #include "buffer.h"
+
+#include "helper.h"
 #include "memory.h"
 
 extern VkDevice device;
@@ -40,9 +42,11 @@ void bindBufferMemory(Buffer *buffer, Memory *memory) {
 void createBuffers() {
     createBuffer(&deviceBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, deviceMemory.size / 2);
     bindBufferMemory(&deviceBuffer, &deviceMemory);
+    debug("Device local buffer created: %ld bytes", deviceBuffer.size);
 
     createBuffer(&sharedBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, sharedMemory.size);
     bindBufferMemory(&sharedBuffer, &sharedMemory);
+    debug("Host visible buffer created: %ld bytes", sharedBuffer.size);
 }
 
 void destroyBuffer(Buffer *buffer) {
@@ -53,5 +57,8 @@ void destroyBuffer(Buffer *buffer) {
 
 void destroyBuffers() {
     destroyBuffer(&sharedBuffer);
+    debug("Host visible buffer destroyed");
+
     destroyBuffer(&deviceBuffer);
+    debug("Device local buffer destroyed");
 }
