@@ -17,13 +17,8 @@ Swapchain oldSwapchain;
 Swapchain swapchain;
 
 void createSwapchain() {
+    swapchain.imageCount = surfaceCapabilities.minImageCount;
     swapchain.transform = surfaceCapabilities.currentTransform;
-
-    swapchain.imageCount = surfaceCapabilities.minImageCount + 1;
-
-    if(surfaceCapabilities.maxImageCount != 0 && surfaceCapabilities.maxImageCount < swapchain.imageCount) {
-        swapchain.imageCount = surfaceCapabilities.maxImageCount;
-    }
 
     VkSurfaceFormatKHR preferredSurfaceFormats[] = {
         {

@@ -26,7 +26,7 @@ void createFramebuffer(Framebuffer *framebuffer) {
 }
 
 void createFramebufferSet() {
-    framebufferSet.framebufferImageCount = 3;
+    framebufferSet.framebufferImageCount = 2;
 
     framebufferSet.sampleCount = VK_SAMPLE_COUNT_4_BIT;
 
