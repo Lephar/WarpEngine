@@ -57,4 +57,6 @@ void destroyFramebufferSet() {
         destroyFramebuffer(&framebufferSet.framebuffers[framebufferIndex]);
         debug("Framebuffer %d destroyed", framebufferIndex);
     }
+
+    free(framebufferSet.framebuffers);
 }
