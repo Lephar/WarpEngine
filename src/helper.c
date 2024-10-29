@@ -40,8 +40,6 @@ void parseArguments(int argc, char *argv[]) {
         debug("\targv[%d]: %s", argn, argv[argn]);
     }
 
-    debug("PATH_MAX: %d", PATH_MAX);
-
     const char * separator = strrchr(argv[0], '/');
 
     if(separator == NULL) {
