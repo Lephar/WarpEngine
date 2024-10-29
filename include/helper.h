@@ -1,5 +1,9 @@
 #include "zero.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif //PATH_MAX
+
 #define debug(...) \
     do { \
         if (DEBUG) { \
