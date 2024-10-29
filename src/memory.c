@@ -67,7 +67,7 @@ void allocateMemories() {
     destroyBuffer(&temporaryBuffer);
     destroyImage(&temporaryImage);
 
-    debug("Device local memory allocated: %ld bytes", deviceMemory.size);
+    debug("Device local memory allocated:\t%ld bytes", deviceMemory.size);
     debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
     debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
 
@@ -80,7 +80,7 @@ void allocateMemories() {
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 1L << 30);
     destroyBuffer(&temporaryBuffer);
 
-    debug("Host visible memory allocated: %ld bytes", sharedMemory.size);
+    debug("Host visible memory allocated:\t%ld bytes", sharedMemory.size);
     debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
 }
