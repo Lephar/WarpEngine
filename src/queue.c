@@ -55,9 +55,8 @@ void generateQueueDetails() {
 
     for(uint32_t queueIndex = 1; queueIndex < queueCount; queueIndex++) {
         VkBool32 queueDistinct = VK_TRUE;
-        uint32_t comparisonIndex = queueIndex - 1;
 
-        while(1) {
+        for(int32_t comparisonIndex = queueIndex - 1; comparisonIndex >= 0; comparisonIndex--) {
             if(queueReferences[queueIndex]->queueFamilyIndex == queueReferences[comparisonIndex]->queueFamilyIndex) {
                 queueReferences[queueIndex]->queueInfoIndex = queueReferences[comparisonIndex]->queueInfoIndex;
                 queueReferences[queueIndex]->queueIndex = queueReferences[comparisonIndex]->queueIndex + 1;
@@ -67,10 +66,6 @@ void generateQueueDetails() {
                 }
 
                 queueDistinct = VK_FALSE;
-                break;
-            }
-
-            if(!comparisonIndex--) {
                 break;
             }
         }
