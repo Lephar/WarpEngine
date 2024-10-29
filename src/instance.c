@@ -3,7 +3,7 @@
 #include "helper.h"
 
 extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
-extern const char *title;
+extern char *name;
 extern uint32_t requiredInstanceExtensionCount;
 extern const char **requiredInstanceExtensionNames;
 
@@ -54,9 +54,9 @@ void createInstance() {
     VkApplicationInfo applicationInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pNext = NULL,
-        .pApplicationName = title,
+        .pApplicationName = name,
         .applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-        .pEngineName = title,
+        .pEngineName = name,
         .engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
         .apiVersion = VK_API_VERSION_1_3
     };

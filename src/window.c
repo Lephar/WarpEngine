@@ -1,13 +1,14 @@
 #include "window.h"
 #include "helper.h"
 
+extern char *name;
+
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
 extern SDL_bool surfaceCreated;
 SDL_bool drawing = SDL_FALSE;
 
 PFN_vkGetInstanceProcAddr getInstanceProcAddr;
-const char *title = NULL;
 SDL_Window *window = NULL;
 VkExtent2D extent = {};
 uint32_t requiredInstanceExtensionCount = 0;
@@ -16,7 +17,7 @@ const char **requiredInstanceExtensionNames = NULL;
 extern VkInstance instance;
 extern VkSurfaceKHR surface;
 
-void initialize() {
+void initializeSystem() {
     assert(!systemInitialized);
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -29,12 +30,10 @@ void initialize() {
     debug("System initialized");
 }
 
-void createWindow(const char *name, int32_t width, int32_t height) {
+void createWindow() {
     assert(systemInitialized && !windowCreated);
 
-    title = name;
-
-    window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_VULKAN);
+    window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
     SDL_Vulkan_GetDrawableSize(window, (int32_t *)&extent.width, (int32_t *)&extent.height);
 
     SDL_Vulkan_GetInstanceExtensions(window, &requiredInstanceExtensionCount, NULL);
@@ -90,7 +89,7 @@ void destroyWindow() {
     debug("Window destroyed");
 }
 
-void quit() {
+void quitSystem() {
     assert(!windowCreated && systemInitialized);
 
     getInstanceProcAddr = NULL;
