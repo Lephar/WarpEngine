@@ -40,7 +40,7 @@ void parseArguments(int argc, char *argv[]) {
         debug("\targv[%d]: %s", argn, argv[argn]);
     }
 
-    const char * separator = strrchr(argv[0], '/');
+    char *separator = strrchr(argv[0], '/');
 
     if(separator == NULL) {
         getcwd(path, PATH_MAX);
