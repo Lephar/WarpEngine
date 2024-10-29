@@ -19,7 +19,11 @@ char name[PATH_MAX];
 extern VkExtent2D extent;
 
 void initialize(int argc, char *argv[]) {
-    debug("argc:     %d", argc);
+    debug("argc: %d", argc);
+    for(int32_t argn = 0; argn < argc; argn++) {
+        debug("\targv[%d]: %s", argn, argv[argn]);
+    }
+
     debug("PATH_MAX: %d", PATH_MAX);
 
     const char * separator = strrchr(argv[0], '/');
@@ -35,8 +39,8 @@ void initialize(int argc, char *argv[]) {
     path[PATH_MAX - 1] = '\0';
     name[PATH_MAX - 1] = '\0';
 
-    debug("Path: %s", path);
-    debug("Name: %s", name);
+    debug("Path:  %s", path);
+    debug("Name:  %s", name);
 
     if(argc >= 3) {
         extent.width  = atoi(argv[1]);
