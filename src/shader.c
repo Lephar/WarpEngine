@@ -60,6 +60,17 @@ void createModules() {
     fragment = createModule("fragment", shaderc_fragment_shader);
 }
 
-void destroyModules() {
+void destroyModule(Shader *shader) {
+    vkDestroyShaderModule(device, shader->module, NULL);
 
+    free(shader->code);
+    shader->code = NULL;
+
+    debug("Shader module named %s destroyed", shader->name);
+    shader->name = NULL;
+}
+
+void destroyModules() {
+    destroyModule(&fragment);
+    destroyModule(&vertex);
 }
