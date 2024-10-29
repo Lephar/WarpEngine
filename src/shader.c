@@ -11,8 +11,7 @@ Shader fragment;
 Shader createModule(const char *name, shaderc_shader_kind kind) {
     Shader shader = {
         .name = name,
-        .kind = kind,
-        .file = malloc(PATH_MAX)
+        .kind = kind
     };
 
     debug("Shader: %s", shader.name);
