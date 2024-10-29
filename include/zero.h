@@ -12,6 +12,7 @@
 #include <SDL2/SDL_stdinc.h>
 #include <vulkan/vulkan.h>
 #include <shaderc/shaderc.h>
+#include <cglm/cglm.h>
 
 #include <time.h>
 #include <math.h>
