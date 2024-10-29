@@ -58,8 +58,11 @@ void createModules() {
 
 void destroyModule(Shader *shader) {
     vkDestroyShaderModule(device, shader->module, NULL);
+
     free(shader->code);
     shader->code = NULL;
+
+    debug("Shader module %s destroyed", shader->name);
     shader->name = NULL;
 }
 
