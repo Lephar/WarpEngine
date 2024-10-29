@@ -2,7 +2,7 @@
 
 #include "helper.h"
 
-extern char *path;
+extern char path[];
 extern VkDevice device;
 
 Shader vertex;

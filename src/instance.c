@@ -2,8 +2,9 @@
 #include "window.h"
 #include "helper.h"
 
+extern char name[];
+
 extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
-extern char *name;
 extern uint32_t requiredInstanceExtensionCount;
 extern const char **requiredInstanceExtensionNames;
 

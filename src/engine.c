@@ -13,17 +13,14 @@
 #include "framebuffer.h"
 #include "shader.h"
 
-char *path;
-char *name;
+char path[PATH_MAX];
+char name[PATH_MAX];
 
 extern VkExtent2D extent;
 
 void initialize(int argc, char *argv[]) {
     debug("argc:     %d", argc);
     debug("PATH_MAX: %d", PATH_MAX);
-
-    path = malloc(PATH_MAX);
-    name = malloc(PATH_MAX);
 
     const char * separator = strrchr(argv[0], '/');
 
@@ -83,7 +80,4 @@ void quit() {
     destroyInstance();
     destroyWindow();
     quitSystem();
-
-    free(name);
-    free(path);
 }

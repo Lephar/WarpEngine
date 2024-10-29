@@ -1,7 +1,7 @@
 #include "window.h"
 #include "helper.h"
 
-extern char *name;
+extern char name[];
 
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
