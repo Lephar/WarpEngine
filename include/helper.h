@@ -24,3 +24,5 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagB
 
 uint32_t popcount(uint32_t value);
 uint32_t byte_to_binary(uint8_t value);
+
+void parseArguments(int argc, char *argv[]);
