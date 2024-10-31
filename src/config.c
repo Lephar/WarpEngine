@@ -28,17 +28,16 @@ void configure(int argc, char *argv[]) {
     path[PATH_MAX - 1] = '\0';
     name[PATH_MAX - 1] = '\0';
 
-    debug("Path:  %s", path);
-    debug("Name:  %s", name);
+    debug("Path:   %s", path);
+    debug("Name:   %s", name);
 
-    if(argc >= 3) {
-        extent.width  = atoi(argv[1]);
-        extent.height = atoi(argv[2]);
+    if(argc >= 2) {
+        strncpy(config, argv[1], PATH_MAX - 1);
     } else {
-        extent.width  = 800;
-        extent.height = 600;
+        strncpy(config, "config.txt", PATH_MAX - 1);
     }
 
-    debug("Width:  %d", extent.width);
-    debug("Height: %d", extent.height);
+    config[PATH_MAX - 1] = '\0';
+
+    debug("Config: %s", config);
 }

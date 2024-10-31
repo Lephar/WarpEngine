@@ -1,0 +1,8 @@
+Window:
+    800
+    600
+Shaders: 2
+    vertex.vert
+    fragment.frag
+Assets: 1
+    Lantern.gltf

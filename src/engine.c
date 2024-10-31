@@ -1,6 +1,7 @@
 #include "engine.h"
 
 #include "helper.h"
+#include "config.h"
 
 #include "window.h"
 #include "instance.h"
@@ -17,7 +18,7 @@ char path[PATH_MAX];
 char name[PATH_MAX];
 
 void initialize(int argc, char *argv[]) {
-    parseArguments(argc, argv);
+    configure(argc, argv);
 
     initializeSystem();
     createWindow();
