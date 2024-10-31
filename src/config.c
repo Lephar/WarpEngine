@@ -2,8 +2,6 @@
 
 #include "helper.h"
 
-char config[PATH_MAX];
-
 extern char path[];
 extern char name[];
 
@@ -18,26 +16,24 @@ void configure(int argc, char *argv[]) {
     char *separator = strrchr(argv[0], '/');
 
     if(separator == NULL) {
-        getcwd(path, PATH_MAX);
-        strncpy(name, argv[0], PATH_MAX);
+        assert(getcwd(path, PATH_MAX) != NULL);
+        assert(snprintf(name, PATH_MAX, "%s", argv[0]) < PATH_MAX);
     } else {
-        strncpy(path, argv[0], separator - argv[0]);
-        strncpy(name, separator + 1, PATH_MAX);
+        *separator++ = '\0'; // Let's play a game
+        assert(snprintf(path, PATH_MAX, "%s", argv[0]) < PATH_MAX);
+        assert(snprintf(name, PATH_MAX, "%s", separator) < PATH_MAX);
     }
-
-    path[PATH_MAX - 1] = '\0';
-    name[PATH_MAX - 1] = '\0';
 
     debug("Path:   %s", path);
     debug("Name:   %s", name);
 
-    if(argc >= 2) {
-        strncpy(config, argv[1], PATH_MAX - 1);
-    } else {
-        strncpy(config, "config.txt", PATH_MAX - 1);
-    }
+    char config[PATH_MAX];
 
-    config[PATH_MAX - 1] = '\0';
+    if(argc < 2) {
+        assert(snprintf(config, PATH_MAX, "%s/config.txt", path) < PATH_MAX);
+    } else {
+        assert(snprintf(config, PATH_MAX, "%s/%s", path, argv[1]) < PATH_MAX);
+    }
 
     debug("Config: %s", config);
 }
