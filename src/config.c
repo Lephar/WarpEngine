@@ -36,4 +36,18 @@ void configure(int argc, char *argv[]) {
     }
 
     debug("Config: %s", config);
+
+    FILE *file = fopen(config, "r");
+    assert(file != NULL);
+
+    char discard[PATH_MAX];
+    fscanf(file, "%s", discard);
+    assert(strncmp(discard, "Window:", PATH_MAX) == 0);
+
+    fscanf(file, "%d%d", &extent.width, &extent.height);
+    debug("Width:  %d", extent.width );
+    debug("Height: %d", extent.height);
+
+    // Discard rest of the file for now
+    fclose(file);
 }
