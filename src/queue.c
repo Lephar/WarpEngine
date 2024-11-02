@@ -87,18 +87,31 @@ void generateQueueDetails() {
 
 void getQueues() {
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
-        vkGetDeviceQueue(device, queueReferences[queueIndex]->queueFamilyIndex, queueReferences[queueIndex]->queueIndex, &queueReferences[queueIndex]->queue);
+        Queue *queueReference = queueReferences[queueIndex];
+
+        vkGetDeviceQueue(device, queueReference->queueFamilyIndex, queueReference->queueIndex, &queueReference->queue);
         debug("Device queue %d retrieved", queueIndex);
 
         VkCommandPoolCreateInfo commandPoolInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
             .pNext = NULL,
             .flags = 0,
-            .queueFamilyIndex = queueReferences[queueIndex]->queueFamilyIndex
+            .queueFamilyIndex = queueReference->queueFamilyIndex
         };
 
-        vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReferences[queueIndex]->commandPool);
-        debug("Command pool %d created", queueIndex);
+        vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReference->commandPool);
+        debug("\tCommand pool created");
+
+        VkCommandBufferAllocateInfo commandBufferInfo = {
+            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+            .pNext = NULL,
+            .commandPool = queueReference->commandPool,
+            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+            .commandBufferCount = 1
+        };
+
+        vkAllocateCommandBuffers(device, &commandBufferInfo, &queueReference->commandBuffer);
+        debug("\tCommand buffer created");
     }
 }
 
