@@ -9,9 +9,11 @@ struct queue {
     uint32_t queueInfoIndex;
     VkQueue queue;
     VkCommandPool commandPool;
-    VkCommandBuffer commandBuffer;
+    VkCommandBuffer commandBuffer; //Is this necessary?
 } typedef Queue;
 
 void generateQueueDetails();
 void getQueues();
+VkCommandBuffer beginTransferCommand();
+void endTransferCommand(VkCommandBuffer commandBuffer);
 void clearQueues();
