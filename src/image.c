@@ -1,12 +1,15 @@
 #include "image.h"
+
 #include "memory.h"
+#include "buffer.h"
+#include "queue.h"
 
 extern VkDevice device;
 
 void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
-    image->size.width = width;
-    image->size.height = height;
-    image->size.depth = 1;
+    image->extent.width = width;
+    image->extent.height = height;
+    image->extent.depth = 1;
     image->levels = levels;
     image->samples = samples;
     image->format = format;
@@ -18,7 +21,7 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
         .flags = 0,
         .imageType = VK_IMAGE_TYPE_2D,
         .format = image->format,
-        .extent = image->size,
+        .extent = image->extent,
         .mipLevels = image->levels,
         .arrayLayers = 1,
         .samples = image->samples,
@@ -68,6 +71,31 @@ void createImageView(Image *image, VkImageAspectFlags aspects) {
     };
 
     vkCreateImageView(device, &imageViewInfo, NULL, &image->view);
+}
+
+void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) {
+    VkCommandBuffer commandBuffer = beginTransferCommand();
+
+    VkBufferImageCopy copyInfo = {
+        .bufferOffset = bufferOffset,
+        .bufferRowLength = 0,
+        .bufferImageHeight = 0,
+        .imageSubresource = { // Should image parameters be used?
+            .aspectMask = image->aspects,
+            .mipLevel = 0,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        },
+        .imageOffset = {
+            .x = 0,
+            .y = 0,
+            .z = 0
+        },
+        .imageExtent = image->extent
+    };
+
+    vkCmdCopyBufferToImage(commandBuffer, buffer->buffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyInfo);
+    endTransferCommand(commandBuffer);
 }
 
 void destroyImageView(Image *image) {

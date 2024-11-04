@@ -5,7 +5,7 @@
 typedef struct memory Memory;
 
 struct image {
-    VkExtent3D size;
+    VkExtent3D extent;
     uint32_t levels;
     VkSampleCountFlagBits samples;
     VkFormat format;
