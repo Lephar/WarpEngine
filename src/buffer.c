@@ -2,6 +2,7 @@
 
 #include "helper.h"
 #include "memory.h"
+#include "queue.h"
 
 extern VkDevice device;
 
@@ -47,6 +48,19 @@ void createBuffers() {
     createBuffer(&sharedBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, sharedMemory.size);
     bindBufferMemory(&sharedBuffer, &sharedMemory);
     debug("Host visible buffer created: %ld bytes", sharedBuffer.size);
+}
+
+void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, VkDeviceSize destinationOffset, VkDeviceSize size) {
+    VkCommandBuffer commandBuffer = beginTransferCommand();
+
+    VkBufferCopy copyInfo = {
+        .srcOffset = sourceOffset,
+        .dstOffset = destinationOffset,
+        .size = size
+    };
+
+    vkCmdCopyBuffer(commandBuffer, source->buffer, destination->buffer, 1, &copyInfo);
+    endTransferCommand(commandBuffer);
 }
 
 void destroyBuffer(Buffer *buffer) {
