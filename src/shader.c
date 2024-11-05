@@ -52,8 +52,11 @@ void createModule(Shader *shader, const char *name, shaderc_shader_kind kind) {
 }
 
 void createModules() {
-    createModule(&vertex,   "vertex"  , shaderc_vertex_shader  );
-    createModule(&fragment, "fragment", shaderc_fragment_shader);
+    //createModule(&vertex,   "vertex"  , shaderc_vertex_shader  );
+    //createModule(&fragment, "fragment", shaderc_fragment_shader);
+
+    createModule(&vertex,   "vertex_fixed"  , shaderc_vertex_shader  );
+    createModule(&fragment, "fragment_fixed", shaderc_fragment_shader);
 }
 
 void destroyModule(Shader *shader) {
