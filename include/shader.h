@@ -10,4 +10,6 @@ struct shader {
 } typedef Shader;
 
 void createModules();
+void createDescriptors();
 void destroyModules();
+void destroyDescriptors();

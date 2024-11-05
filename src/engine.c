@@ -33,6 +33,7 @@ void initialize(int argc, char *argv[]) {
     createSwapchain();
     createFramebufferSet();
     createModules();
+    createDescriptors();
 }
 
 void loop() {
@@ -41,6 +42,7 @@ void loop() {
 
 void quit() {
     destroyModules();
+    destroyDescriptors();
     destroyFramebufferSet();
     destroySwapchain();
     destroyBuffers();

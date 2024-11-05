@@ -8,6 +8,8 @@ extern VkDevice device;
 Shader vertex;
 Shader fragment;
 
+VkDescriptorPool descriptorPool;
+
 void createModule(Shader *shader, const char *name, shaderc_shader_kind kind) {
     shader->name = name;
     shader->kind = kind;
@@ -59,6 +61,25 @@ void createModules() {
     createModule(&fragment, "fragment_fixed", shaderc_fragment_shader);
 }
 
+void createDescriptors() {
+    VkDescriptorPoolSize poolSize = {
+        .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .descriptorCount = 1
+    };
+
+    VkDescriptorPoolCreateInfo poolInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .maxSets = 1,
+        .poolSizeCount = 1,
+        .pPoolSizes = &poolSize
+    };
+
+    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
+    debug("Descriptor pool created");
+}
+
 void destroyModule(Shader *shader) {
     vkDestroyShaderModule(device, shader->module, NULL);
 
@@ -72,4 +93,9 @@ void destroyModule(Shader *shader) {
 void destroyModules() {
     destroyModule(&fragment);
     destroyModule(&vertex);
+}
+
+void destroyDescriptors() {
+    vkDestroyDescriptorPool(device, descriptorPool, NULL);
+    debug("Descriptor pool destroyed");
 }
