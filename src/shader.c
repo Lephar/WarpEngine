@@ -9,6 +9,8 @@ Shader vertex;
 Shader fragment;
 
 VkDescriptorPool descriptorPool;
+VkDescriptorSetLayout descriptorSetLayout;
+VkDescriptorSet descriptorSet;
 
 void createModule(Shader *shader, const char *name, shaderc_shader_kind kind) {
     shader->name = name;
@@ -78,6 +80,36 @@ void createDescriptors() {
 
     vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
     debug("Descriptor pool created");
+
+    VkDescriptorSetLayoutBinding layoutBinding = {
+        .binding = 0,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .descriptorCount = 1,
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .pImmutableSamplers = NULL
+    };
+
+    VkDescriptorSetLayoutCreateInfo layoutInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .bindingCount = 1,
+        .pBindings = &layoutBinding
+    };
+
+    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
+    debug("Descriptor set layout created");
+
+    VkDescriptorSetAllocateInfo setInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .pNext = NULL,
+        .descriptorPool = descriptorPool,
+        .descriptorSetCount = 1,
+        .pSetLayouts = &descriptorSetLayout
+    };
+
+    vkAllocateDescriptorSets(device, &setInfo, &descriptorSet);
+    debug("Descriptor set allocated");
 }
 
 void destroyModule(Shader *shader) {
@@ -98,4 +130,6 @@ void destroyModules() {
 void destroyDescriptors() {
     vkDestroyDescriptorPool(device, descriptorPool, NULL);
     debug("Descriptor pool destroyed");
+    vkDestroyDescriptorSetLayout(device, descriptorSetLayout, NULL);
+    debug("Descriptor set layout destroyed");
 }
