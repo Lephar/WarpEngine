@@ -113,6 +113,7 @@ void freeMemory(Memory *memory) {
 }
 
 void freeMemories() {
+    unmapMemory(&sharedMemory);
     freeMemory(&sharedMemory);
     debug("Host visible memory freed");
 
