@@ -47,6 +47,16 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags p
     vkAllocateMemory(device, &memoryInfo, NULL, &memory->memory);
 }
 
+void *mapMemory(Memory *memory) {
+    assert(memory->properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+    void *map;
+
+    vkMapMemory(device, memory->memory, 0, VK_WHOLE_SIZE, 0, &map);
+
+    return map;
+}
+
 void allocateMemories() {
     Image temporaryImage;
     VkMemoryRequirements imageMemoryRequirements;
@@ -87,16 +97,6 @@ void allocateMemories() {
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
 
     mappedSharedMemory = mapMemory(&sharedMemory);
-}
-
-void *mapMemory(Memory *memory) {
-    assert(memory->properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-    void *map;
-
-    vkMapMemory(device, memory->memory, 0, memory->size, 0, &map);
-
-    return map;
 }
 
 void unmapMemory(Memory *memory) {
