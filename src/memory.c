@@ -11,6 +11,8 @@ VkPhysicalDeviceMemoryProperties memoryProperties;
 Memory deviceMemory;
 Memory sharedMemory;
 
+void *mappedSharedMemory;
+
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
     VkDeviceSize bindOffset = (memory->offset + memoryRequirements.alignment - 1) / memoryRequirements.alignment * memoryRequirements.alignment;
 
@@ -19,14 +21,14 @@ VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements
     return bindOffset;
 }
 
-void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
-    memory->requiredProperties = requiredProperties;
+void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags properties, VkDeviceSize size) {
+    memory->properties = properties;
     memory->typeIndex = UINT32_MAX;
     memory->offset = 0;
     memory->size = size;
 
     for(uint32_t memoryIndex = 0; memoryIndex < memoryProperties.memoryTypeCount; memoryIndex++) {
-        if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
+        if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & properties) == properties) {
             memory->typeIndex = memoryIndex; // TODO: Implement an actual logic
             break;
         }
@@ -83,9 +85,13 @@ void allocateMemories() {
     debug("Host visible memory allocated:\t%ld bytes", sharedMemory.size);
     debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
+
+    mappedSharedMemory = mapMemory(&sharedMemory);
 }
 
 void *mapMemory(Memory *memory) {
+    assert(memory->properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
     void *map;
 
     vkMapMemory(device, memory->memory, 0, memory->size, 0, &map);
@@ -100,7 +106,7 @@ void unmapMemory(Memory *memory) {
 void freeMemory(Memory *memory) {
     vkFreeMemory(device, memory->memory, NULL);
 
-    memory->requiredProperties = 0;
+    memory->properties = 0;
     memory->typeIndex = UINT32_MAX;
     memory->size = 0;
     memory->offset = 0;

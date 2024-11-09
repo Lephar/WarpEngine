@@ -3,7 +3,7 @@
 #include "zero.h"
 
 struct memory {
-    VkMemoryPropertyFlags requiredProperties;
+    VkMemoryPropertyFlags properties;
     uint32_t typeIndex;
     VkDeviceSize size;
     VkDeviceSize offset;
