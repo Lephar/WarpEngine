@@ -85,6 +85,18 @@ void allocateMemories() {
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
 }
 
+void *mapMemory(Memory *memory) {
+    void *map;
+
+    vkMapMemory(device, memory->memory, 0, memory->size, 0, &map);
+
+    return map;
+}
+
+void unmapMemory(Memory *memory) {
+    vkUnmapMemory(device, memory->memory);
+}
+
 void freeMemory(Memory *memory) {
     vkFreeMemory(device, memory->memory, NULL);
 
