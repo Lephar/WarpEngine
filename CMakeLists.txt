@@ -16,7 +16,6 @@ set(CONFIG_TEMPLATE ${PROJECT_SOURCE_DIR}/config.txt)
 set(CONFIG_FILE ${PROJECT_BINARY_DIR}/config.txt)
 
 add_custom_command(
-    PRE_BUILD
     OUTPUT ${CONFIG_FILE}
     COMMAND ${CMAKE_COMMAND} -E copy ${CONFIG_TEMPLATE} ${CONFIG_FILE}
     DEPENDS ${CONFIG_TEMPLATE}
@@ -27,7 +26,7 @@ set(GLSLC glslc)
 foreach(GLSL ${SHADERS})
     get_filename_component(FILENAME ${GLSL} NAME)
     set(SPIRV ${PROJECT_BINARY_DIR}/shaders/${FILENAME}.spv)
-    add_custom_command(PRE_BUILD
+    add_custom_command(
         OUTPUT ${SPIRV}
         COMMAND ${GLSLC} ${GLSL} -o ${SPIRV}
         DEPENDS ${GLSL})
@@ -37,7 +36,7 @@ endforeach(GLSL)
 foreach(SOURCE_MODEL ${SOURCE_ASSETS})
     get_filename_component(FILENAME ${SOURCE_MODEL} NAME)
     set(TARGET_MODEL ${PROJECT_BINARY_DIR}/assets/${FILENAME})
-    add_custom_command(PRE_BUILD
+    add_custom_command(
         OUTPUT ${TARGET_MODEL}
         COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_MODEL} ${TARGET_MODEL}
         DEPENDS ${SOURCE_ASSETS})
