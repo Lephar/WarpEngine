@@ -74,7 +74,7 @@ void createImageView(Image *image, VkImageAspectFlags aspects) {
 }
 
 void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) {
-    VkCommandBuffer commandBuffer = beginTransferCommand();
+    VkCommandBuffer commandBuffer = beginSingleTransferCommand();
 
     VkBufferImageCopy copyInfo = {
         .bufferOffset = bufferOffset,
@@ -95,11 +95,11 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
     };
 
     vkCmdCopyBufferToImage(commandBuffer, buffer->buffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyInfo);
-    endTransferCommand(commandBuffer);
+    endSingleTransferCommand(commandBuffer);
 }
 
 void transitionImageLayout(Image *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags, VkPipelineStageFlags sourceStages, VkPipelineStageFlags destinationStages) {
-    VkCommandBuffer commandBuffer = beginTransferCommand();
+    VkCommandBuffer commandBuffer = beginSingleTransferCommand();
 
     VkImageMemoryBarrier memoryBarrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -121,7 +121,7 @@ void transitionImageLayout(Image *image, VkImageLayout oldLayout, VkImageLayout 
     };
 
     vkCmdPipelineBarrier(commandBuffer, sourceStages, destinationStages, 0, 0, NULL, 0, NULL, 1, &memoryBarrier);
-    endTransferCommand(commandBuffer);
+    endSingleTransferCommand(commandBuffer);
 }
 
 void destroyImageView(Image *image) {

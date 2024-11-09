@@ -14,6 +14,7 @@ struct queue {
 
 void generateQueueDetails();
 void getQueues();
-VkCommandBuffer beginTransferCommand();
-void endTransferCommand(VkCommandBuffer commandBuffer);
+VkCommandBuffer allocateSingleCommandBuffer(Queue *queue);
+VkCommandBuffer beginSingleTransferCommand();
+void endSingleTransferCommand(VkCommandBuffer commandBuffer);
 void clearQueues();

@@ -102,30 +102,27 @@ void getQueues() {
         vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReference->commandPool);
         debug("\tCommand pool created");
 
-        VkCommandBufferAllocateInfo commandBufferInfo = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .pNext = NULL,
-            .commandPool = queueReference->commandPool,
-            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = 1
-        };
-
-        vkAllocateCommandBuffers(device, &commandBufferInfo, &queueReference->commandBuffer);
+        queueReference->commandBuffer = allocateSingleCommandBuffer(queueReference);
         debug("\tCommand buffer created");
     }
 }
 
-VkCommandBuffer beginTransferCommand() {
-    VkCommandBufferAllocateInfo allocateInfo = {
+VkCommandBuffer allocateSingleCommandBuffer(Queue *queue) {
+    VkCommandBufferAllocateInfo commandBufferInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .pNext = NULL,
-        .commandPool = transferQueue.commandPool,
+        .commandPool = queue->commandPool,
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1
     };
 
     VkCommandBuffer commandBuffer;
-    vkAllocateCommandBuffers(device, &allocateInfo, &commandBuffer);
+    vkAllocateCommandBuffers(device, &commandBufferInfo, &commandBuffer);
+    return commandBuffer;
+}
+
+VkCommandBuffer beginSingleTransferCommand() {
+    VkCommandBuffer commandBuffer = allocateSingleCommandBuffer(&transferQueue);
 
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -138,7 +135,7 @@ VkCommandBuffer beginTransferCommand() {
     return commandBuffer;
 }
 
-void endTransferCommand(VkCommandBuffer commandBuffer) {
+void endSingleTransferCommand(VkCommandBuffer commandBuffer) {
     vkEndCommandBuffer(commandBuffer);
 
     VkSubmitInfo submitInfo = {

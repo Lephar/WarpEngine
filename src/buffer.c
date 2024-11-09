@@ -59,7 +59,7 @@ void *mapBufferMemory(Buffer *buffer) {
 }
 
 void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, VkDeviceSize destinationOffset, VkDeviceSize size) {
-    VkCommandBuffer commandBuffer = beginTransferCommand();
+    VkCommandBuffer commandBuffer = beginSingleTransferCommand();
 
     VkBufferCopy copyInfo = {
         .srcOffset = sourceOffset,
@@ -68,7 +68,7 @@ void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, 
     };
 
     vkCmdCopyBuffer(commandBuffer, source->buffer, destination->buffer, 1, &copyInfo);
-    endTransferCommand(commandBuffer);
+    endSingleTransferCommand(commandBuffer);
 }
 
 // WARN: Risk of unmapping the whole memory used by another image or buffer
