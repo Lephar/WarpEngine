@@ -13,6 +13,7 @@
 #include "buffer.h"
 #include "framebuffer.h"
 #include "shader.h"
+#include "manager.h"
 
 char path[PATH_MAX];
 char name[PATH_MAX];
@@ -34,6 +35,8 @@ void initialize(int argc, char *argv[]) {
     createFramebufferSet();
     createModules();
     createDescriptors();
+    initializeAssets();
+    loadAssets();
 }
 
 void loop() {
@@ -41,6 +44,7 @@ void loop() {
 }
 
 void quit() {
+    freeAssets();
     destroyModules();
     destroyDescriptors();
     destroyFramebufferSet();

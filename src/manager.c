@@ -1,10 +1,15 @@
 #include "manager.h"
 
+#include "helper.h"
 #include "memory.h"
 #include "buffer.h"
 
 uint32_t  indexCount;
 uint32_t vertexCount;
+
+VkDeviceSize   indexBufferSize;
+VkDeviceSize  vertexBufferSize;
+VkDeviceSize uniformBufferSize;
 
 Index    *  indexBuffer;
 Vertex   * vertexBuffer;
@@ -18,14 +23,20 @@ extern Memory sharedMemory;
 extern Buffer deviceBuffer;
 extern Buffer sharedBuffer;
 
+extern void *mappedSharedMemory;
+
 // TODO: Implement GLTF loading
 void initializeAssets() {
-    indexCount  = 3;
+     indexCount = 3;
     vertexCount = 3;
 
-      indexBuffer = malloc( indexCount * sizeof(Index  ));
-     vertexBuffer = malloc(vertexCount * sizeof(Vertex ));
-    uniformBuffer = calloc(1, sizeof(Uniform));
+      indexBufferSize =  indexCount * sizeof(Index  );
+     vertexBufferSize = vertexCount * sizeof(Vertex );
+    uniformBufferSize =               sizeof(Uniform);
+
+      indexBuffer = malloc(           indexBufferSize);
+     vertexBuffer = malloc(          vertexBufferSize);
+    uniformBuffer = calloc(1, uniformBufferSize);
 
     indexBuffer[0] = 0;
     indexBuffer[1] = 1;
@@ -45,10 +56,23 @@ void initializeAssets() {
     uniformBuffer->transform[1][1] = 1;
     uniformBuffer->transform[2][2] = 1;
     uniformBuffer->transform[3][3] = 1;
+
+    debug("Assets initialized");
 }
 
 void loadAssets() {
+    memcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
+    memcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
+
+    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
+
+    debug("Assets copied to device buffer");
 }
 
 void freeAssets() {
+    free(uniformBuffer);
+    free( vertexBuffer);
+    free(  indexBuffer);
+
+    debug("Assets freed");
 }
