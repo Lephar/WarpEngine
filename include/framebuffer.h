@@ -7,6 +7,10 @@ struct framebuffer {
     Image depthStencil;
     Image color;
     Image resolve;
+
+    VkCommandBuffer commandBuffer;
+    VkSemaphore semaphore;
+    VkFence fence;
 } typedef Framebuffer;
 
 struct framebufferSet {

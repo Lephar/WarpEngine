@@ -1,12 +1,15 @@
 #include "framebuffer.h"
 
 #include "helper.h"
+#include "queue.h"
 #include "memory.h"
 #include "swapchain.h"
 
 extern VkExtent2D extent;
-extern Swapchain swapchain;
+extern VkDevice device;
+extern Queue graphicsQueue;
 extern Memory deviceMemory;
+extern Swapchain swapchain;
 
 FramebufferSet framebufferSet;
 FramebufferSet oldFramebufferSet;
@@ -23,6 +26,24 @@ void createFramebuffer(Framebuffer *framebuffer) {
     createImageView(&framebuffer->depthStencil, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
     createImageView(&framebuffer->color, VK_IMAGE_ASPECT_COLOR_BIT);
     createImageView(&framebuffer->resolve, VK_IMAGE_ASPECT_COLOR_BIT);
+
+    framebuffer->commandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
+
+    VkSemaphoreCreateInfo semaphoreInfo = {
+        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0
+    };
+
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->semaphore);
+
+    VkFenceCreateInfo fenceInfo = {
+        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+        .pNext = NULL,
+        .flags = VK_FENCE_CREATE_SIGNALED_BIT
+    };
+
+    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->fence);
 }
 
 void createFramebufferSet() {
@@ -43,6 +64,9 @@ void createFramebufferSet() {
 }
 
 void destroyFramebuffer(Framebuffer *framebuffer) {
+    vkDestroyFence(device, framebuffer->fence, NULL);
+    vkDestroySemaphore(device, framebuffer->semaphore, NULL);
+
     destroyImageView(&framebuffer->resolve);
     destroyImageView(&framebuffer->color);
     destroyImageView(&framebuffer->depthStencil);
