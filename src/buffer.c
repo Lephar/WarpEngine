@@ -50,6 +50,14 @@ void createBuffers() {
     debug("Host visible buffer created: %ld bytes", sharedBuffer.size);
 }
 
+void *mapBufferMemory(Buffer *buffer) {
+    void *memory;
+
+    vkMapMemory(device, buffer->memory->memory, buffer->memoryOffset, buffer->size, 0, &memory);
+
+    return memory;
+}
+
 void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, VkDeviceSize destinationOffset, VkDeviceSize size) {
     VkCommandBuffer commandBuffer = beginTransferCommand();
 
@@ -61,6 +69,11 @@ void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, 
 
     vkCmdCopyBuffer(commandBuffer, source->buffer, destination->buffer, 1, &copyInfo);
     endTransferCommand(commandBuffer);
+}
+
+// WARN: Risk of unmapping different buffer memories
+void unmapBufferMemory(Buffer *buffer) {
+    vkUnmapMemory(device, buffer->memory->memory);
 }
 
 void destroyBuffer(Buffer *buffer) {
