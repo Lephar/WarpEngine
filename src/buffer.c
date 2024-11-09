@@ -71,7 +71,7 @@ void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, 
     endTransferCommand(commandBuffer);
 }
 
-// WARN: Risk of unmapping different buffer memories
+// WARN: Risk of unmapping the whole memory used by another image or buffer
 void unmapBufferMemory(Buffer *buffer) {
     vkUnmapMemory(device, buffer->memory->memory);
 }

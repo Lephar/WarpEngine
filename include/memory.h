@@ -15,6 +15,4 @@ void freeMemories();
 
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements);
 void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size);
-void *mapMemory(Memory *memory);
-void unmapMemory(Memory *memory);
 void freeMemory(Memory *memory);
