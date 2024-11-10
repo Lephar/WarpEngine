@@ -1,16 +1,12 @@
 #include "zero.h"
 
 struct shader {
-    const char *name;
-    shaderc_shader_kind kind;
-    char filename[PATH_MAX];
-    size_t codeSize;
-    char *code;
-    size_t intermediateSize;
-    uint32_t *intermediate;
+    size_t size;
+    char *data;
     VkShaderModule module;
 } typedef Shader;
 
+void loadShaders();
 void createModules();
 void createDescriptors();
 void destroyModules();
