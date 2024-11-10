@@ -27,6 +27,26 @@ uint32_t popcount(uint32_t value) {
     return count;
 }
 
+// TODO: Change to iterative, no need for function call overhead
 uint32_t byte_to_binary(uint8_t value) {
     return (value == 0 || value == 1 ? value : ((value % 2) + 10 * byte_to_binary(value / 2)));
+}
+
+void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data) {
+    char fullPath[PATH_MAX];
+    sprintf(fullPath, "%s/%s", rootPath, relativePath);
+
+    FILE *file = fopen(fullPath, binary ? "rb" : "r");
+    fseek(file, 0, SEEK_END);
+    *size = ftell(file) + (binary ? 0 : 1);
+    rewind(file);
+
+    *data = malloc(*size);
+    fread(*data, 1, *size, file);
+    fclose(file);
+
+    // TODO: Is this necessary?
+    if(!binary) {
+        (*data)[*size - 1] = '\0';
+    }
 }
