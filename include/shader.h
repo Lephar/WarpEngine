@@ -3,9 +3,10 @@
 struct shader {
     const char *name;
     shaderc_shader_kind kind;
-    char file[PATH_MAX];
-    size_t size;
-    char *code; // WARN: Not used for .spv
+    char filename[PATH_MAX];
+    size_t codeSize;
+    char *code;
+    size_t intermediateSize;
     uint32_t *intermediate;
     VkShaderModule module;
 } typedef Shader;

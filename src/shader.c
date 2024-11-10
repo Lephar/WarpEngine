@@ -28,17 +28,17 @@ void createModule(Shader *shader, const char *name, shaderc_shader_kind kind) {
         extension = "frag";
     } //TODO: Add other shader types
 
-    sprintf(shader->file, "shaders/%s.%s.spv", shader->name, extension);
-    debug("\tPath: %s", shader->file);
+    sprintf(shader->filename, "shaders/%s.%s.spv", shader->name, extension);
+    debug("\tPath: %s", shader->filename);
 
-    readFile(shader->file, 1, &shader->size, (char**)&shader->intermediate);
-    debug("\tSize: %ld", shader->size);
+    readFile(shader->filename, 1, &shader->codeSize, (char**)&shader->intermediate);
+    debug("\tSize: %ld", shader->codeSize);
 
     VkShaderModuleCreateInfo shaderInfo = {
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .codeSize = shader->size,
+        .codeSize = shader->codeSize,
         .pCode = shader->intermediate
     };
 
