@@ -42,7 +42,7 @@ void configure(int argc, char *argv[]) {
 
     char discard[PATH_MAX];
     fscanf(file, "%s", discard);
-    assert(strncmp(discard, "Window:", PATH_MAX) == 0);
+    assert(strncmp(discard, "Window:", PATH_MAX) == 0 || strncmp(discard, "Fullscreen:", PATH_MAX) == 0);
 
     fscanf(file, "%d%d", &extent.width, &extent.height);
     debug("Width:  %d", extent.width );
