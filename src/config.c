@@ -65,13 +65,54 @@ void configure(int argc, char *argv[]) {
     FILE *file = fopen(config, "r");
     assert(file != NULL);
 
+     queueCount = sizeof( queueReferences) / sizeof(Queue  *);
+    shaderCount = sizeof(shaderReferences) / sizeof(Shader *);
+
+    debug("Queue  count: %d",  queueCount);
+    debug("Shader count: %d", shaderCount);
+
     char discard[PATH_MAX];
+
     fscanf(file, "%s", discard);
     assert(strncmp(discard, "Window:", PATH_MAX) == 0 || strncmp(discard, "Fullscreen:", PATH_MAX) == 0);
 
-    fscanf(file, "%d%d", &extent.width, &extent.height);
-    debug("Width:  %d", extent.width );
-    debug("Height: %d", extent.height);
+    fscanf(file, "%u%u", &extent.width, &extent.height);
+    debug("Width:  %u", extent.width );
+    debug("Height: %u", extent.height);
+
+    fscanf(file, "%s", discard);
+    assert(strncmp(discard, "Shaders:", PATH_MAX) == 0);
+
+    uint32_t configShaderCount;
+    fscanf(file, "%u", &configShaderCount);
+    assert(configShaderCount == shaderCount);
+
+    for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
+        Shader *shader = shaderReferences[shaderIndex];
+
+        char kind[UINT8_MAX];
+        char intermediate[UINT8_MAX];
+
+        fscanf(file, "%s%s%s", shader->name, kind, intermediate);
+
+        debug("Shader: %s", shader->name);
+        debug("\tKind:          %s", kind);
+        debug("\tIntermediate:  %s", intermediate);
+
+        if(strncmp(kind, "compute", UINT8_MAX) == 0) {
+            shader->kind = shaderc_compute_shader;
+        } else if(strncmp(kind, "vertex", UINT8_MAX) == 0) {
+            shader->kind = shaderc_vertex_shader;
+        } else if(strncmp(kind, "fragment", UINT8_MAX) == 0) {
+            shader->kind = shaderc_fragment_shader;
+        } //TODO: Add other shader types
+
+        if(strncmp(intermediate, "intermediate", UINT8_MAX) == 0 || strncmp(intermediate, "spirv", UINT8_MAX) == 0) {
+            shader->intermediate = VK_TRUE;
+        } else {
+            shader->intermediate = VK_FALSE;
+        }
+    }
 
     // Discard rest of the file for now
     fclose(file);

@@ -30,7 +30,6 @@ void initialize(int argc, char *argv[]) {
     createBuffers();
     createSwapchain();
     createFramebufferSet();
-    loadShaders();
     createModules();
     createDescriptors();
     initializeAssets();
