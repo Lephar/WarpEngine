@@ -2,7 +2,7 @@
 #include "window.h"
 #include "helper.h"
 
-extern char name[];
+extern char executableName[];
 
 extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 extern uint32_t requiredInstanceExtensionCount;
@@ -55,9 +55,9 @@ void createInstance() {
     VkApplicationInfo applicationInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pNext = NULL,
-        .pApplicationName = name,
+        .pApplicationName = executableName,
         .applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-        .pEngineName = name,
+        .pEngineName = executableName,
         .engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
         .apiVersion = VK_API_VERSION_1_3
     };

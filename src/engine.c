@@ -15,9 +15,6 @@
 #include "shader.h"
 #include "manager.h"
 
-char path[PATH_MAX];
-char name[PATH_MAX];
-
 void initialize(int argc, char *argv[]) {
     configure(argc, argv);
 

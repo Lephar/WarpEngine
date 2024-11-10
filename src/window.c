@@ -1,7 +1,7 @@
 #include "window.h"
 #include "helper.h"
 
-extern char name[];
+extern char executableName[];
 
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
@@ -33,7 +33,7 @@ void initializeSystem() {
 void createWindow() {
     assert(systemInitialized && !windowCreated);
 
-    window = SDL_CreateWindow(name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
+    window = SDL_CreateWindow(executableName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, extent.width, extent.height, SDL_WINDOW_VULKAN);
     SDL_Vulkan_GetDrawableSize(window, (int32_t *)&extent.width, (int32_t *)&extent.height);
 
     SDL_Vulkan_GetInstanceExtensions(window, &requiredInstanceExtensionCount, NULL);

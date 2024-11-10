@@ -2,8 +2,8 @@
 
 #include "helper.h"
 
-extern char path[];
-extern char name[];
+char rootPath[PATH_MAX];
+char executableName[PATH_MAX];
 
 extern VkExtent2D extent;
 
@@ -16,23 +16,23 @@ void configure(int argc, char *argv[]) {
     char *separator = strrchr(argv[0], '/');
 
     if(separator == NULL) {
-        assert(getcwd(path, PATH_MAX) != NULL);
-        assert(snprintf(name, PATH_MAX, "%s", argv[0]) < PATH_MAX);
+        assert(getcwd(rootPath, PATH_MAX) != NULL);
+        assert(snprintf(executableName, PATH_MAX, "%s", argv[0]) < PATH_MAX);
     } else {
         *separator++ = '\0'; // Let's play a game
-        assert(snprintf(path, PATH_MAX, "%s", argv[0]) < PATH_MAX);
-        assert(snprintf(name, PATH_MAX, "%s", separator) < PATH_MAX);
+        assert(snprintf(rootPath, PATH_MAX, "%s", argv[0]) < PATH_MAX);
+        assert(snprintf(executableName, PATH_MAX, "%s", separator) < PATH_MAX);
     }
 
-    debug("Path:   %s", path);
-    debug("Name:   %s", name);
+    debug("Path:   %s", rootPath);
+    debug("Name:   %s", executableName);
 
     char config[PATH_MAX];
 
     if(argc < 2) {
-        assert(snprintf(config, PATH_MAX, "%s/config.txt", path) < PATH_MAX);
+        assert(snprintf(config, PATH_MAX, "%s/config.txt", rootPath) < PATH_MAX);
     } else {
-        assert(snprintf(config, PATH_MAX, "%s/%s", path, argv[1]) < PATH_MAX);
+        assert(snprintf(config, PATH_MAX, "%s/%s", rootPath, argv[1]) < PATH_MAX);
     }
 
     debug("Config: %s", config);

@@ -1,5 +1,7 @@
 #include "helper.h"
 
+extern char rootPath[];
+
 VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagBitsEXT severity,
                                                 VkDebugUtilsMessageTypeFlagsEXT type,
                                                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
