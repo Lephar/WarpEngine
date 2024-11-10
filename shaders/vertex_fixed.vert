@@ -1,7 +1,7 @@
 #version 460 core
 
 layout(binding = 0) uniform Transform {
-	mat4 transform;
+    mat4 transform;
 };
 
 layout(location = 0) in  vec3  inputPosition;

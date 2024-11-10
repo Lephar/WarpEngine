@@ -9,7 +9,7 @@ layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	vec3 ambientLight = vec3(0.2f, 0.2f, 0.2f);
-	
-	outputColor = vec4(ambientLight, 1.0f) * texture(textureSampler, inputTexture);
+    vec3 ambientLight = vec3(0.2f, 0.2f, 0.2f);
+
+    outputColor = vec4(ambientLight, 1.0f) * texture(textureSampler, inputTexture);
 }
