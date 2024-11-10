@@ -5,7 +5,8 @@ struct shader {
     shaderc_shader_kind kind;
     char file[PATH_MAX];
     size_t size;
-    uint32_t *code;
+    char *code; // WARN: Not used for .spv
+    uint32_t *intermediate;
     VkShaderModule module;
 } typedef Shader;
 

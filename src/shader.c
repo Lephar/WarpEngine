@@ -2,7 +2,6 @@
 
 #include "helper.h"
 
-extern char path[];
 extern VkDevice device;
 
 Shader vertex;
@@ -29,18 +28,10 @@ void createModule(Shader *shader, const char *name, shaderc_shader_kind kind) {
         extension = "frag";
     } //TODO: Add other shader types
 
-    sprintf(shader->file, "%s/shaders/%s.%s.spv", path, shader->name, extension);
+    sprintf(shader->file, "shaders/%s.%s.spv", shader->name, extension);
     debug("\tPath: %s", shader->file);
 
-    FILE *file = fopen(shader->file, "rb");
-    fseek(file, 0, SEEK_END);
-    shader->size = ftell(file);
-    rewind(file);
-
-    shader->code = malloc(shader->size);
-    fread(shader->code, 1, shader->size, file);
-    fclose(file);
-
+    readFile(shader->file, 1, &shader->size, (char**)&shader->intermediate);
     debug("\tSize: %ld", shader->size);
 
     VkShaderModuleCreateInfo shaderInfo = {
@@ -48,7 +39,7 @@ void createModule(Shader *shader, const char *name, shaderc_shader_kind kind) {
         .pNext = NULL,
         .flags = 0,
         .codeSize = shader->size,
-        .pCode = shader->code
+        .pCode = shader->intermediate
     };
 
     vkCreateShaderModule(device, &shaderInfo, NULL, &shader->module);
