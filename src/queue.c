@@ -17,6 +17,8 @@ extern uint32_t queueCount;
 uint32_t distinctQueueFamilyCount;
 
 void generateQueueDetails() {
+    debug("Queue count: %d",  queueCount);
+
     graphicsQueue.requiredFlags = VK_QUEUE_GRAPHICS_BIT;
      computeQueue.requiredFlags = VK_QUEUE_COMPUTE_BIT ;
     transferQueue.requiredFlags = VK_QUEUE_TRANSFER_BIT;

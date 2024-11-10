@@ -54,6 +54,8 @@ void createModule(Shader *shader) {
             assert(status == shaderc_compilation_status_success);
         }
 
+        debug("\tSuccessfully compiled");
+
         shader->size = shaderc_result_get_length(result);
         shader->data = malloc(shader->size);
 
@@ -73,6 +75,7 @@ void createModule(Shader *shader) {
     };
 
     vkCreateShaderModule(device, &shaderInfo, NULL, &shader->module);
+    debug("\tSuccessfully created");
 }
 
 void createModules() {
@@ -83,8 +86,11 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    createModule(&vertex  );
-    createModule(&fragment);
+    debug("Shader count: %d", shaderCount);
+
+    for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
+        createModule(shaderReferences[shaderIndex]);
+    }
 
     debug("Shader modules created");
 }
@@ -152,8 +158,9 @@ void destroyModules() {
 
     debug("Shader compiler and shader compile options released");
 
-    destroyModule(&fragment);
-    destroyModule(&vertex  );
+    for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
+        destroyModule(shaderReferences[shaderIndex]);
+    }
 
     debug("Shader modules destroyed");
 }

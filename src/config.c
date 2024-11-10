@@ -65,12 +65,6 @@ void configure(int argc, char *argv[]) {
     FILE *file = fopen(config, "r");
     assert(file != NULL);
 
-     queueCount = sizeof( queueReferences) / sizeof(Queue  *);
-    shaderCount = sizeof(shaderReferences) / sizeof(Shader *);
-
-    debug("Queue  count: %d",  queueCount);
-    debug("Shader count: %d", shaderCount);
-
     char discard[PATH_MAX];
 
     fscanf(file, "%s", discard);
@@ -80,24 +74,28 @@ void configure(int argc, char *argv[]) {
     debug("Width:  %u", extent.width );
     debug("Height: %u", extent.height);
 
+     queueCount = sizeof( queueReferences) / sizeof(Queue  *);
+    shaderCount = sizeof(shaderReferences) / sizeof(Shader *);
+
     fscanf(file, "%s", discard);
     assert(strncmp(discard, "Shaders:", PATH_MAX) == 0);
 
     uint32_t configShaderCount;
     fscanf(file, "%u", &configShaderCount);
+    debug("Shader count: %d", configShaderCount);
     assert(configShaderCount == shaderCount);
 
     for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
         Shader *shader = shaderReferences[shaderIndex];
 
         char kind[UINT8_MAX];
-        char intermediate[UINT8_MAX];
+        char type[UINT8_MAX];
 
-        fscanf(file, "%s%s%s", shader->name, kind, intermediate);
+        fscanf(file, "%s%s%s", shader->name, kind, type);
 
         debug("Shader: %s", shader->name);
-        debug("\tKind:          %s", kind);
-        debug("\tIntermediate:  %s", intermediate);
+        debug("\tKind: %s", kind);
+        debug("\tType: %s", type);
 
         if(strncmp(kind, "compute", UINT8_MAX) == 0) {
             shader->kind = shaderc_compute_shader;
@@ -107,7 +105,7 @@ void configure(int argc, char *argv[]) {
             shader->kind = shaderc_fragment_shader;
         } //TODO: Add other shader types
 
-        if(strncmp(intermediate, "intermediate", UINT8_MAX) == 0 || strncmp(intermediate, "spirv", UINT8_MAX) == 0) {
+        if(strncmp(type, "intermediate", UINT8_MAX) == 0 || strncmp(type, "spirv", UINT8_MAX) == 0) {
             shader->intermediate = VK_TRUE;
         } else {
             shader->intermediate = VK_FALSE;

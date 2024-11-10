@@ -2,7 +2,7 @@ Window:
     800
     600
 Shaders: 2
-    vertex_fixed vertex intermediate
+    vertex_fixed   vertex   glsl
     fragment_fixed fragment intermediate
 Assets: 1
     Lantern.gltf
