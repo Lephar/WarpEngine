@@ -1,11 +1,36 @@
 #include "config.h"
 
 #include "helper.h"
+#include "queue.h"
+#include "shader.h"
+#include "manager.h"
 
 char rootPath[PATH_MAX];
 char executableName[PATH_MAX];
 
 extern VkExtent2D extent;
+
+extern Queue graphicsQueue;
+extern Queue  computeQueue;
+extern Queue transferQueue;
+
+Queue *queueReferences[] = {
+    &graphicsQueue,
+    & computeQueue,
+    &transferQueue
+};
+
+uint32_t queueCount;
+
+extern Shader vertex;
+extern Shader fragment;
+
+Shader *shaderReferences[] = {
+    &vertex,
+    &fragment
+};
+
+uint32_t shaderCount;
 
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);

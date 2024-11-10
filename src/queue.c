@@ -10,22 +10,16 @@ Queue graphicsQueue;
 Queue  computeQueue;
 Queue transferQueue;
 
-Queue *queueReferences[] = {
-    &graphicsQueue,
-    & computeQueue,
-    &transferQueue
-};
+extern Queue *queueReferences[];
 
-uint32_t queueCount;
+extern uint32_t queueCount;
+
 uint32_t distinctQueueFamilyCount;
 
 void generateQueueDetails() {
     graphicsQueue.requiredFlags = VK_QUEUE_GRAPHICS_BIT;
      computeQueue.requiredFlags = VK_QUEUE_COMPUTE_BIT ;
     transferQueue.requiredFlags = VK_QUEUE_TRANSFER_BIT;
-
-    queueCount = sizeof(queueReferences) / sizeof(Queue*);
-    debug("Queue count: %d", queueCount);
 
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         uint32_t mostSuitedScore = 0;

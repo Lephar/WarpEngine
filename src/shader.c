@@ -9,10 +9,9 @@ extern VkDevice device;
 Shader vertex;
 Shader fragment;
 
-Shader *shaderReferences[] = {
-    &vertex,
-    &fragment
-};
+extern Shader *shaderReferences[];
+
+extern uint32_t shaderCount;
 
 VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
