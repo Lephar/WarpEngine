@@ -97,9 +97,6 @@ void getQueues() {
 
         vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReference->commandPool);
         debug("\tCommand pool created");
-
-        queueReference->commandBuffer = allocateSingleCommandBuffer(queueReference);
-        debug("\tCommand buffer created");
     }
 }
 
