@@ -18,6 +18,8 @@ VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
 VkDescriptorSet descriptorSet;
 
+VkPipelineLayout pipelineLayout;
+
 void createModule(Shader *shader) {
     debug("Shader: %s", shader->name);
 
@@ -142,6 +144,20 @@ void createDescriptors() {
 
     vkAllocateDescriptorSets(device, &setInfo, &descriptorSet);
     debug("Descriptor set allocated");
+
+    // TODO: Carry it away!
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .setLayoutCount = 1,
+        .pSetLayouts = &descriptorSetLayout,
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = NULL
+    };
+
+    vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &pipelineLayout);
+    debug("Pipeline layout created");
 }
 
 void destroyModule(Shader *shader) {
@@ -166,6 +182,9 @@ void destroyModules() {
 }
 
 void destroyDescriptors() {
+    vkDestroyPipelineLayout(device, pipelineLayout, NULL);
+    debug("Pipeline layout destroyed");
+
     vkDestroyDescriptorPool(device, descriptorPool, NULL);
     debug("Descriptor pool destroyed");
 

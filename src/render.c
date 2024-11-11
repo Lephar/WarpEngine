@@ -11,7 +11,6 @@ extern VkExtent2D extent;
 extern Queue graphicsQueue;
 
 extern Swapchain swapchain;
-
 extern FramebufferSet framebufferSet;
 
 extern Buffer deviceBuffer;
@@ -29,6 +28,9 @@ extern VkDeviceSize uniformBufferSize;
 extern Index    *  indexBuffer;
 extern Vertex   * vertexBuffer;
 extern Uniform  *uniformBuffer;
+
+extern VkDescriptorSet descriptorSet;
+extern VkPipelineLayout pipelineLayout;
 
 uint32_t framebufferIndex;
 uint32_t swapchainImageIndex;
@@ -112,6 +114,11 @@ void render() {
 
     vkBeginCommandBuffer(framebuffer->commandBuffer, &beginInfo);
     vkCmdBeginRendering(framebuffer->commandBuffer, &renderingInfo);
+
+    vkCmdBindIndexBuffer(framebuffer->commandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+    vkCmdBindVertexBuffers(framebuffer->commandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
+
+    vkCmdBindDescriptorSets(framebuffer->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
 
     vkCmdEndRendering(framebuffer->commandBuffer);
     vkEndCommandBuffer(framebuffer->commandBuffer);
