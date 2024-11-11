@@ -75,28 +75,33 @@ void allocateMemories() {
 
     typeFilter = imageMemoryRequirements.memoryTypeBits & bufferMemoryRequirements.memoryTypeBits;
 
-    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 1L << 29);
+    debug("Device local memory:");
+    debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
+
+    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 512L << 20);
     destroyBuffer(&temporaryBuffer);
     destroyImage(&temporaryImage);
 
-    debug("Device local memory allocated:\t%ld bytes", deviceMemory.size);
-    debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
     debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
+    debug("\t%ld bytes allocated", deviceMemory.size);
 
     createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 1L << 20);
     vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
     typeFilter = bufferMemoryRequirements.memoryTypeBits;
 
+    debug("Host visible memory:");
+    debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
+
     allocateMemory(&sharedMemory, typeFilter,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 1L << 27);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 128L << 20);
     destroyBuffer(&temporaryBuffer);
 
-    debug("Host visible memory allocated:\t%ld bytes", sharedMemory.size);
-    debug("\tSuitable type indices:\t%08u", byte_to_binary(typeFilter));
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
+    debug("\t%ld bytes allocated",  sharedMemory.size);
 
     mappedSharedMemory = mapMemory(&sharedMemory);
+    debug("\tSuccessfully mapped");
 }
 
 void unmapMemory(Memory *memory) {
