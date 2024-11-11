@@ -1,3 +1,5 @@
+#pragma once
+
 #include "zero.h"
 
 struct shader {

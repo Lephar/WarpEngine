@@ -1,7 +1,8 @@
 #pragma once
 
-#include "image.h"
 #include "zero.h"
+
+#include "image.h"
 
 struct framebuffer {
     Image depthStencil;

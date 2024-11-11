@@ -1,3 +1,5 @@
+#pragma once
+
 #include "zero.h"
 
 typedef uint32_t Index;

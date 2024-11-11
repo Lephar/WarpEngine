@@ -1,3 +1,5 @@
+#pragma once
+
 #include "zero.h"
 
 #ifndef PATH_MAX
