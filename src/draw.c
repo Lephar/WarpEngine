@@ -41,5 +41,78 @@ void initializeRender() {
 }
 
 void render() {
+    framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
+    Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
+    VkCommandBufferBeginInfo beginInfo = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .pInheritanceInfo = NULL
+    };
+
+    VkRenderingAttachmentInfo depthStencilAttachmentInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+        .pNext = NULL,
+        .imageView = framebuffer->depthStencil.view,
+        .imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
+        .resolveMode = VK_RESOLVE_MODE_NONE,
+        .resolveImageView = VK_NULL_HANDLE,
+        .resolveImageLayout = 0,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .clearValue = {
+            .depthStencil = {
+                .depth = 1.0f,
+                .stencil = 0
+            }
+        }
+    };
+
+    VkRenderingAttachmentInfo colorAttachmentInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+        .pNext = NULL,
+        .imageView = framebuffer->color.view,
+        .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        .resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT,
+        .resolveImageView = framebuffer->resolve.view,
+        .resolveImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .clearValue = {
+            .color = {
+                .float32 = {
+                    0.0f,
+                    0.0f,
+                    0.0f,
+                    1.0f
+                },
+            }
+        }
+    };
+
+    VkRenderingInfo renderingInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .renderArea = {
+            .offset = {
+                .x = 0,
+                .y = 0,
+            },
+            .extent = extent
+        },
+        .layerCount = 1,
+        .viewMask = 0,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentInfo,
+        .pDepthAttachment = &depthStencilAttachmentInfo,
+        .pStencilAttachment = &depthStencilAttachmentInfo
+    };
+
+    vkBeginCommandBuffer(framebuffer->commandBuffer, &beginInfo);
+    vkCmdBeginRendering(framebuffer->commandBuffer, &renderingInfo);
+
+    vkCmdEndRendering(framebuffer->commandBuffer);
+    vkEndCommandBuffer(framebuffer->commandBuffer);
 }
