@@ -21,7 +21,6 @@ struct framebufferSet {
 
     VkFormat depthStencilFormat;
     VkFormat colorFormat;
-    VkFormat resolveFormat;
 
     Framebuffer *framebuffers;
 } typedef FramebufferSet;

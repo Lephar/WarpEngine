@@ -17,7 +17,7 @@ FramebufferSet oldFramebufferSet;
 void createFramebuffer(Framebuffer *framebuffer) {
     createImage(&framebuffer->depthStencil, extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     createImage(&framebuffer->color, extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
-    createImage(&framebuffer->resolve, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.resolveFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+    createImage(&framebuffer->resolve, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
 
     bindImageMemory(&framebuffer->depthStencil, &deviceMemory);
     bindImageMemory(&framebuffer->color, &deviceMemory);
@@ -53,7 +53,6 @@ void createFramebufferSet() {
 
     framebufferSet.depthStencilFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
     framebufferSet.colorFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
-    framebufferSet.resolveFormat = swapchain.surfaceFormat.format;
 
     framebufferSet.framebuffers = malloc(framebufferSet.framebufferImageCount * sizeof(Framebuffer));
 
