@@ -15,6 +15,8 @@
 #include "shader.h"
 #include "manager.h"
 
+#include "draw.h"
+
 void initialize(int argc, char *argv[]) {
     configure(argc, argv);
 
@@ -37,7 +39,7 @@ void initialize(int argc, char *argv[]) {
 }
 
 void loop() {
-    draw(NULL);
+    draw(render);
 }
 
 void quit() {
