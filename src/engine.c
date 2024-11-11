@@ -15,7 +15,7 @@
 #include "shader.h"
 #include "element.h"
 
-#include "draw.h"
+#include "render.h"
 
 void initialize(int argc, char *argv[]) {
     configure(argc, argv);
