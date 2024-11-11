@@ -2,4 +2,5 @@
 
 #include "zero.h"
 
+void initializeRender();
 void render();

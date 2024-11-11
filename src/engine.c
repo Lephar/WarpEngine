@@ -39,6 +39,8 @@ void initialize(int argc, char *argv[]) {
 }
 
 void loop() {
+    initializeRender();
+
     draw(render);
 }
 
