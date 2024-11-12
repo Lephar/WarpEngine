@@ -8,7 +8,7 @@ struct shader {
     VkBool32 intermediate;
     size_t size;
     char *data;
-    VkShaderModule module;
+    VkShaderEXT module;
 } typedef Shader;
 
 void createModules();
