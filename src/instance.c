@@ -1,10 +1,8 @@
 #include "instance.h"
-#include "window.h"
 #include "helper.h"
 
 extern char executableName[];
 
-extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 extern uint32_t requiredInstanceExtensionCount;
 extern const char **requiredInstanceExtensionNames;
 
@@ -87,7 +85,9 @@ void createInstance() {
     debug("Instance created");
 
 #ifndef NDEBUG
-    PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = (PFN_vkCreateDebugUtilsMessengerEXT)getInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = loadFunction("vkCreateDebugUtilsMessengerEXT");
+    assert(createDebugUtilsMessenger);
+
     createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
     debug("Messenger created");
 #endif // NDEBUG
@@ -98,7 +98,9 @@ void createInstance() {
 
 void destroyInstance() {
 #ifndef NDEBUG
-    PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT)getInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = loadFunction("vkDestroyDebugUtilsMessengerEXT");
+    assert(destroyDebugUtilsMessenger);
+
     destroyDebugUtilsMessenger(instance, messenger, NULL);
     debug("Messenger destroyed");
 #endif // NDEBUG
