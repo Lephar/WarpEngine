@@ -2,6 +2,9 @@
 
 extern char rootPath[];
 
+extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
+extern VkInstance instance;
+
 VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagBitsEXT severity,
                                                 VkDebugUtilsMessageTypeFlagsEXT type,
                                                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -13,6 +16,10 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagB
     debug("%s", pCallbackData->pMessage);
 
     return VK_FALSE;
+}
+
+void *loadFunction(const char *name) {
+    return getInstanceProcAddr(instance, name);
 }
 
 // Not the most optimal solution but gets the job done
