@@ -88,6 +88,7 @@ void createModule(Shader *shader) {
     const char *extension = ".glsl";
 
     VkShaderStageFlags stage = 0;
+    VkShaderStageFlags nextStage = 0;
 
     if(shader->kind == shaderc_compute_shader) {
         extension = ".comp";
@@ -95,6 +96,7 @@ void createModule(Shader *shader) {
     } else if(shader->kind == shaderc_vertex_shader) {
         extension = ".vert";
         stage = VK_SHADER_STAGE_VERTEX_BIT;
+        nextStage = VK_SHADER_STAGE_FRAGMENT_BIT;
     } else if(shader->kind == shaderc_fragment_shader) {
         extension = ".frag";
         stage = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -140,7 +142,7 @@ void createModule(Shader *shader) {
         .pNext = NULL,
         .flags = 0,
         .stage = stage,
-        .nextStage = 0,
+        .nextStage = nextStage,
         .codeType = VK_SHADER_CODE_TYPE_SPIRV_EXT,
         .codeSize = shader->size,
         .pCode = shader->data,
