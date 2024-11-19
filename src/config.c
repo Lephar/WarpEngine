@@ -22,12 +22,12 @@ Queue *queueReferences[] = {
 
 uint32_t queueCount;
 
-extern Shader vertex;
-extern Shader fragment;
+extern Shader vertexShader;
+extern Shader fragmentShader;
 
 Shader *shaderReferences[] = {
-    &vertex,
-    &fragment
+    &vertexShader,
+    &fragmentShader
 };
 
 uint32_t shaderCount;
@@ -98,11 +98,11 @@ void configure(int argc, char *argv[]) {
         debug("\tType: %s", type);
 
         if(strncmp(kind, "compute", UINT8_MAX) == 0) {
-            shader->kind = shaderc_compute_shader;
+            shader->stage = VK_SHADER_STAGE_COMPUTE_BIT;
         } else if(strncmp(kind, "vertex", UINT8_MAX) == 0) {
-            shader->kind = shaderc_vertex_shader;
+            shader->stage = VK_SHADER_STAGE_VERTEX_BIT;
         } else if(strncmp(kind, "fragment", UINT8_MAX) == 0) {
-            shader->kind = shaderc_fragment_shader;
+            shader->stage = VK_SHADER_STAGE_FRAGMENT_BIT;
         } //TODO: Add other shader types
 
         if(strncmp(type, "intermediate", UINT8_MAX) == 0 || strncmp(type, "spirv", UINT8_MAX) == 0) {

@@ -4,7 +4,7 @@
 
 struct shader {
     char name[PATH_MAX];
-    shaderc_shader_kind kind;
+    VkShaderStageFlags stage;
     VkBool32 intermediate;
     size_t size;
     char *data;

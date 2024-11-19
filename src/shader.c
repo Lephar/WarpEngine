@@ -6,8 +6,8 @@ shaderc_compile_options_t shaderCompileOptions;
 
 extern VkDevice device;
 
-Shader vertex;
-Shader fragment;
+Shader   vertexShader;
+Shader fragmentShader;
 
 extern Shader *shaderReferences[];
 
@@ -87,19 +87,19 @@ void createModule(Shader *shader) {
 
     const char *extension = ".glsl";
 
-    VkShaderStageFlags stage = 0;
+    shaderc_shader_kind shaderKind = 0;
     VkShaderStageFlags nextStage = 0;
 
-    if(shader->kind == shaderc_compute_shader) {
+    if(shader->stage == VK_SHADER_STAGE_COMPUTE_BIT) {
         extension = ".comp";
-        stage = VK_SHADER_STAGE_COMPUTE_BIT;
-    } else if(shader->kind == shaderc_vertex_shader) {
+        shaderKind = shaderc_compute_shader;
+    } else if(shader->stage == VK_SHADER_STAGE_VERTEX_BIT) {
         extension = ".vert";
-        stage = VK_SHADER_STAGE_VERTEX_BIT;
+        shaderKind = shaderc_vertex_shader;
         nextStage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    } else if(shader->kind == shaderc_fragment_shader) {
+    } else if(shader->stage == VK_SHADER_STAGE_FRAGMENT_BIT) {
         extension = ".frag";
-        stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderKind = shaderc_fragment_shader;
     } //TODO: Add other shader types
 
     char shaderFile[PATH_MAX];
@@ -116,7 +116,7 @@ void createModule(Shader *shader) {
         readFile(shaderFile, 0, &shaderCodeSize, &shaderCode);
         debug("\tCode size:     %ld", shaderCodeSize);
 
-        shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode, shaderCodeSize - 1, shader->kind, shaderFile, "main", shaderCompileOptions);
+        shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode, shaderCodeSize - 1, shaderKind, shaderFile, "main", shaderCompileOptions);
         shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
 
         if(status != shaderc_compilation_status_success) {
@@ -141,7 +141,7 @@ void createModule(Shader *shader) {
         .sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,
         .pNext = NULL,
         .flags = 0,
-        .stage = stage,
+        .stage = shader->stage,
         .nextStage = nextStage,
         .codeType = VK_SHADER_CODE_TYPE_SPIRV_EXT,
         .codeSize = shader->size,
