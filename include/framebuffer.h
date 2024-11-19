@@ -10,7 +10,8 @@ struct framebuffer {
     Image resolve;
 
     VkCommandBuffer commandBuffer;
-    VkSemaphore semaphore;
+    VkSemaphore acquireSemaphore;
+    VkSemaphore finishedSemaphore;
     VkFence fence;
 } typedef Framebuffer;
 
