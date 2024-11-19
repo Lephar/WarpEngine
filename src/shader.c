@@ -1,10 +1,16 @@
 #include "shader.h"
+
 #include "helper.h"
+
+#include "buffer.h"
+#include "element.h"
 
 shaderc_compiler_t shaderCompiler;
 shaderc_compile_options_t shaderCompileOptions;
 
 extern VkDevice device;
+
+extern Buffer sharedBuffer;
 
 Shader   vertexShader;
 Shader fragmentShader;
@@ -66,6 +72,27 @@ void createDescriptors() {
 
     vkAllocateDescriptorSets(device, &setInfo, &descriptorSet);
     debug("Descriptor set allocated");
+
+    VkDescriptorBufferInfo bufferInfo = {
+        .buffer = sharedBuffer.buffer,
+        .offset = 0,
+        .range = sizeof(Uniform)
+    };
+
+    VkWriteDescriptorSet descriptorWrite = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = NULL,
+        .dstSet = descriptorSet,
+        .dstBinding = 0,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        .pImageInfo = NULL,
+        .pBufferInfo = &bufferInfo,
+        .pTexelBufferView = NULL
+    };
+
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
 
     // TODO: Carry it away!
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
