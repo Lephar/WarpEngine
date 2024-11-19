@@ -35,7 +35,8 @@ void createFramebuffer(Framebuffer *framebuffer) {
         .flags = 0
     };
 
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->semaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->acquireSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->finishedSemaphore);
 
     VkFenceCreateInfo fenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
@@ -64,7 +65,9 @@ void createFramebufferSet() {
 
 void destroyFramebuffer(Framebuffer *framebuffer) {
     vkDestroyFence(device, framebuffer->fence, NULL);
-    vkDestroySemaphore(device, framebuffer->semaphore, NULL);
+
+    vkDestroySemaphore(device, framebuffer->acquireSemaphore, NULL);
+    vkDestroySemaphore(device, framebuffer->finishedSemaphore, NULL);
 
     destroyImageView(&framebuffer->resolve);
     destroyImageView(&framebuffer->color);
