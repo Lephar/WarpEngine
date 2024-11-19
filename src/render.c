@@ -1,10 +1,15 @@
 #include "render.h"
 
+#include "helper.h"
+
 #include "queue.h"
 #include "swapchain.h"
 #include "framebuffer.h"
 #include "buffer.h"
 #include "element.h"
+#include "shader.h"
+
+extern VkDevice device;
 
 extern VkExtent2D extent;
 
@@ -32,18 +37,16 @@ extern Uniform  *uniformBuffer;
 extern VkDescriptorSet descriptorSet;
 extern VkPipelineLayout pipelineLayout;
 
-uint32_t framebufferIndex;
-uint32_t swapchainImageIndex;
+extern Shader   vertexShader;
+extern Shader fragmentShader;
+
 uint32_t frameCount;
 
 void initializeRender() {
-    framebufferIndex = 0;
-    swapchainImageIndex = 0;
     frameCount = 0;
 }
 
-void render() {
-    framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
+void record(uint32_t framebufferIndex) {
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
@@ -112,6 +115,55 @@ void render() {
         .pStencilAttachment = &depthStencilAttachmentInfo
     };
 
+    VkShaderStageFlags stages[] = {
+          vertexShader.stage,
+        fragmentShader.stage
+    };
+
+    VkShaderEXT shaders[] = {
+          vertexShader.module,
+        fragmentShader.module
+    };
+
+    uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
+
+    //VkBool32 colorBlend = VK_FALSE;
+
+    //VkSampleMask sampleMask = 0;
+
+    VkViewport viewport = {
+        .x = 0,
+        .y = 0,
+        .width = extent.width,
+        .height = extent.height
+    };
+
+    VkRect2D scissor = {
+        .offset = {
+            .x = 0,
+            .y = 0
+        },
+        .extent = extent
+    };
+
+    VkVertexInputBindingDescription2EXT vertexBinding = {
+        .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
+        .pNext = NULL,
+        .binding = 0,
+        .stride = sizeof(Vertex),
+        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+        .divisor = 1
+    };
+
+    VkVertexInputAttributeDescription2EXT vertexAttribute = {
+        .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+        .pNext = NULL,
+        .location = 0,
+        .binding = 0,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
+        .offset = 0
+    };
+
     vkBeginCommandBuffer(framebuffer->commandBuffer, &beginInfo);
     vkCmdBeginRendering(framebuffer->commandBuffer, &renderingInfo);
 
@@ -120,6 +172,65 @@ void render() {
 
     vkCmdBindDescriptorSets(framebuffer->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
 
+    PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
+    cmdBindShaders(framebuffer->commandBuffer, stageCount, stages, shaders);
+
+
+    //vkCmdSetCullMode(framebuffer->commandBuffer, VK_CULL_MODE_BACK_BIT);
+    //vkCmdSetFrontFace(framebuffer->commandBuffer, VK_FRONT_FACE_CLOCKWISE);
+
+    //PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
+    //cmdSetPolygonMode(framebuffer->commandBuffer, VK_POLYGON_MODE_FILL);
+    vkCmdSetPrimitiveTopology(framebuffer->commandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    vkCmdSetPrimitiveRestartEnable(framebuffer->commandBuffer, VK_FALSE);
+
+    //vkCmdSetDepthTestEnable(framebuffer->commandBuffer, VK_TRUE);
+    //vkCmdSetDepthWriteEnable(framebuffer->commandBuffer, VK_TRUE);
+    //vkCmdSetDepthBiasEnable(framebuffer->commandBuffer, VK_FALSE);
+    //vkCmdSetDepthCompareOp(framebuffer->commandBuffer, VK_COMPARE_OP_GREATER);
+
+    vkCmdSetStencilTestEnable(framebuffer->commandBuffer, VK_FALSE);
+
+    vkCmdSetRasterizerDiscardEnable(framebuffer->commandBuffer, VK_TRUE);
+
+    //PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
+    //cmdSetRasterizationSamples(framebuffer->commandBuffer, framebufferSet.sampleCount);
+    //PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadFunction("vkCmdSetSampleMaskEXT");
+    //cmdSetSampleMask(framebuffer->commandBuffer, framebufferSet.sampleCount, &sampleMask);
+
+    //PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadFunction("vkCmdSetAlphaToOneEnableEXT");
+    //cmdSetAlphaToOneEnable(framebuffer->commandBuffer, VK_FALSE);
+    //PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadFunction("vkCmdSetAlphaToCoverageEnableEXT");
+    //cmdSetAlphaToCoverageEnable(framebuffer->commandBuffer, VK_FALSE);
+    //PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadFunction("vkCmdSetColorBlendEnableEXT");
+    //cmdSetColorBlendEnable(framebuffer->commandBuffer, 0, 1, &colorBlend);
+
+    // TODO: Why doesn't this work?
+    //vkCmdSetViewport(framebuffer->commandBuffer, 0, 1, &viewport);
+    //vkCmdSetScissor(framebuffer->commandBuffer, 0, 1, &scissor);
+
+    vkCmdSetViewportWithCount(framebuffer->commandBuffer, 1, &viewport);
+    vkCmdSetScissorWithCount(framebuffer->commandBuffer, 1, &scissor);
+
+    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
+    cmdSetVertexInput(framebuffer->commandBuffer, 1, &vertexBinding, 1, &vertexAttribute);
+
+
+    vkCmdDrawIndexed(framebuffer->commandBuffer, indexCount, 1, 0, 0, 0);
+
     vkCmdEndRendering(framebuffer->commandBuffer);
     vkEndCommandBuffer(framebuffer->commandBuffer);
+
+    assert(0);
+}
+
+void submit(uint32_t framebufferIndex) {
+
+}
+
+void render() {
+    uint32_t framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
+
+    record(framebufferIndex);
+    submit(framebufferIndex);
 }
