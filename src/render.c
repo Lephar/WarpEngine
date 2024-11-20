@@ -41,12 +41,14 @@ extern Shader   vertexShader;
 extern Shader fragmentShader;
 
 uint32_t frameCount;
+uint32_t framebufferIndex;
 
 void initializeRender() {
     frameCount = 0;
+    framebufferIndex = 0;
 }
 
-void record(uint32_t framebufferIndex) {
+void record() {
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
@@ -166,16 +168,16 @@ void record(uint32_t framebufferIndex) {
 
     vkWaitForFences(device, 1, &framebuffer->fence, VK_TRUE, UINT64_MAX);
 
-    vkBeginCommandBuffer(framebuffer->commandBuffer, &beginInfo);
-    vkCmdBeginRendering(framebuffer->commandBuffer, &renderingInfo);
+    vkBeginCommandBuffer(framebuffer->renderCommandBuffer, &beginInfo);
+    vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
 
-    vkCmdBindIndexBuffer(framebuffer->commandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-    vkCmdBindVertexBuffers(framebuffer->commandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
+    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
 
-    vkCmdBindDescriptorSets(framebuffer->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
 
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
-    cmdBindShaders(framebuffer->commandBuffer, stageCount, stages, shaders);
+    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
 
 
     //vkCmdSetCullMode(framebuffer->commandBuffer, VK_CULL_MODE_BACK_BIT);
@@ -183,17 +185,17 @@ void record(uint32_t framebufferIndex) {
 
     //PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
     //cmdSetPolygonMode(framebuffer->commandBuffer, VK_POLYGON_MODE_FILL);
-    vkCmdSetPrimitiveTopology(framebuffer->commandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-    vkCmdSetPrimitiveRestartEnable(framebuffer->commandBuffer, VK_FALSE);
+    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
     //vkCmdSetDepthTestEnable(framebuffer->commandBuffer, VK_TRUE);
     //vkCmdSetDepthWriteEnable(framebuffer->commandBuffer, VK_TRUE);
     //vkCmdSetDepthBiasEnable(framebuffer->commandBuffer, VK_FALSE);
     //vkCmdSetDepthCompareOp(framebuffer->commandBuffer, VK_COMPARE_OP_GREATER);
 
-    vkCmdSetStencilTestEnable(framebuffer->commandBuffer, VK_FALSE);
+    vkCmdSetStencilTestEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    vkCmdSetRasterizerDiscardEnable(framebuffer->commandBuffer, VK_TRUE);
+    vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_TRUE);
 
     //PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
     //cmdSetRasterizationSamples(framebuffer->commandBuffer, framebufferSet.sampleCount);
@@ -211,20 +213,20 @@ void record(uint32_t framebufferIndex) {
     //vkCmdSetViewport(framebuffer->commandBuffer, 0, 1, &viewport);
     //vkCmdSetScissor(framebuffer->commandBuffer, 0, 1, &scissor);
 
-    vkCmdSetViewportWithCount(framebuffer->commandBuffer, 1, &viewport);
-    vkCmdSetScissorWithCount(framebuffer->commandBuffer, 1, &scissor);
+    vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
+    vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
 
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
-    cmdSetVertexInput(framebuffer->commandBuffer, 1, &vertexBinding, 1, &vertexAttribute);
+    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, 1, &vertexAttribute);
 
 
-    vkCmdDrawIndexed(framebuffer->commandBuffer, indexCount, 1, 0, 0, 0);
+    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, indexCount, 1, 0, 0, 0);
 
-    vkCmdEndRendering(framebuffer->commandBuffer);
-    vkEndCommandBuffer(framebuffer->commandBuffer);
+    vkCmdEndRendering(framebuffer->renderCommandBuffer);
+    vkEndCommandBuffer(framebuffer->renderCommandBuffer);
 }
 
-void submit(uint32_t framebufferIndex) {
+void submit() {
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkSubmitInfo submitInfo = {
@@ -234,7 +236,7 @@ void submit(uint32_t framebufferIndex) {
         .pWaitSemaphores = NULL,
         .pWaitDstStageMask = 0,
         .commandBufferCount = 1,
-        .pCommandBuffers = &framebuffer->commandBuffer,
+        .pCommandBuffers = &framebuffer->renderCommandBuffer,
         .signalSemaphoreCount = 1,
         .pSignalSemaphores = &framebuffer->finishedSemaphore
     };
@@ -242,9 +244,20 @@ void submit(uint32_t framebufferIndex) {
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
 }
 
-void render() {
-    uint32_t framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
+void present() {
+    Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
-    record(framebufferIndex);
-    submit(framebufferIndex);
+    uint32_t swapchainImageIndex = UINT32_MAX;
+
+    vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+
+
+}
+
+void render() {
+    framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
+
+    record();
+    submit();
+    present();
 }

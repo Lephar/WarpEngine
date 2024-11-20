@@ -27,7 +27,8 @@ void createFramebuffer(Framebuffer *framebuffer) {
     createImageView(&framebuffer->color, VK_IMAGE_ASPECT_COLOR_BIT);
     createImageView(&framebuffer->resolve, VK_IMAGE_ASPECT_COLOR_BIT);
 
-    framebuffer->commandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
+    framebuffer->renderCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
+    framebuffer->presentCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
 
     VkSemaphoreCreateInfo semaphoreInfo = {
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,

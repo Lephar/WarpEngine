@@ -9,9 +9,12 @@ struct framebuffer {
     Image color;
     Image resolve;
 
-    VkCommandBuffer commandBuffer;
+    VkCommandBuffer renderCommandBuffer;
+    VkCommandBuffer presentCommandBuffer;
+
     VkSemaphore acquireSemaphore;
     VkSemaphore finishedSemaphore;
+
     VkFence fence;
 } typedef Framebuffer;
 
