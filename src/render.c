@@ -164,6 +164,8 @@ void record(uint32_t framebufferIndex) {
         .offset = 0
     };
 
+    vkWaitForFences(device, 1, &framebuffer->fence, VK_TRUE, UINT64_MAX);
+
     vkBeginCommandBuffer(framebuffer->commandBuffer, &beginInfo);
     vkCmdBeginRendering(framebuffer->commandBuffer, &renderingInfo);
 
@@ -220,12 +222,24 @@ void record(uint32_t framebufferIndex) {
 
     vkCmdEndRendering(framebuffer->commandBuffer);
     vkEndCommandBuffer(framebuffer->commandBuffer);
-
-    assert(0);
 }
 
 void submit(uint32_t framebufferIndex) {
+    Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
+    VkSubmitInfo submitInfo = {
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .pNext = NULL,
+        .waitSemaphoreCount = 0,
+        .pWaitSemaphores = NULL,
+        .pWaitDstStageMask = 0,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &framebuffer->commandBuffer,
+        .signalSemaphoreCount = 1,
+        .pSignalSemaphores = &framebuffer->finishedSemaphore
+    };
+
+    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
 }
 
 void render() {
