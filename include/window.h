@@ -4,6 +4,6 @@
 
 void initializeSystem();
 void createWindow();
-void draw(void (*render)());
+SDL_bool pollEvents();
 void destroyWindow();
 void quitSystem();

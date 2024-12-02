@@ -6,7 +6,6 @@ extern char executableName[];
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
 extern SDL_bool surfaceCreated;
-SDL_bool drawing = SDL_FALSE;
 
 PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 SDL_Window *window = NULL;
@@ -51,32 +50,16 @@ void createWindow() {
     debug("Window created");
 }
 
-void draw(void (*render)()) {
-    assert(surfaceCreated && !drawing);
+SDL_bool pollEvents() {
+    SDL_Event event;
 
-    drawing = SDL_TRUE;
-    debug("Draw loop started");
-
-    while (true) {
-        SDL_Event event;
-
-        while(SDL_PollEvent(&event)) {
-            if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
-                drawing = SDL_FALSE;
-                break;
-            }
-        }
-
-        if(!drawing) {
-            break;
-        }
-
-        if(render) {
-            render();
+    while(SDL_PollEvent(&event)) {
+        if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
+            return SDL_FALSE;
         }
     }
 
-    debug("Draw loop ended");
+    return SDL_TRUE;
 }
 
 void destroyWindow() {
