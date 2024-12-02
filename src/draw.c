@@ -46,6 +46,8 @@ uint32_t framebufferIndex;
 void initializeDraw() {
     frameCount = 0;
     framebufferIndex = 0;
+
+    debug("Draw loop started");
 }
 
 void render() {
@@ -255,4 +257,10 @@ void draw() {
 
     render();
     present();
+}
+
+void finalizeDraw() {
+    debug("Draw loop ended");
+
+    vkDeviceWaitIdle(device);
 }

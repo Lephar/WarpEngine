@@ -41,13 +41,11 @@ void initialize(int argc, char *argv[]) {
 void loop() {
     initializeDraw();
 
-    debug("Draw loop started");
-
-    while(pollEvents()) {
+    //while(pollEvents()) {
         draw();
-    }
+    //}
 
-    debug("Draw loop ended");
+    finalizeDraw();
 }
 
 void quit() {

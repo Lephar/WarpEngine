@@ -4,3 +4,4 @@
 
 void initializeDraw();
 void draw();
+void finalizeDraw();
