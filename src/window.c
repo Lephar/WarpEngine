@@ -20,7 +20,13 @@ extern VkSurfaceKHR surface;
 void initializeSystem() {
     assert(!systemInitialized);
 
+    SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
+    SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
+
     SDL_Init(SDL_INIT_EVERYTHING);
+    debug("SDL Video Driver: %s", SDL_GetCurrentVideoDriver());
+    debug("SDL Audio Driver: %s", SDL_GetCurrentAudioDriver());
+
     SDL_Vulkan_LoadLibrary(NULL);
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
