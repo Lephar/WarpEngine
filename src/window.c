@@ -47,7 +47,9 @@ void createWindow() {
     SDL_Vulkan_GetInstanceExtensions(window, &requiredInstanceExtensionCount, requiredInstanceExtensionNames);
 
     windowCreated = SDL_TRUE;
-    debug("Window created");
+    debug("Window created:");
+    debug("\tWidth:  %u", extent.width );
+    debug("\tHeight: %u", extent.height);
 }
 
 SDL_bool pollEvents() {

@@ -41,12 +41,15 @@ void createSurface() {
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
 
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities);
-    extent = surfaceCapabilities.currentExtent;
+
+    if(surfaceCapabilities.currentExtent.width != UINT32_MAX && surfaceCapabilities.currentExtent.height != UINT32_MAX) {
+        extent = surfaceCapabilities.currentExtent;
+    }
 
     debug("Surface details set:");
-    debug("\tSurface extent: %d %d", extent.width, extent.height);
-    debug("\tSurface format count: %d", surfaceFormatCount);
-    debug("\tPresent mode count: %d", presentModeCount);
+    debug("\tSurface extent: %u %u", extent.width, extent.height);
+    debug("\tSurface format count: %u", surfaceFormatCount);
+    debug("\tPresent mode count: %u", presentModeCount);
 }
 
 void destroySurface() {
