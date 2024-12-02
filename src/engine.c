@@ -15,7 +15,7 @@
 #include "shader.h"
 #include "element.h"
 
-#include "render.h"
+#include "draw.h"
 
 void initialize(int argc, char *argv[]) {
     configure(argc, argv);
@@ -39,9 +39,15 @@ void initialize(int argc, char *argv[]) {
 }
 
 void loop() {
-    initializeRender();
+    initializeDraw();
 
-    draw(render);
+    debug("Draw loop started");
+
+    while(pollEvents()) {
+        draw();
+    }
+
+    debug("Draw loop ended");
 }
 
 void quit() {
