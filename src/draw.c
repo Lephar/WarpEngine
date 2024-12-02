@@ -1,4 +1,4 @@
-#include "render.h"
+#include "draw.h"
 
 #include "helper.h"
 
@@ -43,12 +43,12 @@ extern Shader fragmentShader;
 uint32_t frameCount;
 uint32_t framebufferIndex;
 
-void initializeRender() {
+void initializeDraw() {
     frameCount = 0;
     framebufferIndex = 0;
 }
 
-void record() {
+void render() {
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
@@ -224,10 +224,7 @@ void record() {
 
     vkCmdEndRendering(framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);
-}
 
-void submit() {
-    Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -242,22 +239,20 @@ void submit() {
     };
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
+
 }
 
-void present() {
+void present() { // TODO: WIP
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     uint32_t swapchainImageIndex = UINT32_MAX;
 
     vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
-
-
 }
 
-void render() {
+void draw() {
     framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
 
-    record();
-    submit();
+    render();
     present();
 }
