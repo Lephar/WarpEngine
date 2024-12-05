@@ -250,6 +250,13 @@ void present() { // TODO: WIP
     uint32_t swapchainImageIndex = UINT32_MAX;
 
     vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+
+    VkImage *swapchainImage = &swapchain.images[swapchainImageIndex];
+
+    VkImageBlit region = {};
+    VkFilter filter = {};
+
+    vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve.image, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, swapchainImage, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1, &region, filter);
 }
 
 void draw() {
