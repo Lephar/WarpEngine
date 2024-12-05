@@ -253,10 +253,46 @@ void present() { // TODO: WIP
 
     VkImage *swapchainImage = &swapchain.images[swapchainImageIndex];
 
-    VkImageBlit region = {};
-    VkFilter filter = {};
+    VkImageBlit region = {
+        .srcSubresource = {
+            .aspectMask = framebuffer->resolve.aspects,
+            .mipLevel = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        },
+        .srcOffsets = {
+            {
+                .x = 0,
+                .y = 0,
+                .z = 0
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .z = 0
+            }
+        },
+        .dstSubresource = {
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+            .mipLevel = 1,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        },
+        .dstOffsets = {
+            {
+                .x = 0,
+                .y = 0,
+                .z = 0
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .z = 0
+            }
+        },
+    };
 
-    vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve.image, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, swapchainImage, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1, &region, filter);
+    vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve.image, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, *swapchainImage, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1, &region, VK_FILTER_NEAREST);
 }
 
 void draw() {
