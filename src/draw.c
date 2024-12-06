@@ -168,7 +168,9 @@ void render() {
         .offset = 0
     };
 
-    vkWaitForFences(device, 1, &framebuffer->fence, VK_TRUE, UINT64_MAX);
+    // TODO: Whole fence logic...
+    vkWaitForFences(device, 1, &framebuffer->renderFence, VK_TRUE, UINT64_MAX);
+    vkResetFences(device, 1, &framebuffer->renderFence);
 
     vkBeginCommandBuffer(framebuffer->renderCommandBuffer, &beginInfo);
     vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
@@ -331,7 +333,7 @@ void present() { // TODO: WIP
         .pSignalSemaphores = &framebuffer->blitSemaphore
     };
 
-    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, framebuffer->renderFence);
 
     VkPresentInfoKHR presentInfo = {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -347,10 +349,14 @@ void present() { // TODO: WIP
 }
 
 void draw() {
+    debug("%d", frameCount);
+
     framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
 
     render();
     present();
+
+    frameCount++;
 }
 
 void finalizeDraw() {

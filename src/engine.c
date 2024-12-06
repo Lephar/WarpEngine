@@ -41,9 +41,9 @@ void initialize(int argc, char *argv[]) {
 void loop() {
     initializeDraw();
 
-    //while(pollEvents()) {
+    while(pollEvents()) {
         draw();
-    //}
+    }
 
     finalizeDraw();
 }
