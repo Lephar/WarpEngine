@@ -98,32 +98,34 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
     endSingleTransferCommand(commandBuffer);
 }
 
-void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags, VkPipelineStageFlags sourceStages, VkPipelineStageFlags destinationStages) {
+
+// TODO: Generalize access mask and pipeline stages
+void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout) {
     VkImageMemoryBarrier memoryBarrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
         .pNext = NULL,
-        .srcAccessMask = sourceAccessFlags,
-        .dstAccessMask = destinationAccessFlags,
+        .srcAccessMask = 0,
+        .dstAccessMask = 0,
         .oldLayout = oldLayout,
         .newLayout = newLayout,
         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-        .image = image->image,
+        .image = *image,
         .subresourceRange = {
-            .aspectMask = image->aspects,
+            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
             .baseMipLevel = 0,
-            .levelCount = image->levels,
+            .levelCount = 1,
             .baseArrayLayer = 0,
             .layerCount = 1
         }
     };
 
-    vkCmdPipelineBarrier(*commandBuffer, sourceStages, destinationStages, 0, 0, NULL, 0, NULL, 1, &memoryBarrier);
+    vkCmdPipelineBarrier(*commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &memoryBarrier);
 }
 
-void transitionImageLayout(Image *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags, VkPipelineStageFlags sourceStages, VkPipelineStageFlags destinationStages) {
+void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout) {
     VkCommandBuffer commandBuffer = beginSingleTransferCommand();
-    recordTransitionImageLayout(&commandBuffer, image, oldLayout, newLayout, sourceAccessFlags, destinationAccessFlags, sourceStages, destinationStages);
+    recordTransitionImageLayout(&commandBuffer, image, oldLayout, newLayout);
     endSingleTransferCommand(commandBuffer);
 }
 
