@@ -106,7 +106,7 @@ void createSwapchain() {
         .imageColorSpace = swapchain.surfaceFormat.colorSpace,
         .imageExtent = extent,
         .imageArrayLayers = 1,
-        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .queueFamilyIndexCount = 0,
         .pQueueFamilyIndices = NULL,
@@ -124,6 +124,10 @@ void createSwapchain() {
     swapchain.images = malloc(swapchain.imageCount * sizeof(VkImage));
     vkGetSwapchainImagesKHR(device, swapchain.swapchain, &swapchain.imageCount, swapchain.images);
     debug("Retrieved %d swapchain images", swapchain.imageCount);
+
+    for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
+        transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+    }
 }
 
 void destroySwapchain() {
