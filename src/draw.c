@@ -263,7 +263,7 @@ void present() { // TODO: WIP
     VkImageBlit region = {
         .srcSubresource = {
             .aspectMask = framebuffer->resolve.aspects,
-            .mipLevel = 1,
+            .mipLevel = 0,
             .baseArrayLayer = 0,
             .layerCount = 1
         },
@@ -274,14 +274,14 @@ void present() { // TODO: WIP
                 .z = 0
             },
             {
-                .x = 0,
-                .y = 0,
-                .z = 0
+                .x = framebuffer->resolve.extent.width,
+                .y = framebuffer->resolve.extent.height,
+                .z = 1
             }
         },
         .dstSubresource = {
             .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            .mipLevel = 1,
+            .mipLevel = 0,
             .baseArrayLayer = 0,
             .layerCount = 1
         },
@@ -292,9 +292,9 @@ void present() { // TODO: WIP
                 .z = 0
             },
             {
-                .x = 0,
-                .y = 0,
-                .z = 0
+                .x = extent.width,
+                .y = extent.height,
+                .z = 1
             }
         },
     };
@@ -328,6 +328,18 @@ void present() { // TODO: WIP
     };
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
+
+    VkPresentInfoKHR presentInfo = {
+        .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+        .pNext = NULL,
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = &framebuffer->blitSemaphore,
+        .swapchainCount = 1,
+        .pSwapchains = &swapchain.swapchain,
+        .pImageIndices = &swapchainImageIndex
+    };
+
+    vkQueuePresentKHR(graphicsQueue.queue, &presentInfo);
 }
 
 void draw() {
