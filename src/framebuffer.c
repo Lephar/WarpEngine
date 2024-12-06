@@ -17,7 +17,7 @@ FramebufferSet oldFramebufferSet;
 void createFramebuffer(Framebuffer *framebuffer) {
     createImage(&framebuffer->depthStencil, extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     createImage(&framebuffer->color, extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
-    createImage(&framebuffer->resolve, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+    createImage(&framebuffer->resolve, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
 
     bindImageMemory(&framebuffer->depthStencil, &deviceMemory);
     bindImageMemory(&framebuffer->color, &deviceMemory);
@@ -37,7 +37,8 @@ void createFramebuffer(Framebuffer *framebuffer) {
     };
 
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->acquireSemaphore);
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->finishedSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->drawSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphore);
 
     VkFenceCreateInfo fenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
@@ -68,7 +69,8 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
     vkDestroyFence(device, framebuffer->fence, NULL);
 
     vkDestroySemaphore(device, framebuffer->acquireSemaphore, NULL);
-    vkDestroySemaphore(device, framebuffer->finishedSemaphore, NULL);
+    vkDestroySemaphore(device, framebuffer->drawSemaphore, NULL);
+    vkDestroySemaphore(device, framebuffer->blitSemaphore, NULL);
 
     destroyImageView(&framebuffer->resolve);
     destroyImageView(&framebuffer->color);

@@ -237,7 +237,7 @@ void render() {
         .commandBufferCount = 1,
         .pCommandBuffers = &framebuffer->renderCommandBuffer,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &framebuffer->finishedSemaphore
+        .pSignalSemaphores = &framebuffer->drawSemaphore
     };
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
@@ -252,6 +252,13 @@ void present() { // TODO: WIP
     vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
 
     VkImage *swapchainImage = &swapchain.images[swapchainImageIndex];
+
+    VkCommandBufferBeginInfo beginInfo = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .pInheritanceInfo = NULL
+    };
 
     VkImageBlit region = {
         .srcSubresource = {
@@ -292,7 +299,35 @@ void present() { // TODO: WIP
         },
     };
 
+    vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
     vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve.image, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, *swapchainImage, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 1, &region, VK_FILTER_NEAREST);
+    vkEndCommandBuffer(framebuffer->presentCommandBuffer);
+
+    VkPipelineStageFlags waitStages[] = {
+        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+    };
+
+    VkSemaphore waitSemaphores[] = {
+        framebuffer->acquireSemaphore,
+        framebuffer->drawSemaphore
+    };
+
+    uint32_t semaphoreCount = sizeof(waitSemaphores) / sizeof(VkSemaphore);
+
+    VkSubmitInfo submitInfo = {
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .pNext = NULL,
+        .waitSemaphoreCount = semaphoreCount,
+        .pWaitSemaphores = waitSemaphores,
+        .pWaitDstStageMask = waitStages,
+        .commandBufferCount = 1,
+        .pCommandBuffers = &framebuffer->presentCommandBuffer,
+        .signalSemaphoreCount = 1,
+        .pSignalSemaphores = &framebuffer->blitSemaphore
+    };
+
+    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
 }
 
 void draw() {

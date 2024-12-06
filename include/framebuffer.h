@@ -13,7 +13,8 @@ struct framebuffer {
     VkCommandBuffer presentCommandBuffer;
 
     VkSemaphore acquireSemaphore;
-    VkSemaphore finishedSemaphore;
+    VkSemaphore drawSemaphore;
+    VkSemaphore blitSemaphore;
 
     VkFence fence;
 } typedef Framebuffer;
