@@ -48,7 +48,8 @@ void createFramebuffer(Framebuffer *framebuffer) {
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
     };
 
-    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->fence);
+    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->renderFence);
+    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->presentFence);
 }
 
 void createFramebufferSet() {
@@ -68,7 +69,8 @@ void createFramebufferSet() {
 }
 
 void destroyFramebuffer(Framebuffer *framebuffer) {
-    vkDestroyFence(device, framebuffer->fence, NULL);
+    vkDestroyFence(device, framebuffer->renderFence, NULL);
+    vkDestroyFence(device, framebuffer->presentFence, NULL);
 
     vkDestroySemaphore(device, framebuffer->acquireSemaphore, NULL);
     vkDestroySemaphore(device, framebuffer->drawSemaphore, NULL);
