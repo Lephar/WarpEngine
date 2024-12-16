@@ -167,7 +167,7 @@ void createModule(Shader *shader) {
     VkShaderCreateInfoEXT shaderCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,
         .pNext = NULL,
-        .flags = 0,
+        .flags = VK_SHADER_CREATE_LINK_STAGE_BIT_EXT,
         .stage = shader->stage,
         .nextStage = nextStage,
         .codeType = VK_SHADER_CODE_TYPE_SPIRV_EXT,
