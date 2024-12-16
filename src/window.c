@@ -16,6 +16,11 @@ const char **requiredInstanceExtensionNames = NULL;
 extern VkInstance instance;
 extern VkSurfaceKHR surface;
 
+SDL_TimerID timer = 0;
+
+uint32_t frameIndex = 0;
+uint32_t frameIndexCheckpoint = 0;
+
 void initializeSystem() {
     assert(!systemInitialized);
 
@@ -58,6 +63,29 @@ void createWindow() {
     debug("\tHeight: %u", extent.height);
 }
 
+uint32_t timerCallback(uint32_t interval, void *userData) {
+    (void) userData;
+
+    uint32_t frameDifference = frameIndex - frameIndexCheckpoint;
+    frameIndexCheckpoint = frameIndex;
+
+    char title[INT8_MAX];
+    sprintf(title, "Frame: %u\tFPS: %u", frameIndex, frameDifference);
+
+    SDL_SetWindowTitle(window, title);
+
+    return interval;
+}
+
+void initializeMainLoop() {
+    timerCallback(0, NULL); // Call it immediatelly once
+
+    timer = SDL_AddTimer(1000, timerCallback, NULL);
+    assert(timer);
+
+    debug("Main loop initialized");
+}
+
 SDL_bool pollEvents() {
     SDL_Event event;
 
@@ -67,7 +95,14 @@ SDL_bool pollEvents() {
         }
     }
 
+    frameIndex++;
     return SDL_TRUE;
+}
+
+void finalizeMainLoop() {
+    SDL_RemoveTimer(timer);
+
+    debug("Main loop finalized");
 }
 
 void destroyWindow() {

@@ -40,17 +40,14 @@ extern VkPipelineLayout pipelineLayout;
 extern Shader   vertexShader;
 extern Shader fragmentShader;
 
-uint32_t frameCount;
-uint32_t framebufferIndex;
+extern uint32_t frameIndex;
 
 void initializeDraw() {
-    frameCount = 0;
-    framebufferIndex = 0;
-
     debug("Draw loop started");
 }
 
 void render() {
+    uint32_t framebufferIndex = frameIndex % framebufferSet.framebufferImageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
@@ -238,7 +235,6 @@ void render() {
     vkCmdEndRendering(framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);
 
-
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
@@ -252,14 +248,13 @@ void render() {
     };
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
-
 }
 
 void present() {
+    uint32_t framebufferIndex = frameIndex % framebufferSet.framebufferImageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     uint32_t swapchainImageIndex = UINT32_MAX;
-
     vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
 
     VkImage *swapchainImage = &swapchain.images[swapchainImageIndex];
@@ -358,14 +353,8 @@ void present() {
 }
 
 void draw() {
-    debug("%d", frameCount);
-
-    framebufferIndex = frameCount % framebufferSet.framebufferImageCount;
-
     render();
     present();
-
-    frameCount++;
 }
 
 void finalizeDraw() {
