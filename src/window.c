@@ -19,8 +19,14 @@ extern VkSurfaceKHR surface;
 void initializeSystem() {
     assert(!systemInitialized);
 
+// TODO: Temporarily use X11 for debug builds because RenderDoc doesn't support Wayland
+#ifndef NDEBUG
+    SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11,wayland,windows");
+    SDL_SetHint(SDL_HINT_AUDIODRIVER, "pulseaudio,pipewire,directsound");
+#else
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
     SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
+#endif
 
     SDL_Init(SDL_INIT_EVERYTHING);
     debug("SDL Video Driver: %s", SDL_GetCurrentVideoDriver());
