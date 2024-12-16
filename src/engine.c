@@ -39,14 +39,15 @@ void initialize(int argc, char *argv[]) {
 }
 
 void loop() {
+    initializeMainLoop();
     initializeDraw();
 
     while(pollEvents()) {
         draw();
-        break;
     }
 
     finalizeDraw();
+    finalizeMainLoop();
 }
 
 void quit() {
