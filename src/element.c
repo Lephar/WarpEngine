@@ -61,10 +61,12 @@ void initializeAssets() {
 }
 
 void loadAssets() {
-    memcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
-    memcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
+    VkDeviceSize stagingBufferOffset = uniformBufferSize;
 
-    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
+    memcpy(mappedSharedMemory + stagingBufferOffset, indexBuffer, indexBufferSize);
+    memcpy(mappedSharedMemory + stagingBufferOffset + indexBufferSize, vertexBuffer, vertexBufferSize);
+
+    copyBuffer(&sharedBuffer, &deviceBuffer, stagingBufferOffset, 0, indexBufferSize + vertexBufferSize);
 
     memcpy(mappedSharedMemory, uniformBuffer, uniformBufferSize);
 
