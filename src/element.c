@@ -66,6 +66,8 @@ void loadAssets() {
 
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
 
+    memcpy(mappedSharedMemory, uniformBuffer, uniformBufferSize);
+
     debug("Assets copied to device buffer");
 }
 
