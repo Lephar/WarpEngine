@@ -72,6 +72,9 @@ void createDevice() {
     }
 
     VkPhysicalDeviceFeatures deviceFeatures = {
+        .fillModeNonSolid = VK_TRUE,
+        .wideLines = VK_TRUE,
+        .largePoints = VK_TRUE
     };
 
     float *queuePriorities = malloc(queueCount * sizeof(float));

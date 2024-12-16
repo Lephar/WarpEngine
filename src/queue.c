@@ -16,6 +16,7 @@ extern uint32_t queueCount;
 
 uint32_t distinctQueueFamilyCount;
 
+// TODO: Add surface presentation support for queues
 void generateQueueDetails() {
     debug("Queue count: %d",  queueCount);
 

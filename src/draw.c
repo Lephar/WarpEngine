@@ -116,17 +116,7 @@ void render() {
         .pStencilAttachment = &depthStencilAttachmentInfo
     };
 
-    VkShaderStageFlags stages[] = {
-          vertexShader.stage,
-        fragmentShader.stage
-    };
-
-    VkShaderEXT shaders[] = {
-          vertexShader.module,
-        fragmentShader.module
-    };
-
-    uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
+    VkSampleMask sampleMask = 0xFF;
 
     VkBool32 colorBlend = VK_FALSE;
 
@@ -135,8 +125,6 @@ void render() {
         VK_COLOR_COMPONENT_R_BIT |
         VK_COLOR_COMPONENT_G_BIT |
         VK_COLOR_COMPONENT_B_BIT ;
-
-    VkSampleMask sampleMask = 0xFF;
 
     VkViewport viewport = {
         .x = 0,
@@ -173,6 +161,18 @@ void render() {
         .offset = 0
     };
 
+    VkShaderStageFlags stages[] = {
+          vertexShader.stage,
+        fragmentShader.stage
+    };
+
+    VkShaderEXT shaders[] = {
+          vertexShader.module,
+        fragmentShader.module
+    };
+
+    uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
+
     // TODO: Whole fence logic...
     vkWaitForFences(device, 1, &framebuffer->renderFence, VK_TRUE, UINT64_MAX);
     vkResetFences(device, 1, &framebuffer->renderFence);
@@ -195,10 +195,10 @@ void render() {
 
     vkCmdSetStencilTestEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
+    vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
+    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
     cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
-    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-    vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
     PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
     cmdSetRasterizationSamples(framebuffer->renderCommandBuffer, framebufferSet.sampleCount);
