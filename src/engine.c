@@ -43,6 +43,7 @@ void loop() {
 
     while(pollEvents()) {
         draw();
+        break;
     }
 
     finalizeDraw();
