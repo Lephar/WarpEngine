@@ -14,7 +14,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagB
     (void)pUserData;
 
     if(severity > VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
-    debug("%s", pCallbackData->pMessage);
+        debug("%s", pCallbackData->pMessage);
 
     return VK_FALSE;
 }
