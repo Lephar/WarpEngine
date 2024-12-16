@@ -52,10 +52,10 @@ void initializeAssets() {
     vertexBuffer[2].y =  0.5f ;
     vertexBuffer[2].z =  0.5f ;
 
-    uniformBuffer->transform[0][0] = 1;
-    uniformBuffer->transform[1][1] = 1;
-    uniformBuffer->transform[2][2] = 1;
-    uniformBuffer->transform[3][3] = 1;
+    uniformBuffer->transform[0][0] = 1.0f;
+    uniformBuffer->transform[1][1] = 1.0f;
+    uniformBuffer->transform[2][2] = 1.0f;
+    uniformBuffer->transform[3][3] = 1.0f;
 
     debug("Assets initialized");
 }

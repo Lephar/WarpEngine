@@ -131,15 +131,23 @@ void render() {
 
     uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
 
-    //VkBool32 colorBlend = VK_FALSE;
+    VkBool32 colorBlend = VK_FALSE;
 
-    //VkSampleMask sampleMask = 0;
+    VkColorComponentFlags colorWriteMask =
+        VK_COLOR_COMPONENT_A_BIT |
+        VK_COLOR_COMPONENT_R_BIT |
+        VK_COLOR_COMPONENT_G_BIT |
+        VK_COLOR_COMPONENT_B_BIT ;
+
+    VkSampleMask sampleMask = 0xFF;
 
     VkViewport viewport = {
         .x = 0,
         .y = 0,
         .width = extent.width,
-        .height = extent.height
+        .height = extent.height,
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f
     };
 
     VkRect2D scissor = {
