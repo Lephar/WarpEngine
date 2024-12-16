@@ -188,49 +188,50 @@ void render() {
 
     vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
-    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
+    vkCmdSetCullMode(framebuffer->renderCommandBuffer, VK_CULL_MODE_NONE);
+    vkCmdSetFrontFace(framebuffer->renderCommandBuffer, VK_FRONT_FACE_COUNTER_CLOCKWISE);
 
-
-    //vkCmdSetCullMode(framebuffer->commandBuffer, VK_CULL_MODE_BACK_BIT);
-    //vkCmdSetFrontFace(framebuffer->commandBuffer, VK_FRONT_FACE_CLOCKWISE);
-
-    //PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
-    //cmdSetPolygonMode(framebuffer->commandBuffer, VK_POLYGON_MODE_FILL);
-    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-    vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-
-    //vkCmdSetDepthTestEnable(framebuffer->commandBuffer, VK_TRUE);
-    //vkCmdSetDepthWriteEnable(framebuffer->commandBuffer, VK_TRUE);
-    //vkCmdSetDepthBiasEnable(framebuffer->commandBuffer, VK_FALSE);
-    //vkCmdSetDepthCompareOp(framebuffer->commandBuffer, VK_COMPARE_OP_GREATER);
+    vkCmdSetDepthTestEnable(framebuffer->renderCommandBuffer, VK_TRUE);
+    vkCmdSetDepthWriteEnable(framebuffer->renderCommandBuffer, VK_TRUE);
+    vkCmdSetDepthBiasEnable(framebuffer->renderCommandBuffer, VK_FALSE);
+    vkCmdSetDepthCompareOp(framebuffer->renderCommandBuffer, VK_COMPARE_OP_ALWAYS);
 
     vkCmdSetStencilTestEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_TRUE);
+    PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
+    cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
+    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    //PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
-    //cmdSetRasterizationSamples(framebuffer->commandBuffer, framebufferSet.sampleCount);
-    //PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadFunction("vkCmdSetSampleMaskEXT");
-    //cmdSetSampleMask(framebuffer->commandBuffer, framebufferSet.sampleCount, &sampleMask);
+    PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
+    cmdSetRasterizationSamples(framebuffer->renderCommandBuffer, framebufferSet.sampleCount);
+    PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadFunction("vkCmdSetSampleMaskEXT");
+    cmdSetSampleMask(framebuffer->renderCommandBuffer, framebufferSet.sampleCount, &sampleMask);
 
-    //PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadFunction("vkCmdSetAlphaToOneEnableEXT");
-    //cmdSetAlphaToOneEnable(framebuffer->commandBuffer, VK_FALSE);
-    //PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadFunction("vkCmdSetAlphaToCoverageEnableEXT");
-    //cmdSetAlphaToCoverageEnable(framebuffer->commandBuffer, VK_FALSE);
-    //PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadFunction("vkCmdSetColorBlendEnableEXT");
-    //cmdSetColorBlendEnable(framebuffer->commandBuffer, 0, 1, &colorBlend);
+    PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadFunction("vkCmdSetAlphaToOneEnableEXT");
+    cmdSetAlphaToOneEnable(framebuffer->renderCommandBuffer, VK_FALSE);
+    PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadFunction("vkCmdSetAlphaToCoverageEnableEXT");
+    cmdSetAlphaToCoverageEnable(framebuffer->renderCommandBuffer, VK_FALSE);
+
+    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadFunction("vkCmdSetColorBlendEnableEXT");
+    cmdSetColorBlendEnable(framebuffer->renderCommandBuffer, 0, 1, &colorBlend);
+    PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadFunction("vkCmdSetColorWriteMaskEXT");
+    cmdSetColorWriteMask(framebuffer->renderCommandBuffer, 0, 1, &colorWriteMask);
 
     // TODO: Why doesn't this work?
-    //vkCmdSetViewport(framebuffer->commandBuffer, 0, 1, &viewport);
-    //vkCmdSetScissor(framebuffer->commandBuffer, 0, 1, &scissor);
+    //vkCmdSetViewport(framebuffer->renderCommandBuffer, 0, 1, &viewport);
+    //vkCmdSetScissor(framebuffer->renderCommandBuffer, 0, 1, &scissor);
 
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
 
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, 1, &vertexAttribute);
 
+    PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
+    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
 
     vkCmdDrawIndexed(framebuffer->renderCommandBuffer, indexCount, 1, 0, 0, 0);
 
@@ -254,7 +255,7 @@ void render() {
 
 }
 
-void present() { // TODO: WIP
+void present() {
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     uint32_t swapchainImageIndex = UINT32_MAX;
@@ -327,12 +328,12 @@ void present() { // TODO: WIP
         framebuffer->drawSemaphore
     };
 
-    uint32_t semaphoreCount = sizeof(waitSemaphores) / sizeof(VkSemaphore);
+    uint32_t waitSemaphoreCount = sizeof(waitSemaphores) / sizeof(VkSemaphore);
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
-        .waitSemaphoreCount = semaphoreCount,
+        .waitSemaphoreCount = waitSemaphoreCount,
         .pWaitSemaphores = waitSemaphores,
         .pWaitDstStageMask = waitStages,
         .commandBufferCount = 1,
