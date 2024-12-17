@@ -99,7 +99,7 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
 }
 
 
-// TODO: Generalize access mask and pipeline stages
+// TODO: REWRITE STAGE AND ACCESS MASKS IMMEDIATELY
 void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout) {
     VkImageMemoryBarrier memoryBarrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,

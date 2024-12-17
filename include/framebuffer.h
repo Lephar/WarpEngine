@@ -14,10 +14,11 @@ struct framebuffer {
 
     VkSemaphore acquireSemaphore;
     VkSemaphore drawSemaphore;
-    VkSemaphore blitSemaphore;
+    VkSemaphore blitSemaphoreRender;
+    VkSemaphore blitSemaphorePresent;
 
-    VkFence renderFence;
-    VkFence presentFence;
+    VkFence drawFence;
+    VkFence blitFence;
 } typedef Framebuffer;
 
 struct framebufferSet {

@@ -173,9 +173,8 @@ void render() {
 
     uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
 
-    // TODO: Whole fence logic...
-    vkWaitForFences(device, 1, &framebuffer->renderFence, VK_TRUE, UINT64_MAX);
-    vkResetFences(device, 1, &framebuffer->renderFence);
+    vkWaitForFences(device, 1, &framebuffer->drawFence, VK_TRUE, UINT64_MAX);
+    vkResetFences(device, 1, &framebuffer->drawFence);
 
     vkBeginCommandBuffer(framebuffer->renderCommandBuffer, &beginInfo);
     vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
@@ -235,29 +234,26 @@ void render() {
     vkCmdEndRendering(framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);
 
+    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
-        .waitSemaphoreCount = 0,
-        .pWaitSemaphores = NULL,
-        .pWaitDstStageMask = 0,
+        .waitSemaphoreCount = 1,
+        .pWaitSemaphores = &framebuffer->blitSemaphoreRender,
+        .pWaitDstStageMask = &waitStage,
         .commandBufferCount = 1,
         .pCommandBuffers = &framebuffer->renderCommandBuffer,
         .signalSemaphoreCount = 1,
         .pSignalSemaphores = &framebuffer->drawSemaphore
     };
 
-    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, framebuffer->drawFence);
 }
 
 void present() {
     uint32_t framebufferIndex = frameIndex % framebufferSet.framebufferImageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
-
-    uint32_t swapchainImageIndex = UINT32_MAX;
-    vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
-
-    VkImage *swapchainImage = &swapchain.images[swapchainImageIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -305,6 +301,13 @@ void present() {
         },
     };
 
+    vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
+    vkResetFences(device, 1, &framebuffer->blitFence);
+
+    uint32_t swapchainImageIndex = UINT32_MAX;
+    vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    VkImage *swapchainImage = &swapchain.images[swapchainImageIndex];
+
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, &framebuffer->resolve.image, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, swapchainImage, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
@@ -314,8 +317,8 @@ void present() {
     vkEndCommandBuffer(framebuffer->presentCommandBuffer);
 
     VkPipelineStageFlags waitStages[] = {
-        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VK_PIPELINE_STAGE_TRANSFER_BIT
     };
 
     VkSemaphore waitSemaphores[] = {
@@ -325,6 +328,13 @@ void present() {
 
     uint32_t waitSemaphoreCount = sizeof(waitSemaphores) / sizeof(VkSemaphore);
 
+    VkSemaphore signalSemaphores[] = {
+        framebuffer->blitSemaphoreRender,
+        framebuffer->blitSemaphorePresent
+    };
+
+    uint32_t signalSemaphoreCount = sizeof(signalSemaphores) / sizeof(VkSemaphore);
+
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
@@ -333,17 +343,17 @@ void present() {
         .pWaitDstStageMask = waitStages,
         .commandBufferCount = 1,
         .pCommandBuffers = &framebuffer->presentCommandBuffer,
-        .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &framebuffer->blitSemaphore
+        .signalSemaphoreCount = signalSemaphoreCount,
+        .pSignalSemaphores = signalSemaphores
     };
 
-    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, framebuffer->renderFence);
+    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, framebuffer->blitFence);
 
     VkPresentInfoKHR presentInfo = {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .pNext = NULL,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &framebuffer->blitSemaphore,
+        .pWaitSemaphores = &framebuffer->blitSemaphorePresent,
         .swapchainCount = 1,
         .pSwapchains = &swapchain.swapchain,
         .pImageIndices = &swapchainImageIndex

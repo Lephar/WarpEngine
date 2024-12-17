@@ -40,7 +40,34 @@ void createFramebuffer(Framebuffer *framebuffer) {
 
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->acquireSemaphore);
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->drawSemaphore);
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphoreRender);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphorePresent);
+
+    // TODO: This is not an elegant solution, change to timeline semaphores perhaps?
+    VkSubmitInfo submitInfo = {
+        .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        .pNext = NULL,
+        .waitSemaphoreCount = 0,
+        .pWaitSemaphores = NULL,
+        .pWaitDstStageMask = NULL,
+        .commandBufferCount = 0,
+        .pCommandBuffers = NULL,
+        .signalSemaphoreCount = 1,
+        .pSignalSemaphores = &framebuffer->blitSemaphoreRender
+    };
+
+    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
+
+    /*
+    VkSemaphoreSignalInfo signalInfo = {
+        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO,
+        .pNext = NULL,
+        .semaphore = framebuffer->blitSemaphore2,
+        .value = 1
+    };
+
+    vkSignalSemaphore(device, &signalInfo);
+    */
 
     VkFenceCreateInfo fenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
@@ -48,8 +75,8 @@ void createFramebuffer(Framebuffer *framebuffer) {
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
     };
 
-    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->renderFence);
-    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->presentFence);
+    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->drawFence);
+    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->blitFence);
 }
 
 void createFramebufferSet() {
@@ -69,12 +96,13 @@ void createFramebufferSet() {
 }
 
 void destroyFramebuffer(Framebuffer *framebuffer) {
-    vkDestroyFence(device, framebuffer->renderFence, NULL);
-    vkDestroyFence(device, framebuffer->presentFence, NULL);
+    vkDestroyFence(device, framebuffer->drawFence, NULL);
+    vkDestroyFence(device, framebuffer->blitFence, NULL);
 
     vkDestroySemaphore(device, framebuffer->acquireSemaphore, NULL);
     vkDestroySemaphore(device, framebuffer->drawSemaphore, NULL);
-    vkDestroySemaphore(device, framebuffer->blitSemaphore, NULL);
+    vkDestroySemaphore(device, framebuffer->blitSemaphoreRender, NULL);
+    vkDestroySemaphore(device, framebuffer->blitSemaphorePresent, NULL);
 
     destroyImageView(&framebuffer->resolve);
     destroyImageView(&framebuffer->color);
