@@ -17,7 +17,8 @@ Swapchain oldSwapchain;
 Swapchain swapchain;
 
 void createSwapchain() {
-    swapchain.imageCount = surfaceCapabilities.minImageCount;
+    // TODO: Why segmentation fault?
+    swapchain.imageCount = surfaceCapabilities.minImageCount + 1;
     swapchain.transform = surfaceCapabilities.currentTransform;
 
     VkSurfaceFormatKHR preferredSurfaceFormats[] = {
@@ -129,7 +130,7 @@ void createSwapchain() {
 
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
         wrapImage(&swapchain.images[imageIndex], handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT);
-        //transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+        transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
         debug("Wrapped and transitioned swapchain image %u", imageIndex);
     }
 
