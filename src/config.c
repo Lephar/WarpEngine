@@ -40,13 +40,23 @@ void configure(int argc, char *argv[]) {
 
     char *separator = strrchr(argv[0], '/');
 
+    char *result = NULL;
+    int32_t length = 0;
+
     if(separator == NULL) {
-        assert(getcwd(rootPath, PATH_MAX) != NULL);
-        assert(snprintf(executableName, PATH_MAX, "%s", argv[0]) < PATH_MAX);
+        result = getcwd(rootPath, PATH_MAX);
+        assert(result != NULL);
+
+        length = snprintf(executableName, PATH_MAX, "%s", argv[0]);
+        assert(length < PATH_MAX);
     } else {
         *separator++ = '\0'; // Let's play a game
-        assert(snprintf(rootPath, PATH_MAX, "%s", argv[0]) < PATH_MAX);
-        assert(snprintf(executableName, PATH_MAX, "%s", separator) < PATH_MAX);
+
+        length = snprintf(rootPath, PATH_MAX, "%s", argv[0]);
+        assert(length < PATH_MAX);
+
+        length = snprintf(executableName, PATH_MAX, "%s", separator);
+        assert(length < PATH_MAX);
     }
 
     debug("Path:   %s", rootPath);
@@ -55,9 +65,11 @@ void configure(int argc, char *argv[]) {
     char config[PATH_MAX];
 
     if(argc < 2) {
-        assert(snprintf(config, PATH_MAX, "%s/config.txt", rootPath) < PATH_MAX);
+        length = snprintf(config, PATH_MAX, "%s/config.txt", rootPath);
+        assert(length < PATH_MAX);
     } else {
-        assert(snprintf(config, PATH_MAX, "%s/%s", rootPath, argv[1]) < PATH_MAX);
+        length = snprintf(config, PATH_MAX, "%s/%s", rootPath, argv[1]);
+        assert(length < PATH_MAX);
     }
 
     debug("Config: %s", config);

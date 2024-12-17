@@ -50,7 +50,8 @@ void readFile(const char *relativePath, uint32_t binary, size_t *size, char **da
     rewind(file);
 
     *data = malloc(*size);
-    fread(*data, 1, *size, file);
+    size_t length = fread(*data, 1, *size, file);
+    assert(length + (binary ? 0 : 1) == *size);
     fclose(file);
 
     // TODO: Is this necessary?
