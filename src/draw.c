@@ -304,6 +304,7 @@ void present() {
     vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
     vkResetFences(device, 1, &framebuffer->blitFence);
 
+    // TODO: Investigate multiple swapchain image acquisition at startup
     uint32_t swapchainImageIndex = UINT32_MAX;
     vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
