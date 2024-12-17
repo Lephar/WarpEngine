@@ -23,7 +23,7 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
 void createImageView(Image *image, VkImageAspectFlags aspects);
 void bindImageMemory(Image *image, Memory *memory);
 void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset);
-void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkPipelineStageFlags sourceStage, VkPipelineStageFlags targetStage);
-void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkPipelineStageFlags sourceStage, VkPipelineStageFlags targetStage);
+void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout);
+void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout);
 void destroyImageView(Image *image);
 void destroyImage(Image *image);

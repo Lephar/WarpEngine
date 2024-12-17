@@ -98,12 +98,44 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
     endSingleTransferCommand(commandBuffer);
 }
 
-void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkPipelineStageFlags sourceStage, VkPipelineStageFlags targetStage) {
+// TODO: Save old layouts in image struct maybe?
+void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout) {
+    VkPipelineStageFlags sourceStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    VkPipelineStageFlags targetStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    VkAccessFlags sourceAccessMask = VK_ACCESS_NONE;
+    VkAccessFlags targetAccessMask = VK_ACCESS_NONE;
+
+    if(oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+        sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        sourceAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+        sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        sourceAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    } else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+        sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        sourceAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+    } else if(oldLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
+        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    }
+
+    if(newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+        targetStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        targetAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+    } else if(newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+        targetStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        targetAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+    } else if(newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+        targetStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        targetAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    } else if(newLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
+        targetStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    }
+
     VkImageMemoryBarrier memoryBarrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
         .pNext = NULL,
-        .srcAccessMask = 0,
-        .dstAccessMask = 0,
+        .srcAccessMask = sourceAccessMask,
+        .dstAccessMask = targetAccessMask,
         .oldLayout = oldLayout,
         .newLayout = newLayout,
         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
@@ -121,9 +153,9 @@ void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image,
     vkCmdPipelineBarrier(*commandBuffer, sourceStage, targetStage, 0, 0, NULL, 0, NULL, 1, &memoryBarrier);
 }
 
-void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkPipelineStageFlags sourceStage, VkPipelineStageFlags targetStage) {
+void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout) {
     VkCommandBuffer commandBuffer = beginSingleTransferCommand();
-    recordTransitionImageLayout(&commandBuffer, image, oldLayout, newLayout, sourceStage, targetStage);
+    recordTransitionImageLayout(&commandBuffer, image, oldLayout, newLayout);
     endSingleTransferCommand(commandBuffer);
 }
 
