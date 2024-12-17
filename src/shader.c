@@ -191,8 +191,10 @@ void createModule(Shader *shader) {
 void createModules() {
     shaderCompiler = shaderc_compiler_initialize();
 
-    // TODO: Add actual compiler options depending on compilation profile
     shaderCompileOptions = shaderc_compile_options_initialize();
+#ifndef NDEBUG
+    shaderc_compile_options_set_optimization_level(shaderCompileOptions, shaderc_optimization_level_performance);
+#endif //NDEBUG
 
     debug("Shader compiler and shader compile options set");
 

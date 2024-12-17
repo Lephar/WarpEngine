@@ -31,7 +31,7 @@ void initializeSystem() {
 #else
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
     SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
-#endif
+#endif //NDEBUG
 
     SDL_Init(SDL_INIT_EVERYTHING);
     debug("SDL Video Driver: %s", SDL_GetCurrentVideoDriver());
