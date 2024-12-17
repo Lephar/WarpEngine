@@ -43,6 +43,8 @@ extern Shader fragmentShader;
 extern uint32_t frameIndex;
 
 void initializeDraw() {
+    vkDeviceWaitIdle(device);
+
     debug("Draw loop started");
 }
 
@@ -306,7 +308,10 @@ void present() {
 
     // TODO: Investigate multiple swapchain image acquisition at startup
     uint32_t swapchainImageIndex = UINT32_MAX;
-    vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    debug("Frame : %u", framebufferIndex);
+    VkResult result = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    debug("Result: %d", result);
+    debug("Index : %u", swapchainImageIndex);
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
