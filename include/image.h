@@ -19,6 +19,7 @@ struct image {
     Memory *memory;
 } typedef Image;
 
+void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage);
 void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage);
 void createImageView(Image *image, VkImageAspectFlags aspects);
 void bindImageMemory(Image *image, Memory *memory);

@@ -6,7 +6,7 @@
 
 extern VkDevice device;
 
-void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
+void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
     image->extent.width = width;
     image->extent.height = height;
     image->extent.depth = 1;
@@ -14,27 +14,40 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
     image->samples = samples;
     image->format = format;
     image->usage = usage;
+    image->aspects = VK_IMAGE_ASPECT_NONE;
+    image->layout = VK_IMAGE_LAYOUT_UNDEFINED;
+    image->image = handle;
 
+    vkGetImageMemoryRequirements(device, image->image, &image->memoryRequirements);
+}
+
+void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
     VkImageCreateInfo imageInfo = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
         .imageType = VK_IMAGE_TYPE_2D,
-        .format = image->format,
-        .extent = image->extent,
-        .mipLevels = image->levels,
+        .format = format,
+        .extent = {
+            .width = width,
+            .height = height,
+            .depth = 1
+        },
+        .mipLevels = levels,
         .arrayLayers = 1,
-        .samples = image->samples,
+        .samples = samples,
         .tiling = VK_IMAGE_TILING_OPTIMAL,
-        .usage = image->usage,
+        .usage = usage,
         .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .queueFamilyIndexCount = 0,
         .pQueueFamilyIndices = NULL,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
     };
 
-    vkCreateImage(device, &imageInfo, NULL, &image->image);
-    vkGetImageMemoryRequirements(device, image->image, &image->memoryRequirements);
+    VkImage imageHandle;
+    vkCreateImage(device, &imageInfo, NULL, &imageHandle);
+
+    wrapImage(image, imageHandle, width, height, levels, samples, format, usage);
 }
 
 void bindImageMemory(Image *image, Memory *memory) {
