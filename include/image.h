@@ -12,6 +12,7 @@ struct image {
     VkFormat format;
     VkImageUsageFlags usage;
     VkImageAspectFlags aspects;
+    VkImageLayout layout;
     VkImage image;
     VkImageView view;
     VkMemoryRequirements memoryRequirements;
@@ -24,7 +25,7 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
 void createImageView(Image *image, VkImageAspectFlags aspects);
 void bindImageMemory(Image *image, Memory *memory);
 void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset);
-void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout);
-void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout);
+void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, VkImageLayout layout);
+void transitionImageLayout(Image *image, VkImageLayout layout);
 void destroyImageView(Image *image);
 void destroyImage(Image *image);
