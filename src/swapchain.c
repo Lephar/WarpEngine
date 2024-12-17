@@ -126,7 +126,7 @@ void createSwapchain() {
     debug("Retrieved %d swapchain images", swapchain.imageCount);
 
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
-        transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+        transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
     }
 }
 

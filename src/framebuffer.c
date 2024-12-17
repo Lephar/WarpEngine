@@ -27,7 +27,7 @@ void createFramebuffer(Framebuffer *framebuffer) {
     createImageView(&framebuffer->color, VK_IMAGE_ASPECT_COLOR_BIT);
     createImageView(&framebuffer->resolve, VK_IMAGE_ASPECT_COLOR_BIT);
 
-    transitionImageLayout(&framebuffer->resolve.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    transitionImageLayout(&framebuffer->resolve.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
 
     framebuffer->renderCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
     framebuffer->presentCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);

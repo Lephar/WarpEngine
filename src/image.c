@@ -98,9 +98,7 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
     endSingleTransferCommand(commandBuffer);
 }
 
-
-// TODO: REWRITE STAGE AND ACCESS MASKS IMMEDIATELY
-void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout) {
+void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkPipelineStageFlags sourceStage, VkPipelineStageFlags targetStage) {
     VkImageMemoryBarrier memoryBarrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
         .pNext = NULL,
@@ -120,12 +118,12 @@ void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, VkImage *image,
         }
     };
 
-    vkCmdPipelineBarrier(*commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &memoryBarrier);
+    vkCmdPipelineBarrier(*commandBuffer, sourceStage, targetStage, 0, 0, NULL, 0, NULL, 1, &memoryBarrier);
 }
 
-void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout) {
+void transitionImageLayout(VkImage *image, VkImageLayout oldLayout, VkImageLayout newLayout, VkPipelineStageFlags sourceStage, VkPipelineStageFlags targetStage) {
     VkCommandBuffer commandBuffer = beginSingleTransferCommand();
-    recordTransitionImageLayout(&commandBuffer, image, oldLayout, newLayout);
+    recordTransitionImageLayout(&commandBuffer, image, oldLayout, newLayout, sourceStage, targetStage);
     endSingleTransferCommand(commandBuffer);
 }
 
