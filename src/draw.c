@@ -306,12 +306,10 @@ void present() {
     vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
     vkResetFences(device, 1, &framebuffer->blitFence);
 
-    // TODO: Investigate multiple swapchain image acquisition at startup
     uint32_t swapchainImageIndex = UINT32_MAX;
-    debug("Frame : %u", framebufferIndex);
-    VkResult result = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
-    debug("Result: %d", result);
-    debug("Index : %u", swapchainImageIndex);
+    // TODO: Implement swapchain recreation
+    // TODO: Investigate multiple swapchain image acquisition at startup
+    vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
