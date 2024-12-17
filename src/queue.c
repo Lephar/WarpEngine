@@ -115,9 +115,7 @@ VkCommandBuffer allocateSingleCommandBuffer(Queue *queue) {
     return commandBuffer;
 }
 
-VkCommandBuffer beginSingleTransferCommand() {
-    VkCommandBuffer commandBuffer = allocateSingleCommandBuffer(&transferQueue);
-
+void beginSingleCommand(VkCommandBuffer *commandBuffer) {
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .pNext = NULL,
@@ -125,12 +123,27 @@ VkCommandBuffer beginSingleTransferCommand() {
         .pInheritanceInfo = NULL
     };
 
-    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+    vkBeginCommandBuffer(*commandBuffer, &beginInfo);
+}
+
+VkCommandBuffer beginSingleTransferCommand() {
+    VkCommandBuffer commandBuffer = allocateSingleCommandBuffer(&transferQueue);
+
+    beginSingleCommand(&commandBuffer);
+
     return commandBuffer;
 }
 
-void endSingleTransferCommand(VkCommandBuffer commandBuffer) {
-    vkEndCommandBuffer(commandBuffer);
+VkCommandBuffer beginSingleGraphicsCommand() {
+    VkCommandBuffer commandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
+
+    beginSingleCommand(&commandBuffer);
+
+    return commandBuffer;
+}
+
+void endSingleCommand(Queue *queue, VkCommandBuffer *commandBuffer) {
+    vkEndCommandBuffer(*commandBuffer);
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -139,14 +152,22 @@ void endSingleTransferCommand(VkCommandBuffer commandBuffer) {
         .pWaitSemaphores = NULL,
         .pWaitDstStageMask = 0,
         .commandBufferCount = 1,
-        .pCommandBuffers = &commandBuffer,
+        .pCommandBuffers = commandBuffer,
         .signalSemaphoreCount = 0,
         .pSignalSemaphores = NULL
     };
 
-    vkQueueSubmit(transferQueue.queue, 1, &submitInfo, NULL);
-    vkQueueWaitIdle(transferQueue.queue);
-    vkFreeCommandBuffers(device, transferQueue.commandPool, 1, &commandBuffer);
+    vkQueueSubmit(queue->queue, 1, &submitInfo, NULL);
+    vkQueueWaitIdle(queue->queue);
+    vkFreeCommandBuffers(device, queue->commandPool, 1, commandBuffer);
+}
+
+void endSingleTransferCommand(VkCommandBuffer commandBuffer) {
+    endSingleCommand(&transferQueue, &commandBuffer);
+}
+
+void endSingleGraphicsCommand(VkCommandBuffer commandBuffer) {
+    endSingleCommand(&graphicsQueue, &commandBuffer);
 }
 
 void clearQueues() {

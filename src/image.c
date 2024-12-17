@@ -171,9 +171,9 @@ void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, V
 }
 
 void transitionImageLayout(Image *image, VkImageLayout layout) {
-    VkCommandBuffer commandBuffer = beginSingleTransferCommand();
+    VkCommandBuffer commandBuffer = beginSingleGraphicsCommand();
     recordTransitionImageLayout(&commandBuffer, image, layout);
-    endSingleTransferCommand(commandBuffer);
+    endSingleGraphicsCommand(commandBuffer);
 }
 
 void destroyImageView(Image *image) {

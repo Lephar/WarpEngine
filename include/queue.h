@@ -15,5 +15,7 @@ void generateQueueDetails();
 void getQueues();
 VkCommandBuffer allocateSingleCommandBuffer(Queue *queue);
 VkCommandBuffer beginSingleTransferCommand();
+VkCommandBuffer beginSingleGraphicsCommand();
 void endSingleTransferCommand(VkCommandBuffer commandBuffer);
+void endSingleGraphicsCommand(VkCommandBuffer commandBuffer);
 void clearQueues();
