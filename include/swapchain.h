@@ -2,7 +2,7 @@
 
 #include "zero.h"
 
-#include "image.h"
+typedef struct image Image;
 
 struct swapchain {
     uint32_t imageCount;
