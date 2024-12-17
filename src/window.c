@@ -63,6 +63,7 @@ void createWindow() {
     debug("\tHeight: %u", extent.height);
 }
 
+#ifndef NDEBUG
 uint32_t timerCallback(uint32_t interval, void *userData) {
     (void) userData;
 
@@ -76,12 +77,15 @@ uint32_t timerCallback(uint32_t interval, void *userData) {
 
     return interval;
 }
+#endif //NDEBUG
 
 void initializeMainLoop() {
+#ifndef NDEBUG
     timerCallback(0, NULL); // Call it immediatelly once
 
     timer = SDL_AddTimer(1000, timerCallback, NULL);
     assert(timer);
+#endif //NDEBUG
 
     debug("Main loop initialized");
 }
@@ -100,7 +104,9 @@ SDL_bool pollEvents() {
 }
 
 void finalizeMainLoop() {
+#ifndef NDEBUG
     SDL_RemoveTimer(timer);
+#endif //NDEBUG
 
     debug("Main loop finalized");
 }
