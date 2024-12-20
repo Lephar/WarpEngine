@@ -3,7 +3,7 @@
 #include "helper.h"
 #include "queue.h"
 #include "shader.h"
-#include "element.h"
+#include "content.h"
 
 char rootPath[PATH_MAX];
 char executableName[PATH_MAX];
