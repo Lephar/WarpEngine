@@ -1,5 +1,7 @@
 #include "window.h"
+
 #include "helper.h"
+#include "control.h"
 
 extern char executableName[];
 
@@ -80,6 +82,8 @@ uint32_t timerCallback(uint32_t interval, void *userData) {
 #endif //NDEBUG
 
 void initializeMainLoop() {
+    resetControls();
+
 #ifndef NDEBUG
     timerCallback(0, NULL); // Call it immediatelly once
 
@@ -91,15 +95,26 @@ void initializeMainLoop() {
 }
 
 SDL_bool pollEvents() {
+    preprocessFrameControls();
+
     SDL_Event event;
 
     while(SDL_PollEvent(&event)) {
         if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             return SDL_FALSE;
+        } else if(event.type == SDL_MOUSEMOTION) {
+            mouseMove(event.motion);
+        } else if(event.type == SDL_KEYDOWN) {
+            keyDown(event.key);
+        } else if(event.type == SDL_KEYUP) {
+            keyUp(event.key);
         }
     }
 
+    postprocessFrameControls();
+
     frameIndex++;
+
     return SDL_TRUE;
 }
 
