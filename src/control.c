@@ -36,17 +36,14 @@ void preprocessFrameControls() {
     timePrevious = timeCurrent;
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
     timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
-    //debug("%g", timeDelta);
+
+    glm_vec2_copy(mousePosition, mousePositionPrevious);
 
     int keyCount = 0;
     const uint8_t *states = SDL_GetKeyboardState(&keyCount);
-    debug("W:%u A:%u S:%u D:%u", states[SDL_SCANCODE_W], states[SDL_SCANCODE_A], states[SDL_SCANCODE_S], states[SDL_SCANCODE_D]);
 
     movementInput[0] = states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D];
     movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
-
-    //glm_vec2_zero(movement);
-    glm_vec2_copy(mousePosition, mousePositionPrevious);
 }
 
 void mouseMove(SDL_MouseMotionEvent event) {
@@ -63,8 +60,4 @@ void keyUp(SDL_KeyboardEvent event) {
 }
 
 void postprocessFrameControls() {
-    //glm_vec2_norm(movement);
-
-    debug("Mouse: %g %g -> %g %g", mousePositionPrevious[0], mousePositionPrevious[1], mousePosition[0], mousePosition[1]);
-    debug("Movement: %g %g", movementInput[0], movementInput[1]);
 }

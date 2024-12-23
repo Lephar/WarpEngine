@@ -101,7 +101,6 @@ SDL_bool pollEvents() {
 
     SDL_Event event;
 
-    // TODO: On Wayland, key events register as text events
     while(SDL_PollEvent(&event)) {
         if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             return SDL_FALSE;
