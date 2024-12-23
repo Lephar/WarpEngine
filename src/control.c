@@ -38,6 +38,13 @@ void preprocessFrameControls() {
     timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
     //debug("%g", timeDelta);
 
+    int keyCount = 0;
+    const uint8_t *states = SDL_GetKeyboardState(&keyCount);
+    debug("W:%u A:%u S:%u D:%u", states[SDL_SCANCODE_W], states[SDL_SCANCODE_A], states[SDL_SCANCODE_S], states[SDL_SCANCODE_D]);
+
+    movementInput[0] = states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D];
+    movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
+
     //glm_vec2_zero(movement);
     glm_vec2_copy(mousePosition, mousePositionPrevious);
 }
@@ -48,17 +55,11 @@ void mouseMove(SDL_MouseMotionEvent event) {
 }
 
 void keyDown(SDL_KeyboardEvent event) {
-    movementInput[0] += (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_A);
-    movementInput[0] -= (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_D);
-    movementInput[1] += (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_W);
-    movementInput[1] -= (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_S);
+    (void) event;
 }
 
 void keyUp(SDL_KeyboardEvent event) {
-    movementInput[0] -= (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_A);
-    movementInput[0] += (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_D);
-    movementInput[1] -= (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_W);
-    movementInput[1] += (event.repeat == 0) * (event.keysym.scancode == SDL_SCANCODE_S);
+    (void) event;
 }
 
 void postprocessFrameControls() {
