@@ -28,8 +28,8 @@ void initializeSystem() {
 
 // TODO: Temporarily use X11 for debug builds because RenderDoc doesn't support Wayland
 #ifndef NDEBUG
-    SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11,wayland,windows");
-    SDL_SetHint(SDL_HINT_AUDIODRIVER, "pulseaudio,pipewire,directsound");
+    SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
+    SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
 #else
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
     SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
@@ -99,6 +99,7 @@ SDL_bool pollEvents() {
 
     SDL_Event event;
 
+    // TODO: On Wayland, key events register as text events
     while(SDL_PollEvent(&event)) {
         if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             return SDL_FALSE;
