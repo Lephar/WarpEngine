@@ -3,6 +3,14 @@
 // TODO: Not necessary here, remove when done
 #include "helper.h"
 
+#define  SEC_TO_MSEC 1000.0f
+#define MSEC_TO_USEC 1000.0f
+#define USEC_TO_NSEC 1000.0f
+
+struct timespec timePrevious;
+struct timespec timeCurrent;
+float timeDelta; // In microseconds
+
 extern VkExtent2D extent;
 
 vec2 mousePositionPrevious;
@@ -11,17 +19,25 @@ vec2 mousePosition;
 vec3 position;
 vec3 forward;
 vec3 left;
-vec3 globalUp;
+vec3 upGlobal;
 
 vec2 movementInput;
 vec2 movement;
 
 void resetControls() {
+    clock_gettime(CLOCK_MONOTONIC, &timePrevious);
+    clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
+
     glm_vec2_zero(mousePositionPrevious);
     glm_vec2_zero(mousePosition);
 }
 
 void preprocessFrameControls() {
+    timePrevious = timeCurrent;
+    clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
+    timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
+    //debug("%g", timeDelta);
+
     //glm_vec2_zero(movement);
     glm_vec2_copy(mousePosition, mousePositionPrevious);
 }
