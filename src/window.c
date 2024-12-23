@@ -95,6 +95,8 @@ void initializeMainLoop() {
 }
 
 SDL_bool pollEvents() {
+    frameIndex++;
+
     preprocessFrameControls();
 
     SDL_Event event;
@@ -113,8 +115,6 @@ SDL_bool pollEvents() {
     }
 
     postprocessFrameControls();
-
-    frameIndex++;
 
     return SDL_TRUE;
 }
