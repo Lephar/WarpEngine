@@ -104,12 +104,6 @@ SDL_bool pollEvents() {
     while(SDL_PollEvent(&event)) {
         if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             return SDL_FALSE;
-        } else if(event.type == SDL_MOUSEMOTION) {
-            mouseMove(event.motion);
-        } else if(event.type == SDL_KEYDOWN) {
-            keyDown(event.key);
-        } else if(event.type == SDL_KEYUP) {
-            keyUp(event.key);
         }
     }
 
