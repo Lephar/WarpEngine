@@ -28,7 +28,7 @@ void resetControls() {
     glm_vec2_zero(mouseDelta);
 }
 
-void preprocessFrameControls() {
+void processControlEvents() {
     struct timespec timePrevious = timeCurrent;
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
     timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;

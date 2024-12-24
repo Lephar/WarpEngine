@@ -87,7 +87,7 @@ void initializeMainLoop() {
 #ifndef NDEBUG
     timerCallback(0, NULL); // Call it immediatelly once
 
-    timer = SDL_AddTimer(1000, timerCallback, NULL);
+    timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
     assert(timer);
 #endif //NDEBUG
 
@@ -97,8 +97,6 @@ void initializeMainLoop() {
 SDL_bool pollEvents() {
     frameIndex++;
 
-    preprocessFrameControls();
-
     SDL_Event event;
 
     while(SDL_PollEvent(&event)) {
@@ -107,7 +105,7 @@ SDL_bool pollEvents() {
         }
     }
 
-    postprocessFrameControls();
+    processControlEvents();
 
     return SDL_TRUE;
 }
