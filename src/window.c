@@ -27,13 +27,13 @@ void initializeSystem() {
     assert(!systemInitialized);
 
 // TODO: Temporarily use X11 for debug builds because RenderDoc doesn't support Wayland
-#ifndef NDEBUG
+#ifdef DEBUG
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11,wayland,windows");
     SDL_SetHint(SDL_HINT_AUDIODRIVER, "pulseaudio,pipewire,directsound");
 #else
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
     SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
-#endif //NDEBUG
+#endif // DEBUG
 
     SDL_Init(SDL_INIT_EVERYTHING);
     debug("SDL Video Driver: %s", SDL_GetCurrentVideoDriver());
@@ -65,7 +65,7 @@ void createWindow() {
     debug("\tHeight: %u", extent.height);
 }
 
-#ifndef NDEBUG
+#ifdef DEBUG
 uint32_t timerCallback(uint32_t interval, void *userData) {
     (void) userData;
 
@@ -79,17 +79,17 @@ uint32_t timerCallback(uint32_t interval, void *userData) {
 
     return interval;
 }
-#endif //NDEBUG
+#endif // DEBUG
 
 void initializeMainLoop() {
     resetControls();
 
-#ifndef NDEBUG
+#ifdef DEBUG
     timerCallback(0, NULL); // Call it immediatelly once
 
     timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
     assert(timer);
-#endif //NDEBUG
+#endif // DEBUG
 
     debug("Main loop initialized");
 }
@@ -111,9 +111,9 @@ SDL_bool pollEvents() {
 }
 
 void finalizeMainLoop() {
-#ifndef NDEBUG
+#ifdef DEBUG
     SDL_RemoveTimer(timer);
-#endif //NDEBUG
+#endif // DEBUG
 
     debug("Main loop finalized");
 }
