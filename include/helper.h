@@ -6,18 +6,20 @@
 #define PATH_MAX 4096
 #endif //PATH_MAX
 
-#define  SEC_TO_MSEC 1000.0f
-#define MSEC_TO_USEC 1000.0f
-#define USEC_TO_NSEC 1000.0f
+#define  SEC_TO_MSEC 10e3f
+#define MSEC_TO_USEC 10e3f
+#define USEC_TO_NSEC 10e3f
 
 #define debug(...) \
     do { \
-        if (DEBUG) { \
-            struct timespec timespec; \
+        if(DEBUG) { \
+            /*struct timespec timespec; \
             clock_gettime(CLOCK_REALTIME, &timespec); \
-            char timestamp[20]; \
-            strftime(timestamp, 20, "%Y-%m-%d %H:%M:%S", localtime(&(time_t){timespec.tv_sec})); \
-            printf("%s %7.3Lf %s:%d:%s():\t", timestamp, timespec.tv_nsec / 1e6L, __FILE__, __LINE__, __func__); \
+            \
+            char timestamp[INT8_MAX]; \
+            strftime(timestamp, INT8_MAX, "%Y-%m-%d %H:%M:%S", localtime((time_t *) &timespec.tv_sec)); \
+            \
+            printf("%s %7.3f %s:%u:%s():\t", timestamp, timespec.tv_nsec / (MSEC_TO_USEC * USEC_TO_NSEC), __FILE__, __LINE__, __func__);*/ \
             printf(__VA_ARGS__); \
             printf("\n"); \
         } \
