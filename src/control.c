@@ -3,9 +3,7 @@
 // TODO: Not necessary here, remove when done
 #include "helper.h"
 
-#define  SEC_TO_MSEC 1000.0f
-#define MSEC_TO_USEC 1000.0f
-#define USEC_TO_NSEC 1000.0f
+#include "content.h"
 
 struct timespec timeCurrent;
 float timeDelta; // In microseconds

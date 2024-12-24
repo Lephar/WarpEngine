@@ -6,6 +6,10 @@
 #define PATH_MAX 4096
 #endif //PATH_MAX
 
+#define  SEC_TO_MSEC 1000.0f
+#define MSEC_TO_USEC 1000.0f
+#define USEC_TO_NSEC 1000.0f
+
 #define debug(...) \
     do { \
         if (DEBUG) { \
