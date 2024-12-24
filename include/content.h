@@ -11,7 +11,7 @@ struct vertex {
 } typedef Vertex;
 
 struct uniform {
-    float transform[4][4];
+    mat4 transform;
 } typedef Uniform;
 
 void initializeAssets();

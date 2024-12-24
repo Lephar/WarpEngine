@@ -36,27 +36,27 @@ void initializeAssets() {
 
       indexBuffer = malloc(           indexBufferSize);
      vertexBuffer = malloc(          vertexBufferSize);
-    uniformBuffer = calloc(1, uniformBufferSize);
+    //uniformBuffer = calloc(1, uniformBufferSize);
 
     indexBuffer[0] = 0;
     indexBuffer[1] = 1;
     indexBuffer[2] = 2;
 
     vertexBuffer[0].x =  0.0f ;
-    vertexBuffer[0].y = -0.67f;
-    vertexBuffer[0].z =  0.5f ;
+    vertexBuffer[0].y = -0.5f ;
+    vertexBuffer[0].z =  1.0f ;
     vertexBuffer[1].x =  0.5f ;
     vertexBuffer[1].y =  0.5f ;
-    vertexBuffer[1].z =  0.5f ;
+    vertexBuffer[1].z =  1.0f ;
     vertexBuffer[2].x = -0.5f ;
     vertexBuffer[2].y =  0.5f ;
-    vertexBuffer[2].z =  0.5f ;
-
+    vertexBuffer[2].z =  1.0f ;
+    /*
     uniformBuffer->transform[0][0] = 1.0f;
     uniformBuffer->transform[1][1] = 1.0f;
     uniformBuffer->transform[2][2] = 1.0f;
     uniformBuffer->transform[3][3] = 1.0f;
-
+    */
     debug("Assets initialized");
 }
 
@@ -67,14 +67,16 @@ void loadAssets() {
     memcpy(mappedSharedMemory + stagingBufferOffset + indexBufferSize, vertexBuffer, vertexBufferSize);
 
     copyBuffer(&sharedBuffer, &deviceBuffer, stagingBufferOffset, 0, indexBufferSize + vertexBufferSize);
+    memset(mappedSharedMemory, 0, sharedMemory.size);
 
-    memcpy(mappedSharedMemory, uniformBuffer, uniformBufferSize);
+    //memcpy(mappedSharedMemory, uniformBuffer, uniformBufferSize);
+    uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
 
     debug("Assets copied to device buffer");
 }
 
 void freeAssets() {
-    free(uniformBuffer);
+    //free(uniformBuffer);
     free( vertexBuffer);
     free(  indexBuffer);
 
