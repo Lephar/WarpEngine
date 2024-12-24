@@ -39,9 +39,10 @@ void initializeSystem() {
     debug("SDL Video Driver: %s", SDL_GetCurrentVideoDriver());
     debug("SDL Audio Driver: %s", SDL_GetCurrentAudioDriver());
 
-    SDL_Vulkan_LoadLibrary(NULL);
-    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+    // TODO: May be needed if debug code is changed from printf to SDL_Log
+    //SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
+    SDL_Vulkan_LoadLibrary(NULL);
     getInstanceProcAddr = SDL_Vulkan_GetVkGetInstanceProcAddr();
 
     systemInitialized = SDL_TRUE;

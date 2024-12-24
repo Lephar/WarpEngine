@@ -9,21 +9,23 @@
 #define  SEC_TO_MSEC 10e3f
 #define MSEC_TO_USEC 10e3f
 #define USEC_TO_NSEC 10e3f
-
+/*
 #define debug(...) \
     do { \
         if(DEBUG) { \
-            /*struct timespec timespec; \
+            struct timespec timespec; \
             clock_gettime(CLOCK_REALTIME, &timespec); \
             \
             char timestamp[INT8_MAX]; \
             strftime(timestamp, INT8_MAX, "%Y-%m-%d %H:%M:%S", localtime((time_t *) &timespec.tv_sec)); \
             \
-            printf("%s %7.3f %s:%u:%s():\t", timestamp, timespec.tv_nsec / (MSEC_TO_USEC * USEC_TO_NSEC), __FILE__, __LINE__, __func__);*/ \
+            printf("%s %7.3f %s:%u:%s():\t", timestamp, timespec.tv_nsec / (MSEC_TO_USEC * USEC_TO_NSEC), __FILE__, __LINE__, __func__); \
             printf(__VA_ARGS__); \
             printf("\n"); \
         } \
     } while (0)
+*/
+void debug(const char *fmt, ...);
 
 VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT      severity,
                                                VkDebugUtilsMessageTypeFlagsEXT             type,

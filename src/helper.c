@@ -5,6 +5,16 @@ extern char rootPath[];
 extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 extern VkInstance instance;
 
+void debug(const char *fmt, ...) {
+    if(DEBUG) {
+        va_list args;
+		va_start(args, fmt);
+		vprintf(fmt, args);
+        printf("\n");
+		va_end(args);
+    }
+}
+
 VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagBitsEXT severity,
                                                 VkDebugUtilsMessageTypeFlagsEXT type,
                                                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -24,6 +34,7 @@ void *loadFunction(const char *name) {
 }
 
 // Not the most optimal solution but gets the job done
+// TODO: This will be added to the new C version
 uint32_t popcount(uint32_t value) {
     uint32_t count = 0;
 
