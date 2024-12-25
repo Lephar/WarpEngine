@@ -41,9 +41,6 @@ void resetControls() {
     SDL_GetRelativeMouseState(&discard, &discard);
     glm_vec2_zero(mouseDelta);
 
-    glm_mat4_zero(viewMatrix);
-    glm_mat4_zero(projMatrix);
-
     aspectRatio = (float) extent.width / (float) extent.height;
     fieldOfView = M_PI_2;
 
@@ -58,14 +55,14 @@ void resetControls() {
     forward[2]  = 1.0f;
     left[0]     = 1.0f;
     upGlobal[1] = 1.0f;
+
+    glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, projMatrix);
 }
 
 void processControlEvents() {
     struct timespec timePrevious = timeCurrent;
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
     timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
-
-    SDL_WarpMouseInWindow(window, extent.width / 2, extent.height / 2);
 
     int32_t mouseX;
     int32_t mouseY;
@@ -95,8 +92,5 @@ void processControlEvents() {
     vec3 target;
     glm_vec3_add(position, forward, target);
     glm_lookat(position, target, upGlobal, viewMatrix);
-
-    glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, projMatrix);
-
     glm_mat4_mul(projMatrix, viewMatrix, uniformBuffer->transform);
 }
