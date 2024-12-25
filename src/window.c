@@ -86,10 +86,9 @@ void initializeMainLoop() {
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 #ifdef DEBUG
+    timerCallback(0, NULL); // Call it immediatelly once
     timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
     assert(timer);
-
-    timerCallback(0, NULL); // Call it immediatelly once
 #endif // DEBUG
     resetControls();
 

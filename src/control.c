@@ -70,6 +70,7 @@ void processControlEvents() {
     int32_t mouseX;
     int32_t mouseY;
     SDL_GetRelativeMouseState(&mouseX, &mouseY);
+    SDL_WarpMouseInWindow(window, extent.width / 2, extent.height / 2);
 
     mouseDelta[0] = -2.0f * mouseX / extent.width;
     mouseDelta[1] = -2.0f * mouseY / extent.height;
