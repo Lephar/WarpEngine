@@ -59,6 +59,12 @@ uint32_t binarize(uint8_t decimal) {
     return binary;
 }
 
+int32_t compareFloat(float first, float second) {
+    float difference = first - second;
+
+    return (difference > EPSILON) - (difference < -EPSILON);
+}
+
 void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data) {
     char fullPath[PATH_MAX];
     sprintf(fullPath, "%s/%s", rootPath, relativePath);

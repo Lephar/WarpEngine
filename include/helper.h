@@ -9,6 +9,8 @@
 #define  SEC_TO_MSEC 10e3f
 #define MSEC_TO_USEC 10e3f
 #define USEC_TO_NSEC 10e3f
+
+#define EPSILON 0.000000000931322574615478515625 // 2 ^ -30
 /*
 #define debug(...) \
     do { \
@@ -35,7 +37,9 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 void *loadFunction(const char *name);
 
 uint32_t popcount(uint32_t value);
-uint32_t binarize(uint8_t value);
+uint32_t binarize(uint8_t decimal);
+
+int32_t compareFloat(float first, float second);
 
 // WARN: Free the output data!
 void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data);
