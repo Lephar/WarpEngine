@@ -86,7 +86,15 @@ void processControlEvents() {
     }
 
     if(compareFloat(glm_vec2_norm2(movementInput), 0)) {
-        glm_vec2_scale_as(movementInput, timeDelta, movementInput);
+        glm_vec2_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
+
+        vec3 forwardMovement;
+        glm_vec3_scale_as(forward, movementInput[1], forwardMovement);
+
+        vec3 leftMovement;
+        glm_vec3_scale_as(left, movementInput[0], leftMovement);
+
+        glm_vec3_addadd(forwardMovement, leftMovement, position);
     }
 
     vec3 target;
