@@ -80,7 +80,13 @@ void processControlEvents() {
     movementInput[0] = states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D];
     movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
 
-    // TODO: Actually calculate the values
+    if(compareFloat(glm_vec2_norm2(mouseDelta), 0)) {
+        glm_vec3_rotate(forward, mouseDelta[0], upGlobal);
+    }
+
+    if(compareFloat(glm_vec2_norm2(movementInput), 0)) {
+        glm_vec2_scale_as(movementInput, timeDelta, movementInput);
+    }
 
     vec3 target;
     glm_vec3_add(position, forward, target);
