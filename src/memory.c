@@ -76,7 +76,7 @@ void allocateMemories() {
     typeFilter = imageMemoryRequirements.memoryTypeBits & bufferMemoryRequirements.memoryTypeBits;
 
     debug("Device local memory:");
-    debug("\tSuitable type indices:\t%08u", binary(typeFilter));
+    debug("\tSuitable type indices:\t%08u", binarize(typeFilter));
 
     allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 512L << 20);
     destroyBuffer(&temporaryBuffer);
@@ -91,7 +91,7 @@ void allocateMemories() {
     typeFilter = bufferMemoryRequirements.memoryTypeBits;
 
     debug("Host visible memory:");
-    debug("\tSuitable type indices:\t%08u", binary(typeFilter));
+    debug("\tSuitable type indices:\t%08u", binarize(typeFilter));
 
     allocateMemory(&sharedMemory, typeFilter,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 128L << 20);

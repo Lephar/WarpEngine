@@ -35,7 +35,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 void *loadFunction(const char *name);
 
 uint32_t popcount(uint32_t value);
-uint32_t binary(uint8_t value);
+uint32_t binarize(uint8_t value);
 
 // WARN: Free the output data!
 void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data);
