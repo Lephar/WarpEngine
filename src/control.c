@@ -71,8 +71,8 @@ void processControlEvents() {
     int32_t mouseY;
     SDL_GetRelativeMouseState(&mouseX, &mouseY);
 
-    mouseDelta[0] = 2.0f * mouseX / extent.width;
-    mouseDelta[1] = 2.0f * mouseY / extent.height;
+    mouseDelta[0] = -2.0f * mouseX / extent.width;
+    mouseDelta[1] = -2.0f * mouseY / extent.height;
 
     int keyCount = 0;
     const uint8_t *states = SDL_GetKeyboardState(&keyCount);
@@ -81,7 +81,10 @@ void processControlEvents() {
     movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
 
     if(compareFloat(glm_vec2_norm2(mouseDelta), 0)) {
+        glm_vec3_rotate(left, mouseDelta[0], upGlobal);
         glm_vec3_rotate(forward, mouseDelta[0], upGlobal);
+        // TODO: Limit vertical rotation on global up and down
+        glm_vec3_rotate(forward, mouseDelta[1], left);
     }
 
     if(compareFloat(glm_vec2_norm2(movementInput), 0)) {
