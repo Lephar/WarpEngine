@@ -65,6 +65,10 @@ int32_t compareFloat(float first, float second) {
     return (difference > EPSILON) - (difference < -EPSILON);
 }
 
+float radians(float degrees) {
+    return M_PI * degrees / 180.0f;
+}
+
 void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data) {
     char fullPath[PATH_MAX];
     sprintf(fullPath, "%s/%s", rootPath, relativePath);
