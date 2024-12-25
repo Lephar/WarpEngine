@@ -46,9 +46,17 @@ uint32_t popcount(uint32_t value) {
     return count;
 }
 
-// TODO: Change to iterative, no need for function call overhead
-uint32_t byte_to_binary(uint8_t value) {
-    return (value == 0 || value == 1 ? value : ((value % 2) + 10 * byte_to_binary(value / 2)));
+uint32_t binarize(uint8_t decimal) {
+    uint32_t binary = 0;
+    uint8_t shift = CHAR_BIT - 1;
+    uint8_t mask = 1 << shift;
+
+    for(int i = 0; i < CHAR_BIT; i++) {
+        binary = (binary * 10) + ((decimal & mask) >> shift);
+        decimal <<= 1;
+    }
+
+    return binary;
 }
 
 void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data) {
