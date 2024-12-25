@@ -28,8 +28,8 @@ extern uint32_t distinctQueueFamilyCount;
 void selectPhysicalDevice() {
     uint32_t deviceCount;
     vkEnumeratePhysicalDevices(instance, &deviceCount, NULL);
-	VkPhysicalDevice *devices = malloc(deviceCount * sizeof(VkPhysicalDevice));
-	vkEnumeratePhysicalDevices(instance, &deviceCount, devices);
+    VkPhysicalDevice *devices = malloc(deviceCount * sizeof(VkPhysicalDevice));
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices);
 
     uint32_t selectedIndex = 0;
 
