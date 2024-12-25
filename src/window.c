@@ -83,14 +83,15 @@ uint32_t timerCallback(uint32_t interval, void *userData) {
 #endif // DEBUG
 
 void initializeMainLoop() {
-    resetControls();
-
+    SDL_ShowCursor(SDL_DISABLE);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 #ifdef DEBUG
-    timerCallback(0, NULL); // Call it immediatelly once
-
     timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
     assert(timer);
+
+    timerCallback(0, NULL); // Call it immediatelly once
 #endif // DEBUG
+    resetControls();
 
     debug("Main loop initialized");
 }

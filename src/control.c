@@ -5,6 +5,7 @@
 
 #include "content.h"
 
+extern SDL_Window *window;
 extern VkExtent2D extent;
 
 struct timespec timeCurrent;
@@ -63,6 +64,8 @@ void processControlEvents() {
     struct timespec timePrevious = timeCurrent;
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
     timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
+
+    SDL_WarpMouseInWindow(window, extent.width / 2, extent.height / 2);
 
     int32_t mouseX;
     int32_t mouseY;
