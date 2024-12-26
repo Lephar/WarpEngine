@@ -90,7 +90,8 @@ void initializeMainLoop() {
     timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
     assert(timer);
 #endif // DEBUG
-    resetControls();
+    initializeControls();
+    generatePerspective();
 
     debug("Main loop initialized");
 }
@@ -106,7 +107,7 @@ SDL_bool pollEvents() {
         }
     }
 
-    processControlEvents();
+    processEvents();
 
     return SDL_TRUE;
 }

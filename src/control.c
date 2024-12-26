@@ -11,12 +11,6 @@ extern VkExtent2D extent;
 struct timespec timeCurrent;
 float timeDelta; // In microseconds
 
-float aspectRatio;
-float fieldOfView;
-
-float nearPlane;
-float  farPlane;
-
 vec2 mouseDelta;
 
 vec3 position;
@@ -34,18 +28,12 @@ extern VkDeviceSize uniformBufferSize;
 extern Uniform *uniformBuffer;
 extern void *mappedSharedMemory;
 
-void resetControls() {
+void initializeControls() {
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
 
     int32_t discard;
     SDL_GetRelativeMouseState(&discard, &discard);
     glm_vec2_zero(mouseDelta);
-
-    aspectRatio = (float) extent.width / (float) extent.height;
-    fieldOfView = M_PI_2;
-
-    nearPlane =  0.1f;
-     farPlane = 10.0f;
 
     glm_vec3_zero(position);
     glm_vec3_zero(forward);
@@ -56,10 +44,21 @@ void resetControls() {
     left[0]     = 1.0f;
     upGlobal[1] = 1.0f;
 
-    glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, projMatrix);
+    debug("Control variables created");
 }
 
-void processControlEvents() {
+void generatePerspective() {
+    float aspectRatio = (float) extent.width / (float) extent.height;
+    float fieldOfView = M_PI_2;
+
+    float nearPlane =  0.1f;
+    float  farPlane = 10.0f;
+
+    glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, projMatrix);
+    debug("Perspective created");
+}
+
+void processEvents() {
     struct timespec timePrevious = timeCurrent;
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
     timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
@@ -78,11 +77,11 @@ void processControlEvents() {
     movementInput[0] = states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D];
     movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
 
+    // TODO: Limit vertical rotation on global up and down
     if(compareFloat(glm_vec2_norm2(mouseDelta), 0)) {
-        glm_vec3_rotate(left, mouseDelta[0], upGlobal);
+        glm_vec3_rotate(left   , mouseDelta[0], upGlobal);
         glm_vec3_rotate(forward, mouseDelta[0], upGlobal);
-        // TODO: Limit vertical rotation on global up and down
-        glm_vec3_rotate(forward, mouseDelta[1], left);
+        glm_vec3_rotate(forward, mouseDelta[1], left    );
     }
 
     if(compareFloat(glm_vec2_norm2(movementInput), 0)) {

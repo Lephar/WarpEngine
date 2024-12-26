@@ -2,5 +2,6 @@
 
 #include "pch.h"
 
-void resetControls();
-void processControlEvents();
+void initializeControls();
+void generatePerspective();
+void processEvents();
