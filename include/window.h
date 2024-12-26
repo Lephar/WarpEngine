@@ -5,7 +5,7 @@
 void initializeSystem();
 void createWindow();
 void initializeMainLoop();
-SDL_bool pollEvents();
+void pollEvents();
 void finalizeMainLoop();
 void destroyWindow();
 void quitSystem();

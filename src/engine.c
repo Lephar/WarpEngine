@@ -17,6 +17,11 @@
 
 #include "draw.h"
 
+extern SDL_bool   quitEvent;
+extern SDL_bool resizeEvent;
+
+extern VkDevice device;
+
 void initialize(int argc, char *argv[]) {
     configure(argc, argv);
 
@@ -30,19 +35,41 @@ void initialize(int argc, char *argv[]) {
     createSurface();
     allocateMemories();
     createBuffers();
-    createSwapchain();
-    createFramebufferSet();
-    createDescriptors();
-    createModules();
     initializeAssets();
     loadAssets();
+    createDescriptors();
+    createModules();
+    createSwapchain();
+    createFramebufferSet();
+}
+
+void recreateSwapchain() {
+    vkDeviceWaitIdle(device);
+
+    destroyFramebufferSet();
+    destroySwapchain();
+    destroySurface();
+
+    createSurface();
+    createSwapchain();
+    createFramebufferSet();
+
+    resizeEvent = SDL_FALSE;
 }
 
 void loop() {
     initializeMainLoop();
     initializeDraw();
 
-    while(pollEvents()) {
+    while(1) {
+        pollEvents();
+
+        if(quitEvent) {
+            break;
+        } else if(resizeEvent) {
+            recreateSwapchain();
+        }
+
         draw();
     }
 
