@@ -82,6 +82,8 @@ void createFramebuffer(Framebuffer *framebuffer) {
 }
 
 void createFramebufferSet() {
+    deviceMemory.reusableMemoryOffset = deviceMemory.offset;
+
     framebufferSet.framebufferImageCount = 2;
 
     framebufferSet.sampleCount = VK_SAMPLE_COUNT_4_BIT;
@@ -122,4 +124,6 @@ void destroyFramebufferSet() {
     }
 
     free(framebufferSet.framebuffers);
+
+    deviceMemory.offset = deviceMemory.reusableMemoryOffset;
 }

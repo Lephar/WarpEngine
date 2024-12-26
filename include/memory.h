@@ -6,6 +6,7 @@ struct memory {
     VkMemoryPropertyFlags properties;
     uint32_t typeIndex;
     VkDeviceSize size;
+    VkDeviceSize reusableMemoryOffset;
     VkDeviceSize offset;
     VkDeviceMemory memory;
 } typedef Memory;
