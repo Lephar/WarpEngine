@@ -15,11 +15,12 @@ vec2 mouseDelta;
 
 vec3 position;
 vec3 forward;
-vec3 left;
+vec3 right;
+vec3 up;
 vec3 upGlobal;
 
-vec2 movementInput;
-vec2 movement;
+vec3 movementInput;
+vec3 movement;
 
 mat4 viewMatrix;
 mat4 projMatrix;
@@ -37,12 +38,14 @@ void initializeControls() {
 
     glm_vec3_zero(position);
     glm_vec3_zero(forward);
-    glm_vec3_zero(left);
+    glm_vec3_zero(right);
+    glm_vec3_zero(up);
     glm_vec3_zero(upGlobal);
 
-    forward[2]  = 1.0f;
-    left[0]     = 1.0f;
-    upGlobal[1] = 1.0f;
+    forward[1]  = 1.0f;
+    right[0]    = 1.0f;
+    up[2]       = 1.0f;
+    upGlobal[2] = 1.0f;
 
     debug("Control variables created");
 }
@@ -68,32 +71,40 @@ void processEvents() {
     SDL_GetRelativeMouseState(&mouseX, &mouseY);
     SDL_WarpMouseInWindow(window, extent.width / 2, extent.height / 2);
 
-    mouseDelta[0] = -2.0f * mouseX / extent.width;
+    mouseDelta[0] =  2.0f * mouseX / extent.width;
     mouseDelta[1] = -2.0f * mouseY / extent.height;
 
     int keyCount = 0;
     const uint8_t *states = SDL_GetKeyboardState(&keyCount);
 
-    movementInput[0] = states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D];
-    movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
+    movementInput[0] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
+    movementInput[1] = states[SDL_SCANCODE_D] - states[SDL_SCANCODE_A];
+    movementInput[2] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
 
     // TODO: Limit vertical rotation on global up and down
     if(compareFloat(glm_vec2_norm2(mouseDelta), 0)) {
-        glm_vec3_rotate(left   , mouseDelta[0], upGlobal);
         glm_vec3_rotate(forward, mouseDelta[0], upGlobal);
-        glm_vec3_rotate(forward, mouseDelta[1], left    );
+        glm_vec3_rotate(right  , mouseDelta[0], upGlobal);
+        glm_vec3_rotate(up     , mouseDelta[0], upGlobal);
+        glm_vec3_rotate(forward, mouseDelta[1], right    );
+        glm_vec3_rotate(up     , mouseDelta[1], right    );
     }
 
-    if(compareFloat(glm_vec2_norm2(movementInput), 0)) {
-        glm_vec2_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
+    if(compareFloat(glm_vec3_norm2(movementInput), 0)) {
+        glm_vec3_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
 
         vec3 forwardMovement;
-        glm_vec3_scale_as(forward, movementInput[1], forwardMovement);
+        glm_vec3_scale_as(forward, movementInput[0], forwardMovement);
 
-        vec3 leftMovement;
-        glm_vec3_scale_as(left, movementInput[0], leftMovement);
+        vec3 rightMovement;
+        glm_vec3_scale_as(right, movementInput[1], rightMovement);
 
-        glm_vec3_addadd(forwardMovement, leftMovement, position);
+        vec3 upMovement;
+        glm_vec3_scale_as(up, movementInput[2], upMovement);
+
+        glm_vec3_add(forwardMovement, position, position);
+        glm_vec3_add(rightMovement  , position, position);
+        glm_vec3_add(upMovement     , position, position);
     }
 
     vec3 target;
