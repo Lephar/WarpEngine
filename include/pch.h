@@ -6,14 +6,6 @@
 #define DEBUG 0
 #endif // NDEBUG
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_log.h>
-#include <SDL2/SDL_vulkan.h>
-#include <SDL2/SDL_stdinc.h>
-#include <vulkan/vulkan.h>
-#include <shaderc/shaderc.h>
-#include <cglm/cglm.h>
-
 #include <time.h>
 #include <math.h>
 #include <fcntl.h>
@@ -24,3 +16,12 @@
 #include <limits.h>
 #include <assert.h>
 #include <sys/mman.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_log.h>
+#include <SDL2/SDL_vulkan.h>
+#include <SDL2/SDL_stdinc.h>
+#include <vulkan/vulkan.h>
+#include <shaderc/shaderc.h>
+
+#include "cglm/cglm.h"

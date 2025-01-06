@@ -53,4 +53,4 @@ add_executable(${PROJECT_NAME} ${EXTERNAL} ${HEADERS} ${SOURCES} ${SHADERS} ${CO
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra)
 target_include_directories(${PROJECT_NAME} PUBLIC include external ${SDL2_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
 target_precompile_headers(${PROJECT_NAME} PUBLIC include/pch.h)
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${Vulkan_LIBRARIES} shaderc_shared cglm m)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${Vulkan_LIBRARIES} shaderc_shared m)
