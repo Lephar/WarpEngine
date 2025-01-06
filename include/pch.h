@@ -24,4 +24,5 @@
 #include <vulkan/vulkan.h>
 #include <shaderc/shaderc.h>
 
+#include "cgltf/cgltf.h"
 #include "cglm/cglm.h"
