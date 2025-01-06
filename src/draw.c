@@ -130,9 +130,9 @@ void render() {
 
     VkViewport viewport = {
         .x = 0,
-        .y = 0,
+        .y = extent.height,
         .width = extent.width,
-        .height = extent.height,
+        .height = - (float) extent.height,
         .minDepth = 0.0f,
         .maxDepth = 1.0f
     };
