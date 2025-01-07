@@ -16,7 +16,7 @@ namespace Engine::Manager {
 
 	Image loadImage(const char* filename) {
 		auto path = assetFolder / filename;
-		
+
 		Image image{};
 		int width, height, channels;
 
@@ -48,7 +48,7 @@ namespace Engine::Manager {
 				.transformation = transformation,
 				.materialName = primitive.material->name
 			};
-			
+
 			for (unsigned attributeIndex = 0; attributeIndex < primitive.attributes_count; attributeIndex++) {
 				auto& attribute = primitive.attributes[attributeIndex];
 
@@ -83,12 +83,12 @@ namespace Engine::Manager {
 	void loadNode(cgltf_node*& nodeData, glm::mat4 parentTransformation) {
 		cgltf_float transformationData[16]{};
 		cgltf_node_transform_local(nodeData, transformationData);
-		
+
 		glm::mat4 transformation{};
 		std::memcpy(&transformation, transformationData, sizeof(transformationData));
 
 		transformation = parentTransformation * transformation;
-		
+
 		auto& mesh = nodeData->mesh;
 
 		if (mesh)
@@ -117,7 +117,7 @@ namespace Engine::Manager {
 
 		if (result != cgltf_result_success) {
 			std::cerr << "Error validating asset " << filename << " with error code " << result << std::endl;
-			cgltf_free(data); 
+			cgltf_free(data);
 			return;
 		}
 #endif // NDEBUF
