@@ -36,7 +36,6 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 
 void *loadFunction(const char *name);
 
-uint32_t popcount(uint32_t value);
 uint32_t binarize(uint8_t decimal);
 
 int32_t compareFloat(float first, float second);

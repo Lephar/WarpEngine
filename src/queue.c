@@ -1,6 +1,8 @@
 #include "queue.h"
 #include "helper.h"
 
+#include <stdbit.h>
+
 extern VkDevice device;
 
 uint32_t queueFamilyCount;
@@ -33,7 +35,7 @@ void generateQueueDetails() {
             VkQueueFlags satisfiedFlags = supportedFlags &  queueReferences[queueIndex]->requiredFlags;
             VkQueueFlags redundantFlags = supportedFlags & ~queueReferences[queueIndex]->requiredFlags;
 
-            uint32_t queueFamilyScore = ~popcount(redundantFlags);
+            uint32_t queueFamilyScore = stdc_count_zeros_ui(redundantFlags);
 
             if(queueReferences[queueIndex]->requiredFlags == satisfiedFlags && mostSuitedScore < queueFamilyScore) {
                 mostSuitedScore = queueFamilyScore;

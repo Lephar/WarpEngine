@@ -33,19 +33,6 @@ void *loadFunction(const char *name) {
     return getInstanceProcAddr(instance, name);
 }
 
-// Not the most optimal solution but gets the job done
-// TODO: This will be added in the C23 version
-uint32_t popcount(uint32_t value) {
-    uint32_t count = 0;
-
-    while(value) {
-        count += value & 1;
-        value >>= 1;
-    }
-
-    return count;
-}
-
 // TODO: This will be added in the C23 version too
 uint32_t binarize(uint8_t decimal) {
     uint32_t binary = 0;
