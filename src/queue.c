@@ -1,8 +1,6 @@
 #include "queue.h"
 #include "helper.h"
 
-#include <stdbit.h>
-
 extern VkDevice device;
 
 uint32_t queueFamilyCount;
