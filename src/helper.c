@@ -33,20 +33,6 @@ void *loadFunction(const char *name) {
     return getInstanceProcAddr(instance, name);
 }
 
-// TODO: This will be added in the C23 version too
-uint32_t binarize(uint8_t decimal) {
-    uint32_t binary = 0;
-    uint8_t shift = CHAR_BIT - 1;
-    uint8_t mask = 1 << shift;
-
-    for(int i = 0; i < CHAR_BIT; i++) {
-        binary = (binary * 10) + ((decimal & mask) >> shift);
-        decimal <<= 1;
-    }
-
-    return binary;
-}
-
 int32_t compareFloat(float first, float second) {
     float difference = first - second;
 

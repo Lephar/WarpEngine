@@ -36,9 +36,8 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 
 void *loadFunction(const char *name);
 
-uint32_t binarize(uint8_t decimal);
-
 int32_t compareFloat(float first, float second);
+
 float radians(float degrees);
 
 // WARN: Free the output data!
