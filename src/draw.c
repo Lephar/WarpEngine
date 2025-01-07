@@ -216,10 +216,6 @@ void render() {
     PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadFunction("vkCmdSetColorWriteMaskEXT");
     cmdSetColorWriteMask(framebuffer->renderCommandBuffer, 0, 1, &colorWriteMask);
 
-    // TODO: Why doesn't this work?
-    //vkCmdSetViewport(framebuffer->renderCommandBuffer, 0, 1, &viewport);
-    //vkCmdSetScissor(framebuffer->renderCommandBuffer, 0, 1, &scissor);
-
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
 
@@ -306,9 +302,8 @@ void present() {
     vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
     vkResetFences(device, 1, &framebuffer->blitFence);
 
-    uint32_t swapchainImageIndex = UINT32_MAX;
-    // TODO: Implement swapchain recreation
     // TODO: Investigate multiple swapchain image acquisition at startup
+    uint32_t swapchainImageIndex = UINT32_MAX;
     vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
 

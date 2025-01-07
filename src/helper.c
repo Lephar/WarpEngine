@@ -34,7 +34,7 @@ void *loadFunction(const char *name) {
 }
 
 // Not the most optimal solution but gets the job done
-// TODO: This will be added to the new C version
+// TODO: This will be added in the C23 version
 uint32_t popcount(uint32_t value) {
     uint32_t count = 0;
 
@@ -46,6 +46,7 @@ uint32_t popcount(uint32_t value) {
     return count;
 }
 
+// TODO: This will be added in the C23 version too
 uint32_t binarize(uint8_t decimal) {
     uint32_t binary = 0;
     uint8_t shift = CHAR_BIT - 1;

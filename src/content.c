@@ -11,9 +11,9 @@ VkDeviceSize   indexBufferSize;
 VkDeviceSize  vertexBufferSize;
 VkDeviceSize uniformBufferSize;
 
-Index    *  indexBuffer;
-Vertex   * vertexBuffer;
-Uniform  *uniformBuffer;
+Index   *  indexBuffer;
+Vertex  * vertexBuffer;
+Uniform *uniformBuffer;
 
 extern VkDevice device;
 
@@ -34,9 +34,8 @@ void initializeAssets() {
      vertexBufferSize = vertexCount * sizeof(Vertex );
     uniformBufferSize =               sizeof(Uniform);
 
-      indexBuffer = malloc(           indexBufferSize);
-     vertexBuffer = malloc(          vertexBufferSize);
-    //uniformBuffer = calloc(1, uniformBufferSize);
+     indexBuffer = malloc( indexBufferSize);
+    vertexBuffer = malloc(vertexBufferSize);
 
     indexBuffer[0] = 0;
     indexBuffer[1] = 1;
@@ -51,12 +50,7 @@ void initializeAssets() {
     vertexBuffer[2].x =  0.5f ;
     vertexBuffer[2].y =  0.5f ;
     vertexBuffer[2].z = -0.5f ;
-    /*
-    uniformBuffer->transform[0][0] = 1.0f;
-    uniformBuffer->transform[1][1] = 1.0f;
-    uniformBuffer->transform[2][2] = 1.0f;
-    uniformBuffer->transform[3][3] = 1.0f;
-    */
+
     debug("Assets initialized");
 }
 
@@ -69,14 +63,12 @@ void loadAssets() {
     copyBuffer(&sharedBuffer, &deviceBuffer, stagingBufferOffset, 0, indexBufferSize + vertexBufferSize);
     memset(mappedSharedMemory, 0, sharedMemory.size);
 
-    //memcpy(mappedSharedMemory, uniformBuffer, uniformBufferSize);
     uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
 
     debug("Assets copied to device buffer");
 }
 
 void freeAssets() {
-    //free(uniformBuffer);
     free( vertexBuffer);
     free(  indexBuffer);
 

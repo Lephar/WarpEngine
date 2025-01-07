@@ -60,17 +60,6 @@ void createFramebuffer(Framebuffer *framebuffer) {
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
 
-    /*
-    VkSemaphoreSignalInfo signalInfo = {
-        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO,
-        .pNext = NULL,
-        .semaphore = framebuffer->blitSemaphore2,
-        .value = 1
-    };
-
-    vkSignalSemaphore(device, &signalInfo);
-    */
-
     VkFenceCreateInfo fenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
         .pNext = NULL,

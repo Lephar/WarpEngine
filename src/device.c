@@ -37,6 +37,7 @@ void selectPhysicalDevice() {
         VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(devices[deviceIndex], &properties);
 
+        // TODO: Implement better device selection
         if(properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
             selectedIndex = deviceIndex;
         }
