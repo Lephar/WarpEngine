@@ -54,8 +54,8 @@ void generatePerspective() {
     float aspectRatio = (float) extent.width / (float) extent.height;
     float fieldOfView = M_PI_2;
 
-    float nearPlane =  0.1f;
-    float  farPlane = 10.0f;
+    float nearPlane =   1.0f;
+    float  farPlane = 100.0f;
 
     glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, projMatrix);
     debug("Perspective created");

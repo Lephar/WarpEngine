@@ -227,7 +227,8 @@ void render() {
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
 
-    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, indexCount, 1, 0, 0, 0);
+    vkCmdDraw(framebuffer->renderCommandBuffer, vertexCount, 1, 0, 0);
+    //vkCmdDrawIndexed(framebuffer->renderCommandBuffer, indexCount, 1, 0, 0, 0);
 
     vkCmdEndRendering(framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);

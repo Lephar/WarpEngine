@@ -18,6 +18,8 @@ Index   *  indexBuffer;
 Vertex  * vertexBuffer;
 Uniform *uniformBuffer;
 
+VkDeviceSize stagingBufferOffset;
+
 extern VkDevice device;
 
 extern Memory deviceMemory;
@@ -28,12 +30,61 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
-void loadNode(cgltf_node *node) {
-    debug("%s %s", node->name, node->mesh ? node->mesh->name : "");
+void processAttribute(cgltf_attribute *attribute) {
+    debug("\t\t\t\tAttribute: %s, %d", attribute->name, attribute->type);
 
-    for(uint32_t childIndex = 0; childIndex < node->children_count; childIndex++) {
+    cgltf_accessor *accessor = attribute->data;
+    cgltf_buffer_view *view = accessor->buffer_view;
+    cgltf_buffer *buffer = view->buffer;
+
+    uint8_t *data = buffer->data + view->offset;
+
+    if(attribute->type == cgltf_attribute_type_position) {
+        memcpy(mappedSharedMemory + stagingBufferOffset + vertexBufferSize, data, view->size);
+
+        vertexBufferSize += view->size;
+        vertexCount += accessor->count;
+
+        debug("\t\t\t\t\t%lu elements copied, %lu bytes in size", accessor->count, view->size);
+    }
+}
+
+void processPrimitive(cgltf_primitive *primitive) {
+    debug("\t\t\tPrimitive Type: %d", primitive->type);
+
+    for(cgltf_size attributeIndex = 0; attributeIndex < primitive->attributes_count; attributeIndex++) {
+        cgltf_attribute *attribute = &primitive->attributes[attributeIndex];
+        processAttribute(attribute);
+    }
+}
+
+void loadMesh(cgltf_mesh *mesh) {
+    debug("\t\tMesh:%s", mesh->name);
+
+    for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
+        cgltf_primitive *primitive = &mesh->primitives[primitiveIndex];
+        processPrimitive(primitive);
+    }
+}
+
+void loadNode(cgltf_node *node) {
+    debug("\tNode:%s", node->name);
+
+    if(node->mesh)
+        loadMesh(node->mesh);
+
+    for(cgltf_size childIndex = 0; childIndex < node->children_count; childIndex++) {
         cgltf_node *childNode = node->children[childIndex];
         loadNode(childNode);
+    }
+}
+
+void loadScene(cgltf_scene *scene) {
+    debug("Scene: %s", scene->name);
+
+    for (cgltf_size nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
+        cgltf_node *node = scene->nodes[nodeIndex];
+        loadNode(node);
     }
 }
 
@@ -65,27 +116,24 @@ void loadModel(Model *model) {
         assert(result == cgltf_result_success);
     }
 
-    for (uint32_t sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
+    for (cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
         cgltf_scene *scene = &data->scenes[sceneIndex];
-
-        for (uint32_t nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
-            cgltf_node *node = scene->nodes[nodeIndex];
-            loadNode(node);
-        }
+        loadScene(scene);
     }
 
     cgltf_free(data);
 }
 
-// TODO: Implement GLTF loading
 void initializeAssets() {
-    for(uint32_t modelIndex = 0; modelIndex < modelCount; modelIndex++) {
-        loadModel(&models[modelIndex]);
-    }
+    indexCount  = 0;
+    vertexCount = 0;
 
+    indexBufferSize   = 0;
+    vertexBufferSize  = 0;
+    uniformBufferSize = sizeof(Uniform);
 
-     indexCount = 3;
-    vertexCount = 3;
+    stagingBufferOffset = uniformBufferSize;
+    /*
 
       indexBufferSize =  indexCount * sizeof(Index  );
      vertexBufferSize = vertexCount * sizeof(Vertex );
@@ -107,15 +155,17 @@ void initializeAssets() {
     vertexBuffer[2].x =  0.5f ;
     vertexBuffer[2].y =  0.5f ;
     vertexBuffer[2].z = -0.5f ;
+    */
+    for(uint32_t modelIndex = 0; modelIndex < modelCount; modelIndex++) {
+        loadModel(&models[modelIndex]);
+    }
 
     debug("Assets initialized");
 }
 
 void loadAssets() {
-    VkDeviceSize stagingBufferOffset = uniformBufferSize;
-
-    memcpy(mappedSharedMemory + stagingBufferOffset, indexBuffer, indexBufferSize);
-    memcpy(mappedSharedMemory + stagingBufferOffset + indexBufferSize, vertexBuffer, vertexBufferSize);
+    //memcpy(mappedSharedMemory + stagingBufferOffset, indexBuffer, indexBufferSize);
+    //memcpy(mappedSharedMemory + stagingBufferOffset + indexBufferSize, vertexBuffer, vertexBufferSize);
 
     copyBuffer(&sharedBuffer, &deviceBuffer, stagingBufferOffset, 0, indexBufferSize + vertexBufferSize);
     memset(mappedSharedMemory, 0, sharedMemory.size);
@@ -126,8 +176,8 @@ void loadAssets() {
 }
 
 void freeAssets() {
-    free( vertexBuffer);
-    free(  indexBuffer);
+    //free( vertexBuffer);
+    //free(  indexBuffer);
 
     free(models); // NOTICE: Allocated in config unit
 
