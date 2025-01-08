@@ -30,6 +30,9 @@ extern VkDeviceSize   indexBufferSize;
 extern VkDeviceSize  vertexBufferSize;
 extern VkDeviceSize uniformBufferSize;
 
+extern VkDeviceSize   indexBufferBegin;
+extern VkDeviceSize  vertexBufferBegin;
+
 extern Index    *  indexBuffer;
 extern Vertex   * vertexBuffer;
 extern Uniform  *uniformBuffer;
@@ -181,8 +184,8 @@ void render() {
     vkBeginCommandBuffer(framebuffer->renderCommandBuffer, &beginInfo);
     vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
 
-    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
+    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &vertexBufferBegin);
 
     vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
@@ -197,10 +200,11 @@ void render() {
     vkCmdSetStencilTestEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
     vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-    //vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_POINT_LIST);
+    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
-    cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
+    //cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
+    cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_LINE);
+    vkCmdSetLineWidth(framebuffer->renderCommandBuffer, 1.0f);
 
     PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
     cmdSetRasterizationSamples(framebuffer->renderCommandBuffer, framebufferSet.sampleCount);
@@ -228,8 +232,7 @@ void render() {
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
 
-    vkCmdDraw(framebuffer->renderCommandBuffer, vertexCount, 1, 0, 0);
-    //vkCmdDrawIndexed(framebuffer->renderCommandBuffer, indexCount, 1, 0, 0, 0);
+    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, indexCount, 1, 0, 0, 0);
 
     vkCmdEndRendering(framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);

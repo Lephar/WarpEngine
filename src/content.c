@@ -14,11 +14,12 @@ VkDeviceSize   indexBufferSize;
 VkDeviceSize  vertexBufferSize;
 VkDeviceSize uniformBufferSize;
 
+VkDeviceSize  indexBufferBegin;
+VkDeviceSize vertexBufferBegin;
+
 Index   *  indexBuffer;
 Vertex  * vertexBuffer;
 Uniform *uniformBuffer;
-
-VkDeviceSize stagingBufferOffset;
 
 extern VkDevice device;
 
@@ -37,10 +38,10 @@ void processAttribute(cgltf_attribute *attribute) {
     cgltf_buffer_view *view = accessor->buffer_view;
     cgltf_buffer *buffer = view->buffer;
 
-    uint8_t *data = buffer->data + view->offset;
+    uint16_t *data = buffer->data + view->offset;
 
     if(attribute->type == cgltf_attribute_type_position) {
-        memcpy(mappedSharedMemory + stagingBufferOffset + vertexBufferSize, data, view->size);
+        memcpy(mappedSharedMemory + vertexBufferBegin + vertexBufferSize, data, view->size);
 
         vertexBufferSize += view->size;
         vertexCount += accessor->count;
@@ -51,6 +52,21 @@ void processAttribute(cgltf_attribute *attribute) {
 
 void processPrimitive(cgltf_primitive *primitive) {
     debug("\t\t\tPrimitive Type: %d", primitive->type);
+
+    cgltf_accessor *accessor = primitive->indices;
+    cgltf_buffer_view *view = accessor->buffer_view;
+    cgltf_buffer *buffer = view->buffer;
+
+    uint8_t *data = buffer->data + view->offset;
+
+    for(uint32_t indexIndex = 0; indexIndex < accessor->count; indexIndex++) {
+        data[indexIndex] += vertexCount;
+    }
+
+    memcpy(mappedSharedMemory + indexBufferBegin + indexBufferSize, data, view->size);
+
+    indexBufferSize += view->size;
+    indexCount += accessor->count;
 
     for(cgltf_size attributeIndex = 0; attributeIndex < primitive->attributes_count; attributeIndex++) {
         cgltf_attribute *attribute = &primitive->attributes[attributeIndex];
@@ -132,7 +148,8 @@ void initializeAssets() {
     vertexBufferSize  = 0;
     uniformBufferSize = sizeof(Uniform);
 
-    stagingBufferOffset = uniformBufferSize;
+    indexBufferBegin  = uniformBufferSize;
+    vertexBufferBegin = indexBufferBegin + sharedMemory.size / 2;
     /*
 
       indexBufferSize =  indexCount * sizeof(Index  );
@@ -167,7 +184,8 @@ void loadAssets() {
     //memcpy(mappedSharedMemory + stagingBufferOffset, indexBuffer, indexBufferSize);
     //memcpy(mappedSharedMemory + stagingBufferOffset + indexBufferSize, vertexBuffer, vertexBufferSize);
 
-    copyBuffer(&sharedBuffer, &deviceBuffer, stagingBufferOffset, 0, indexBufferSize + vertexBufferSize);
+    //copyBuffer(&sharedBuffer, &deviceBuffer, indexBufferBegin, 0, indexBufferSize + vertexBufferSize);
+    copyBuffer(&sharedBuffer, &deviceBuffer, indexBufferBegin, 0, sharedBuffer.size - indexBufferBegin);
     memset(mappedSharedMemory, 0, sharedMemory.size);
 
     uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
