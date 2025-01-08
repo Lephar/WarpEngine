@@ -14,6 +14,11 @@ struct uniform {
     mat4 transform;
 } typedef Uniform;
 
+struct model {
+    char name[PATH_MAX];
+
+} typedef Model;
+
 void initializeAssets();
 void loadAssets();
 void freeAssets();

@@ -4,6 +4,8 @@
 #include "memory.h"
 #include "buffer.h"
 
+Model *models;
+
 uint32_t  indexCount;
 uint32_t vertexCount;
 
@@ -71,6 +73,8 @@ void loadAssets() {
 void freeAssets() {
     free( vertexBuffer);
     free(  indexBuffer);
+
+    free(models); // NOTICE: Allocated in config unit
 
     debug("Assets freed");
 }

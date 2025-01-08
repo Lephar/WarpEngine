@@ -32,6 +32,8 @@ Shader *shaderReferences[] = {
 
 uint32_t shaderCount;
 
+extern Model *models;
+
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);
     for(int32_t argn = 0; argn < argc; argn++) {
@@ -105,9 +107,9 @@ void configure(int argc, char *argv[]) {
 
         fscanf(file, "%s%s%s", shader->name, kind, type);
 
-        debug("Shader: %s", shader->name);
-        debug("\tKind: %s", kind);
-        debug("\tType: %s", type);
+        debug("\tShader: %s", shader->name);
+        debug("\t\tKind: %s", kind);
+        debug("\t\tType: %s", type);
 
         if(strncmp(kind, "compute", UINT8_MAX) == 0) {
             shader->stage = VK_SHADER_STAGE_COMPUTE_BIT;
@@ -124,6 +126,21 @@ void configure(int argc, char *argv[]) {
         }
     }
 
-    // Discard rest of the file for now
+    fscanf(file, "%s", discard);
+    assert(strncmp(discard, "Assets:", PATH_MAX) == 0);
+
+    uint32_t assetCount = 0;
+    fscanf(file, "%u", &assetCount);
+    debug("Asset count: %d", assetCount);
+
+    models = malloc(assetCount * sizeof(Model)); // NOTICE: Free in the content unit
+
+    for(uint32_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
+        Model *model = &models[assetIndex];
+
+        fscanf(file, "%s", model->name);
+        debug("\tAsset: %s", model->name);
+    }
+
     fclose(file);
 }
