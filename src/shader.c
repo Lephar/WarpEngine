@@ -149,9 +149,9 @@ void createModule(Shader *shader) {
         if(status != shaderc_compilation_status_success) {
             debug("%s", shaderc_result_get_error_message(result));
             shaderc_result_release(result);
-            assert(status == shaderc_compilation_status_success);
         }
 
+        assert(status == shaderc_compilation_status_success);
         debug("\tSuccessfully compiled");
 
         shader->size = shaderc_result_get_length(result);

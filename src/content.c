@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "buffer.h"
 
+uint32_t modelCount;
 Model *models;
 
 uint32_t  indexCount;
@@ -27,8 +28,62 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
+void loadNode(cgltf_node *node) {
+    debug("%s %s", node->name, node->mesh ? node->mesh->name : "");
+
+    for(uint32_t childIndex = 0; childIndex < node->children_count; childIndex++) {
+        cgltf_node *childNode = node->children[childIndex];
+        loadNode(childNode);
+    }
+}
+
+void loadModel(Model *model) {
+    cgltf_data* data = NULL;
+    cgltf_options assetOptions = {};
+
+    cgltf_result result = cgltf_parse_file(&assetOptions, model->fullpath, &data);
+
+    if (result != cgltf_result_success) {
+        debug("Failed to read %s: %d", result);
+        assert(result == cgltf_result_success);
+    }
+
+    result = cgltf_validate(data);
+
+    if (result != cgltf_result_success) {
+        debug("Failed to validate %s: %d", result);
+        assert(result == cgltf_result_success);
+    }
+
+    // TODO: Load materials here
+
+    result = cgltf_load_buffers(&assetOptions, data, model->fullpath);
+
+    if (result != cgltf_result_success) {
+        debug("Failed to load buffers %s: %d", result);
+        cgltf_free(data);
+        assert(result == cgltf_result_success);
+    }
+
+    for (uint32_t sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
+        cgltf_scene *scene = &data->scenes[sceneIndex];
+
+        for (uint32_t nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
+            cgltf_node *node = scene->nodes[nodeIndex];
+            loadNode(node);
+        }
+    }
+
+    cgltf_free(data);
+}
+
 // TODO: Implement GLTF loading
 void initializeAssets() {
+    for(uint32_t modelIndex = 0; modelIndex < modelCount; modelIndex++) {
+        loadModel(&models[modelIndex]);
+    }
+
+
      indexCount = 3;
     vertexCount = 3;
 

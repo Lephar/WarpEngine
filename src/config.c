@@ -32,6 +32,7 @@ Shader *shaderReferences[] = {
 
 uint32_t shaderCount;
 
+extern uint32_t modelCount;
 extern Model *models;
 
 void configure(int argc, char *argv[]) {
@@ -129,14 +130,13 @@ void configure(int argc, char *argv[]) {
     fscanf(file, "%s", discard);
     assert(strncmp(discard, "Assets:", PATH_MAX) == 0);
 
-    uint32_t assetCount = 0;
-    fscanf(file, "%u", &assetCount);
-    debug("Asset count: %d", assetCount);
+    fscanf(file, "%u", &modelCount);
+    debug("Asset count: %d", modelCount);
 
-    models = malloc(assetCount * sizeof(Model)); // NOTICE: Free in the content unit
+    models = malloc(modelCount * sizeof(Model)); // NOTICE: Free in the content unit
 
-    for(uint32_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
-        Model *model = &models[assetIndex];
+    for(uint32_t modelIndex = 0; modelIndex < modelCount; modelIndex++) {
+        Model *model = &models[modelIndex];
 
         char type[UINT8_MAX];
 
@@ -148,7 +148,7 @@ void configure(int argc, char *argv[]) {
             model->binary = VK_FALSE;
         }
 
-        length = snprintf(model->fullpath, PATH_MAX, "%s/%s.%s", rootPath, model->name, model->binary ? "glb" : "gltf");
+        length = snprintf(model->fullpath, PATH_MAX, "%s/assets/%s.%s", rootPath, model->name, model->binary ? "glb" : "gltf");
         assert(length < PATH_MAX);
         debug("\t%s", model->fullpath);
     }
