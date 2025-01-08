@@ -94,7 +94,7 @@ void allocateMemories() {
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
     allocateMemory(&sharedMemory, typeFilter,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 128L << 20);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 1L << 30);
     destroyBuffer(&temporaryBuffer);
 
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
