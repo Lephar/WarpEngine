@@ -62,40 +62,40 @@ void configure(int argc, char *argv[]) {
     debug("Path:   %s", rootPath);
     debug("Name:   %s", executableName);
 
-    char *configFile = argc < 2 ? "config.txt" : argv[1];
-    debug("Config: %s", configFile);
+    char config[PATH_MAX];
 
-    size_t configSize = 0;
-    char *configString = NULL;
-    readFile(configFile, false, &configSize, &configString);
-    assert(configSize != 0);
-    assert(configString != NULL);
+    if(argc < 2) {
+        length = snprintf(config, PATH_MAX, "%s/config.txt", rootPath);
+        assert(length < PATH_MAX);
+    } else {
+        length = snprintf(config, PATH_MAX, "%s/%s", rootPath, argv[1]);
+        assert(length < PATH_MAX);
+    }
 
-    // TODO: Simplify offsetting by using a function
+    debug("Config: %s", config);
+
+    FILE *file = fopen(config, "r");
+    assert(file != NULL);
+
     char discard[PATH_MAX];
-    int32_t offset = 0;
-    int32_t n = 0;
 
-    sscanf(configString, "%s%n", discard, &offset);
+    fscanf(file, "%s", discard);
     assert(strncmp(discard, "Window:", PATH_MAX) == 0 || strncmp(discard, "Fullscreen:", PATH_MAX) == 0);
 
-    sscanf(configString + offset, "%u%u%n", &extent.width, &extent.height, &n);
+    fscanf(file, "%u%u", &extent.width, &extent.height);
     debug("Width:  %u", extent.width );
     debug("Height: %u", extent.height);
-    offset += n;
 
      queueCount = sizeof( queueReferences) / sizeof(Queue  *);
     shaderCount = sizeof(shaderReferences) / sizeof(Shader *);
 
-    sscanf(configString + offset, "%s%n", discard, &n);
+    fscanf(file, "%s", discard);
     assert(strncmp(discard, "Shaders:", PATH_MAX) == 0);
-    offset += n;
 
     uint32_t configShaderCount;
-    sscanf(configString + offset, "%u%n", &configShaderCount, &n);
+    fscanf(file, "%u", &configShaderCount);
     debug("Shader count: %d", configShaderCount);
     assert(configShaderCount == shaderCount);
-    offset += n;
 
     for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
         Shader *shader = shaderReferences[shaderIndex];
@@ -103,8 +103,7 @@ void configure(int argc, char *argv[]) {
         char kind[UINT8_MAX];
         char type[UINT8_MAX];
 
-        sscanf(configString + offset, "%s%s%s%n", shader->name, kind, type, &n);
-        offset += n;
+        fscanf(file, "%s%s%s", shader->name, kind, type);
 
         debug("Shader: %s", shader->name);
         debug("\tKind: %s", kind);
@@ -126,5 +125,5 @@ void configure(int argc, char *argv[]) {
     }
 
     // Discard rest of the file for now
-    free(configString);
+    fclose(file);
 }
