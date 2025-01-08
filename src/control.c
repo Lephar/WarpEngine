@@ -109,5 +109,5 @@ void processEvents() {
     vec3 target;
     glm_vec3_add(position, forward, target);
     glm_lookat(position, target, upGlobal, viewMatrix);
-    glm_mat4_mul(projMatrix, viewMatrix, uniformBuffer->transform);
+    glm_mat4_mul(projMatrix, viewMatrix, *uniformBuffer);
 }

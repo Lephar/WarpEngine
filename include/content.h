@@ -4,15 +4,9 @@
 
 typedef uint32_t Index;
 
-struct vertex {
-    float x;
-    float y;
-    float z;
-} typedef Vertex;
+typedef vec3 Vertex;
 
-struct uniform {
-    mat4 transform;
-} typedef Uniform;
+typedef mat4 Uniform;
 
 struct model {
     uint32_t binary;
