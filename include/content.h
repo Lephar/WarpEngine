@@ -15,7 +15,9 @@ struct uniform {
 } typedef Uniform;
 
 struct model {
+    uint32_t binary;
     char name[PATH_MAX];
+    char fullpath[PATH_MAX];
 
 } typedef Model;
 

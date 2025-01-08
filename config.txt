@@ -5,4 +5,4 @@ Shaders: 2
     vertex_fixed   vertex   glsl
     fragment_fixed fragment intermediate
 Assets: 1
-    Lantern.gltf
+    Lantern text
