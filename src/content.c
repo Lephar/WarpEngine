@@ -57,13 +57,19 @@ void processPrimitive(cgltf_primitive *primitive) {
     cgltf_buffer_view *view = accessor->buffer_view;
     cgltf_buffer *buffer = view->buffer;
 
-    uint8_t *data = buffer->data + view->offset;
+    void *data = buffer->data + view->offset;
 
-    for(uint32_t indexIndex = 0; indexIndex < accessor->count; indexIndex++) {
-        data[indexIndex] += vertexCount;
+    Mesh mesh = {
+        .indices = malloc(view->size)
+    };
+
+    if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
+        for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
+            mesh.indices[dataIndex] = ((uint16_t *) data)[dataIndex];
+        }
+    } else if(accessor->component_type == cgltf_component_type_r_32u) {
+        memcpy(mesh.indices, data, view->size);
     }
-
-    memcpy(mappedSharedMemory + indexBufferBegin + indexBufferSize, data, view->size);
 
     indexBufferSize += view->size;
     indexCount += accessor->count;

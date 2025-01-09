@@ -4,9 +4,28 @@
 
 typedef uint32_t Index;
 
-typedef vec3 Vertex;
+struct material {
 
-typedef mat4 Uniform;
+} typedef Material;
+
+struct vertex {
+    vec3 position;
+    vec3 texcoord;
+} typedef Vertex;
+
+struct mesh {
+    Index *indices;
+    Vertex *vertices;
+    mat4 transform;
+    Material normal;
+    Material texture;
+} typedef Mesh;
+
+struct uniform {
+    mat4 view;
+    mat4 proj;
+    mat4 camera;
+} typedef Uniform;
 
 struct model {
     uint32_t binary;

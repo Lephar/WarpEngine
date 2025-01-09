@@ -22,9 +22,6 @@ vec3 upGlobal;
 vec3 movementInput;
 vec3 movement;
 
-mat4 viewMatrix;
-mat4 projMatrix;
-
 extern VkDeviceSize uniformBufferSize;
 extern Uniform *uniformBuffer;
 extern void *mappedSharedMemory;
@@ -57,7 +54,7 @@ void generatePerspective() {
     float nearPlane = 1.0f;
     float  farPlane = 1000.0f;
 
-    glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, projMatrix);
+    glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, uniformBuffer->proj);
     debug("Perspective created");
 }
 
@@ -108,6 +105,6 @@ void processEvents() {
 
     vec3 target;
     glm_vec3_add(position, forward, target);
-    glm_lookat(position, target, upGlobal, viewMatrix);
-    glm_mat4_mul(projMatrix, viewMatrix, *uniformBuffer);
+    glm_lookat(position, target, upGlobal, uniformBuffer->view);
+    glm_mat4_mul(uniformBuffer->proj, uniformBuffer->view, uniformBuffer->camera);
 }
