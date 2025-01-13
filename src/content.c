@@ -59,16 +59,12 @@ void processPrimitive(cgltf_primitive *primitive) {
 
     void *data = buffer->data + view->offset;
 
-    Mesh mesh = {
-        .indices = malloc(view->size)
-    };
-
     if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
         for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
-            mesh.indices[dataIndex] = ((uint16_t *) data)[dataIndex];
+            //mesh.indices[dataIndex] = ((uint16_t *) data)[dataIndex];
         }
     } else if(accessor->component_type == cgltf_component_type_r_32u) {
-        memcpy(mesh.indices, data, view->size);
+        //memcpy(mesh.indices, data, view->size);
     }
 
     indexBufferSize += view->size;
@@ -114,31 +110,32 @@ void loadModel(Model *model) {
     cgltf_data* data = NULL;
     cgltf_options assetOptions = {};
 
-    cgltf_result result = cgltf_parse_file(&assetOptions, model->fullpath, &data);
+    cgltf_result result;
+    //cgltf_parse_file(&assetOptions, model->fullpath, &data);
 
-    if (result != cgltf_result_success) {
+    if(result != cgltf_result_success) {
         debug("Failed to read %s: %d", result);
         assert(result == cgltf_result_success);
     }
 
     result = cgltf_validate(data);
 
-    if (result != cgltf_result_success) {
+    if(result != cgltf_result_success) {
         debug("Failed to validate %s: %d", result);
         assert(result == cgltf_result_success);
     }
 
     // TODO: Load materials here
 
-    result = cgltf_load_buffers(&assetOptions, data, model->fullpath);
+    //result = cgltf_load_buffers(&assetOptions, data, model->fullpath);
 
-    if (result != cgltf_result_success) {
+    if(result != cgltf_result_success) {
         debug("Failed to load buffers %s: %d", result);
         cgltf_free(data);
         assert(result == cgltf_result_success);
     }
 
-    for (cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
+    for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
         cgltf_scene *scene = &data->scenes[sceneIndex];
         loadScene(scene);
     }
