@@ -25,6 +25,8 @@
 #include <vulkan/vulkan.h>
 #include <shaderc/shaderc.h>
 
+#include "stb/stb_image.h"
+
 #include "cgltf/cgltf.h"
 
 #define CGLM_FORCE_DEPTH_ZERO_TO_ONE
