@@ -43,10 +43,7 @@ float radians(float degrees) {
     return M_PI * degrees / 180.0f;
 }
 
-void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data) {
-    char fullPath[PATH_MAX];
-    sprintf(fullPath, "%s/%s", rootPath, relativePath);
-
+void readFile(const char *fullPath, uint32_t binary, size_t *size, char **data) {
     FILE *file = fopen(fullPath, binary ? "rb" : "r");
     fseek(file, 0, SEEK_END);
     *size = ftell(file) + (binary ? 0 : 1);
