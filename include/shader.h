@@ -3,9 +3,6 @@
 #include "pch.h"
 
 struct shader {
-    char name[PATH_MAX];
-    VkShaderStageFlags stage;
-    VkBool32 intermediate;
     size_t size;
     char *data;
     VkShaderEXT module;

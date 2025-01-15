@@ -40,12 +40,6 @@ struct model {
     Node *nodes;
 } typedef Model;
 
-struct scene {
-    uint32_t binary;
-    char name[PATH_MAX];
-    char fullpath[PATH_MAX];
-} typedef Scene;
-
 struct uniform {
     mat4 view;
     mat4 proj;
