@@ -130,7 +130,7 @@ void createModule(Shader *shader) {
     } //TODO: Add other shader types
 
     char shaderFile[PATH_MAX];
-    sprintf(shaderFile, "shaders/%s%s%s", shader->name, extension, shader->intermediate ? ".spv" : "");
+    sprintf(shaderFile, "%s%s%s", shader->name, extension, shader->intermediate ? ".spv" : "");
     debug("\tPath:          %s", shaderFile);
 
     if(shader->intermediate) {

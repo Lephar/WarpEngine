@@ -22,10 +22,10 @@ Queue *queueReferences[] = {
 
 uint32_t queueCount;
 
-extern Shader vertexShader;
-extern Shader fragmentShader;
+ShaderFile vertexShader;
+ShaderFile fragmentShader;
 
-Shader *shaderReferences[] = {
+ShaderFile *shaderReferences[] = {
     &vertexShader,
     &fragmentShader
 };
@@ -34,6 +34,40 @@ uint32_t shaderCount;
 
 extern uint32_t modelCount;
 extern Model *models;
+
+void readShaderFile(FILE *file, ShaderFile *shader) {
+    char kind[UINT8_MAX];
+    char type[UINT8_MAX];
+
+    fscanf(file, "%s%s%s", shader->file.name, kind, type);
+
+    const char *kindExtension = ".glsl";
+    const char *typeExtension = "";
+
+    if(strncmp(kind, "compute", UINT8_MAX) == 0) {
+        shader->stage = VK_SHADER_STAGE_COMPUTE_BIT;
+        kindExtension = ".comp";
+    } else if(strncmp(kind, "vertex", UINT8_MAX) == 0) {
+        shader->stage = VK_SHADER_STAGE_VERTEX_BIT;
+        kindExtension = ".vert";
+    } else if(strncmp(kind, "fragment", UINT8_MAX) == 0) {
+        shader->stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        kindExtension = ".frag";
+    } //TODO: Add other shader types
+
+    if(strncmp(type, "intermediate", UINT8_MAX) == 0 || strncmp(type, "spirv", UINT8_MAX) == 0) {
+        shader->intermediate = VK_TRUE;
+        typeExtension = ".spv";
+    } else {
+        shader->intermediate = VK_FALSE;
+    }
+
+    sprintf(shader->file.fullpath, "%s/shaders/%s", rootPath, shader->file.name);
+
+    debug("Shader: %s", shader->file.name);
+    debug("\tKind: %s", kind);
+    debug("\tType: %s", type);
+}
 
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);
@@ -101,30 +135,7 @@ void configure(int argc, char *argv[]) {
     assert(configShaderCount == shaderCount);
 
     for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
-        Shader *shader = shaderReferences[shaderIndex];
-
-        char kind[UINT8_MAX];
-        char type[UINT8_MAX];
-
-        fscanf(file, "%s%s%s", shader->name, kind, type);
-
-        debug("Shader: %s", shader->name);
-        debug("\tKind: %s", kind);
-        debug("\tType: %s", type);
-
-        if(strncmp(kind, "compute", UINT8_MAX) == 0) {
-            shader->stage = VK_SHADER_STAGE_COMPUTE_BIT;
-        } else if(strncmp(kind, "vertex", UINT8_MAX) == 0) {
-            shader->stage = VK_SHADER_STAGE_VERTEX_BIT;
-        } else if(strncmp(kind, "fragment", UINT8_MAX) == 0) {
-            shader->stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        } //TODO: Add other shader types
-
-        if(strncmp(type, "intermediate", UINT8_MAX) == 0 || strncmp(type, "spirv", UINT8_MAX) == 0) {
-            shader->intermediate = VK_TRUE;
-        } else {
-            shader->intermediate = VK_FALSE;
-        }
+        readShaderFile(shaderReferences[shaderIndex]);
     }
 
     fscanf(file, "%s", discard);
