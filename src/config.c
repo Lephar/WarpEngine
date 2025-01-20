@@ -1,12 +1,13 @@
 #include "config.h"
 
 #include "helper.h"
+#include "file.h"
 #include "queue.h"
 #include "shader.h"
 #include "content.h"
 
-char rootPath[PATH_MAX];
-char executableName[PATH_MAX];
+extern char rootPath[];
+extern char executableName[];
 
 extern VkExtent2D extent;
 
@@ -34,40 +35,6 @@ uint32_t shaderCount;
 
 extern uint32_t modelCount;
 extern Model *models;
-
-void readShaderFile(FILE *file, ShaderFile *shader) {
-    char kind[UINT8_MAX];
-    char type[UINT8_MAX];
-
-    fscanf(file, "%s%s%s", shader->file.name, kind, type);
-
-    const char *kindExtension = ".glsl";
-    const char *typeExtension = "";
-
-    if(strncmp(kind, "compute", UINT8_MAX) == 0) {
-        shader->stage = VK_SHADER_STAGE_COMPUTE_BIT;
-        kindExtension = ".comp";
-    } else if(strncmp(kind, "vertex", UINT8_MAX) == 0) {
-        shader->stage = VK_SHADER_STAGE_VERTEX_BIT;
-        kindExtension = ".vert";
-    } else if(strncmp(kind, "fragment", UINT8_MAX) == 0) {
-        shader->stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        kindExtension = ".frag";
-    } //TODO: Add other shader types
-
-    if(strncmp(type, "intermediate", UINT8_MAX) == 0 || strncmp(type, "spirv", UINT8_MAX) == 0) {
-        shader->intermediate = VK_TRUE;
-        typeExtension = ".spv";
-    } else {
-        shader->intermediate = VK_FALSE;
-    }
-
-    sprintf(shader->file.fullpath, "%s/shaders/%s", rootPath, shader->file.name);
-
-    debug("Shader: %s", shader->file.name);
-    debug("\tKind: %s", kind);
-    debug("\tType: %s", type);
-}
 
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);

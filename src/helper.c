@@ -42,20 +42,3 @@ int32_t compareFloat(float first, float second) {
 float radians(float degrees) {
     return M_PI * degrees / 180.0f;
 }
-
-void readFile(const char *fullPath, uint32_t binary, size_t *size, char **data) {
-    FILE *file = fopen(fullPath, binary ? "rb" : "r");
-    fseek(file, 0, SEEK_END);
-    *size = ftell(file) + (binary ? 0 : 1);
-    rewind(file);
-
-    *data = malloc(*size);
-    size_t length = fread(*data, 1, *size, file);
-    assert(length + (binary ? 0 : 1) == *size);
-    fclose(file);
-
-    // TODO: Is this necessary?
-    if(!binary) {
-        (*data)[*size - 1] = '\0';
-    }
-}
