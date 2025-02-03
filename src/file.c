@@ -2,10 +2,15 @@
 
 #include "helper.h" // TODO: Remove after use
 
+extern char rootPath[];
+
 Data readFile(const char *path, FileType type) {
     Data data = {};
 
-    FILE *file = fopen(path, type == FILE_TYPE_BINARY ? "rb" : "r");
+    char fullPath[PATH_MAX];
+    sprintf(fullPath, "%s%s", rootPath, path);
+
+    FILE *file = fopen(fullPath, type == FILE_TYPE_BINARY ? "rb" : "r");
     fseek(file, 0, SEEK_END);
     data.size = ftell(file) + (type ? 0 : 1);
     rewind(file);
