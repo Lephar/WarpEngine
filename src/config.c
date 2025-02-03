@@ -68,7 +68,9 @@ void configure(int argc, char *argv[]) {
 
     if(strncasecmp(windowMode, "Fullscreen:", PATH_MAX) == 0) {
         fullScreen = SDL_TRUE;
-    } // NOTICE: No need for `else` because it's default initialized to SDL_FALSE
+    } else {
+        fullScreen = SDL_FALSE;
+    }
 
     fscanf(file, "%u%u", &extent.width, &extent.height);
     debug("Width:  %u", extent.width );
