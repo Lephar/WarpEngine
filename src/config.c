@@ -6,8 +6,8 @@
 #include "shader.h"
 #include "content.h"
 
-extern char rootPath[];
-extern char executableName[];
+char rootPath[PATH_MAX];
+char executableName[PATH_MAX];
 
 extern VkExtent2D extent;
 

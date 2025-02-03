@@ -2,9 +2,6 @@
 
 #include "helper.h" // TODO: Remove after use
 
-char rootPath[PATH_MAX];
-char executableName[PATH_MAX];
-
 Data readFile(const char *path, FileType type) {
     Data data = {};
 
