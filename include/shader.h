@@ -15,7 +15,5 @@ struct shaderModule {
     VkShaderEXT module;
 } typedef ShaderModule;
 
-void createDescriptors();
 void createModules();
-void destroyDescriptors();
 void destroyModules();

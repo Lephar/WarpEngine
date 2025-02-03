@@ -12,6 +12,7 @@
 #include "swapchain.h"
 #include "buffer.h"
 #include "framebuffer.h"
+#include "pipeline.h"
 #include "shader.h"
 #include "content.h"
 

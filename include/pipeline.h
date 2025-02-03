@@ -2,6 +2,5 @@
 
 #include "pch.h"
 
-struct pipeline {
-
-} typedef Pipeline;
+void createDescriptors();
+void destroyDescriptors();
