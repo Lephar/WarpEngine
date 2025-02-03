@@ -1,7 +1,7 @@
 #include "shader.h"
 
 #include "helper.h"
-
+#include "file.h"
 #include "buffer.h"
 #include "content.h"
 
@@ -10,68 +10,77 @@ shaderc_compile_options_t shaderCompileOptions;
 
 extern VkDevice device;
 
-extern Buffer sharedBuffer;
+ShaderModule   vertexShader;
+ShaderModule fragmentShader;
 
-Shader   vertexShader;
-Shader fragmentShader;
+ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
+    ShaderCode shaderCode = {
+        .type = type,
+        .stage = stage,
+        .data = readFile(path, type)
+    };
 
-extern Shader *shaderReferences[];
+    return shaderCode;
+}
 
-extern uint32_t shaderCount;
+ShaderCode compileShaderCode(ShaderCode shaderCode) {
+    assert(shaderCode.type == FILE_TYPE_TEXT);
 
-void createModule(Shader *shader) {
-    debug("Shader: %s", shader->name);
+    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode.data.content, shaderCode.data.size - 1, shaderCode.stage, "shader", "main", shaderCompileOptions);
+    shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
+
+    if(status != shaderc_compilation_status_success) {
+        debug("%s", shaderc_result_get_error_message(result));
+        shaderc_result_release(result);
+    }
+
+    assert(status == shaderc_compilation_status_success);
+    debug("\tSuccessfully compiled");
+
+    ShaderCode compiledShaderCode = {
+        .type = FILE_TYPE_BINARY,
+        .stage = shaderCode.stage,
+        .data = {
+            .size = shaderc_result_get_length(result),
+            .content = malloc(compiledShaderCode.data.size)
+        }
+    };
+
+    memcpy(compiledShaderCode.data.content, shaderc_result_get_bytes(result), compiledShaderCode.data.size);
+    debug("\tCompiled size: %ld", compiledShaderCode.data.size);
+
+    shaderc_result_release(result);
+}
+
+ShaderModule createModule(ShaderCode shaderCode) {
+    debug("Shader: %s", shaderCode->name);
 
     const char *extension = ".glsl";
 
     shaderc_shader_kind shaderKind = 0;
     VkShaderStageFlags nextStage = 0;
 
-    if(shader->stage == VK_SHADER_STAGE_COMPUTE_BIT) {
+    if(shaderCode->stage == VK_SHADER_STAGE_COMPUTE_BIT) {
         extension = ".comp";
         shaderKind = shaderc_compute_shader;
-    } else if(shader->stage == VK_SHADER_STAGE_VERTEX_BIT) {
+    } else if(shaderCode->stage == VK_SHADER_STAGE_VERTEX_BIT) {
         extension = ".vert";
         shaderKind = shaderc_vertex_shader;
         nextStage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    } else if(shader->stage == VK_SHADER_STAGE_FRAGMENT_BIT) {
+    } else if(shaderCode->stage == VK_SHADER_STAGE_FRAGMENT_BIT) {
         extension = ".frag";
         shaderKind = shaderc_fragment_shader;
     } //TODO: Add other shader types
 
     char shaderFile[PATH_MAX];
-    sprintf(shaderFile, "%s%s%s", shader->name, extension, shader->intermediate ? ".spv" : "");
+    sprintf(shaderFile, "%s%s%s", shaderCode->name, extension, shaderCode->intermediate ? ".spv" : "");
     debug("\tPath:          %s", shaderFile);
 
-    if(shader->intermediate) {
-        readFile(shaderFile, 1, &shader->size, &shader->data);
-        debug("\tSize:          %ld", shader->size);
+    if(shaderCode->intermediate) {
+        readFile(shaderFile, 1, &shaderCode->size, &shaderCode->data);
+        debug("\tSize:          %ld", shaderCode->size);
     } else {
-        size_t shaderCodeSize;
-        char *shaderCode;
 
-        readFile(shaderFile, 0, &shaderCodeSize, &shaderCode);
-        debug("\tCode size:     %ld", shaderCodeSize);
-
-        shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode, shaderCodeSize - 1, shaderKind, shaderFile, "main", shaderCompileOptions);
-        shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
-
-        if(status != shaderc_compilation_status_success) {
-            debug("%s", shaderc_result_get_error_message(result));
-            shaderc_result_release(result);
-        }
-
-        assert(status == shaderc_compilation_status_success);
-        debug("\tSuccessfully compiled");
-
-        shader->size = shaderc_result_get_length(result);
-        shader->data = malloc(shader->size);
-
-        memcpy(shader->data, shaderc_result_get_bytes(result), shader->size);
-        debug("\tCompiled size: %ld", shader->size);
-
-        shaderc_result_release(result);
-        free(shaderCode);
     }
 
     VkShaderCreateInfoEXT shaderCreateInfo = {
@@ -94,7 +103,7 @@ void createModule(Shader *shader) {
     PFN_vkCreateShadersEXT createShaders = loadFunction("vkCreateShadersEXT");
     assert(createShaders);
 
-    createShaders(device, 1, &shaderCreateInfo, NULL, &shader->module);
+    createShaders(device, 1, &shaderCreateInfo, NULL, &shaderCode->module);
     debug("\tSuccessfully created");
 }
 
