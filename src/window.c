@@ -11,7 +11,6 @@ extern SDL_bool surfaceCreated;
 
 PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 SDL_Window *window = NULL;
-SDL_bool fullScreen = SDL_FALSE;
 VkExtent2D extent = {};
 uint32_t requiredInstanceExtensionCount = 0;
 const char **requiredInstanceExtensionNames = NULL;

@@ -9,7 +9,6 @@
 extern char rootPath[];
 extern char executableName[];
 
-extern SDL_bool fullScreen;
 extern VkExtent2D extent;
 
 extern uint32_t modelCount;
@@ -60,17 +59,9 @@ void configure(int argc, char *argv[]) {
     FILE *file = fopen(config, "r");
     assert(file != NULL);
 
-    char windowMode[PATH_MAX];
-    fscanf(file, "%s", windowMode);
-    assert(strncasecmp(windowMode, "Window:",     PATH_MAX) == 0 ||
-           strncasecmp(windowMode, "Windowed:",   PATH_MAX) == 0 ||
-           strncasecmp(windowMode, "Fullscreen:", PATH_MAX) == 0 );
-
-    if(strncasecmp(windowMode, "Fullscreen:", PATH_MAX) == 0) {
-        fullScreen = SDL_TRUE;
-    } else {
-        fullScreen = SDL_FALSE;
-    }
+    char discard[PATH_MAX];
+    fscanf(file, "%s", discard);
+    assert(strncasecmp(discard, "Window:", PATH_MAX) == 0);
 
     fscanf(file, "%u%u", &extent.width, &extent.height);
     debug("Width:  %u", extent.width );
