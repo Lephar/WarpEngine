@@ -9,29 +9,8 @@
 extern char rootPath[];
 extern char executableName[];
 
+extern SDL_bool fullScreen;
 extern VkExtent2D extent;
-
-extern Queue graphicsQueue;
-extern Queue  computeQueue;
-extern Queue transferQueue;
-
-Queue *queueReferences[] = {
-    &graphicsQueue,
-    & computeQueue,
-    &transferQueue
-};
-
-uint32_t queueCount;
-
-ShaderFile vertexShader;
-ShaderFile fragmentShader;
-
-ShaderFile *shaderReferences[] = {
-    &vertexShader,
-    &fragmentShader
-};
-
-uint32_t shaderCount;
 
 extern uint32_t modelCount;
 extern Model *models;
@@ -83,30 +62,29 @@ void configure(int argc, char *argv[]) {
 
     char discard[PATH_MAX];
 
-    fscanf(file, "%s", discard);
-    assert(strncmp(discard, "Window:", PATH_MAX) == 0 || strncmp(discard, "Fullscreen:", PATH_MAX) == 0);
+    char windowMode[PATH_MAX];
+    fscanf(file, "%s", windowMode);
+    assert(strncasecmp(windowMode, "Window:",     PATH_MAX) == 0 ||
+           strncasecmp(windowMode, "Windowed:",   PATH_MAX) == 0 ||
+           strncasecmp(windowMode, "Fullscreen:", PATH_MAX) == 0 );
+
+    if(strncasecmp(windowMode, "Fullscreen:", PATH_MAX) == 0) {
+        fullScreen = SDL_TRUE;
+    } // NOTICE: No need for `else` because it's default initialized to SDL_FALSE
 
     fscanf(file, "%u%u", &extent.width, &extent.height);
     debug("Width:  %u", extent.width );
     debug("Height: %u", extent.height);
 
-     queueCount = sizeof( queueReferences) / sizeof(Queue  *);
-    shaderCount = sizeof(shaderReferences) / sizeof(Shader *);
-
     fscanf(file, "%s", discard);
-    assert(strncmp(discard, "Shaders:", PATH_MAX) == 0);
-
-    uint32_t configShaderCount;
-    fscanf(file, "%u", &configShaderCount);
-    debug("Shader count: %d", configShaderCount);
-    assert(configShaderCount == shaderCount);
+    assert(strncasecmp(discard, "Shaders:", PATH_MAX) == 0);
 
     for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
         readShaderFile(shaderReferences[shaderIndex]);
     }
 
     fscanf(file, "%s", discard);
-    assert(strncmp(discard, "Assets:", PATH_MAX) == 0);
+    assert(strncasecmp(discard, "Assets:", PATH_MAX) == 0);
 
     fscanf(file, "%u", &modelCount);
     debug("Asset count: %d", modelCount);
@@ -120,7 +98,7 @@ void configure(int argc, char *argv[]) {
 
         fscanf(file, "%s%s", model->name, type);
 
-        if(strncmp(type, "binary", PATH_MAX) == 0) {
+        if(strncasecmp(type, "binary", PATH_MAX) == 0) {
             model->binary = VK_TRUE;
         } else {
             model->binary = VK_FALSE;
