@@ -60,8 +60,6 @@ void configure(int argc, char *argv[]) {
     FILE *file = fopen(config, "r");
     assert(file != NULL);
 
-    char discard[PATH_MAX];
-
     char windowMode[PATH_MAX];
     fscanf(file, "%s", windowMode);
     assert(strncasecmp(windowMode, "Window:",     PATH_MAX) == 0 ||
@@ -75,39 +73,6 @@ void configure(int argc, char *argv[]) {
     fscanf(file, "%u%u", &extent.width, &extent.height);
     debug("Width:  %u", extent.width );
     debug("Height: %u", extent.height);
-
-    fscanf(file, "%s", discard);
-    assert(strncasecmp(discard, "Shaders:", PATH_MAX) == 0);
-
-    for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
-        readShaderFile(shaderReferences[shaderIndex]);
-    }
-
-    fscanf(file, "%s", discard);
-    assert(strncasecmp(discard, "Assets:", PATH_MAX) == 0);
-
-    fscanf(file, "%u", &modelCount);
-    debug("Asset count: %d", modelCount);
-
-    models = malloc(modelCount * sizeof(Model)); // NOTICE: Free in the content unit
-
-    for(uint32_t modelIndex = 0; modelIndex < modelCount; modelIndex++) {
-        Model *model = &models[modelIndex];
-
-        char type[UINT8_MAX];
-
-        fscanf(file, "%s%s", model->name, type);
-
-        if(strncasecmp(type, "binary", PATH_MAX) == 0) {
-            model->binary = VK_TRUE;
-        } else {
-            model->binary = VK_FALSE;
-        }
-
-        length = snprintf(model->fullpath, PATH_MAX, "%s/assets/%s.%s", rootPath, model->name, model->binary ? "glb" : "gltf");
-        assert(length < PATH_MAX);
-        debug("\t%s", model->fullpath);
-    }
 
     fclose(file);
 }
