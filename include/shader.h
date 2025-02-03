@@ -2,11 +2,18 @@
 
 #include "pch.h"
 
-struct shader {
-    size_t size;
-    char *data;
+#include "file.h"
+
+struct shaderCode {
+    FileType type;
+    shaderc_shader_kind stage;
+    Data data;
+} typedef ShaderCode;
+
+struct shaderModule {
+    VkShaderStageFlagBits stage;
     VkShaderEXT module;
-} typedef Shader;
+} typedef ShaderModule;
 
 void createDescriptors();
 void createModules();

@@ -5,28 +5,26 @@
 char rootPath[PATH_MAX];
 char executableName[PATH_MAX];
 
-File readFile(const char *path, FileType type) {
-    File file = {
-        .type = type
-    };
+Data readFile(const char *path, FileType type) {
+    Data data = {};
 
-    FILE *descriptor = fopen(path, type == FILE_TYPE_BINARY ? "rb" : "r");
-    fseek(descriptor, 0, SEEK_END);
-    file.size = ftell(descriptor) + (type ? 0 : 1);
-    rewind(descriptor);
+    FILE *file = fopen(path, type == FILE_TYPE_BINARY ? "rb" : "r");
+    fseek(file, 0, SEEK_END);
+    data.size = ftell(file) + (type ? 0 : 1);
+    rewind(file);
 
-    file.data = malloc(file.size);
-    size_t length = fread(file.data, 1, file.size, descriptor);
-    assert(length + (type == FILE_TYPE_BINARY ? 0 : 1) == file.size);
-    fclose(descriptor);
+    data.content = malloc(data.size);
+    size_t length = fread(data.content, 1, data.size, file);
+    assert(length + (type == FILE_TYPE_BINARY ? 0 : 1) == data.size);
+    fclose(file);
 
     // TODO: Is this necessary?
     if(type == FILE_TYPE_TEXT) {
-        debug("EOF Check: %c", (file.data)[file.size - 2]);
-        (file.data)[file.size - 1] = '\0';
+        debug("EOF Check: %c", (data.content)[data.size - 2]);
+        (data.content)[data.size - 1] = '\0';
     }
 
-    return file;
+    return data;
 }
 
 void readShaderFile(const char *fullPath, uint32_t binary, size_t *size, char **data) {
