@@ -2,22 +2,31 @@
 
 #include "pch.h"
 
+enum fileType {
+    FILE_TYPE_TEXT,
+    FILE_TYPE_BINARY
+} typedef FileType;
+
 struct file {
-    char fullpath[PATH_MAX];
+    FileType type;
     size_t size;
     char *data;
 } typedef File;
 
-struct shaderFile {
-    File file;
-    VkShaderStageFlags stage;
-    VkBool32 intermediate;
-} typedef ShaderFile;
+struct shaderIntermediate {
+    shaderc_shader_kind stage;
+    size_t size;
+    char *data;
+} typedef ShaderIntermediate;
 
-struct modelFile {
-    File file;
+struct shaderModule {
+    VkShaderStageFlagBits stage;
+    VkShaderEXT module;
+} typedef ShaderModule;
+
+struct sceneFile {
     uint32_t binary;
-} typedef ModelFile;
+} typedef SceneFile;
 
 // WARN: Free the output data!
-File readFile(const char *relativePath, uint32_t binary);
+File readFile(const char *path, FileType type);
