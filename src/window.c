@@ -29,20 +29,15 @@ SDL_bool resizeEvent = SDL_FALSE;
 void initializeSystem() {
     assert(!systemInitialized);
 
-#ifdef DEBUG
-    // TODO: Temporarily use X11 for debug builds because RenderDoc doesn't support Wayland
-    SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11,wayland,windows");
-    SDL_SetHint(SDL_HINT_AUDIODRIVER, "pulseaudio,pipewire,directsound");
-#else
+    // NOTICE: RenderDoc doesn't support Wayland
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
     SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
-#endif // DEBUG
 
     SDL_Init(SDL_INIT_EVERYTHING);
     debug("SDL Video Driver: %s", SDL_GetCurrentVideoDriver());
     debug("SDL Audio Driver: %s", SDL_GetCurrentAudioDriver());
 
-    // TODO: May be needed if debug code is changed from printf to SDL_Log
+    // NOTICE: May be needed if debug code is changed from printf to SDL_Log
     //SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
     SDL_Vulkan_LoadLibrary(NULL);
@@ -90,7 +85,6 @@ void initializeMainLoop() {
     SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_SetWindowResizable(window, SDL_TRUE);
 #ifdef DEBUG
-    timerCallback(0, NULL); // Call it immediatelly once
     timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
     assert(timer);
 #endif // DEBUG
