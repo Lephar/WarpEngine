@@ -39,6 +39,3 @@ void *loadFunction(const char *name);
 int32_t compareFloat(float first, float second);
 
 float radians(float degrees);
-
-// WARN: Free the output data!
-void readFile(const char *relativePath, uint32_t binary, size_t *size, char **data);
