@@ -29,3 +29,5 @@ void *loadFunction(const char *name);
 int32_t compareFloat(float first, float second);
 
 float radians(float degrees);
+
+void freeData(Data *data);

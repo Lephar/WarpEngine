@@ -42,3 +42,9 @@ int32_t compareFloat(float first, float second) {
 float radians(float degrees) {
     return M_PI * degrees / 180.0f;
 }
+
+void freeData(Data *data) {
+    data->size = 0;
+    free(data->content);
+    data->content = NULL;
+}
