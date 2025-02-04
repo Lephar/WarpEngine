@@ -4,11 +4,15 @@
 
 extern char rootPath[];
 
+void makeFullPath(const char relativePath[], char outFullPath[]) {
+    snprintf(outFullPath, PATH_MAX, "%s%s", rootPath, relativePath);
+}
+
 Data readFile(const char *path, FileType type) {
     Data data = {};
 
     char fullPath[PATH_MAX];
-    sprintf(fullPath, "%s%s", rootPath, path);
+    makeFullPath(path, fullPath);
 
     FILE *file = fopen(fullPath, type == FILE_TYPE_BINARY ? "rb" : "r");
     fseek(file, 0, SEEK_END);
