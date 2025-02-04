@@ -35,6 +35,6 @@ float radians(float degrees);
 
 Data wrapData(size_t size, char *content);
 Data allocateData(size_t size);
-void copyData(size_t size, char *content, Data *data);
-Data makeData(size_t size, char *content);
+void copyData(size_t size, const char *content, Data *data);
+Data makeData(size_t size, const char *content);
 void freeData(Data *data);

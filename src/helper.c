@@ -61,12 +61,12 @@ Data allocateData(size_t size) {
     return data;
 }
 
-void copyData(size_t size, char *content, Data *data) {
+void copyData(size_t size, const char *content, Data *data) {
     assert(size == data->size);
     memcpy(data->content, content, size);
 }
 
-Data makeData(size_t size, char *content) {
+Data makeData(size_t size, const char *content) {
     Data data = allocateData(size);
     copyData(size, content, &data);
     return data;
