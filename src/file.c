@@ -9,17 +9,16 @@ void makeFullPath(const char relativePath[], char outFullPath[]) {
 }
 
 Data readFile(const char *path, FileType type) {
-    Data data = {};
-
     char fullPath[PATH_MAX];
     makeFullPath(path, fullPath);
 
     FILE *file = fopen(fullPath, type == FILE_TYPE_BINARY ? "rb" : "r");
     fseek(file, 0, SEEK_END);
-    data.size = ftell(file) + (type ? 0 : 1);
+    size_t size = ftell(file) + (type ? 0 : 1);
     rewind(file);
 
-    data.content = malloc(data.size);
+    Data data = allocateData(size);
+
     size_t length = fread(data.content, 1, data.size, file);
     assert(length + (type == FILE_TYPE_BINARY ? 0 : 1) == data.size);
     fclose(file);
