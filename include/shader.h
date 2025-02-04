@@ -12,6 +12,7 @@ struct shaderCode {
 
 struct shaderModule {
     VkShaderStageFlagBits stage;
+    VkShaderStageFlagBits nextStage;
     VkShaderEXT module;
 } typedef ShaderModule;
 

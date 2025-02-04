@@ -10,8 +10,13 @@ shaderc_compile_options_t shaderCompileOptions;
 
 extern VkDevice device;
 
-ShaderModule   vertexShader;
-ShaderModule fragmentShader;
+extern VkDescriptorSetLayout descriptorSetLayout;
+
+ShaderCode   vertexShaderCode;
+ShaderCode fragmentShaderCode;
+
+ShaderModule   vertexShaderModule;
+ShaderModule fragmentShaderModule;
 
 ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
     ShaderCode shaderCode = {
@@ -32,66 +37,43 @@ ShaderCode compileShaderCode(ShaderCode shaderCode) {
     if(status != shaderc_compilation_status_success) {
         debug("%s", shaderc_result_get_error_message(result));
         shaderc_result_release(result);
+        assert(status == shaderc_compilation_status_success);
     }
 
-    assert(status == shaderc_compilation_status_success);
     debug("\tSuccessfully compiled");
 
     ShaderCode compiledShaderCode = {
         .type = FILE_TYPE_BINARY,
         .stage = shaderCode.stage,
-        .data = {
-            .size = shaderc_result_get_length(result),
-            .content = malloc(compiledShaderCode.data.size)
-        }
+        .data = makeData(shaderc_result_get_length(result), shaderc_result_get_bytes(result))
     };
 
-    memcpy(compiledShaderCode.data.content, shaderc_result_get_bytes(result), compiledShaderCode.data.size);
     debug("\tCompiled size: %ld", compiledShaderCode.data.size);
 
     shaderc_result_release(result);
 }
 
 ShaderModule createModule(ShaderCode shaderCode) {
-    debug("Shader: %s", shaderCode->name);
+    ShaderModule shaderModule = {};
 
-    const char *extension = ".glsl";
-
-    shaderc_shader_kind shaderKind = 0;
-    VkShaderStageFlags nextStage = 0;
-
-    if(shaderCode->stage == VK_SHADER_STAGE_COMPUTE_BIT) {
-        extension = ".comp";
-        shaderKind = shaderc_compute_shader;
-    } else if(shaderCode->stage == VK_SHADER_STAGE_VERTEX_BIT) {
-        extension = ".vert";
-        shaderKind = shaderc_vertex_shader;
-        nextStage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    } else if(shaderCode->stage == VK_SHADER_STAGE_FRAGMENT_BIT) {
-        extension = ".frag";
-        shaderKind = shaderc_fragment_shader;
+    if(shaderCode.stage == shaderc_compute_shader) {
+        shaderModule.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    } else if(shaderCode.stage == shaderc_vertex_shader) {
+        shaderModule.stage     = VK_SHADER_STAGE_VERTEX_BIT;
+        shaderModule.nextStage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    } else if(shaderCode.stage == shaderc_fragment_shader) {
+        shaderModule.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     } //TODO: Add other shader types
-
-    char shaderFile[PATH_MAX];
-    sprintf(shaderFile, "%s%s%s", shaderCode->name, extension, shaderCode->intermediate ? ".spv" : "");
-    debug("\tPath:          %s", shaderFile);
-
-    if(shaderCode->intermediate) {
-        readFile(shaderFile, 1, &shaderCode->size, &shaderCode->data);
-        debug("\tSize:          %ld", shaderCode->size);
-    } else {
-
-    }
 
     VkShaderCreateInfoEXT shaderCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,
         .pNext = NULL,
         .flags = VK_SHADER_CREATE_LINK_STAGE_BIT_EXT,
-        .stage = shader->stage,
-        .nextStage = nextStage,
+        .stage = shaderModule.stage,
+        .nextStage = shaderModule.nextStage,
         .codeType = VK_SHADER_CODE_TYPE_SPIRV_EXT,
-        .codeSize = shader->size,
-        .pCode = shader->data,
+        .codeSize = shaderCode.data.size,
+        .pCode = shaderCode.data.content,
         .pName = "main",
         .setLayoutCount = 1,
         .pSetLayouts = &descriptorSetLayout,
@@ -103,8 +85,10 @@ ShaderModule createModule(ShaderCode shaderCode) {
     PFN_vkCreateShadersEXT createShaders = loadFunction("vkCreateShadersEXT");
     assert(createShaders);
 
-    createShaders(device, 1, &shaderCreateInfo, NULL, &shaderCode->module);
+    createShaders(device, 1, &shaderCreateInfo, NULL, &shaderModule.module);
     debug("\tSuccessfully created");
+
+    return shaderModule;
 }
 
 void createModules() {
@@ -117,11 +101,7 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    debug("Shader count: %d", shaderCount);
-
-    for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
-        createModule(shaderReferences[shaderIndex]);
-    }
+    vertexShader = createModule(vertexShaderCode);
 
     debug("Shader modules created");
 }
