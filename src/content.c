@@ -29,6 +29,9 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
+size_t sceneCount;
+Scene *scenes;
+
 void processAttribute(cgltf_attribute *attribute) {
     debug("\t\t\t\tAttribute: %s, %d", attribute->name, attribute->type);
 
@@ -53,16 +56,16 @@ void processPrimitive(cgltf_primitive *primitive) {
 
     cgltf_accessor *accessor = primitive->indices;
     cgltf_buffer_view *view = accessor->buffer_view;
-    cgltf_buffer *buffer = view->buffer;
+    //cgltf_buffer *buffer = view->buffer;
 
-    void *data = buffer->data + view->offset;
+    //void *data = buffer->data + view->offset;
 
     if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
         for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
-            //mesh.indices[dataIndex] = ((uint16_t *) data)[dataIndex];
+            //mesh->indices[dataIndex] = ((uint16_t *) data)[dataIndex];
         }
     } else if(accessor->component_type == cgltf_component_type_r_32u) {
-        //memcpy(mesh.indices, data, view->size);
+        //memcpy(mesh->indices, data, view->size);
     }
 
     indexBufferSize += view->size;
@@ -74,42 +77,45 @@ void processPrimitive(cgltf_primitive *primitive) {
     }
 }
 
-void loadMesh(cgltf_mesh *mesh) {
-    debug("\t\tMesh:%s", mesh->name);
+void loadMesh(cgltf_mesh *meshData) {
+    debug("\t\tMesh:%s", meshData->name);
 
-    for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
-        cgltf_primitive *primitive = &mesh->primitives[primitiveIndex];
+    for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
+        cgltf_primitive *primitive = &meshData->primitives[primitiveIndex];
         processPrimitive(primitive);
     }
 }
 
-void loadNode(cgltf_node *node) {
-    debug("\tNode:%s", node->name);
+void loadNode(cgltf_node *nodeData) {
+    debug("\tNode:%s", nodeData->name);
 
-    if(node->mesh)
-        loadMesh(node->mesh);
+    if(nodeData->mesh)
+        loadMesh(nodeData->mesh);
 
-    for(cgltf_size childIndex = 0; childIndex < node->children_count; childIndex++) {
-        cgltf_node *childNode = node->children[childIndex];
+    for(cgltf_size childIndex = 0; childIndex < nodeData->children_count; childIndex++) {
+        cgltf_node *childNode = nodeData->children[childIndex];
         loadNode(childNode);
     }
 }
 
-void loadScene(cgltf_scene *scene) {
-    debug("Scene: %s", scene->name);
+void loadScene(cgltf_scene *sceneData) {
+    debug("Scene: %s", sceneData->name);
 
-    for (cgltf_size nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
-        cgltf_node *node = scene->nodes[nodeIndex];
+    for (cgltf_size nodeIndex = 0; nodeIndex < sceneData->nodes_count; nodeIndex++) {
+        cgltf_node *node = sceneData->nodes[nodeIndex];
         loadNode(node);
     }
 }
 
-void loadModel(Model *model) {
+void loadModel(const char *relativePath) {
+    char fullPath[PATH_MAX];
+    makeFullPath(relativePath, fullPath);
+
     cgltf_data* data = NULL;
     cgltf_options assetOptions = {};
 
     cgltf_result result;
-    //cgltf_parse_file(&assetOptions, model->fullpath, &data);
+    result = cgltf_parse_file(&assetOptions, fullPath, &data);
 
     if(result != cgltf_result_success) {
         debug("Failed to read %s: %d", result);
@@ -125,7 +131,7 @@ void loadModel(Model *model) {
 
     // TODO: Load materials here
 
-    //result = cgltf_load_buffers(&assetOptions, data, model->fullpath);
+    result = cgltf_load_buffers(&assetOptions, data, fullPath);
 
     if(result != cgltf_result_success) {
         debug("Failed to load buffers %s: %d", result);
@@ -152,7 +158,6 @@ void initializeAssets() {
     indexBufferBegin  = uniformBufferSize;
     vertexBufferBegin = indexBufferBegin + sharedMemory.size / 2;
     /*
-
       indexBufferSize =  indexCount * sizeof(Index  );
      vertexBufferSize = vertexCount * sizeof(Vertex );
     uniformBufferSize =               sizeof(Uniform);
@@ -197,7 +202,7 @@ void freeAssets() {
     //free( vertexBuffer);
     //free(  indexBuffer);
 
-    free(models); // NOTICE: Allocated in config unit
+    //free(models); // NOTICE: Allocated in config unit
 
     debug("Assets freed");
 }

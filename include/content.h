@@ -35,10 +35,10 @@ struct node {
     Mesh *meshes;
 } typedef Node;
 
-struct model {
+struct scene {
     cgltf_size nodeCount;
     Node *nodes;
-} typedef Model;
+} typedef Scene;
 
 struct uniform {
     mat4 view;
