@@ -99,6 +99,8 @@ void destroyShaderModule(ShaderModule *shaderModule) {
 }
 
 ShaderModule makeShaderModule(const char *file, FileType type, shaderc_shader_kind stage) {
+    debug("Loading and creating shader module %s", file);
+
     ShaderCode shaderCode = loadShaderCode(file, type, stage);
 
     if(type == FILE_TYPE_TEXT) {
@@ -121,10 +123,7 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    debug("Loading and compiling vertex shader:");
     vertexShaderModule   = makeShaderModule("vertex_fixed.vert", FILE_TYPE_TEXT, shaderc_vertex_shader);
-
-    debug("Creating fragment shader module:");
     fragmentShaderModule = makeShaderModule("fragment_fixed.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
 
     debug("Shader modules created");

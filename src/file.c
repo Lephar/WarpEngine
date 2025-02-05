@@ -6,7 +6,6 @@ extern char rootPath[];
 
 void makeFullPath(const char relativePath[], char outFullPath[]) {
     snprintf(outFullPath, PATH_MAX, "%s/%s", rootPath, relativePath);
-    debug("%s", outFullPath);
 }
 
 Data readFile(const char *path, FileType type) {
@@ -24,9 +23,7 @@ Data readFile(const char *path, FileType type) {
     assert(length + (type == FILE_TYPE_BINARY ? 0 : 1) == data.size);
     fclose(file);
 
-    // TODO: Is this necessary?
     if(type == FILE_TYPE_TEXT) {
-        debug("EOF Check: %c", (data.content)[data.size - 2]);
         (data.content)[data.size - 1] = '\0';
     }
 
