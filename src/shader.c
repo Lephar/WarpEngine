@@ -12,13 +12,13 @@ extern VkDevice device;
 
 extern VkDescriptorSetLayout descriptorSetLayout;
 
-ShaderCode   vertexShaderCode;
-ShaderCode fragmentShaderCode;
-
 ShaderModule   vertexShaderModule;
 ShaderModule fragmentShaderModule;
 
-ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
+ShaderCode loadShaderCode(const char *file, FileType type, shaderc_shader_kind stage) {
+    char path[PATH_MAX];
+    snprintf(path, PATH_MAX, "shaders/%s", file);
+
     ShaderCode shaderCode = {
         .type = type,
         .stage = stage,
@@ -28,10 +28,10 @@ ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind s
     return shaderCode;
 }
 
-ShaderCode compileShaderCode(ShaderCode shaderCode) {
-    assert(shaderCode.type == FILE_TYPE_TEXT);
+void compileShaderCode(ShaderCode *shaderCode) {
+    assert(shaderCode->type == FILE_TYPE_TEXT);
 
-    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode.data.content, shaderCode.data.size - 1, shaderCode.stage, "shader", "main", shaderCompileOptions);
+    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data.string, shaderCode->data.size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
     shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
 
     if(status != shaderc_compilation_status_success) {
@@ -40,20 +40,17 @@ ShaderCode compileShaderCode(ShaderCode shaderCode) {
         assert(status == shaderc_compilation_status_success);
     }
 
-    debug("\tSuccessfully compiled");
-
-    ShaderCode compiledShaderCode = {
-        .type = FILE_TYPE_BINARY,
-        .stage = shaderCode.stage,
-        .data = makeData(shaderc_result_get_length(result), shaderc_result_get_bytes(result))
-    };
-
-    debug("\tCompiled size: %ld", compiledShaderCode.data.size);
-
+    shaderCode->type = FILE_TYPE_BINARY,
+    freeData(&shaderCode->data);
+    shaderCode->data = makeData(shaderc_result_get_length(result), shaderc_result_get_bytes(result));
     shaderc_result_release(result);
 }
 
-ShaderModule createModule(ShaderCode shaderCode) {
+void freeShaderCode(ShaderCode *shaderCode) {
+    freeData(&shaderCode->data);
+}
+
+ShaderModule createShaderModule(ShaderCode shaderCode) {
     ShaderModule shaderModule = {};
 
     if(shaderCode.stage == shaderc_compute_shader) {
@@ -91,29 +88,39 @@ ShaderModule createModule(ShaderCode shaderCode) {
     return shaderModule;
 }
 
+void destroyShaderModule(ShaderModule *shaderModule) {
+    PFN_vkDestroyShaderEXT destroyShader = loadFunction("vkDestroyShaderEXT");
+    assert(destroyShader);
+    destroyShader(device, shaderModule->module, NULL);
+}
+
+ShaderModule makeShaderModule(const char *file, FileType type, shaderc_shader_kind stage) {
+    ShaderCode shaderCode = loadShaderCode(file, type, stage);
+
+    if(type == FILE_TYPE_TEXT) {
+        compileShaderCode(&shaderCode);
+    }
+
+    ShaderModule shaderModule = createShaderModule(shaderCode);
+    freeShaderCode(&shaderCode);
+
+    return shaderModule;
+}
+
 void createModules() {
     shaderCompiler = shaderc_compiler_initialize();
 
     shaderCompileOptions = shaderc_compile_options_initialize();
-#ifdef DEBUG
+#ifndef DEBUG
     shaderc_compile_options_set_optimization_level(shaderCompileOptions, shaderc_optimization_level_performance);
 #endif // DEBUG
 
     debug("Shader compiler and shader compile options set");
 
-    vertexShader = createModule(vertexShaderCode);
+    vertexShaderModule   = makeShaderModule("vertex.vert"  , FILE_TYPE_TEXT, shaderc_vertex_shader  );
+    fragmentShaderModule = makeShaderModule("fragment.frag", FILE_TYPE_TEXT, shaderc_fragment_shader);
 
     debug("Shader modules created");
-}
-
-void destroyModule(Shader *shader) {
-    PFN_vkDestroyShaderEXT destroyShader = loadFunction("vkDestroyShaderEXT");
-    assert(destroyShader);
-    destroyShader(device, shader->module, NULL);
-
-    free(shader->data);
-
-    debug("Shader module %s destroyed", shader->name);
 }
 
 void destroyModules() {
@@ -122,9 +129,8 @@ void destroyModules() {
 
     debug("Shader compiler and shader compile options released");
 
-    for(uint32_t shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++) {
-        destroyModule(shaderReferences[shaderIndex]);
-    }
+    destroyShaderModule(&vertexShaderModule);
+    destroyShaderModule(&fragmentShaderModule);
 
     debug("Shader modules destroyed");
 }
