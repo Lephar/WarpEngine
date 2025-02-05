@@ -11,9 +11,6 @@ char executableName[PATH_MAX];
 
 extern VkExtent2D extent;
 
-extern uint32_t modelCount;
-extern Model *models;
-
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);
     for(int32_t argn = 0; argn < argc; argn++) {

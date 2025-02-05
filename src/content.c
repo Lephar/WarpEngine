@@ -4,9 +4,6 @@
 #include "memory.h"
 #include "buffer.h"
 
-uint32_t modelCount;
-Model *models;
-
 uint32_t  indexCount;
 uint32_t vertexCount;
 
