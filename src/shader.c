@@ -25,6 +25,8 @@ ShaderCode loadShaderCode(const char *file, FileType type, shaderc_shader_kind s
         .data = readFile(path, type)
     };
 
+    debug("\tFile loading successful");
+
     return shaderCode;
 }
 
@@ -44,6 +46,8 @@ void compileShaderCode(ShaderCode *shaderCode) {
     freeData(&shaderCode->data);
     shaderCode->data = makeData(shaderc_result_get_length(result), shaderc_result_get_bytes(result));
     shaderc_result_release(result);
+
+    debug("\tCode compilation successful");
 }
 
 void freeShaderCode(ShaderCode *shaderCode) {
@@ -83,7 +87,7 @@ ShaderModule createShaderModule(ShaderCode shaderCode) {
     assert(createShaders);
 
     createShaders(device, 1, &shaderCreateInfo, NULL, &shaderModule.module);
-    debug("\tSuccessfully created");
+    debug("\tModule creation successful");
 
     return shaderModule;
 }
@@ -117,8 +121,11 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    vertexShaderModule   = makeShaderModule("vertex.vert"  , FILE_TYPE_TEXT, shaderc_vertex_shader  );
-    fragmentShaderModule = makeShaderModule("fragment.frag", FILE_TYPE_TEXT, shaderc_fragment_shader);
+    debug("Loading and compiling vertex shader:");
+    vertexShaderModule   = makeShaderModule("vertex_fixed.vert", FILE_TYPE_TEXT, shaderc_vertex_shader);
+
+    debug("Creating fragment shader module:");
+    fragmentShaderModule = makeShaderModule("fragment_fixed.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
 
     debug("Shader modules created");
 }
