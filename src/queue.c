@@ -10,14 +10,18 @@ Queue graphicsQueue;
 Queue  computeQueue;
 Queue transferQueue;
 
-extern Queue *queueReferences[];
+Queue *queueReferences[] = {
+    &graphicsQueue,
+    & computeQueue,
+    &transferQueue
+};
 
-extern uint32_t queueCount;
-
+uint32_t queueCount;
 uint32_t distinctQueueFamilyCount;
 
 // TODO: Add surface presentation support for queues
 void generateQueueDetails() {
+    queueCount = sizeof(queueReferences) / sizeof(Queue *);
     debug("Queue count: %d",  queueCount);
 
     graphicsQueue.requiredFlags = VK_QUEUE_GRAPHICS_BIT;
