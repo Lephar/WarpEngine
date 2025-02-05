@@ -1,6 +1,7 @@
 #include "content.h"
 
 #include "helper.h"
+#include "file.h"
 #include "memory.h"
 #include "buffer.h"
 
@@ -173,9 +174,8 @@ void initializeAssets() {
     vertexBuffer[2].y =  0.5f ;
     vertexBuffer[2].z = -0.5f ;
     */
-    for(uint32_t modelIndex = 0; modelIndex < modelCount; modelIndex++) {
-        loadModel(&models[modelIndex]);
-    }
+
+    loadModel("assets/Lantern.gltf");
 
     debug("Assets initialized");
 }

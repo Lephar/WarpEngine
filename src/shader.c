@@ -15,10 +15,7 @@ extern VkDescriptorSetLayout descriptorSetLayout;
 ShaderModule   vertexShaderModule;
 ShaderModule fragmentShaderModule;
 
-ShaderCode loadShaderCode(const char *file, FileType type, shaderc_shader_kind stage) {
-    char path[PATH_MAX];
-    snprintf(path, PATH_MAX, "shaders/%s", file);
-
+ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
     ShaderCode shaderCode = {
         .type = type,
         .stage = stage,
@@ -123,8 +120,8 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    vertexShaderModule   = makeShaderModule("vertex_fixed.vert", FILE_TYPE_TEXT, shaderc_vertex_shader);
-    fragmentShaderModule = makeShaderModule("fragment_fixed.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
+    vertexShaderModule   = makeShaderModule("shaders/vertex_fixed.vert", FILE_TYPE_TEXT, shaderc_vertex_shader);
+    fragmentShaderModule = makeShaderModule("shaders/fragment_fixed.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
 
     debug("Shader modules created");
 }
