@@ -5,7 +5,8 @@
 extern char rootPath[];
 
 void makeFullPath(const char relativePath[], char outFullPath[]) {
-    snprintf(outFullPath, PATH_MAX, "%s%s", rootPath, relativePath);
+    snprintf(outFullPath, PATH_MAX, "%s/%s", rootPath, relativePath);
+    debug("%s", outFullPath);
 }
 
 Data readFile(const char *path, FileType type) {
