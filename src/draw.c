@@ -40,8 +40,8 @@ extern Uniform  *uniformBuffer;
 extern VkDescriptorSet descriptorSet;
 extern VkPipelineLayout pipelineLayout;
 
-extern Shader   vertexShader;
-extern Shader fragmentShader;
+extern ShaderModule   vertexShaderModule;
+extern ShaderModule fragmentShaderModule;
 
 extern uint32_t frameIndex;
 
@@ -167,13 +167,13 @@ void render() {
     };
 
     VkShaderStageFlags stages[] = {
-          vertexShader.stage,
-        fragmentShader.stage
+          vertexShaderModule.stage,
+        fragmentShaderModule.stage
     };
 
     VkShaderEXT shaders[] = {
-          vertexShader.module,
-        fragmentShader.module
+          vertexShaderModule.module,
+        fragmentShaderModule.module
     };
 
     uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
