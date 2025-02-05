@@ -9,5 +9,8 @@ enum fileType {
     FILE_TYPE_BINARY
 } typedef FileType;
 
+
+void makeFullPath(const char relativePath[], char outFullPath[]);
+
 // WARN: Free the output data!
 Data readFile(const char *path, FileType type);
