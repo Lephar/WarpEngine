@@ -54,13 +54,13 @@ void freeShaderCode(ShaderCode *shaderCode) {
 ShaderModule createShaderModule(ShaderCode shaderCode) {
     ShaderModule shaderModule = {};
 
-    if(shaderCode.stage == shaderc_compute_shader) {
-        shaderModule.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    if( shaderCode.stage       == shaderc_compute_shader) {
+        shaderModule.stage     =  VK_SHADER_STAGE_COMPUTE_BIT;
     } else if(shaderCode.stage == shaderc_vertex_shader) {
-        shaderModule.stage     = VK_SHADER_STAGE_VERTEX_BIT;
-        shaderModule.nextStage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderModule.stage     =  VK_SHADER_STAGE_VERTEX_BIT;
+        shaderModule.nextStage =  VK_SHADER_STAGE_FRAGMENT_BIT;
     } else if(shaderCode.stage == shaderc_fragment_shader) {
-        shaderModule.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderModule.stage     =  VK_SHADER_STAGE_FRAGMENT_BIT;
     } //TODO: Add other shader types
 
     VkShaderCreateInfoEXT shaderCreateInfo = {
