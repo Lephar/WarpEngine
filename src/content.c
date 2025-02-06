@@ -5,20 +5,6 @@
 #include "memory.h"
 #include "buffer.h"
 
-uint32_t  indexCount;
-uint32_t vertexCount;
-
-VkDeviceSize   indexBufferSize;
-VkDeviceSize  vertexBufferSize;
-VkDeviceSize uniformBufferSize;
-
-VkDeviceSize  indexBufferBegin;
-VkDeviceSize vertexBufferBegin;
-
-Index   *  indexBuffer;
-Vertex  * vertexBuffer;
-Uniform *uniformBuffer;
-
 extern VkDevice device;
 
 extern Memory deviceMemory;
@@ -29,8 +15,12 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
-size_t sceneCount;
-Scene *scenes;
+Index   *indexBuffer;
+Vertex  *vertexBuffer;
+Uniform *uniformBuffer;
+
+size_t modelCount;
+Model *models;
 
 void processAttribute(cgltf_attribute *attribute) {
     debug("\t\t\t\tAttribute: %s, %d", attribute->name, attribute->type);
@@ -77,7 +67,7 @@ void processPrimitive(cgltf_primitive *primitive) {
     }
 }
 
-void loadMesh(cgltf_mesh *meshData) {
+Mesh loadMesh(cgltf_mesh *meshData) {
     debug("\t\tMesh:%s", meshData->name);
 
     for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
@@ -86,11 +76,12 @@ void loadMesh(cgltf_mesh *meshData) {
     }
 }
 
-void loadNode(cgltf_node *nodeData) {
+Node loadNode(cgltf_node *nodeData) {
     debug("\tNode:%s", nodeData->name);
 
-    if(nodeData->mesh)
+    if(nodeData->mesh) {
         loadMesh(nodeData->mesh);
+    }
 
     for(cgltf_size childIndex = 0; childIndex < nodeData->children_count; childIndex++) {
         cgltf_node *childNode = nodeData->children[childIndex];
@@ -98,16 +89,21 @@ void loadNode(cgltf_node *nodeData) {
     }
 }
 
-void loadScene(cgltf_scene *sceneData) {
+Scene loadScene(cgltf_scene *sceneData) {
     debug("Scene: %s", sceneData->name);
+
+    Scene scene = {
+        .nodeCount = sceneData->nodes_count,
+        .nodes = malloc(sceneData->nodes_count * sizeof(Node))
+    };
 
     for (cgltf_size nodeIndex = 0; nodeIndex < sceneData->nodes_count; nodeIndex++) {
         cgltf_node *node = sceneData->nodes[nodeIndex];
-        loadNode(node);
+        scene.nodes[nodeIndex] = loadNode(node);
     }
 }
 
-void loadModel(const char *relativePath) {
+Model loadModel(const char *relativePath) {
     char fullPath[PATH_MAX];
     makeFullPath(relativePath, fullPath);
 
@@ -139,61 +135,34 @@ void loadModel(const char *relativePath) {
         assert(result == cgltf_result_success);
     }
 
+    Model model = {
+        .sceneCount = data->scenes_count,
+        .scenes = malloc(data->scenes_count * sizeof(Scene))
+    };
+
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
         cgltf_scene *scene = &data->scenes[sceneIndex];
-        loadScene(scene);
+        model.scenes[sceneIndex] = loadScene(scene);
     }
 
     cgltf_free(data);
+
+    return model;
 }
 
 void initializeAssets() {
-    indexCount  = 0;
-    vertexCount = 0;
+    modelCount = 1;
+    models = malloc(modelCount * sizeof(Model));
 
-    indexBufferSize   = 0;
-    vertexBufferSize  = 0;
-    uniformBufferSize = sizeof(Uniform);
-
-    indexBufferBegin  = uniformBufferSize;
-    vertexBufferBegin = indexBufferBegin + sharedMemory.size / 2;
-    /*
-      indexBufferSize =  indexCount * sizeof(Index  );
-     vertexBufferSize = vertexCount * sizeof(Vertex );
-    uniformBufferSize =               sizeof(Uniform);
-
-     indexBuffer = malloc( indexBufferSize);
-    vertexBuffer = malloc(vertexBufferSize);
-
-    indexBuffer[0] = 0;
-    indexBuffer[1] = 1;
-    indexBuffer[2] = 2;
-
-    vertexBuffer[0].x =  0.0f ;
-    vertexBuffer[0].y =  0.5f ;
-    vertexBuffer[0].z =  0.5f ;
-    vertexBuffer[1].x = -0.5f ;
-    vertexBuffer[1].y =  0.5f ;
-    vertexBuffer[1].z = -0.5f ;
-    vertexBuffer[2].x =  0.5f ;
-    vertexBuffer[2].y =  0.5f ;
-    vertexBuffer[2].z = -0.5f ;
-    */
-
-    loadModel("assets/Lantern.gltf");
+    models[0] = loadModel("assets/Lantern.gltf");
 
     debug("Assets initialized");
 }
 
 void loadAssets() {
-    //memcpy(mappedSharedMemory + stagingBufferOffset, indexBuffer, indexBufferSize);
-    //memcpy(mappedSharedMemory + stagingBufferOffset + indexBufferSize, vertexBuffer, vertexBufferSize);
+    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, sharedBuffer.size);
 
-    //copyBuffer(&sharedBuffer, &deviceBuffer, indexBufferBegin, 0, indexBufferSize + vertexBufferSize);
-    copyBuffer(&sharedBuffer, &deviceBuffer, indexBufferBegin, 0, sharedBuffer.size - indexBufferBegin);
-    memset(mappedSharedMemory, 0, sharedMemory.size);
-
-    uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
+    uniformBuffer = mappedSharedMemory; // Directly write into shared memory
 
     debug("Assets copied to device buffer");
 }

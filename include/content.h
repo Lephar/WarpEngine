@@ -40,6 +40,11 @@ struct scene {
     Node *nodes;
 } typedef Scene;
 
+struct model {
+    cgltf_size sceneCount;
+    Scene *scenes;
+} typedef Model;
+
 struct uniform {
     mat4 view;
     mat4 proj;
