@@ -42,6 +42,8 @@ void initialize(int argc, char *argv[]) {
     createModules();
     createSwapchain();
     createFramebufferSet();
+
+    vkDeviceWaitIdle(device);
 }
 
 void recreateSwapchain() {
@@ -54,6 +56,8 @@ void recreateSwapchain() {
     createSurface();
     createSwapchain();
     createFramebufferSet();
+
+    vkDeviceWaitIdle(device);
 
     resizeEvent = SDL_FALSE;
 }
@@ -79,6 +83,8 @@ void loop() {
 }
 
 void quit() {
+    vkDeviceWaitIdle(device);
+
     freeAssets();
     destroyModules();
     destroyDescriptors();
