@@ -33,8 +33,9 @@ struct mesh {
 
 struct node {
     mat4 transform;
-    cgltf_size meshCount;
+    cgltf_bool hasMesh;
     Mesh mesh;
+    cgltf_size childCount;
     struct node *children;
 } typedef Node;
 

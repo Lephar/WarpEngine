@@ -122,10 +122,12 @@ Node loadNode(cgltf_node *nodeData) {
     Node node = {
         //.transform = NULL, // TODO: Initialize with nodeData->matrix
         //.mesh = NULL, // TODO: Initialize here maybe?
+        .hasMesh = 0,
         .children = malloc(nodeData->children_count * sizeof(Node))
     };
 
     if(nodeData->mesh) {
+        node.hasMesh = 1;
         node.mesh = loadMesh(nodeData->mesh);
     }
 
@@ -200,13 +202,53 @@ Asset loadAsset(const char *relativePath) {
     return asset;
 }
 
-void initializeAssets() {
-    debug("Initializing assets");
+void copyPrimitive(Primitive *primitive) {
+    static uint32_t indexOffset  = 0;
+    static uint32_t vertexOffset = 0;
 
-    indexCount = 0;
+    for(uint32_t indexIndex = 0; indexIndex < primitive->indexCount; indexIndex++) {
+        indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex] + indexOffset;
+    }
+
+    memcpy(vertexBuffer + vertexOffset, primitive->vertices, primitive->vertexCount * sizeof(Vertex));
+
+    indexOffset  += primitive->indexCount  * sizeof(Index);
+    vertexOffset += primitive->vertexCount * sizeof(Vertex);
+}
+
+void copyMesh(Mesh *mesh) {
+    for(size_t primitiveIndex = 0; primitiveIndex < mesh->primitiveCount; primitiveIndex++) {
+        copyPrimitive(&mesh->primitives[primitiveIndex]);
+    }
+}
+
+void copyNode(Node *node) {
+    if(node->hasMesh) {
+        copyMesh(&node->mesh);
+    }
+
+    for(size_t childIndex = 0; childIndex < node->childCount; childIndex++) {
+        copyNode(&node->children[childIndex]);
+    }
+}
+
+void copyScene(Scene *scene) {
+    for(size_t nodeIndex = 0; nodeIndex < scene->nodeCount; nodeIndex++) {
+        copyNode(&scene->nodes[nodeIndex]);
+    }
+}
+
+void copyAsset(Asset *asset) {
+    for(size_t sceneIndex = 0; sceneIndex < asset->sceneCount; sceneIndex++) {
+        copyScene(&asset->scenes[sceneIndex]);
+    }
+}
+
+void initializeAssets() {
+    indexCount  = 0;
     vertexCount = 0;
 
-    indexBufferSize = 0;
+    indexBufferSize  = 0;
     vertexBufferSize = 0;
 
     uniformSize = 0;
@@ -214,25 +256,25 @@ void initializeAssets() {
     assetCount = 1;
     assets = malloc(assetCount * sizeof(Asset));
 
-    debug("Started reading asset files");
-
     assets[0] = loadAsset("assets/Lantern.gltf");
-
-    debug("Assets loaded from files");
 
     indexBufferSize  = indexCount  * sizeof(Index);
     vertexBufferSize = vertexCount * sizeof(Vertex);
 
-    debug("Allocating host index vertex buffers: %lu and %lu bytes respectively", indexBufferSize, vertexBufferSize);
-
     indexBuffer  = malloc(indexBufferSize);
     vertexBuffer = malloc(vertexBufferSize);
 
+    for(size_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
+        copyAsset(&assets[assetIndex]);
+    }
 
+    mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
+    mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
 }
 
 void loadAssets() {
-    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, sharedBuffer.size);
+    //copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, sharedBuffer.size);
+    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
 
     uniformBuffer = mappedSharedMemory; // Directly write into shared memory
 
