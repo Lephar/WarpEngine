@@ -253,7 +253,7 @@ void copyAsset(Asset *asset) {
     }
 }
 
-void initializeAssets() {
+void loadAssets() {
     indexCount  = 0;
     vertexCount = 0;
 
@@ -265,8 +265,10 @@ void initializeAssets() {
     assetCount = 1;
     assets = malloc(assetCount * sizeof(Asset));
 
-    assets[0] = loadAsset("assets/Lantern.gltf");
+    assets[0] = loadAsset("assets/scene.glb");
+}
 
+void copyAssets() {
     indexBufferSize  = indexCount  * sizeof(Index);
     vertexBufferSize = vertexCount * sizeof(Vertex);
 
@@ -279,22 +281,15 @@ void initializeAssets() {
 
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
-}
 
-void loadAssets() {
-    //copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, sharedBuffer.size);
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
+    memset(mappedSharedMemory, 0, sharedBuffer.size);
 
-    uniformBuffer = mappedSharedMemory; // Directly write into shared memory
-
-    debug("Assets copied to device buffer");
+    uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
 }
 
 void freeAssets() {
-    //free( vertexBuffer);
-    //free(  indexBuffer);
-
-    //free(models); // NOTICE: Allocated in config unit
+    // TODO: Free everything
 
     debug("Assets freed");
 }

@@ -55,6 +55,6 @@ struct uniform {
     mat4 camera;
 } typedef Uniform;
 
-void initializeAssets();
 void loadAssets();
+void copyAssets();
 void freeAssets();
