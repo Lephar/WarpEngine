@@ -205,6 +205,9 @@ void copyPrimitive(Primitive *primitive) {
     static uint32_t indexOffset  = 0;
     static uint32_t vertexOffset = 0;
 
+    debug("indexOffset:  %d", indexOffset);
+    debug("vertexOffset: %d", vertexOffset);
+
     for(uint32_t indexIndex = 0; indexIndex < primitive->indexCount; indexIndex++) {
         indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex] + vertexOffset;
     }
@@ -226,15 +229,22 @@ void copyPrimitive(Primitive *primitive) {
 }
 
 void copyMesh(Mesh *mesh) {
+    debug("Copy %d primitives", mesh->primitiveCount);
+
     for(size_t primitiveIndex = 0; primitiveIndex < mesh->primitiveCount; primitiveIndex++) {
         copyPrimitive(&mesh->primitives[primitiveIndex]);
     }
 }
 
 void copyNode(Node *node) {
+    // TODO: Apply transformation
+
     if(node->hasMesh) {
+        debug("Copy a mesh");
         copyMesh(&node->mesh);
     }
+
+    debug("Copy %d child nodes", node->childCount);
 
     for(size_t childIndex = 0; childIndex < node->childCount; childIndex++) {
         copyNode(&node->children[childIndex]);
@@ -242,12 +252,16 @@ void copyNode(Node *node) {
 }
 
 void copyScene(Scene *scene) {
+    debug("Copy %d nodes", scene->nodeCount);
+
     for(size_t nodeIndex = 0; nodeIndex < scene->nodeCount; nodeIndex++) {
         copyNode(&scene->nodes[nodeIndex]);
     }
 }
 
 void copyAsset(Asset *asset) {
+    debug("Copy %d scenes", asset->sceneCount);
+
     for(size_t sceneIndex = 0; sceneIndex < asset->sceneCount; sceneIndex++) {
         copyScene(&asset->scenes[sceneIndex]);
     }
