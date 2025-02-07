@@ -212,8 +212,8 @@ void copyPrimitive(Primitive *primitive) {
 
     memcpy(vertexBuffer + vertexOffset, primitive->vertices, primitive->vertexCount * sizeof(Vertex));
 
-    indexOffset  += primitive->indexCount  * sizeof(Index);
-    vertexOffset += primitive->vertexCount * sizeof(Vertex);
+    indexOffset  += primitive->indexCount;
+    vertexOffset += primitive->vertexCount;
 }
 
 void copyMesh(Mesh *mesh) {
