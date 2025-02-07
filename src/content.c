@@ -120,9 +120,8 @@ Node loadNode(cgltf_node *nodeData) {
     debug("\tNode: %s", nodeData->name);
 
     Node node = {
-        //.transform = NULL, // TODO: Initialize with nodeData->matrix
-        //.mesh = NULL, // TODO: Initialize here maybe?
-        .hasMesh = 0,
+        // TODO: Initialize missing members
+        .childCount = nodeData->children_count,
         .children = malloc(nodeData->children_count * sizeof(Node))
     };
 
