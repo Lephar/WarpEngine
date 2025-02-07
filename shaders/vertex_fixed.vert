@@ -3,7 +3,9 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(binding = 0) uniform Transform {
-    mat4 transform;
+    mat4 view;
+    mat4 proj;
+    mat4 camera;
 };
 
 layout(location = 0) in  vec3  inputPosition;
@@ -15,5 +17,5 @@ void main()
 {
     outputPosition = inputPosition;
 
-    gl_Position = transform * vec4(outputPosition, 1.0f);
+    gl_Position = camera * vec4(outputPosition, 1.0f);
 }

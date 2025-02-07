@@ -36,8 +36,8 @@ void initialize(int argc, char *argv[]) {
     createSurface();
     allocateMemories();
     createBuffers();
-    initializeAssets();
     loadAssets();
+    copyAssets();
     createDescriptors();
     createModules();
     createSwapchain();
