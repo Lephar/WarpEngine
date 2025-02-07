@@ -19,74 +19,109 @@ Index   *indexBuffer;
 Vertex  *vertexBuffer;
 Uniform *uniformBuffer;
 
-size_t modelCount;
-Model *models;
+size_t assetCount;
+Asset *assets;
 
-void processAttribute(cgltf_attribute *attribute) {
-    debug("\t\t\t\tAttribute: %s, %d", attribute->name, attribute->type);
+void processAttribute(Primitive *primitive, cgltf_attribute *attribute) {
+    debug("\t\t\t\tAttribute: %s", attribute->name);
 
     cgltf_accessor *accessor = attribute->data;
     cgltf_buffer_view *view = accessor->buffer_view;
     cgltf_buffer *buffer = view->buffer;
 
-    uint16_t *data = buffer->data + view->offset;
+    void *data = buffer->data + view->offset;
+
+    if(primitive->vertexCount == 0) {
+        primitive->vertexCount = accessor->count;
+        primitive->vertices = malloc(accessor->count * sizeof(Vertex));
+    }
+
+    assert(primitive->vertexCount == accessor->count);
+    debug("\t\t\t\t\t%lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
     if(attribute->type == cgltf_attribute_type_position) {
-        memcpy(mappedSharedMemory + vertexBufferBegin + vertexBufferSize, data, view->size);
+        vec3 *positions = data; // TODO: Evaluate other possible data types
 
-        vertexBufferSize += view->size;
-        vertexCount += accessor->count;
+        for(cgltf_size positionIndex = 0; positionIndex < accessor->count; positionIndex++) {
+            memcpy(primitive->vertices[positionIndex].position, positions[positionIndex], sizeof(vec3));
+        }
+    } else if(attribute->type == cgltf_attribute_type_texcoord) {
+        vec2 *texcoords = data;
 
-        debug("\t\t\t\t\t%lu elements copied, %lu bytes in size", accessor->count, view->size);
-    }
+        for(cgltf_size texcoordIndex = 0; texcoordIndex < accessor->count; texcoordIndex++) {
+            memcpy(primitive->vertices[texcoordIndex].texcoord, texcoords[texcoordIndex], sizeof(vec2));
+        }
+    } //TODO: Load normal and tangent too
 }
 
-void processPrimitive(cgltf_primitive *primitive) {
-    debug("\t\t\tPrimitive Type: %d", primitive->type);
+Primitive loadPrimitive(cgltf_primitive *primitiveData) {
+    debug("\t\t\tPrimitive Type: %d", primitiveData->type);
 
-    cgltf_accessor *accessor = primitive->indices;
+    cgltf_accessor *accessor = primitiveData->indices;
     cgltf_buffer_view *view = accessor->buffer_view;
-    //cgltf_buffer *buffer = view->buffer;
+    cgltf_buffer *buffer = view->buffer;
 
-    //void *data = buffer->data + view->offset;
+    void *data = buffer->data + view->offset;
+
+    Primitive primitive = {
+        .indexCount = accessor->count,
+        .indices = malloc(accessor->count * sizeof(Index)),
+        .vertexCount = 0,
+        .vertices = NULL,
+        .material = {}
+    };
 
     if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
         for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
-            //mesh->indices[dataIndex] = ((uint16_t *) data)[dataIndex];
+            primitive.indices[dataIndex] = ((uint16_t *) data)[dataIndex];
         }
     } else if(accessor->component_type == cgltf_component_type_r_32u) {
-        //memcpy(mesh->indices, data, view->size);
+        memcpy(primitive.indices, data, view->size);
+    } // TODO: Can it be something else?
+
+    for(cgltf_size attributeIndex = 0; attributeIndex < primitiveData->attributes_count; attributeIndex++) {
+        cgltf_attribute *attribute = &primitiveData->attributes[attributeIndex];
+        processAttribute(&primitive, attribute);
     }
 
-    indexBufferSize += view->size;
-    indexCount += accessor->count;
-
-    for(cgltf_size attributeIndex = 0; attributeIndex < primitive->attributes_count; attributeIndex++) {
-        cgltf_attribute *attribute = &primitive->attributes[attributeIndex];
-        processAttribute(attribute);
-    }
+    return primitive;
 }
 
 Mesh loadMesh(cgltf_mesh *meshData) {
-    debug("\t\tMesh:%s", meshData->name);
+    debug("\t\tMesh: %s", meshData->name);
+
+    Mesh mesh = {
+        .primitiveCount = meshData->primitives_count,
+        .primitives = malloc(meshData->primitives_count * sizeof(Primitive))
+    };
 
     for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
         cgltf_primitive *primitive = &meshData->primitives[primitiveIndex];
-        processPrimitive(primitive);
+        mesh.primitives[primitiveIndex] = loadPrimitive(primitive);
     }
+
+    return mesh;
 }
 
 Node loadNode(cgltf_node *nodeData) {
-    debug("\tNode:%s", nodeData->name);
+    debug("\tNode: %s", nodeData->name);
+
+    Node node = {
+        //.transform = NULL, // TODO: Initialize with nodeData->matrix
+        //.mesh = NULL, // TODO: Initialize here maybe?
+        .children = malloc(nodeData->children_count * sizeof(Node))
+    };
 
     if(nodeData->mesh) {
-        loadMesh(nodeData->mesh);
+        node.mesh = loadMesh(nodeData->mesh);
     }
 
     for(cgltf_size childIndex = 0; childIndex < nodeData->children_count; childIndex++) {
         cgltf_node *childNode = nodeData->children[childIndex];
-        loadNode(childNode);
+        node.children[childIndex] = loadNode(childNode);
     }
+
+    return node;
 }
 
 Scene loadScene(cgltf_scene *sceneData) {
@@ -101,9 +136,11 @@ Scene loadScene(cgltf_scene *sceneData) {
         cgltf_node *node = sceneData->nodes[nodeIndex];
         scene.nodes[nodeIndex] = loadNode(node);
     }
+
+    return scene;
 }
 
-Model loadModel(const char *relativePath) {
+Asset loadAsset(const char *relativePath) {
     char fullPath[PATH_MAX];
     makeFullPath(relativePath, fullPath);
 
@@ -135,26 +172,26 @@ Model loadModel(const char *relativePath) {
         assert(result == cgltf_result_success);
     }
 
-    Model model = {
+    Asset asset = {
         .sceneCount = data->scenes_count,
         .scenes = malloc(data->scenes_count * sizeof(Scene))
     };
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
         cgltf_scene *scene = &data->scenes[sceneIndex];
-        model.scenes[sceneIndex] = loadScene(scene);
+        asset.scenes[sceneIndex] = loadScene(scene);
     }
 
     cgltf_free(data);
 
-    return model;
+    return asset;
 }
 
 void initializeAssets() {
-    modelCount = 1;
-    models = malloc(modelCount * sizeof(Model));
+    assetCount = 1;
+    assets = malloc(assetCount * sizeof(Asset));
 
-    models[0] = loadModel("assets/Lantern.gltf");
+    assets[0] = loadAsset("assets/Lantern.gltf");
 
     debug("Assets initialized");
 }

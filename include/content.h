@@ -9,7 +9,7 @@ typedef uint32_t Index;
 
 struct vertex {
     vec3 position;
-    vec3 texcoord;
+    vec2 texcoord;
 } typedef Vertex;
 
 struct material {
@@ -19,20 +19,23 @@ struct material {
 } typedef Material;
 
 struct primitive {
+    cgltf_size indexCount;
     Index *indices;
+    cgltf_size vertexCount;
     Vertex *vertices;
     Material material;
 } typedef Primitive;
 
 struct mesh {
     cgltf_size primitiveCount;
-    Primitive *primitive;
+    Primitive *primitives;
 } typedef Mesh;
 
 struct node {
     mat4 transform;
     cgltf_size meshCount;
-    Mesh *meshes;
+    Mesh mesh;
+    struct node *children;
 } typedef Node;
 
 struct scene {
@@ -40,10 +43,10 @@ struct scene {
     Node *nodes;
 } typedef Scene;
 
-struct model {
+struct asset {
     cgltf_size sceneCount;
     Scene *scenes;
-} typedef Model;
+} typedef Asset;
 
 struct uniform {
     mat4 view;
