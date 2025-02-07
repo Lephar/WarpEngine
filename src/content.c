@@ -206,10 +206,20 @@ void copyPrimitive(Primitive *primitive) {
     static uint32_t vertexOffset = 0;
 
     for(uint32_t indexIndex = 0; indexIndex < primitive->indexCount; indexIndex++) {
-        indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex] + indexOffset;
+        indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex] + vertexOffset;
     }
 
-    memcpy(vertexBuffer + vertexOffset, primitive->vertices, primitive->vertexCount * sizeof(Vertex));
+    // TODO: Yeah...
+    for(uint32_t vertexIndex = 0; vertexIndex < primitive->vertexCount; vertexIndex++) {
+        vertexBuffer[vertexOffset + vertexIndex].position[0] = primitive->vertices[vertexIndex].position[0];
+        vertexBuffer[vertexOffset + vertexIndex].position[1] = primitive->vertices[vertexIndex].position[2];
+        vertexBuffer[vertexOffset + vertexIndex].position[2] = primitive->vertices[vertexIndex].position[1];
+
+        vertexBuffer[vertexOffset + vertexIndex].texcoord[0] = primitive->vertices[vertexIndex].texcoord[0];
+        vertexBuffer[vertexOffset + vertexIndex].texcoord[1] = primitive->vertices[vertexIndex].texcoord[1];
+    }
+
+    //memcpy(vertexBuffer + vertexOffset, primitive->vertices, primitive->vertexCount * sizeof(Vertex));
 
     indexOffset  += primitive->indexCount;
     vertexOffset += primitive->vertexCount;
