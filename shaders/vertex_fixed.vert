@@ -7,6 +7,7 @@ layout(binding = 0) uniform Transform {
 };
 
 layout(location = 0) in  vec3  inputPosition;
+layout(location = 1) in  vec2  inputTexcoord;
 
 layout(location = 0) out vec3 outputPosition;
 

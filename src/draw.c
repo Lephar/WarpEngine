@@ -30,17 +30,14 @@ extern VkDeviceSize   indexBufferSize;
 extern VkDeviceSize  vertexBufferSize;
 extern VkDeviceSize uniformBufferSize;
 
-extern VkDeviceSize   indexBufferBegin;
-extern VkDeviceSize  vertexBufferBegin;
-
-extern Index    *  indexBuffer;
-extern Vertex   * vertexBuffer;
+extern Index    *indexBuffer;
+extern Vertex   *vertexBuffer;
 extern Uniform  *uniformBuffer;
 
 extern VkDescriptorSet descriptorSet;
 extern VkPipelineLayout pipelineLayout;
 
-extern ShaderModule   vertexShaderModule;
+extern ShaderModule vertexShaderModule;
 extern ShaderModule fragmentShaderModule;
 
 extern uint32_t frameIndex;
@@ -157,14 +154,25 @@ void render() {
         .divisor = 1
     };
 
-    VkVertexInputAttributeDescription2EXT vertexAttribute = {
-        .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-        .pNext = NULL,
-        .location = 0,
-        .binding = 0,
-        .format = VK_FORMAT_R32G32B32_SFLOAT,
-        .offset = 0
+    VkVertexInputAttributeDescription2EXT vertexAttributes[] = {
+        {
+            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+            .pNext = NULL,
+            .location = 0,
+            .binding = 0,
+            .format = VK_FORMAT_R32G32B32_SFLOAT,
+            .offset = 0
+        }, {
+            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+            .pNext = NULL,
+            .location = 1,
+            .binding = 0,
+            .format = VK_FORMAT_R32G32_SFLOAT,
+            .offset = sizeof(vec3)
+        }
     };
+
+    uint32_t vertexAttributeCount = sizeof(vertexAttributes) / sizeof(VkVertexInputAttributeDescription2EXT);
 
     VkShaderStageFlags stages[] = {
           vertexShaderModule.stage,
@@ -184,8 +192,8 @@ void render() {
     vkBeginCommandBuffer(framebuffer->renderCommandBuffer, &beginInfo);
     vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
 
-    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
-    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &vertexBufferBegin);
+    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
 
     vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
@@ -227,7 +235,7 @@ void render() {
     vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
 
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
-    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, 1, &vertexAttribute);
+    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
 
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
