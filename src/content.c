@@ -15,6 +15,14 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
+size_t indexCount;
+size_t vertexCount;
+
+size_t indexBufferSize;
+size_t vertexBufferSize;
+
+size_t uniformSize;
+
 Index   *indexBuffer;
 Vertex  *vertexBuffer;
 Uniform *uniformBuffer;
@@ -34,6 +42,8 @@ void processAttribute(Primitive *primitive, cgltf_attribute *attribute) {
     if(primitive->vertexCount == 0) {
         primitive->vertexCount = accessor->count;
         primitive->vertices = malloc(accessor->count * sizeof(Vertex));
+
+        vertexCount += accessor->count;
     }
 
     assert(primitive->vertexCount == accessor->count);
@@ -70,6 +80,9 @@ Primitive loadPrimitive(cgltf_primitive *primitiveData) {
         .vertices = NULL,
         .material = {}
     };
+
+    indexCount += accessor->count;
+    debug("\t\t\t\t%lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
     if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
         for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
@@ -188,12 +201,34 @@ Asset loadAsset(const char *relativePath) {
 }
 
 void initializeAssets() {
+    debug("Initializing assets");
+
+    indexCount = 0;
+    vertexCount = 0;
+
+    indexBufferSize = 0;
+    vertexBufferSize = 0;
+
+    uniformSize = 0;
+
     assetCount = 1;
     assets = malloc(assetCount * sizeof(Asset));
 
+    debug("Started reading asset files");
+
     assets[0] = loadAsset("assets/Lantern.gltf");
 
-    debug("Assets initialized");
+    debug("Assets loaded from files");
+
+    indexBufferSize  = indexCount  * sizeof(Index);
+    vertexBufferSize = vertexCount * sizeof(Vertex);
+
+    debug("Allocating host index vertex buffers: %lu and %lu bytes respectively", indexBufferSize, vertexBufferSize);
+
+    indexBuffer  = malloc(indexBufferSize);
+    vertexBuffer = malloc(vertexBufferSize);
+
+
 }
 
 void loadAssets() {
