@@ -30,7 +30,7 @@ Uniform *uniformBuffer;
 size_t assetCount;
 Asset *assets;
 
-void processAttribute(Primitive *primitive, cgltf_attribute *attribute) {
+void processAttribute(Primitive *primitive, cgltf_attribute *attribute, mat4 transform) {
     debug("\t\t\t\tAttribute: %s", attribute->name);
 
     cgltf_accessor *accessor = attribute->data;
@@ -53,7 +53,7 @@ void processAttribute(Primitive *primitive, cgltf_attribute *attribute) {
         vec3 *positions = data; // TODO: Evaluate other possible data types
 
         for(cgltf_size positionIndex = 0; positionIndex < accessor->count; positionIndex++) {
-            memcpy(primitive->vertices[positionIndex].position, positions[positionIndex], sizeof(vec3));
+            glm_mat4_mulv3(transform, positions[positionIndex], 1.0f, primitive->vertices[positionIndex].position);
         }
     } else if(attribute->type == cgltf_attribute_type_texcoord) {
         vec2 *texcoords = data;
@@ -64,7 +64,7 @@ void processAttribute(Primitive *primitive, cgltf_attribute *attribute) {
     } //TODO: Load normal and tangent too
 }
 
-Primitive loadPrimitive(cgltf_primitive *primitiveData) {
+Primitive loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
     debug("\t\t\tPrimitive Type: %d", primitiveData->type);
 
     cgltf_accessor *accessor = primitiveData->indices;
@@ -94,13 +94,13 @@ Primitive loadPrimitive(cgltf_primitive *primitiveData) {
 
     for(cgltf_size attributeIndex = 0; attributeIndex < primitiveData->attributes_count; attributeIndex++) {
         cgltf_attribute *attribute = &primitiveData->attributes[attributeIndex];
-        processAttribute(&primitive, attribute);
+        processAttribute(&primitive, attribute, transform);
     }
 
     return primitive;
 }
 
-Mesh loadMesh(cgltf_mesh *meshData) {
+Mesh loadMesh(cgltf_mesh *meshData, mat4 transform) {
     debug("\t\tMesh: %s", meshData->name);
 
     Mesh mesh = {
@@ -110,7 +110,7 @@ Mesh loadMesh(cgltf_mesh *meshData) {
 
     for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
         cgltf_primitive *primitive = &meshData->primitives[primitiveIndex];
-        mesh.primitives[primitiveIndex] = loadPrimitive(primitive);
+        mesh.primitives[primitiveIndex] = loadPrimitive(primitive, transform);
     }
 
     return mesh;
@@ -125,9 +125,11 @@ Node loadNode(cgltf_node *nodeData) {
         .children = malloc(nodeData->children_count * sizeof(Node))
     };
 
+    cgltf_node_transform_world(nodeData, (cgltf_float *)node.transform);
+
     if(nodeData->mesh) {
         node.hasMesh = 1;
-        node.mesh = loadMesh(nodeData->mesh);
+        node.mesh = loadMesh(nodeData->mesh, node.transform);
     }
 
     for(cgltf_size childIndex = 0; childIndex < nodeData->children_count; childIndex++) {
@@ -279,7 +281,7 @@ void loadAssets() {
     assetCount = 1;
     assets = malloc(assetCount * sizeof(Asset));
 
-    assets[0] = loadAsset("assets/scene.glb");
+    assets[0] = loadAsset("assets/Lantern.gltf");
 }
 
 void copyAssets() {
