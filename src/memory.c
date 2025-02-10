@@ -35,7 +35,15 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags p
     }
 
     assert(memory->typeIndex < memoryProperties.memoryTypeCount);
-    assert(memory->size < memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size); // TODO: Take used memory into account
+
+    /* TODO: Why doesn't this work?
+    if(memory->size > memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size) {
+        memory->size = memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size;
+    } */
+
+    while(memory->size > memoryProperties.memoryHeaps[memoryProperties.memoryTypes[memory->typeIndex].heapIndex].size) {
+        memory->size /= 2;
+    } // TODO: Take used memory into account
 
     VkMemoryAllocateInfo memoryInfo = {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -48,7 +56,8 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags p
 }
 
 void *mapMemory(Memory *memory) {
-    assert((memory->properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) && memory->memory != VK_NULL_HANDLE);
+    assert(memory->memory != VK_NULL_HANDLE);
+    assert(memory->properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
     void *map;
 
