@@ -22,6 +22,8 @@ vec3 upGlobal;
 vec3 movementInput;
 vec3 movement;
 
+float moveSpeed;
+
 extern VkDeviceSize uniformBufferSize;
 extern Uniform *uniformBuffer;
 extern void *mappedSharedMemory;
@@ -43,6 +45,8 @@ void initializeControls() {
     left[0]     = 1.0f;
     up[2]       = 1.0f;
     upGlobal[2] = 1.0f;
+
+    moveSpeed = 10.0f;
 
     debug("Control variables created");
 }
@@ -92,7 +96,7 @@ void processEvents() {
         vec3 leftMovement;
         vec3 upMovement;
 
-        glm_vec3_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
+        glm_vec3_scale_as(movementInput, moveSpeed * timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
 
         glm_vec3_scale_as(forward, movementInput[0], forwardMovement);
         glm_vec3_scale_as(left   , movementInput[1], leftMovement   );
