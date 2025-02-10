@@ -37,7 +37,7 @@ void initialize(int argc, char *argv[]) {
     allocateMemories();
     createBuffers();
     loadAssets();
-    copyAssets();
+    moveAssets();
     createDescriptors();
     createModules();
     createSwapchain();
@@ -85,7 +85,6 @@ void loop() {
 void quit() {
     vkDeviceWaitIdle(device);
 
-    freeAssets();
     destroyModules();
     destroyDescriptors();
     destroyFramebufferSet();

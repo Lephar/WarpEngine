@@ -56,5 +56,4 @@ struct uniform {
 } typedef Uniform;
 
 void loadAssets();
-void copyAssets();
-void freeAssets();
+void moveAssets();

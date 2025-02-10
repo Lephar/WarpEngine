@@ -203,7 +203,7 @@ Asset loadAsset(const char *relativePath) {
     return asset;
 }
 
-void copyPrimitive(Primitive *primitive) {
+void movePrimitive(Primitive *primitive) {
     static uint32_t indexOffset  = 0;
     static uint32_t vertexOffset = 0;
 
@@ -228,45 +228,56 @@ void copyPrimitive(Primitive *primitive) {
 
     indexOffset  += primitive->indexCount;
     vertexOffset += primitive->vertexCount;
+
+    free(primitive->vertices);
+    free(primitive->indices);
 }
 
-void copyMesh(Mesh *mesh) {
+void moveMesh(Mesh *mesh) {
     debug("Copy %d primitives", mesh->primitiveCount);
 
     for(size_t primitiveIndex = 0; primitiveIndex < mesh->primitiveCount; primitiveIndex++) {
-        copyPrimitive(&mesh->primitives[primitiveIndex]);
+        movePrimitive(&mesh->primitives[primitiveIndex]);
     }
+
+    free(mesh->primitives);
 }
 
-void copyNode(Node *node) {
+void moveNode(Node *node) {
     // TODO: Apply transformation
 
     if(node->hasMesh) {
         debug("Copy a mesh");
-        copyMesh(&node->mesh);
+        moveMesh(&node->mesh);
     }
 
     debug("Copy %d child nodes", node->childCount);
 
     for(size_t childIndex = 0; childIndex < node->childCount; childIndex++) {
-        copyNode(&node->children[childIndex]);
+        moveNode(&node->children[childIndex]);
     }
+
+    free(node->children);
 }
 
-void copyScene(Scene *scene) {
+void moveScene(Scene *scene) { // TODO: Can it be merged with node?
     debug("Copy %d nodes", scene->nodeCount);
 
     for(size_t nodeIndex = 0; nodeIndex < scene->nodeCount; nodeIndex++) {
-        copyNode(&scene->nodes[nodeIndex]);
+        moveNode(&scene->nodes[nodeIndex]);
     }
+
+    free(scene->nodes);
 }
 
-void copyAsset(Asset *asset) {
+void moveAsset(Asset *asset) {
     debug("Copy %d scenes", asset->sceneCount);
 
     for(size_t sceneIndex = 0; sceneIndex < asset->sceneCount; sceneIndex++) {
-        copyScene(&asset->scenes[sceneIndex]);
+        moveScene(&asset->scenes[sceneIndex]);
     }
+
+    free(asset->scenes);
 }
 
 void loadAssets() {
@@ -284,7 +295,7 @@ void loadAssets() {
     assets[0] = loadAsset("assets/Lantern.gltf");
 }
 
-void copyAssets() {
+void moveAssets() {
     indexBufferSize  = indexCount  * sizeof(Index);
     vertexBufferSize = vertexCount * sizeof(Vertex);
 
@@ -292,8 +303,10 @@ void copyAssets() {
     vertexBuffer = malloc(vertexBufferSize);
 
     for(size_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
-        copyAsset(&assets[assetIndex]);
+        moveAsset(&assets[assetIndex]);
     }
+
+    free(assets);
 
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
@@ -301,11 +314,8 @@ void copyAssets() {
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
+    free(vertexBuffer);
+    free(indexBuffer);
+
     uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
-}
-
-void freeAssets() {
-    // TODO: Free everything
-
-    debug("Assets freed");
 }
