@@ -13,6 +13,7 @@ struct vertex {
 } typedef Vertex;
 
 struct material {
+    char name[UINT8_MAX];
     Image texture;
     Image normal;
     Image tangent; // TODO: What is this?
@@ -23,7 +24,7 @@ struct primitive {
     Index *indices;
     cgltf_size vertexCount;
     Vertex *vertices;
-    Material material;
+    Material *material;
 } typedef Primitive;
 
 struct mesh {
@@ -45,6 +46,8 @@ struct scene {
 } typedef Scene;
 
 struct asset {
+    cgltf_size materialCount;
+    Material *materials;
     cgltf_size sceneCount;
     Scene *scenes;
 } typedef Asset;
