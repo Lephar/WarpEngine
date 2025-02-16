@@ -156,9 +156,19 @@ Scene loadScene(cgltf_scene *sceneData) {
     return scene;
 }
 
-Asset loadAsset(const char *relativePath) {
+void loadImage(const char *path, Image *outImage) {
+    uint8_t *imageData = stbi_load(path, (int32_t *)&outImage->extent.width, (int32_t *)&outImage->extent.height, (int32_t *)&outImage->channels, STBI_rgb_alpha);
+    debug("%s: %d", path, outImage->channels);
+    outImage->channels = STBI_rgb_alpha;
+    stbi_image_free(imageData);
+}
+
+Asset loadAsset(const char *assetName) {
+    char assetsDirectory[PATH_MAX];
+    makeFullPath("assets", assetsDirectory);
+
     char fullPath[PATH_MAX];
-    makeFullPath(relativePath, fullPath);
+    snprintf(fullPath, PATH_MAX, "%s/%s", assetsDirectory, assetName);
 
     cgltf_data* data = NULL;
     cgltf_options assetOptions = {};
@@ -178,8 +188,6 @@ Asset loadAsset(const char *relativePath) {
         assert(result == cgltf_result_success);
     }
 
-    // TODO: Load materials here
-
     result = cgltf_load_buffers(&assetOptions, data, fullPath);
 
     if(result != cgltf_result_success) {
@@ -189,9 +197,32 @@ Asset loadAsset(const char *relativePath) {
     }
 
     Asset asset = {
+        .materialCount = data->materials_count,
+        .materials = malloc(data->materials_count * sizeof(Material)),
         .sceneCount = data->scenes_count,
         .scenes = malloc(data->scenes_count * sizeof(Scene))
     };
+
+    for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
+        Material *material = &asset.materials[materialIndex];
+        cgltf_material *materialData = &data->materials[materialIndex];
+
+        debug("Material Index: %d", materialIndex);
+        debug("Material Name: %s", materialData->name);
+        strncpy(material->name, materialData->name, UINT8_MAX);
+
+        if(materialData->has_pbr_metallic_roughness) {
+            char textureFullPath[PATH_MAX];
+            snprintf(textureFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri);
+
+            loadImage(textureFullPath, &material->texture);
+        }
+
+        char normalFullPath[PATH_MAX];
+        snprintf(normalFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->normal_texture.texture->image->uri);
+
+        loadImage(normalFullPath, &material->normal);
+    }
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
         cgltf_scene *scene = &data->scenes[sceneIndex];
@@ -292,7 +323,7 @@ void loadAssets() {
     assetCount = 1;
     assets = malloc(assetCount * sizeof(Asset));
 
-    assets[0] = loadAsset("assets/Lantern.gltf");
+    assets[0] = loadAsset("Lantern.gltf");
 }
 
 void moveAssets() {
