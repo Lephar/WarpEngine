@@ -10,7 +10,7 @@ void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, ui
     image->extent.width = width;
     image->extent.height = height;
     image->extent.depth = 1;
-    image->levels = levels;
+    image->mips = levels;
     image->samples = samples;
     image->format = format;
     image->usage = usage;
@@ -77,7 +77,7 @@ void createImageView(Image *image, VkImageAspectFlags aspects) {
         .subresourceRange = {
             .aspectMask = image->aspects,
             .baseMipLevel = 0,
-            .levelCount = image->levels,
+            .levelCount = image->mips,
             .baseArrayLayer = 0,
             .layerCount = 1
         }
