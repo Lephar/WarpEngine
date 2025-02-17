@@ -26,7 +26,7 @@ struct vertex {
 
 struct material {
     char name[UINT8_MAX];
-    Image texture;
+    VkDescriptorSet descriptor;
     Image normal;
     Image baseColor;
 } typedef Material;
