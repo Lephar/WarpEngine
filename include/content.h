@@ -28,7 +28,7 @@ struct material {
     char name[UINT8_MAX];
     Image texture;
     Image normal;
-    Image tangent; // TODO: What is this?
+    Image baseColor;
 } typedef Material;
 
 struct primitive {
@@ -59,7 +59,7 @@ struct scene {
 
 struct asset {
     cgltf_size materialCount;
-    Material *materials;
+    ProtoMaterial *materials;
     cgltf_size sceneCount;
     Scene *scenes;
 } typedef Asset;

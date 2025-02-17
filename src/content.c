@@ -198,7 +198,7 @@ Asset loadAsset(const char *assetName) {
 
     Asset asset = {
         .materialCount = data->materials_count,
-        .materials = malloc(data->materials_count * sizeof(Material)),
+        .materials = malloc(data->materials_count * sizeof(ProtoMaterial)),
         .sceneCount = data->scenes_count,
         .scenes = malloc(data->scenes_count * sizeof(Scene))
     };
