@@ -156,11 +156,30 @@ Scene loadScene(cgltf_scene *sceneData) {
     return scene;
 }
 
-void loadImage(const char *path, Image *outImage) {
-    uint8_t *imageData = stbi_load(path, (int32_t *)&outImage->extent.width, (int32_t *)&outImage->extent.height, (int32_t *)&outImage->channels, STBI_rgb_alpha);
-    debug("%s: %d", path, outImage->channels);
-    outImage->channels = STBI_rgb_alpha;
-    stbi_image_free(imageData);
+void loadTexture(const char *path, ProtoTexture *outTexture) {
+    debug("\t%s", path);
+    outTexture->data.content = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
+    debug("\t\tChannels: %d", outTexture->extent.depth);
+    outTexture->extent.depth = STBI_rgb_alpha;
+    outTexture->data.size = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
+    debug("\t\tSize: %d", outTexture->data.size);
+}
+
+void loadMaterial(const char *assetsDirectory, cgltf_material *materialData, ProtoMaterial *outMaterial) {
+    debug("Material Name: %s", materialData->name);
+    strncpy(outMaterial->name, materialData->name, UINT8_MAX);
+
+    if(materialData->has_pbr_metallic_roughness) {
+        char textureFullPath[PATH_MAX];
+        snprintf(textureFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri);
+
+        loadTexture(textureFullPath, &outMaterial->baseColor);
+    }
+
+    char normalFullPath[PATH_MAX];
+    snprintf(normalFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->normal_texture.texture->image->uri);
+
+    loadTexture(normalFullPath, &outMaterial->normal);
 }
 
 Asset loadAsset(const char *assetName) {
@@ -204,24 +223,7 @@ Asset loadAsset(const char *assetName) {
     };
 
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        Material *material = &asset.materials[materialIndex];
-        cgltf_material *materialData = &data->materials[materialIndex];
-
-        debug("Material Index: %d", materialIndex);
-        debug("Material Name: %s", materialData->name);
-        strncpy(material->name, materialData->name, UINT8_MAX);
-
-        if(materialData->has_pbr_metallic_roughness) {
-            char textureFullPath[PATH_MAX];
-            snprintf(textureFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri);
-
-            loadImage(textureFullPath, &material->texture);
-        }
-
-        char normalFullPath[PATH_MAX];
-        snprintf(normalFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->normal_texture.texture->image->uri);
-
-        loadImage(normalFullPath, &material->normal);
+        loadMaterial(assetsDirectory, &data->materials[materialIndex], &asset.materials[materialIndex]);
     }
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
