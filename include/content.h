@@ -1,9 +1,21 @@
 #pragma once
 
 #include "pch.h"
+#include "file.h"
 #include "image.h"
 
 // TODO: Use data oriented design for content instead of object oriented
+
+struct protoTexture {
+    VkExtent3D extent;
+    Data data;
+} typedef ProtoTexture;
+
+struct protoMaterial {
+    char name[UINT8_MAX];
+    ProtoTexture normal;
+    ProtoTexture baseColor;
+} typedef ProtoMaterial;
 
 typedef uint32_t Index;
 
