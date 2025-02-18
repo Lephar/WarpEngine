@@ -7,6 +7,7 @@
 // TODO: Use data oriented design for content instead of object oriented
 
 struct protoTexture {
+    VkDeviceSize offset;
     VkExtent3D extent;
     Data data;
 } typedef ProtoTexture;

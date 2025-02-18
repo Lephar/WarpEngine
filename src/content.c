@@ -15,6 +15,13 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
+size_t materialCount;
+Material *materials;
+ProtoMaterial **protoMaterialReferences;
+
+size_t textureBufferSize;
+void  *textureBuffer;
+
 size_t indexCount;
 size_t vertexCount;
 
@@ -158,11 +165,14 @@ Scene loadScene(cgltf_scene *sceneData) {
 
 void loadTexture(const char *path, ProtoTexture *outTexture) {
     debug("\t%s", path);
+    outTexture->offset = textureBufferSize;
     outTexture->data.content = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
-    debug("\t\tChannels: %d", outTexture->extent.depth);
+    debug("\t\tOriginal channels: %d", outTexture->extent.depth);
     outTexture->extent.depth = STBI_rgb_alpha;
     outTexture->data.size = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
+    debug("\t\tOffset: %d", textureBufferSize);
     debug("\t\tSize: %d", outTexture->data.size);
+    textureBufferSize += outTexture->data.size;
 }
 
 void loadMaterial(const char *assetsDirectory, cgltf_material *materialData, ProtoMaterial *outMaterial) {
@@ -180,6 +190,8 @@ void loadMaterial(const char *assetsDirectory, cgltf_material *materialData, Pro
     snprintf(normalFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->normal_texture.texture->image->uri);
 
     loadTexture(normalFullPath, &outMaterial->normal);
+
+    materialCount++;
 }
 
 Asset loadAsset(const char *assetName) {
@@ -314,6 +326,9 @@ void moveAsset(Asset *asset) {
 }
 
 void loadAssets() {
+    materialCount = 0;
+    textureBufferSize = 0;
+
     indexCount  = 0;
     vertexCount = 0;
 
@@ -334,6 +349,10 @@ void moveAssets() {
 
     indexBuffer  = malloc(indexBufferSize);
     vertexBuffer = malloc(vertexBufferSize);
+
+    textureBuffer = malloc(textureBufferSize);
+    materials = malloc(materialCount * sizeof(Material));
+    protoMaterialReferences = malloc(materialCount * sizeof(ProtoMaterial *));
 
     for(size_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
         moveAsset(&assets[assetIndex]);
