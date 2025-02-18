@@ -315,8 +315,31 @@ void moveScene(Scene *scene) { // TODO: Can it be merged with node?
     free(scene->nodes);
 }
 
+void moveTexture(ProtoTexture *texture) {
+    memcpy(textureBuffer + texture->offset, texture->data.content, texture->data.size);
+
+    freeData(&texture->data);
+}
+
+void moveMaterial(ProtoMaterial *material) {
+    static size_t materialIndex = 0;
+
+    protoMaterialReferences[materialIndex] = material;
+
+    moveTexture(&material->normal);
+    moveTexture(&material->baseColor);
+
+    materialIndex++;
+}
+
 void moveAsset(Asset *asset) {
     debug("Copy %d scenes", asset->sceneCount);
+
+    for(size_t materialIndex = 0; materialIndex < asset->materialCount; materialIndex++) {
+        moveMaterial(&asset->materials[materialIndex]);
+    }
+
+    free(asset->materials);
 
     for(size_t sceneIndex = 0; sceneIndex < asset->sceneCount; sceneIndex++) {
         moveScene(&asset->scenes[sceneIndex]);
@@ -360,14 +383,19 @@ void moveAssets() {
 
     free(assets);
 
+    mempcpy(mappedSharedMemory, textureBuffer, textureBufferSize);
+    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, textureBufferSize);
+
+    free(textureBuffer);
+
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
-
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
-    memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     free(vertexBuffer);
     free(indexBuffer);
+
+    memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
 }
