@@ -9,6 +9,8 @@ extern VkDevice device;
 
 extern Buffer sharedBuffer;
 
+extern size_t materialCount;
+
 VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
 VkDescriptorSet descriptorSet;
@@ -16,9 +18,14 @@ VkDescriptorSet descriptorSet;
 VkPipelineLayout pipelineLayout;
 
 void createDescriptors() {
-    VkDescriptorPoolSize poolSize = {
-        .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        .descriptorCount = 1
+    VkDescriptorPoolSize poolSizes[] = {
+    {
+            .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .descriptorCount = 1
+        }, {
+            .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .descriptorCount = materialCount
+        }
     };
 
     VkDescriptorPoolCreateInfo poolInfo = {
@@ -26,27 +33,35 @@ void createDescriptors() {
         .pNext = NULL,
         .flags = 0,
         .maxSets = 1,
-        .poolSizeCount = 1,
-        .pPoolSizes = &poolSize
+        .poolSizeCount = sizeof(poolSizes) / sizeof(VkDescriptorPoolSize),
+        .pPoolSizes = poolSizes
     };
 
     vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
     debug("Descriptor pool created");
 
-    VkDescriptorSetLayoutBinding layoutBinding = {
-        .binding = 0,
-        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        .descriptorCount = 1,
-        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-        .pImmutableSamplers = NULL
+    VkDescriptorSetLayoutBinding layoutBindings[] = {
+        {
+            .binding = 0,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .descriptorCount = 1,
+            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+            .pImmutableSamplers = NULL
+        },{
+            .binding = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .descriptorCount = 1,
+            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .pImmutableSamplers = NULL
+        }
     };
 
     VkDescriptorSetLayoutCreateInfo layoutInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .bindingCount = 1,
-        .pBindings = &layoutBinding
+        .bindingCount = sizeof(layoutBindings) / sizeof(VkDescriptorSetLayoutBinding),
+        .pBindings = layoutBindings
     };
 
     vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
