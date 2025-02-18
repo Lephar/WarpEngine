@@ -348,6 +348,23 @@ void moveAsset(Asset *asset) {
     free(asset->scenes);
 }
 
+void createTexture(ProtoTexture *protoTexture, Image *outTexture) {
+    // TODO: Check format, flags and usage
+    createImage(outTexture, protoTexture->extent.width, protoTexture->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    bindImageMemory(outTexture, &deviceMemory);
+    createImageView(outTexture, VK_IMAGE_ASPECT_COLOR_BIT);
+    transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    copyBufferToImage(&deviceBuffer, outTexture, protoTexture->offset);
+    transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    // TODO: Free at the end
+}
+
+// TODO: Create descriptors
+void createMaterial(ProtoMaterial *protoMaterial, Material *outMaterial) {
+    createTexture(&protoMaterial->normal,    &outMaterial->normal   );
+    createTexture(&protoMaterial->baseColor, &outMaterial->baseColor);
+}
+
 void loadAssets() {
     materialCount = 0;
     textureBufferSize = 0;
@@ -387,6 +404,12 @@ void moveAssets() {
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, textureBufferSize);
 
     free(textureBuffer);
+
+    for(size_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        createMaterial(protoMaterialReferences[materialIndex], &materials[materialIndex]);
+    }
+
+    free(protoMaterialReferences);
 
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
