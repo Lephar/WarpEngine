@@ -21,6 +21,7 @@ void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, ui
     vkGetImageMemoryRequirements(device, image->image, &image->memoryRequirements);
 }
 
+// TODO: Rename levels, add aspects maybe?
 void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
     VkImageCreateInfo imageInfo = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
