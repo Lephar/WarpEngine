@@ -41,6 +41,8 @@ Uniform *uniformBuffer;
 size_t assetCount;
 Asset *assets;
 
+Primitive **primitiveReferences;
+
 size_t drawableCount;
 Drawable *drawables;
 
@@ -91,9 +93,11 @@ Primitive loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
         .indexCount = accessor->count,
         .indices = malloc(accessor->count * sizeof(Index)),
         .vertexCount = 0,
-        .vertices = NULL,
-        .material = {}
+        .vertices = NULL
     };
+
+    strncpy(primitive.materialName, primitiveData->material->name, UINT8_MAX);
+    debug("\t\t\t\tMaterial name: %s", primitive.materialName);
 
     indexCount += accessor->count;
     debug("\t\t\t\t%lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
@@ -194,12 +198,12 @@ void loadMaterial(const char *assetsDirectory, cgltf_material *materialData, Pro
 
         loadTexture(textureFullPath, &outMaterial->baseColor);
     }
-
+    /*
     char normalFullPath[PATH_MAX];
     snprintf(normalFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->normal_texture.texture->image->uri);
 
     loadTexture(normalFullPath, &outMaterial->normal);
-
+    */
     materialCount++;
 }
 
@@ -210,7 +214,7 @@ Asset loadAsset(const char *assetName) {
     char fullPath[PATH_MAX];
     snprintf(fullPath, PATH_MAX, "%s/%s", assetsDirectory, assetName);
 
-    cgltf_data* data = NULL;
+    cgltf_data *data = NULL;
     cgltf_options assetOptions = {};
 
     cgltf_result result;
@@ -265,11 +269,14 @@ void movePrimitive(Primitive *primitive) {
     debug("indexOffset:  %d", indexOffset);
     debug("vertexOffset: %d", vertexOffset);
 
+    primitiveReferences[drawableIndex] = primitive;
+
     drawables[drawableIndex].indexBegin   = indexOffset;
     drawables[drawableIndex].indexCount   = primitive->indexCount;
     drawables[drawableIndex].vertexOffset = vertexOffset;
-    drawables[drawableIndex].descriptor   = VK_NULL_HANDLE;
+    //drawables[drawableIndex].descriptor = primitive->material->descriptor;
 
+    // TODO: Can it be memcpy'ed now?
     for(uint32_t indexIndex = 0; indexIndex < primitive->indexCount; indexIndex++) {
         indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex];
     }
@@ -342,7 +349,7 @@ void moveMaterial(ProtoMaterial *material) {
 
     protoMaterialReferences[materialIndex] = material;
 
-    moveTexture(&material->normal);
+    //moveTexture(&material->normal);
     moveTexture(&material->baseColor);
 
     materialIndex++;
@@ -429,10 +436,22 @@ void createTexture(ProtoTexture *protoTexture, Image *outTexture) {
 
 // TODO: Create descriptors
 void createMaterial(ProtoMaterial *protoMaterial, Material *outMaterial) {
-    createTexture(&protoMaterial->normal,    &outMaterial->normal   );
+    strncpy(outMaterial->name, protoMaterial->name, UINT8_MAX);
+
+    //createTexture(&protoMaterial->normal,    &outMaterial->normal   );
     createTexture(&protoMaterial->baseColor, &outMaterial->baseColor);
 
     createDescriptor(outMaterial);
+
+    for(size_t drawableIndex = 0; drawableIndex < drawableCount; drawableIndex++) {
+        debug("%s %s", primitiveReferences[drawableIndex]->materialName, outMaterial->name);
+
+        if(strncmp(primitiveReferences[drawableIndex]->materialName, outMaterial->name, UINT8_MAX) == 0) {
+            drawables[drawableIndex].descriptorReference = &outMaterial->descriptor;
+            debug("Matched material!");
+            break;
+        }
+    }
 }
 
 void loadAssets() {
@@ -466,13 +485,12 @@ void moveAssets() {
     materials = malloc(materialCount * sizeof(Material));
     protoMaterialReferences = malloc(materialCount * sizeof(ProtoMaterial *));
 
+    primitiveReferences = malloc(drawableCount * sizeof(Primitive *));
     drawables = malloc(drawableCount * sizeof(Drawable));
 
     for(size_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
         moveAsset(&assets[assetIndex]);
     }
-
-    free(assets);
 
     mempcpy(mappedSharedMemory, textureBuffer, textureBufferSize);
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, textureBufferSize);
@@ -483,6 +501,8 @@ void moveAssets() {
         createMaterial(protoMaterialReferences[materialIndex], &materials[materialIndex]);
     }
 
+    free(assets);
+    free(primitiveReferences);
     free(protoMaterialReferences);
 
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);

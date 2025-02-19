@@ -14,7 +14,7 @@ struct protoTexture {
 
 struct protoMaterial {
     char name[UINT8_MAX];
-    ProtoTexture normal;
+//    ProtoTexture normal;
     ProtoTexture baseColor;
 } typedef ProtoMaterial;
 
@@ -28,7 +28,7 @@ struct vertex {
 struct material {
     char name[UINT8_MAX];
     VkDescriptorSet descriptor;
-    Image normal;
+//    Image normal;
     Image baseColor;
 } typedef Material;
 
@@ -36,15 +36,15 @@ struct drawable {
     VkDeviceSize indexBegin;
     VkDeviceSize indexCount;
     VkDeviceSize vertexOffset;
-    VkDescriptorSet descriptor;
+    VkDescriptorSet *descriptorReference;
 } typedef Drawable;
 
 struct primitive {
+    char materialName[UINT8_MAX];
     cgltf_size indexCount;
     Index *indices;
     cgltf_size vertexCount;
     Vertex *vertices;
-    Material *material;
 } typedef Primitive;
 
 struct mesh {

@@ -41,7 +41,8 @@ extern ShaderModule fragmentShaderModule;
 
 extern uint32_t frameIndex;
 
-extern Material *materials;
+extern size_t drawableCount;
+extern Drawable *drawables;
 
 void initializeDraw() {
     vkDeviceWaitIdle(device);
@@ -233,16 +234,16 @@ void render() {
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
 
-    // TODO: Hey!
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &materials[0].descriptor, 0, NULL);
-
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
 
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
 
-    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, indexCount, 1, 0, 0, 0);
+    for(size_t drawableIndex = 0; drawableIndex < drawableCount; drawableIndex++) {
+        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, drawables[drawableIndex].descriptorReference, 0, NULL);
+        vkCmdDrawIndexed(framebuffer->renderCommandBuffer, drawables[drawableIndex].indexCount, 1, drawables[drawableIndex].indexBegin, drawables[drawableIndex].vertexOffset, 0);
+    }
 
     vkCmdEndRendering(framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);
