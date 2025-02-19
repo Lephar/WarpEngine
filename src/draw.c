@@ -34,7 +34,7 @@ extern Index    *indexBuffer;
 extern Vertex   *vertexBuffer;
 extern Uniform  *uniformBuffer;
 
-extern VkDescriptorSet descriptorSet;
+extern VkDescriptorSet uniformDescriptorSet;
 extern VkPipelineLayout pipelineLayout;
 
 extern ShaderModule vertexShaderModule;
@@ -232,7 +232,7 @@ void render() {
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &uniformDescriptorSet, 0, NULL);
 
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);

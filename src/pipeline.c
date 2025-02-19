@@ -13,7 +13,7 @@ extern size_t materialCount;
 
 VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
-VkDescriptorSet descriptorSet;
+VkDescriptorSet uniformDescriptorSet;
 
 VkPipelineLayout pipelineLayout;
 
@@ -92,7 +92,7 @@ void createDescriptors() {
     vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
     debug("Descriptor set layout created");
 
-    VkDescriptorSetAllocateInfo setInfo = {
+    VkDescriptorSetAllocateInfo uniformDescriptorSetInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = NULL,
         .descriptorPool = descriptorPool,
@@ -100,10 +100,10 @@ void createDescriptors() {
         .pSetLayouts = &descriptorSetLayout
     };
 
-    vkAllocateDescriptorSets(device, &setInfo, &descriptorSet);
+    vkAllocateDescriptorSets(device, &uniformDescriptorSetInfo, &uniformDescriptorSet);
     debug("Descriptor set allocated");
 
-    VkDescriptorBufferInfo bufferInfo = {
+    VkDescriptorBufferInfo uniformBufferInfo = {
         .buffer = sharedBuffer.buffer,
         .offset = 0,
         .range = sizeof(Uniform)
@@ -112,13 +112,13 @@ void createDescriptors() {
     VkWriteDescriptorSet descriptorWrite = {
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = NULL,
-        .dstSet = descriptorSet,
+        .dstSet = uniformDescriptorSet,
         .dstBinding = 0,
         .dstArrayElement = 0,
         .descriptorCount = 1,
         .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
         .pImageInfo = NULL,
-        .pBufferInfo = &bufferInfo,
+        .pBufferInfo = &uniformBufferInfo,
         .pTexelBufferView = NULL
     };
 
