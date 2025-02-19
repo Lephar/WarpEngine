@@ -2,4 +2,5 @@
 .vscode/
 build/
 
-assets/scene.glb
+assets/Scene*
+assets/Block*
