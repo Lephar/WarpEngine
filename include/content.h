@@ -32,6 +32,13 @@ struct material {
     Image baseColor;
 } typedef Material;
 
+struct drawable {
+    VkDeviceSize indexBegin;
+    VkDeviceSize indexCount;
+    VkDeviceSize vertexOffset;
+    VkDescriptorSet descriptor;
+} typedef Drawable;
+
 struct primitive {
     cgltf_size indexCount;
     Index *indices;

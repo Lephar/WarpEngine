@@ -41,6 +41,9 @@ Uniform *uniformBuffer;
 size_t assetCount;
 Asset *assets;
 
+size_t drawableCount;
+Drawable *drawables;
+
 void processAttribute(Primitive *primitive, cgltf_attribute *attribute, mat4 transform) {
     debug("\t\t\t\tAttribute: %s", attribute->name);
 
@@ -107,6 +110,8 @@ Primitive loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
         cgltf_attribute *attribute = &primitiveData->attributes[attributeIndex];
         processAttribute(&primitive, attribute, transform);
     }
+
+    drawableCount++;
 
     return primitive;
 }
@@ -253,14 +258,20 @@ Asset loadAsset(const char *assetName) {
 }
 
 void movePrimitive(Primitive *primitive) {
+    static size_t  drawableIndex = 0;
     static uint32_t indexOffset  = 0;
     static uint32_t vertexOffset = 0;
 
     debug("indexOffset:  %d", indexOffset);
     debug("vertexOffset: %d", vertexOffset);
 
+    drawables[drawableIndex].indexBegin   = indexOffset;
+    drawables[drawableIndex].indexCount   = primitive->indexCount;
+    drawables[drawableIndex].vertexOffset = vertexOffset;
+    drawables[drawableIndex].descriptor   = VK_NULL_HANDLE;
+
     for(uint32_t indexIndex = 0; indexIndex < primitive->indexCount; indexIndex++) {
-        indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex] + vertexOffset;
+        indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex];
     }
 
     // TODO: Yeah...
@@ -275,6 +286,7 @@ void movePrimitive(Primitive *primitive) {
 
     //memcpy(vertexBuffer + vertexOffset, primitive->vertices, primitive->vertexCount * sizeof(Vertex));
 
+    drawableIndex++;
     indexOffset  += primitive->indexCount;
     vertexOffset += primitive->vertexCount;
 
@@ -424,6 +436,8 @@ void createMaterial(ProtoMaterial *protoMaterial, Material *outMaterial) {
 }
 
 void loadAssets() {
+    drawableCount = 0;
+
     materialCount = 0;
     textureBufferSize = 0;
 
@@ -451,6 +465,8 @@ void moveAssets() {
     textureBuffer = malloc(textureBufferSize);
     materials = malloc(materialCount * sizeof(Material));
     protoMaterialReferences = malloc(materialCount * sizeof(ProtoMaterial *));
+
+    drawables = malloc(drawableCount * sizeof(Drawable));
 
     for(size_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
         moveAsset(&assets[assetIndex]);
