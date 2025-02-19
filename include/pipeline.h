@@ -2,5 +2,6 @@
 
 #include "pch.h"
 
-void createDescriptors();
-void destroyDescriptors();
+void createLayouts();
+void createDescriptorPool();
+void destroyPipeline();

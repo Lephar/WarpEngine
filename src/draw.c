@@ -34,13 +34,14 @@ extern Index    *indexBuffer;
 extern Vertex   *vertexBuffer;
 extern Uniform  *uniformBuffer;
 
-extern VkDescriptorSet uniformDescriptorSet;
 extern VkPipelineLayout pipelineLayout;
 
 extern ShaderModule vertexShaderModule;
 extern ShaderModule fragmentShaderModule;
 
 extern uint32_t frameIndex;
+
+extern Material *materials;
 
 void initializeDraw() {
     vkDeviceWaitIdle(device);
@@ -197,22 +198,22 @@ void render() {
 
     vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    vkCmdSetCullMode(framebuffer->renderCommandBuffer, VK_CULL_MODE_NONE);
+    vkCmdSetCullMode(framebuffer->renderCommandBuffer, VK_CULL_MODE_BACK_BIT);
     vkCmdSetFrontFace(framebuffer->renderCommandBuffer, VK_FRONT_FACE_COUNTER_CLOCKWISE);
 
     vkCmdSetDepthTestEnable(framebuffer->renderCommandBuffer, VK_TRUE);
     vkCmdSetDepthWriteEnable(framebuffer->renderCommandBuffer, VK_TRUE);
     vkCmdSetDepthBiasEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-    vkCmdSetDepthCompareOp(framebuffer->renderCommandBuffer, VK_COMPARE_OP_ALWAYS);
+    vkCmdSetDepthCompareOp(framebuffer->renderCommandBuffer, VK_COMPARE_OP_LESS);
 
     vkCmdSetStencilTestEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
     vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
     vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
-    //cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
-    cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_LINE);
-    vkCmdSetLineWidth(framebuffer->renderCommandBuffer, 1.0f);
+    cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
+    //cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_LINE);
+    //vkCmdSetLineWidth(framebuffer->renderCommandBuffer, 1.0f);
 
     PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
     cmdSetRasterizationSamples(framebuffer->renderCommandBuffer, framebufferSet.sampleCount);
@@ -232,7 +233,8 @@ void render() {
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &uniformDescriptorSet, 0, NULL);
+    // TODO: Hey!
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &materials[0].descriptor, 0, NULL);
 
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);

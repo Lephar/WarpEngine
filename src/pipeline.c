@@ -13,35 +13,12 @@ extern size_t materialCount;
 
 VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
-VkDescriptorSet uniformDescriptorSet;
 
 VkPipelineLayout pipelineLayout;
 
 VkSampler sampler;
 
-void createDescriptors() {
-    VkDescriptorPoolSize poolSizes[] = {
-        {
-            .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .descriptorCount = 1
-        }, {
-            .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = materialCount
-        }
-    };
-
-    VkDescriptorPoolCreateInfo poolInfo = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-        .pNext = NULL,
-        .flags = 0,
-        .maxSets = 1,
-        .poolSizeCount = sizeof(poolSizes) / sizeof(VkDescriptorPoolSize),
-        .pPoolSizes = poolSizes
-    };
-
-    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
-    debug("Descriptor pool created");
-
+void createLayouts() {
     VkDescriptorSetLayoutBinding layoutBindings[] = {
         {
             .binding = 0,
@@ -66,6 +43,24 @@ void createDescriptors() {
         .pBindings = layoutBindings
     };
 
+    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
+    debug("Descriptor set layout created");
+
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .setLayoutCount = 1,
+        .pSetLayouts = &descriptorSetLayout,
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = NULL
+    };
+
+    vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &pipelineLayout);
+    debug("Pipeline layout created");
+}
+
+void createDescriptorPool() {
     VkSamplerCreateInfo samplerInfo = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
         .pNext = NULL,
@@ -88,58 +83,34 @@ void createDescriptors() {
     };
 
     vkCreateSampler(device, &samplerInfo, NULL, &sampler);
+    debug("Image sampler created");
 
-    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
-    debug("Descriptor set layout created");
-
-    VkDescriptorSetAllocateInfo uniformDescriptorSetInfo = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        .pNext = NULL,
-        .descriptorPool = descriptorPool,
-        .descriptorSetCount = 1,
-        .pSetLayouts = &descriptorSetLayout
+    VkDescriptorPoolSize poolSizes[] = {
+        {
+            .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .descriptorCount = 1
+        }, {
+            .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .descriptorCount = 1
+        }
     };
 
-    vkAllocateDescriptorSets(device, &uniformDescriptorSetInfo, &uniformDescriptorSet);
-    debug("Descriptor set allocated");
-
-    VkDescriptorBufferInfo uniformBufferInfo = {
-        .buffer = sharedBuffer.buffer,
-        .offset = 0,
-        .range = sizeof(Uniform)
-    };
-
-    VkWriteDescriptorSet descriptorWrite = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .pNext = NULL,
-        .dstSet = uniformDescriptorSet,
-        .dstBinding = 0,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        .pImageInfo = NULL,
-        .pBufferInfo = &uniformBufferInfo,
-        .pTexelBufferView = NULL
-    };
-
-    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
-
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+    VkDescriptorPoolCreateInfo poolInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .setLayoutCount = 1,
-        .pSetLayouts = &descriptorSetLayout,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges = NULL
+        .maxSets = materialCount,
+        .poolSizeCount = sizeof(poolSizes) / sizeof(VkDescriptorPoolSize),
+        .pPoolSizes = poolSizes
     };
 
-    vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &pipelineLayout);
-    debug("Pipeline layout created");
+    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
+    debug("Descriptor pool created");
 }
 
-void destroyDescriptors() {
+void destroyPipeline() {
     vkDestroySampler(device, sampler, NULL);
+    debug("Image sampler destroyed");
 
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);
     debug("Pipeline layout destroyed");

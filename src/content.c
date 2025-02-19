@@ -15,6 +15,10 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
+extern VkDescriptorSetLayout descriptorSetLayout;
+extern VkDescriptorPool descriptorPool;
+extern VkSampler sampler;
+
 size_t materialCount;
 Material *materials;
 ProtoMaterial **protoMaterialReferences;
@@ -348,6 +352,58 @@ void moveAsset(Asset *asset) {
     free(asset->scenes);
 }
 
+void createDescriptor(Material *outMaterial) {
+    VkDescriptorSetAllocateInfo allocateInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .pNext = NULL,
+        .descriptorPool = descriptorPool,
+        .descriptorSetCount = 1,
+        .pSetLayouts = &descriptorSetLayout
+    };
+
+    vkAllocateDescriptorSets(device, &allocateInfo, &outMaterial->descriptor);
+
+    VkDescriptorBufferInfo bufferInfo = {
+        .buffer = sharedBuffer.buffer,
+        .offset = 0,
+        .range = sizeof(Uniform)
+    };
+
+    VkDescriptorImageInfo imageInfo = {
+        .sampler = sampler,
+        .imageView = outMaterial->baseColor.view,
+        .imageLayout = outMaterial->baseColor.layout
+    };
+
+    VkWriteDescriptorSet descriptorWrites[] = {
+        {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .pNext = NULL,
+            .dstSet = outMaterial->descriptor,
+            .dstBinding = 0,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .pImageInfo = NULL,
+            .pBufferInfo = &bufferInfo,
+            .pTexelBufferView = NULL
+        }, {
+            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            .pNext = NULL,
+            .dstSet = outMaterial->descriptor,
+            .dstBinding = 1,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .pImageInfo = &imageInfo,
+            .pBufferInfo = NULL,
+            .pTexelBufferView = NULL
+        }
+    };
+
+    vkUpdateDescriptorSets(device, sizeof(descriptorWrites) / sizeof(VkWriteDescriptorSet), descriptorWrites, 0, NULL);
+}
+
 void createTexture(ProtoTexture *protoTexture, Image *outTexture) {
     // TODO: Check format, flags and usage
     createImage(outTexture, protoTexture->extent.width, protoTexture->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
@@ -363,6 +419,8 @@ void createTexture(ProtoTexture *protoTexture, Image *outTexture) {
 void createMaterial(ProtoMaterial *protoMaterial, Material *outMaterial) {
     createTexture(&protoMaterial->normal,    &outMaterial->normal   );
     createTexture(&protoMaterial->baseColor, &outMaterial->baseColor);
+
+    createDescriptor(outMaterial);
 }
 
 void loadAssets() {

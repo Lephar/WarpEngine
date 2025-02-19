@@ -36,9 +36,10 @@ void initialize(int argc, char *argv[]) {
     createSurface();
     allocateMemories();
     createBuffers();
+    createLayouts();
     loadAssets();
+    createDescriptorPool();
     moveAssets();
-    createDescriptors();
     createModules();
     createSwapchain();
     createFramebufferSet();
@@ -86,7 +87,7 @@ void quit() {
     vkDeviceWaitIdle(device);
 
     destroyModules();
-    destroyDescriptors();
+    destroyPipeline();
     destroyFramebufferSet();
     destroySwapchain();
     destroyBuffers();
