@@ -7,7 +7,6 @@ typedef struct buffer Buffer;
 
 struct image {
     VkExtent3D extent;
-    uint32_t channels; // TODO: Added later, check for uninitialized instances
     uint32_t mips;
     VkSampleCountFlagBits samples;
     VkFormat format;

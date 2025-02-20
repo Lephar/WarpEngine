@@ -9,7 +9,7 @@ extern VkDevice device;
 
 extern Buffer sharedBuffer;
 
-extern size_t materialCount;
+extern size_t materialCountLimit;
 
 VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
@@ -99,7 +99,7 @@ void createDescriptorPool() {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .maxSets = materialCount,
+        .maxSets = materialCountLimit,
         .poolSizeCount = sizeof(poolSizes) / sizeof(VkDescriptorPoolSize),
         .pPoolSizes = poolSizes
     };

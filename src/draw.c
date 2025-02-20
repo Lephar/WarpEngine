@@ -41,7 +41,7 @@ extern ShaderModule fragmentShaderModule;
 
 extern uint32_t frameIndex;
 
-extern size_t drawableCount;
+extern uint32_t drawableCount;
 extern Drawable *drawables;
 
 void initializeDraw() {
@@ -240,7 +240,14 @@ void render() {
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
 
-    for(size_t drawableIndex = 0; drawableIndex < drawableCount; drawableIndex++) {
+    for(uint32_t drawableIndex = 0; drawableIndex < drawableCount; drawableIndex++) {
+        /*
+        debug("Recording drawable %d...", drawableIndex);
+        debug("\tIndex Begin:        %lu", drawables[drawableIndex].indexBegin);
+        debug("\tIndex Count:        %lu", drawables[drawableIndex].indexCount);
+        debug("\tVertex Offset:      %lu", drawables[drawableIndex].vertexOffset);
+        debug("\tDescriptor Address: %p", drawables[drawableIndex].descriptorReference);
+        */
         vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, drawables[drawableIndex].descriptorReference, 0, NULL);
         vkCmdDrawIndexed(framebuffer->renderCommandBuffer, drawables[drawableIndex].indexCount, 1, drawables[drawableIndex].indexBegin, drawables[drawableIndex].vertexOffset, 0);
     }

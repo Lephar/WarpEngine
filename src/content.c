@@ -19,200 +19,195 @@ extern VkDescriptorSetLayout descriptorSetLayout;
 extern VkDescriptorPool descriptorPool;
 extern VkSampler sampler;
 
-size_t materialCount;
-Material *materials;
-ProtoMaterial **protoMaterialReferences;
+uint64_t indexCount;
+uint64_t vertexCount;
+uint64_t indexBufferSize;
+uint64_t vertexBufferSize;
+uint64_t textureBufferSize;
 
-size_t textureBufferSize;
-void  *textureBuffer;
+const uint64_t textureBufferSizeLimit = 1 << 30;
+const uint64_t indexBufferSizeLimit   = 1 << 30;
+const uint64_t vertexBufferSizeLimit  = 1 << 30;
 
-size_t indexCount;
-size_t vertexCount;
+void *textureBuffer;
 
-size_t indexBufferSize;
-size_t vertexBufferSize;
-
-size_t uniformSize;
-
-Index   *indexBuffer;
-Vertex  *vertexBuffer;
+Index *indexBuffer;
+Vertex *vertexBuffer;
 Uniform *uniformBuffer;
 
-size_t assetCount;
-Asset *assets;
+uint32_t materialCount;
+uint32_t drawableCount;
 
-Primitive **primitiveReferences;
+const uint32_t materialCountLimit = 128;
+const uint32_t drawableCountLimit = 128;
 
-size_t drawableCount;
+Material *materials;
 Drawable *drawables;
 
-void processAttribute(Primitive *primitive, cgltf_attribute *attribute, mat4 transform) {
-    debug("\t\t\t\tAttribute: %s", attribute->name);
+void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
+    assert(drawableCount < drawableCountLimit);
 
-    cgltf_accessor *accessor = attribute->data;
-    cgltf_buffer_view *view = accessor->buffer_view;
-    cgltf_buffer *buffer = view->buffer;
+    Drawable *drawable = &drawables[drawableCount];
 
-    void *data = buffer->data + view->offset;
+    debug("\t\t\tDrawable Count: %d", drawableCount);
+    debug("\t\t\tPrimitive Type: %d", primitive->type);
 
-    if(primitive->vertexCount == 0) {
-        primitive->vertexCount = accessor->count;
-        primitive->vertices = malloc(accessor->count * sizeof(Vertex));
-
-        vertexCount += accessor->count;
+    for(cgltf_size materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        if(strncmp(primitive->material->name, materials[materialIndex].name, UINT8_MAX) == 0) {
+            drawable->descriptorReference = &materials[materialIndex].descriptor;
+            debug("\t\t\tMaterial matched: %s", primitive->material->name);
+            break;
+        }
     }
 
-    assert(primitive->vertexCount == accessor->count);
-    debug("\t\t\t\t\t%lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
+    assert(drawable->descriptorReference != NULL);
 
-    if(attribute->type == cgltf_attribute_type_position) {
-        vec3 *positions = data; // TODO: Evaluate other possible data types
-
-        for(cgltf_size positionIndex = 0; positionIndex < accessor->count; positionIndex++) {
-            glm_mat4_mulv3(transform, positions[positionIndex], 1.0f, primitive->vertices[positionIndex].position);
-        }
-    } else if(attribute->type == cgltf_attribute_type_texcoord) {
-        vec2 *texcoords = data;
-
-        for(cgltf_size texcoordIndex = 0; texcoordIndex < accessor->count; texcoordIndex++) {
-            memcpy(primitive->vertices[texcoordIndex].texcoord, texcoords[texcoordIndex], sizeof(vec2));
-        }
-    } //TODO: Load normal and tangent too
-}
-
-Primitive loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
-    debug("\t\t\tPrimitive Type: %d", primitiveData->type);
-
-    cgltf_accessor *accessor = primitiveData->indices;
+    cgltf_accessor *accessor = primitive->indices;
     cgltf_buffer_view *view = accessor->buffer_view;
     cgltf_buffer *buffer = view->buffer;
 
     void *data = buffer->data + view->offset;
 
-    Primitive primitive = {
-        .indexCount = accessor->count,
-        .indices = malloc(accessor->count * sizeof(Index)),
-        .vertexCount = 0,
-        .vertices = NULL
-    };
+    drawable->indexBegin   = indexCount;
+    drawable->indexCount   = accessor->count;
+    drawable->vertexOffset = vertexCount;
 
-    strncpy(primitive.materialName, primitiveData->material->name, UINT8_MAX);
-    debug("\t\t\t\tMaterial name: %s", primitive.materialName);
-
-    indexCount += accessor->count;
-    debug("\t\t\t\t%lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
+    debug("\t\t\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
     if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
         for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
-            primitive.indices[dataIndex] = ((uint16_t *) data)[dataIndex];
+            indexBuffer[indexCount + dataIndex] = ((uint16_t *) data)[dataIndex];
         }
     } else if(accessor->component_type == cgltf_component_type_r_32u) {
-        memcpy(primitive.indices, data, view->size);
+        memcpy(&indexBuffer[indexCount], data, view->size);
     } // TODO: Can it be something else?
 
-    for(cgltf_size attributeIndex = 0; attributeIndex < primitiveData->attributes_count; attributeIndex++) {
-        cgltf_attribute *attribute = &primitiveData->attributes[attributeIndex];
-        processAttribute(&primitive, attribute, transform);
+    cgltf_size primitiveVertexCount = 0;
+
+    for(cgltf_size attributeIndex = 0; attributeIndex < primitive->attributes_count; attributeIndex++) {
+        cgltf_attribute *attribute = &primitive->attributes[attributeIndex];
+
+        cgltf_accessor *attributeAccessor = attribute->data;
+        cgltf_buffer_view *attributeView = attributeAccessor->buffer_view;
+        cgltf_buffer *attributeBuffer = attributeView->buffer;
+
+        void *attributeData = attributeBuffer->data + attributeView->offset;
+
+        if(primitiveVertexCount == 0) {
+            primitiveVertexCount = attributeAccessor->count;
+        }
+
+        assert(primitiveVertexCount == attributeAccessor->count);
+
+        debug("\t\t\tAttribute %s: %lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
+
+        // TODO: Check component data types too
+        if(attribute->type == cgltf_attribute_type_position) {
+            vec3 *positions = attributeData;
+
+            for(cgltf_size positionIndex = 0; positionIndex < attributeAccessor->count; positionIndex++) {
+                vec3 *position = &vertexBuffer[vertexCount + positionIndex].position;
+
+                glm_mat4_mulv3(transform, positions[positionIndex], 1.0f, *position);
+
+                float scalar   = (*position)[1];
+                (*position)[1] = (*position)[2];
+                (*position)[2] = scalar;
+            }
+        } else if(attribute->type == cgltf_attribute_type_texcoord) {
+            vec2 *texcoords = attributeData;
+
+            for(cgltf_size texcoordIndex = 0; texcoordIndex < attributeAccessor->count; texcoordIndex++) {
+                memcpy(vertexBuffer[vertexCount + texcoordIndex].texcoord, texcoords[texcoordIndex], sizeof(vec2));
+            }
+        } //TODO: Load normal and tangent too
     }
+
+    debug("\t\t\tIndex begin:   %lu", drawable->indexBegin);
+    debug("\t\t\tIndex count:   %lu", drawable->indexCount);
+    debug("\t\t\tVertex offset: %lu", drawable->vertexOffset);
+
+    indexCount  += accessor->count;
+    vertexCount += primitiveVertexCount;
+
+    indexBufferSize  += accessor->count      * sizeof(Index);
+    vertexBufferSize += primitiveVertexCount * sizeof(Vertex);
 
     drawableCount++;
-
-    return primitive;
 }
 
-Mesh loadMesh(cgltf_mesh *meshData, mat4 transform) {
-    debug("\t\tMesh: %s", meshData->name);
+void loadMesh(cgltf_mesh *mesh, mat4 transform) {
+    debug("\t\tMesh: %s", mesh->name);
 
-    Mesh mesh = {
-        .primitiveCount = meshData->primitives_count,
-        .primitives = malloc(meshData->primitives_count * sizeof(Primitive))
-    };
+    for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
+        loadPrimitive(&mesh->primitives[primitiveIndex], transform);
+    }
+}
 
-    for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
-        cgltf_primitive *primitive = &meshData->primitives[primitiveIndex];
-        mesh.primitives[primitiveIndex] = loadPrimitive(primitive, transform);
+void loadNode(cgltf_node *node) {
+    debug("\tNode: %s", node->name);
+
+    mat4 transform;
+    cgltf_node_transform_world(node, (cgltf_float *)transform);
+
+    if(node->mesh) {
+        loadMesh(node->mesh, transform);
     }
 
-    return mesh;
+    for(cgltf_size childIndex = 0; childIndex < node->children_count; childIndex++) {
+        loadNode(node->children[childIndex]);
+    }
 }
 
-Node loadNode(cgltf_node *nodeData) {
-    debug("\tNode: %s", nodeData->name);
+void loadScene(cgltf_scene *scene) {
+    debug("Scene: %s", scene->name);
 
-    Node node = {
-        // TODO: Initialize missing members
-        .childCount = nodeData->children_count,
-        .children = malloc(nodeData->children_count * sizeof(Node))
-    };
+    for (cgltf_size nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
+        loadNode(scene->nodes[nodeIndex]);
+    }
+}
 
-    cgltf_node_transform_world(nodeData, (cgltf_float *)node.transform);
+void loadTexture(const char *path, TextureInfo *outTextureInfo) {
+    debug("\tImage Path: %s", path);
+    void *imageData = stbi_load(path, (int32_t *)&outTextureInfo->extent.width, (int32_t *)&outTextureInfo->extent.height, (int32_t *)&outTextureInfo->extent.depth, STBI_rgb_alpha);
+    outTextureInfo->extent.depth = STBI_rgb_alpha;
+    outTextureInfo->offset = textureBufferSize;
+    outTextureInfo->size = outTextureInfo->extent.width * outTextureInfo->extent.height * outTextureInfo->extent.depth;
 
-    if(nodeData->mesh) {
-        node.hasMesh = 1;
-        node.mesh = loadMesh(nodeData->mesh, node.transform);
+    debug("\t\tOffset: %lu", outTextureInfo->offset);
+    debug("\t\tSize:   %lu", outTextureInfo->size);
+    memcpy(textureBuffer + outTextureInfo->offset, imageData, outTextureInfo->size);
+
+    textureBufferSize += outTextureInfo->size;
+    stbi_image_free(imageData);
+}
+
+void loadMaterial(cgltf_material *materialData) {
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
+            return;
+        }
     }
 
-    for(cgltf_size childIndex = 0; childIndex < nodeData->children_count; childIndex++) {
-        cgltf_node *childNode = nodeData->children[childIndex];
-        node.children[childIndex] = loadNode(childNode);
-    }
+    assert(materialCount < materialCountLimit);
+    Material *material = &materials[materialCount];
 
-    return node;
-}
-
-Scene loadScene(cgltf_scene *sceneData) {
-    debug("Scene: %s", sceneData->name);
-
-    Scene scene = {
-        .nodeCount = sceneData->nodes_count,
-        .nodes = malloc(sceneData->nodes_count * sizeof(Node))
-    };
-
-    for (cgltf_size nodeIndex = 0; nodeIndex < sceneData->nodes_count; nodeIndex++) {
-        cgltf_node *node = sceneData->nodes[nodeIndex];
-        scene.nodes[nodeIndex] = loadNode(node);
-    }
-
-    return scene;
-}
-
-void loadTexture(const char *path, ProtoTexture *outTexture) {
-    debug("\t%s", path);
-    outTexture->offset = textureBufferSize;
-    outTexture->data.content = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
-    debug("\t\tOriginal channels: %d", outTexture->extent.depth);
-    outTexture->extent.depth = STBI_rgb_alpha;
-    outTexture->data.size = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
-    debug("\t\tOffset: %d", textureBufferSize);
-    debug("\t\tSize: %d", outTexture->data.size);
-    textureBufferSize += outTexture->data.size;
-}
-
-void loadMaterial(const char *assetsDirectory, cgltf_material *materialData, ProtoMaterial *outMaterial) {
     debug("Material Name: %s", materialData->name);
-    strncpy(outMaterial->name, materialData->name, UINT8_MAX);
+    strncpy(material->name, materialData->name, UINT8_MAX);
 
     if(materialData->has_pbr_metallic_roughness) {
         char textureFullPath[PATH_MAX];
-        snprintf(textureFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri);
+        makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "assets", textureFullPath);
 
-        loadTexture(textureFullPath, &outMaterial->baseColor);
+        loadTexture(textureFullPath, &material->baseColorInfo);
     }
-    /*
-    char normalFullPath[PATH_MAX];
-    snprintf(normalFullPath, PATH_MAX, "%s/%s", assetsDirectory, materialData->normal_texture.texture->image->uri);
 
-    loadTexture(normalFullPath, &outMaterial->normal);
-    */
     materialCount++;
 }
 
-Asset loadAsset(const char *assetName) {
-    char assetsDirectory[PATH_MAX];
-    makeFullPath("assets", assetsDirectory);
-
+void loadAsset(const char *assetName) {
     char fullPath[PATH_MAX];
-    snprintf(fullPath, PATH_MAX, "%s/%s", assetsDirectory, assetName);
+    makeFullPath(assetName, "assets", fullPath);
 
     cgltf_data *data = NULL;
     cgltf_options assetOptions = {};
@@ -240,138 +235,18 @@ Asset loadAsset(const char *assetName) {
         assert(result == cgltf_result_success);
     }
 
-    Asset asset = {
-        .materialCount = data->materials_count,
-        .materials = malloc(data->materials_count * sizeof(ProtoMaterial)),
-        .sceneCount = data->scenes_count,
-        .scenes = malloc(data->scenes_count * sizeof(Scene))
-    };
-
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        loadMaterial(assetsDirectory, &data->materials[materialIndex], &asset.materials[materialIndex]);
+        loadMaterial(&data->materials[materialIndex]);
     }
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
-        cgltf_scene *scene = &data->scenes[sceneIndex];
-        asset.scenes[sceneIndex] = loadScene(scene);
+        loadScene(&data->scenes[sceneIndex]);
     }
 
     cgltf_free(data);
-
-    return asset;
 }
 
-void movePrimitive(Primitive *primitive) {
-    static size_t  drawableIndex = 0;
-    static uint32_t indexOffset  = 0;
-    static uint32_t vertexOffset = 0;
-
-    debug("indexOffset:  %d", indexOffset);
-    debug("vertexOffset: %d", vertexOffset);
-
-    primitiveReferences[drawableIndex] = primitive;
-
-    drawables[drawableIndex].indexBegin   = indexOffset;
-    drawables[drawableIndex].indexCount   = primitive->indexCount;
-    drawables[drawableIndex].vertexOffset = vertexOffset;
-    //drawables[drawableIndex].descriptor = primitive->material->descriptor;
-
-    // TODO: Can it be memcpy'ed now?
-    for(uint32_t indexIndex = 0; indexIndex < primitive->indexCount; indexIndex++) {
-        indexBuffer[indexOffset + indexIndex] = primitive->indices[indexIndex];
-    }
-
-    // TODO: Yeah...
-    for(uint32_t vertexIndex = 0; vertexIndex < primitive->vertexCount; vertexIndex++) {
-        vertexBuffer[vertexOffset + vertexIndex].position[0] = primitive->vertices[vertexIndex].position[0];
-        vertexBuffer[vertexOffset + vertexIndex].position[1] = primitive->vertices[vertexIndex].position[2];
-        vertexBuffer[vertexOffset + vertexIndex].position[2] = primitive->vertices[vertexIndex].position[1];
-
-        vertexBuffer[vertexOffset + vertexIndex].texcoord[0] = primitive->vertices[vertexIndex].texcoord[0];
-        vertexBuffer[vertexOffset + vertexIndex].texcoord[1] = primitive->vertices[vertexIndex].texcoord[1];
-    }
-
-    //memcpy(vertexBuffer + vertexOffset, primitive->vertices, primitive->vertexCount * sizeof(Vertex));
-
-    drawableIndex++;
-    indexOffset  += primitive->indexCount;
-    vertexOffset += primitive->vertexCount;
-
-    free(primitive->vertices);
-    free(primitive->indices);
-}
-
-void moveMesh(Mesh *mesh) {
-    debug("Copy %d primitives", mesh->primitiveCount);
-
-    for(size_t primitiveIndex = 0; primitiveIndex < mesh->primitiveCount; primitiveIndex++) {
-        movePrimitive(&mesh->primitives[primitiveIndex]);
-    }
-
-    free(mesh->primitives);
-}
-
-void moveNode(Node *node) {
-    // TODO: Apply transformation
-
-    if(node->hasMesh) {
-        debug("Copy a mesh");
-        moveMesh(&node->mesh);
-    }
-
-    debug("Copy %d child nodes", node->childCount);
-
-    for(size_t childIndex = 0; childIndex < node->childCount; childIndex++) {
-        moveNode(&node->children[childIndex]);
-    }
-
-    free(node->children);
-}
-
-void moveScene(Scene *scene) { // TODO: Can it be merged with node?
-    debug("Copy %d nodes", scene->nodeCount);
-
-    for(size_t nodeIndex = 0; nodeIndex < scene->nodeCount; nodeIndex++) {
-        moveNode(&scene->nodes[nodeIndex]);
-    }
-
-    free(scene->nodes);
-}
-
-void moveTexture(ProtoTexture *texture) {
-    memcpy(textureBuffer + texture->offset, texture->data.content, texture->data.size);
-
-    freeData(&texture->data);
-}
-
-void moveMaterial(ProtoMaterial *material) {
-    static size_t materialIndex = 0;
-
-    protoMaterialReferences[materialIndex] = material;
-
-    //moveTexture(&material->normal);
-    moveTexture(&material->baseColor);
-
-    materialIndex++;
-}
-
-void moveAsset(Asset *asset) {
-    debug("Copy %d scenes", asset->sceneCount);
-
-    for(size_t materialIndex = 0; materialIndex < asset->materialCount; materialIndex++) {
-        moveMaterial(&asset->materials[materialIndex]);
-    }
-
-    free(asset->materials);
-
-    for(size_t sceneIndex = 0; sceneIndex < asset->sceneCount; sceneIndex++) {
-        moveScene(&asset->scenes[sceneIndex]);
-    }
-
-    free(asset->scenes);
-}
-
-void createDescriptor(Material *outMaterial) {
+void createDescriptor(Material *material) {
     VkDescriptorSetAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = NULL,
@@ -380,7 +255,7 @@ void createDescriptor(Material *outMaterial) {
         .pSetLayouts = &descriptorSetLayout
     };
 
-    vkAllocateDescriptorSets(device, &allocateInfo, &outMaterial->descriptor);
+    vkAllocateDescriptorSets(device, &allocateInfo, &material->descriptor);
 
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = sharedBuffer.buffer,
@@ -390,15 +265,15 @@ void createDescriptor(Material *outMaterial) {
 
     VkDescriptorImageInfo imageInfo = {
         .sampler = sampler,
-        .imageView = outMaterial->baseColor.view,
-        .imageLayout = outMaterial->baseColor.layout
+        .imageView = material->baseColor.view,
+        .imageLayout = material->baseColor.layout
     };
 
     VkWriteDescriptorSet descriptorWrites[] = {
         {
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .pNext = NULL,
-            .dstSet = outMaterial->descriptor,
+            .dstSet = material->descriptor,
             .dstBinding = 0,
             .dstArrayElement = 0,
             .descriptorCount = 1,
@@ -409,7 +284,7 @@ void createDescriptor(Material *outMaterial) {
         }, {
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .pNext = NULL,
-            .dstSet = outMaterial->descriptor,
+            .dstSet = material->descriptor,
             .dstBinding = 1,
             .dstArrayElement = 0,
             .descriptorCount = 1,
@@ -421,76 +296,45 @@ void createDescriptor(Material *outMaterial) {
     };
 
     vkUpdateDescriptorSets(device, sizeof(descriptorWrites) / sizeof(VkWriteDescriptorSet), descriptorWrites, 0, NULL);
+
+    debug("Descriptor created for %s: %p", material->name, material->descriptor);
 }
 
-void createTexture(ProtoTexture *protoTexture, Image *outTexture) {
+void createTexture(TextureInfo *textureInfo, Image *outTexture) {
     // TODO: Check format, flags and usage
-    createImage(outTexture, protoTexture->extent.width, protoTexture->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    createImage(outTexture, textureInfo->extent.width, textureInfo->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     bindImageMemory(outTexture, &deviceMemory);
     createImageView(outTexture, VK_IMAGE_ASPECT_COLOR_BIT);
     transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    copyBufferToImage(&deviceBuffer, outTexture, protoTexture->offset);
+    copyBufferToImage(&deviceBuffer, outTexture, textureInfo->offset);
     transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    // TODO: Free at the end
 }
 
-// TODO: Create descriptors
-void createMaterial(ProtoMaterial *protoMaterial, Material *outMaterial) {
-    strncpy(outMaterial->name, protoMaterial->name, UINT8_MAX);
+void createMaterial(Material *material) {
+    createTexture(&material->baseColorInfo, &material->baseColor);
 
-    //createTexture(&protoMaterial->normal,    &outMaterial->normal   );
-    createTexture(&protoMaterial->baseColor, &outMaterial->baseColor);
-
-    createDescriptor(outMaterial);
-
-    for(size_t drawableIndex = 0; drawableIndex < drawableCount; drawableIndex++) {
-        debug("%s %s", primitiveReferences[drawableIndex]->materialName, outMaterial->name);
-
-        if(strncmp(primitiveReferences[drawableIndex]->materialName, outMaterial->name, UINT8_MAX) == 0) {
-            drawables[drawableIndex].descriptorReference = &outMaterial->descriptor;
-            debug("Matched material!");
-            break;
-        }
-    }
+    createDescriptor(material);
 }
 
 void loadAssets() {
-    drawableCount = 0;
-
-    materialCount = 0;
-    textureBufferSize = 0;
-
     indexCount  = 0;
     vertexCount = 0;
 
-    indexBufferSize  = 0;
-    vertexBufferSize = 0;
+    indexBufferSize   = 0;
+    vertexBufferSize  = 0;
+    textureBufferSize = 0;
 
-    uniformSize = 0;
+    textureBuffer = malloc(textureBufferSizeLimit);
+    indexBuffer   = malloc(indexBufferSizeLimit);
+    vertexBuffer  = malloc(vertexBufferSizeLimit);
 
-    assetCount = 1;
-    assets = malloc(assetCount * sizeof(Asset));
+    drawableCount = 0;
+    materialCount = 0;
 
-    assets[0] = loadAsset("Lantern.gltf");
-}
+    materials = malloc(materialCountLimit * sizeof(Material));
+    drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-void moveAssets() {
-    indexBufferSize  = indexCount  * sizeof(Index);
-    vertexBufferSize = vertexCount * sizeof(Vertex);
-
-    indexBuffer  = malloc(indexBufferSize);
-    vertexBuffer = malloc(vertexBufferSize);
-
-    textureBuffer = malloc(textureBufferSize);
-    materials = malloc(materialCount * sizeof(Material));
-    protoMaterialReferences = malloc(materialCount * sizeof(ProtoMaterial *));
-
-    primitiveReferences = malloc(drawableCount * sizeof(Primitive *));
-    drawables = malloc(drawableCount * sizeof(Drawable));
-
-    for(size_t assetIndex = 0; assetIndex < assetCount; assetIndex++) {
-        moveAsset(&assets[assetIndex]);
-    }
+    loadAsset("Lantern.gltf");
 
     mempcpy(mappedSharedMemory, textureBuffer, textureBufferSize);
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, textureBufferSize);
@@ -498,12 +342,8 @@ void moveAssets() {
     free(textureBuffer);
 
     for(size_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        createMaterial(protoMaterialReferences[materialIndex], &materials[materialIndex]);
+        createMaterial(&materials[materialIndex]);
     }
-
-    free(assets);
-    free(primitiveReferences);
-    free(protoMaterialReferences);
 
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
@@ -515,4 +355,16 @@ void moveAssets() {
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
+}
+
+void freeAssets() {
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        destroyImageView(&materials[materialIndex].baseColor);
+        destroyImage(&materials[materialIndex].baseColor);
+    }
+
+    free(materials);
+    free(drawables);
+
+    debug("Assets freed");
 }

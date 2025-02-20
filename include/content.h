@@ -6,18 +6,6 @@
 
 // TODO: Use data oriented design for content instead of object oriented
 
-struct protoTexture {
-    VkDeviceSize offset;
-    VkExtent3D extent;
-    Data data;
-} typedef ProtoTexture;
-
-struct protoMaterial {
-    char name[UINT8_MAX];
-//    ProtoTexture normal;
-    ProtoTexture baseColor;
-} typedef ProtoMaterial;
-
 typedef uint32_t Index;
 
 struct vertex {
@@ -25,11 +13,23 @@ struct vertex {
     vec2 texcoord;
 } typedef Vertex;
 
+struct uniform {
+    mat4 view;
+    mat4 proj;
+    mat4 camera;
+} typedef Uniform;
+
+struct textureInfo {
+    VkExtent3D extent;
+    VkDeviceSize offset;
+    VkDeviceSize size;
+} typedef TextureInfo;
+
 struct material {
     char name[UINT8_MAX];
-    VkDescriptorSet descriptor;
-//    Image normal;
+    TextureInfo baseColorInfo;
     Image baseColor;
+    VkDescriptorSet descriptor;
 } typedef Material;
 
 struct drawable {
@@ -39,44 +39,5 @@ struct drawable {
     VkDescriptorSet *descriptorReference;
 } typedef Drawable;
 
-struct primitive {
-    char materialName[UINT8_MAX];
-    cgltf_size indexCount;
-    Index *indices;
-    cgltf_size vertexCount;
-    Vertex *vertices;
-} typedef Primitive;
-
-struct mesh {
-    cgltf_size primitiveCount;
-    Primitive *primitives;
-} typedef Mesh;
-
-struct node {
-    mat4 transform;
-    cgltf_bool hasMesh;
-    Mesh mesh;
-    cgltf_size childCount;
-    struct node *children;
-} typedef Node;
-
-struct scene {
-    cgltf_size nodeCount;
-    Node *nodes;
-} typedef Scene;
-
-struct asset {
-    cgltf_size materialCount;
-    ProtoMaterial *materials;
-    cgltf_size sceneCount;
-    Scene *scenes;
-} typedef Asset;
-
-struct uniform {
-    mat4 view;
-    mat4 proj;
-    mat4 camera;
-} typedef Uniform;
-
 void loadAssets();
-void moveAssets();
+void freeAssets();

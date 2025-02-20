@@ -37,9 +37,8 @@ void initialize(int argc, char *argv[]) {
     allocateMemories();
     createBuffers();
     createLayouts();
-    loadAssets();
     createDescriptorPool();
-    moveAssets();
+    loadAssets();
     createModules();
     createSwapchain();
     createFramebufferSet();
@@ -91,6 +90,7 @@ void quit() {
     destroyFramebufferSet();
     destroySwapchain();
     destroyBuffers();
+    freeAssets();
     freeMemories();
     destroySurface();
     clearQueues();
