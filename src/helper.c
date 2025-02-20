@@ -46,7 +46,7 @@ float radians(float degrees) {
 Data wrapData(size_t size, char *content) {
     Data data = {
         .size = size,
-        .string = content
+        .content = content
     };
 
     return data;

@@ -24,7 +24,7 @@ Data readFile(const char *path, FileType type) {
     fclose(file);
 
     if(type == FILE_TYPE_TEXT) {
-        (data.content)[data.size - 1] = '\0';
+        ((char *)data.content)[data.size - 1] = '\0';
     }
 
     return data;

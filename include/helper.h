@@ -14,10 +14,7 @@
 
 struct data {
     size_t size;
-    union {
-        char *string;
-        uint8_t *content;
-    };
+    void *content;
 } typedef Data;
 
 void debug(const char *fmt, ...);

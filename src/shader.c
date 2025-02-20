@@ -30,7 +30,7 @@ ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind s
 void compileShaderCode(ShaderCode *shaderCode) {
     assert(shaderCode->type == FILE_TYPE_TEXT);
 
-    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data.string, shaderCode->data.size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
+    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data.content, shaderCode->data.size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
     shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
 
     if(status != shaderc_compilation_status_success) {
