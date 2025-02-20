@@ -10,7 +10,7 @@ enum fileType {
 } typedef FileType;
 
 
-void makeFullPath(const char relativePath[], char outFullPath[]);
+void makeFullPath(const char *filename, const char *subdirectory, char outFullPath[]);
 
 // WARN: Free the output data!
 Data readFile(const char *path, FileType type);

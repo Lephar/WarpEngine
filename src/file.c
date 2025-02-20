@@ -4,13 +4,17 @@
 
 extern char rootPath[];
 
-void makeFullPath(const char relativePath[], char outFullPath[]) {
-    snprintf(outFullPath, PATH_MAX, "%s/%s", rootPath, relativePath);
+void makeFullPath(const char *filename, const char *subdirectory, char outFullPath[]) {
+    if(subdirectory == NULL || strncmp(subdirectory, "", PATH_MAX) == 0) {
+        snprintf(outFullPath, PATH_MAX, "%s/%s", rootPath, filename);
+    } else {
+        snprintf(outFullPath, PATH_MAX, "%s/%s/%s", rootPath, subdirectory, filename);
+    }
 }
 
 Data readFile(const char *path, FileType type) {
     char fullPath[PATH_MAX];
-    makeFullPath(path, fullPath);
+    makeFullPath(path, NULL, fullPath);
 
     FILE *file = fopen(fullPath, type == FILE_TYPE_BINARY ? "rb" : "r");
     fseek(file, 0, SEEK_END);
