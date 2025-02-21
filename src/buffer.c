@@ -71,6 +71,13 @@ void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, 
     endSingleTransferCommand(commandBuffer);
 }
 
+void stagingCopyHostToDevice(void *source, uint64_t size, Buffer *destination, VkDeviceSize offset) {
+    (void) source;
+    (void) size;
+    (void) destination;
+    (void) offset;
+}
+
 // WARN: Risk of unmapping the whole memory used by another image or buffer
 void unmapBufferMemory(Buffer *buffer) {
     vkUnmapMemory(device, buffer->memory->memory);
