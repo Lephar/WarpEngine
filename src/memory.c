@@ -87,7 +87,7 @@ void allocateMemories() {
     debug("Device local memory:");
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
-    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 1L << 30);
+    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 3L << 30);
     destroyBuffer(&temporaryBuffer);
     destroyImage(&temporaryImage);
 
@@ -103,7 +103,7 @@ void allocateMemories() {
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
     allocateMemory(&sharedMemory, typeFilter,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 1L << 30);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 2L << 30);
     destroyBuffer(&temporaryBuffer);
 
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);

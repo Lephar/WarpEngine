@@ -25,9 +25,9 @@ uint64_t indexBufferSize;
 uint64_t vertexBufferSize;
 uint64_t textureBufferSize;
 
-const uint64_t textureBufferSizeLimit = 1 << 30;
-const uint64_t indexBufferSizeLimit   = 1 << 30;
-const uint64_t vertexBufferSizeLimit  = 1 << 30;
+const uint64_t textureBufferSizeLimit = 3L << 30;
+const uint64_t indexBufferSizeLimit   = 1L << 30;
+const uint64_t vertexBufferSizeLimit  = 1L << 30;
 
 void *textureBuffer;
 
@@ -302,7 +302,7 @@ void createDescriptor(Material *material) {
 
 void createTexture(TextureInfo *textureInfo, Image *outTexture) {
     // TODO: Check format, flags and usage
-    createImage(outTexture, textureInfo->extent.width, textureInfo->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    createImage(outTexture, textureInfo->extent.width, textureInfo->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     bindImageMemory(outTexture, &deviceMemory);
     createImageView(outTexture, VK_IMAGE_ASPECT_COLOR_BIT);
     transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
@@ -325,10 +325,11 @@ void loadAssets() {
     textureBufferSize = 0;
 
     textureBuffer = malloc(textureBufferSizeLimit);
-    assert(textureBuffer);
     indexBuffer   = malloc(indexBufferSizeLimit);
-    assert(indexBuffer);
     vertexBuffer  = malloc(vertexBufferSizeLimit);
+
+    assert(textureBuffer);
+    assert(indexBuffer);
     assert(vertexBuffer);
 
     drawableCount = 0;
