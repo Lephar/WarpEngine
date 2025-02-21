@@ -171,7 +171,8 @@ void loadTexture(const char *path, Image *outTexture) {
     outTexture->extent.depth = STBI_rgb_alpha;
     VkDeviceSize size = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
 
-    debug("\t\tSize:   %lu", size);
+    debug("\t\tImage Size:    %lu", size);
+    debug("\t\tMemory Offset: %lu", deviceMemory.offset);
     memcpy(mappedSharedMemory, imageData, size);
 
     stbi_image_free(imageData);
