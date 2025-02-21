@@ -55,7 +55,7 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
     for(cgltf_size materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         if(strncmp(primitive->material->name, materials[materialIndex].name, UINT8_MAX) == 0) {
             drawable->descriptorReference = &materials[materialIndex].descriptor;
-            debug("\t\t\tMaterial matched: %s", primitive->material->name);
+            debug("\t\t\t\tMaterial matched: %s", primitive->material->name);
             break;
         }
     }
@@ -72,7 +72,7 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
     drawable->indexCount   = accessor->count;
     drawable->vertexOffset = vertexCount;
 
-    debug("\t\t\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
+    debug("\t\t\t\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
     if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
         for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
@@ -99,7 +99,7 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
 
         assert(primitiveVertexCount == attributeAccessor->count);
 
-        debug("\t\t\tAttribute %s: %lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
+        debug("\t\t\t\tAttribute %s: %lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
 
         // TODO: Check component data types too
         if(attribute->type == cgltf_attribute_type_position) {
@@ -123,9 +123,9 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
         } //TODO: Load normal and tangent too
     }
 
-    debug("\t\t\tIndex begin:   %lu", drawable->indexBegin);
-    debug("\t\t\tIndex count:   %lu", drawable->indexCount);
-    debug("\t\t\tVertex offset: %lu", drawable->vertexOffset);
+    debug("\t\t\t\tIndex begin:   %lu", drawable->indexBegin);
+    debug("\t\t\t\tIndex count:   %lu", drawable->indexCount);
+    debug("\t\t\t\tVertex offset: %lu", drawable->vertexOffset);
 
     indexCount  += accessor->count;
     vertexCount += primitiveVertexCount;
@@ -325,8 +325,11 @@ void loadAssets() {
     textureBufferSize = 0;
 
     textureBuffer = malloc(textureBufferSizeLimit);
+    assert(textureBuffer);
     indexBuffer   = malloc(indexBufferSizeLimit);
+    assert(indexBuffer);
     vertexBuffer  = malloc(vertexBufferSizeLimit);
+    assert(vertexBuffer);
 
     drawableCount = 0;
     materialCount = 0;
@@ -334,16 +337,19 @@ void loadAssets() {
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-    loadAsset("Lantern.gltf");
+    loadAsset("Scene.gltf");
+    debug("Assets successfully loaded into host memory");
 
     mempcpy(mappedSharedMemory, textureBuffer, textureBufferSize);
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, textureBufferSize);
 
     free(textureBuffer);
+    debug("Textures copied into device memory");
 
     for(size_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         createMaterial(&materials[materialIndex]);
     }
+    debug("Images created in device memory");
 
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
@@ -351,10 +357,12 @@ void loadAssets() {
 
     free(vertexBuffer);
     free(indexBuffer);
+    debug("Index and vertex data copied into device memory");
 
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
+    debug("Assets successfully loaded into device memory");
 }
 
 void freeAssets() {
