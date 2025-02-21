@@ -34,12 +34,12 @@ void initialize(int argc, char *argv[]) {
     createDevice();
     getQueues();
     createSurface();
-    allocateMemories();
-    createBuffers();
     createLayouts();
     createDescriptorPool();
-    loadAssets();
     createModules();
+    allocateMemories();
+    createBuffers();
+    loadAssets();
     createSwapchain();
     createFramebufferSet();
 
