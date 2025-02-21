@@ -105,10 +105,12 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
                 vec3 *position = &vertexBuffer[vertexCount + positionIndex].position;
 
                 glm_mat4_mulv3(transform, positions[positionIndex], 1.0f, *position);
-
+                (*position)[1] *= -1;
+                /*
                 float scalar   = (*position)[1];
                 (*position)[1] = (*position)[2];
                 (*position)[2] = scalar;
+                */
             }
         } else if(attribute->type == cgltf_attribute_type_texcoord) {
             vec2 *texcoords = attributeData;
@@ -255,7 +257,7 @@ void loadMaterial(cgltf_material *materialData) {
         makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "assets", textureFullPath);
 
         loadTexture(textureFullPath, &material->baseColor);
-    createDescriptor(material);
+        createDescriptor(material);
     }
 
     materialCount++;
