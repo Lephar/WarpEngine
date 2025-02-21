@@ -19,15 +19,8 @@ struct uniform {
     mat4 camera;
 } typedef Uniform;
 
-struct textureInfo {
-    VkExtent3D extent;
-    VkDeviceSize offset;
-    VkDeviceSize size;
-} typedef TextureInfo;
-
 struct material {
     char name[UINT8_MAX];
-    TextureInfo baseColorInfo;
     Image baseColor;
     VkDescriptorSet descriptor;
 } typedef Material;

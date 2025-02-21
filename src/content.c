@@ -23,13 +23,9 @@ uint64_t indexCount;
 uint64_t vertexCount;
 uint64_t indexBufferSize;
 uint64_t vertexBufferSize;
-uint64_t textureBufferSize;
 
-const uint64_t textureBufferSizeLimit = 3L << 30;
 const uint64_t indexBufferSizeLimit   = 1L << 30;
 const uint64_t vertexBufferSizeLimit  = 1L << 30;
-
-void *textureBuffer;
 
 Index *indexBuffer;
 Vertex *vertexBuffer;
@@ -167,83 +163,25 @@ void loadScene(cgltf_scene *scene) {
     }
 }
 
-void loadTexture(const char *path, TextureInfo *outTextureInfo) {
+void loadTexture(const char *path, Image *outTexture) {
     debug("\tImage Path: %s", path);
-    void *imageData = stbi_load(path, (int32_t *)&outTextureInfo->extent.width, (int32_t *)&outTextureInfo->extent.height, (int32_t *)&outTextureInfo->extent.depth, STBI_rgb_alpha);
-    outTextureInfo->extent.depth = STBI_rgb_alpha;
-    outTextureInfo->offset = textureBufferSize;
-    outTextureInfo->size = outTextureInfo->extent.width * outTextureInfo->extent.height * outTextureInfo->extent.depth;
+    void *imageData = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
+    outTexture->extent.depth = STBI_rgb_alpha;
+    VkDeviceSize size = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
 
-    debug("\t\tOffset: %lu", outTextureInfo->offset);
-    debug("\t\tSize:   %lu", outTextureInfo->size);
-    memcpy(textureBuffer + outTextureInfo->offset, imageData, outTextureInfo->size);
+    debug("\t\tSize:   %lu", size);
+    memcpy(mappedSharedMemory, imageData, size);
 
-    textureBufferSize += outTextureInfo->size;
     stbi_image_free(imageData);
-}
 
-void loadMaterial(cgltf_material *materialData) {
-    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
-            return;
-        }
-    }
-
-    assert(materialCount < materialCountLimit);
-    Material *material = &materials[materialCount];
-
-    debug("Material Name: %s", materialData->name);
-    strncpy(material->name, materialData->name, UINT8_MAX);
-
-    if(materialData->has_pbr_metallic_roughness) {
-        char textureFullPath[PATH_MAX];
-        makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "assets", textureFullPath);
-
-        loadTexture(textureFullPath, &material->baseColorInfo);
-    }
-
-    materialCount++;
-}
-
-void loadAsset(const char *assetName) {
-    char fullPath[PATH_MAX];
-    makeFullPath(assetName, "assets", fullPath);
-
-    cgltf_data *data = NULL;
-    cgltf_options assetOptions = {};
-
-    cgltf_result result;
-    result = cgltf_parse_file(&assetOptions, fullPath, &data);
-
-    if(result != cgltf_result_success) {
-        debug("Failed to read %s: %d", result);
-        assert(result == cgltf_result_success);
-    }
-
-    result = cgltf_validate(data);
-
-    if(result != cgltf_result_success) {
-        debug("Failed to validate %s: %d", result);
-        assert(result == cgltf_result_success);
-    }
-
-    result = cgltf_load_buffers(&assetOptions, data, fullPath);
-
-    if(result != cgltf_result_success) {
-        debug("Failed to load buffers %s: %d", result);
-        cgltf_free(data);
-        assert(result == cgltf_result_success);
-    }
-
-    for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        loadMaterial(&data->materials[materialIndex]);
-    }
-
-    for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
-        loadScene(&data->scenes[sceneIndex]);
-    }
-
-    cgltf_free(data);
+    // TODO: Check format, flags and usage
+    createImage(outTexture, outTexture->extent.width, outTexture->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    bindImageMemory(outTexture, &deviceMemory);
+    createImageView(outTexture, VK_IMAGE_ASPECT_COLOR_BIT);
+    transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    copyBufferToImage(&sharedBuffer, outTexture, 0);
+    transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    debug("\t\tImage created");
 }
 
 void createDescriptor(Material *material) {
@@ -296,24 +234,72 @@ void createDescriptor(Material *material) {
     };
 
     vkUpdateDescriptorSets(device, sizeof(descriptorWrites) / sizeof(VkWriteDescriptorSet), descriptorWrites, 0, NULL);
-
-    debug("Descriptor created for %s: %p", material->name, material->descriptor);
+    debug("\t\tDescriptor created");
 }
 
-void createTexture(TextureInfo *textureInfo, Image *outTexture) {
-    // TODO: Check format, flags and usage
-    createImage(outTexture, textureInfo->extent.width, textureInfo->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
-    bindImageMemory(outTexture, &deviceMemory);
-    createImageView(outTexture, VK_IMAGE_ASPECT_COLOR_BIT);
-    transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    copyBufferToImage(&deviceBuffer, outTexture, textureInfo->offset);
-    transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-}
+void loadMaterial(cgltf_material *materialData) {
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
+            return;
+        }
+    }
 
-void createMaterial(Material *material) {
-    createTexture(&material->baseColorInfo, &material->baseColor);
+    assert(materialCount < materialCountLimit);
+    Material *material = &materials[materialCount];
 
+    debug("Material Name: %s", materialData->name);
+    strncpy(material->name, materialData->name, UINT8_MAX);
+
+    if(materialData->has_pbr_metallic_roughness) {
+        char textureFullPath[PATH_MAX];
+        makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "assets", textureFullPath);
+
+        loadTexture(textureFullPath, &material->baseColor);
     createDescriptor(material);
+    }
+
+    materialCount++;
+}
+
+void loadAsset(const char *assetName) {
+    char fullPath[PATH_MAX];
+    makeFullPath(assetName, "assets", fullPath);
+
+    cgltf_data *data = NULL;
+    cgltf_options assetOptions = {};
+
+    cgltf_result result;
+    result = cgltf_parse_file(&assetOptions, fullPath, &data);
+
+    if(result != cgltf_result_success) {
+        debug("Failed to read %s: %d", result);
+        assert(result == cgltf_result_success);
+    }
+
+    result = cgltf_validate(data);
+
+    if(result != cgltf_result_success) {
+        debug("Failed to validate %s: %d", result);
+        assert(result == cgltf_result_success);
+    }
+
+    result = cgltf_load_buffers(&assetOptions, data, fullPath);
+
+    if(result != cgltf_result_success) {
+        debug("Failed to load buffers %s: %d", result);
+        cgltf_free(data);
+        assert(result == cgltf_result_success);
+    }
+
+    for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
+        loadMaterial(&data->materials[materialIndex]);
+    }
+
+    for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
+        loadScene(&data->scenes[sceneIndex]);
+    }
+
+    cgltf_free(data);
 }
 
 void loadAssets() {
@@ -322,13 +308,10 @@ void loadAssets() {
 
     indexBufferSize   = 0;
     vertexBufferSize  = 0;
-    textureBufferSize = 0;
 
-    textureBuffer = malloc(textureBufferSizeLimit);
     indexBuffer   = malloc(indexBufferSizeLimit);
     vertexBuffer  = malloc(vertexBufferSizeLimit);
 
-    assert(textureBuffer);
     assert(indexBuffer);
     assert(vertexBuffer);
 
@@ -339,19 +322,10 @@ void loadAssets() {
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
     loadAsset("Scene.gltf");
-    debug("Assets successfully loaded into host memory");
+    debug("Assets successfully loaded");
 
-    mempcpy(mappedSharedMemory, textureBuffer, textureBufferSize);
-    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, textureBufferSize);
-
-    free(textureBuffer);
-    debug("Textures copied into device memory");
-
-    for(size_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        createMaterial(&materials[materialIndex]);
-    }
-    debug("Images created in device memory");
-
+    //stagingCopyHostToDevice(indexBuffer,  indexBufferSize,  &deviceBuffer, 0);
+    //stagingCopyHostToDevice(vertexBuffer, vertexBufferSize, &deviceBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
     mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
     copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
@@ -363,7 +337,6 @@ void loadAssets() {
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
-    debug("Assets successfully loaded into device memory");
 }
 
 void freeAssets() {
