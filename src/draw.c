@@ -327,7 +327,29 @@ void present() {
 
     // TODO: Investigate multiple swapchain image acquisition at startup
     uint32_t swapchainImageIndex = UINT32_MAX;
-    vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    VkResult swapchainStatus = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+
+    if( swapchainStatus == VK_ERROR_OUT_OF_HOST_MEMORY   ||
+        swapchainStatus == VK_ERROR_OUT_OF_DEVICE_MEMORY ||
+        swapchainStatus == VK_ERROR_DEVICE_LOST          ||
+        swapchainStatus == VK_ERROR_OUT_OF_DATE_KHR      ||
+        swapchainStatus == VK_ERROR_SURFACE_LOST_KHR     ||
+        swapchainStatus == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
+        debug("Hard error on swapchain image acquisition");
+        return;
+    } else if(  swapchainStatus == VK_TIMEOUT   ||
+                swapchainStatus == VK_NOT_READY ||
+                swapchainStatus == VK_SUBOPTIMAL_KHR) {
+        debug("Soft error on swapchain image acquisition");
+        //return; // TODO: Draw anyway?
+    }
+
+    // TODO: Can this happen when no error code returned?
+    if(swapchainImageIndex >= swapchain.imageCount) {
+        debug("Faulty swapchain image index returned");
+        return;
+    }
+
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);

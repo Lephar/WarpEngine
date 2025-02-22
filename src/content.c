@@ -324,7 +324,8 @@ void loadAssets() {
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-    loadAsset("Scene.gltf");
+    //loadAsset("Scene.gltf");
+    loadAsset("Lantern.gltf");
     debug("Assets successfully loaded");
 
     //stagingCopyHostToDevice(indexBuffer,  indexBufferSize,  &deviceBuffer, 0);
