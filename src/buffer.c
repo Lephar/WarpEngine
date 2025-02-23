@@ -12,6 +12,8 @@ extern Memory sharedMemory;
 Buffer deviceBuffer;
 Buffer sharedBuffer;
 
+extern void *mappedSharedMemory;
+
 void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size)
 {
     buffer->usage = usage;
@@ -71,11 +73,20 @@ void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, 
     endSingleTransferCommand(commandBuffer);
 }
 
-void stagingCopyHostToDevice(void *source, uint64_t size, Buffer *destination, VkDeviceSize offset) {
-    (void) source;
-    (void) size;
-    (void) destination;
-    (void) offset;
+void stagingCopyHostToDevice(void *sourceBuffer, uint64_t sourceOffset, Buffer *destinationBuffer, VkDeviceSize destinationOffset, uint64_t size) {
+    uint64_t internalOffset = 0;
+    uint64_t remainingSize  = size;
+
+    while(internalOffset < size) {
+        const uint64_t chunkSize = remainingSize <= sharedBuffer.size ? remainingSize : sharedBuffer.size;
+
+        mempcpy(mappedSharedMemory, sourceBuffer + sourceOffset + internalOffset, chunkSize);
+        copyBuffer(&sharedBuffer, destinationBuffer, 0, destinationOffset + internalOffset, chunkSize);
+
+        remainingSize  -= chunkSize;
+        debug("Copied chunk of %lu bytes to the offset of %lu, remaining %lu bytes", chunkSize, internalOffset, remainingSize);
+        internalOffset += chunkSize;
+    }
 }
 
 // WARN: Risk of unmapping the whole memory used by another image or buffer

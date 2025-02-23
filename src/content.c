@@ -324,15 +324,12 @@ void loadAssets() {
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-    //loadAsset("Scene.gltf");
-    loadAsset("Lantern.gltf");
+    //loadAsset("Lantern.gltf");
+    loadAsset("Scene.gltf");
     debug("Assets successfully loaded");
 
-    //stagingCopyHostToDevice(indexBuffer,  indexBufferSize,  &deviceBuffer, 0);
-    //stagingCopyHostToDevice(vertexBuffer, vertexBufferSize, &deviceBuffer, indexBufferSize);
-    mempcpy(mappedSharedMemory, indexBuffer, indexBufferSize);
-    mempcpy(mappedSharedMemory + indexBufferSize, vertexBuffer, vertexBufferSize);
-    copyBuffer(&sharedBuffer, &deviceBuffer, 0, 0, indexBufferSize + vertexBufferSize);
+    stagingCopyHostToDevice(indexBuffer,  0, &deviceBuffer, 0, indexBufferSize);
+    stagingCopyHostToDevice(vertexBuffer, 0, &deviceBuffer, indexBufferSize, vertexBufferSize);
 
     free(vertexBuffer);
     free(indexBuffer);
