@@ -6,15 +6,15 @@
 
 extern VkDevice device;
 
-void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
+void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
     image->extent.width = width;
     image->extent.height = height;
     image->extent.depth = 1;
-    image->mips = levels;
+    image->mips = mips;
     image->samples = samples;
     image->format = format;
     image->usage = usage;
-    image->aspects = VK_IMAGE_ASPECT_NONE;
+    image->aspect = aspect;
     image->layout = VK_IMAGE_LAYOUT_UNDEFINED;
     image->image = handle;
 
@@ -22,7 +22,7 @@ void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, ui
 }
 
 // TODO: Rename levels, add aspects maybe?
-void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage) {
+void createImage(Image *image, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
     VkImageCreateInfo imageInfo = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .pNext = NULL,
@@ -34,7 +34,7 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
             .height = height,
             .depth = 1
         },
-        .mipLevels = levels,
+        .mipLevels = mips,
         .arrayLayers = 1,
         .samples = samples,
         .tiling = VK_IMAGE_TILING_OPTIMAL,
@@ -45,10 +45,10 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t levels,
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
     };
 
-    VkImage imageHandle;
-    vkCreateImage(device, &imageInfo, NULL, &imageHandle);
+    VkImage handle;
+    vkCreateImage(device, &imageInfo, NULL, &handle);
 
-    wrapImage(image, imageHandle, width, height, levels, samples, format, usage);
+    wrapImage(image, handle, width, height, mips, samples, format, usage, aspect);
 }
 
 void bindImageMemory(Image *image, Memory *memory) {
@@ -59,9 +59,7 @@ void bindImageMemory(Image *image, Memory *memory) {
     vkBindImageMemory(device, image->image, memory->memory, image->memoryOffset);
 }
 
-void createImageView(Image *image, VkImageAspectFlags aspects) {
-    image->aspects = aspects;
-
+void createImageView(Image *image) {
     VkImageViewCreateInfo imageViewInfo = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .pNext = NULL,
@@ -76,7 +74,7 @@ void createImageView(Image *image, VkImageAspectFlags aspects) {
             .a = VK_COMPONENT_SWIZZLE_IDENTITY
         },
         .subresourceRange = {
-            .aspectMask = image->aspects,
+            .aspectMask = image->aspect,
             .baseMipLevel = 0,
             .levelCount = image->mips,
             .baseArrayLayer = 0,
@@ -94,8 +92,8 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
         .bufferOffset = bufferOffset,
         .bufferRowLength = 0,
         .bufferImageHeight = 0,
-        .imageSubresource = { // Should image parameters be used?
-            .aspectMask = image->aspects,
+        .imageSubresource = {
+            .aspectMask = image->aspect,
             .mipLevel = 0,
             .baseArrayLayer = 0,
             .layerCount = 1
@@ -160,7 +158,7 @@ void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, V
         .subresourceRange = {
             .aspectMask = aspectMask,
             .baseMipLevel = 0,
-            .levelCount = 1,
+            .levelCount = image->mips,
             .baseArrayLayer = 0,
             .layerCount = 1
         }

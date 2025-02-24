@@ -285,7 +285,7 @@ void present() {
 
     VkImageBlit region = {
         .srcSubresource = {
-            .aspectMask = framebuffer->resolve.aspects,
+            .aspectMask = framebuffer->resolve.aspect,
             .mipLevel = 0,
             .baseArrayLayer = 0,
             .layerCount = 1

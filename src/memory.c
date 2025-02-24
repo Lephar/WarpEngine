@@ -76,7 +76,7 @@ void allocateMemories() {
     uint32_t typeFilter; // TODO: Syntax highlighting fails for %b but it compiles, contribute to clangd maybe?
 
     createImage(&temporaryImage, 800, 600, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
-        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
     vkGetImageMemoryRequirements(device, temporaryImage.image, &imageMemoryRequirements);
 
     createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 1L << 20);

@@ -174,11 +174,9 @@ void loadTexture(const char *path, Image *outTexture) {
     debug("\t\tImage Size:    %lu", imageSize);
     debug("\t\tMemory Offset: %lu", deviceMemory.offset);
 
-    // TODO: Check format, flags and usage
-    createImage(outTexture, outTexture->extent.width, outTexture->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    createImage(outTexture, outTexture->extent.width, outTexture->extent.height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
     bindImageMemory(outTexture, &deviceMemory);
-    createImageView(outTexture, VK_IMAGE_ASPECT_COLOR_BIT);
-
+    createImageView(outTexture);
     transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
     if(imageSize <= sharedBuffer.size) {

@@ -129,7 +129,7 @@ void createSwapchain() {
     debug("Retrieved %u swapchain images", swapchain.imageCount);
 
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
-        wrapImage(&swapchain.images[imageIndex], handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+        wrapImage(&swapchain.images[imageIndex], handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
         transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
         debug("Wrapped and transitioned swapchain image %u", imageIndex);
     }
