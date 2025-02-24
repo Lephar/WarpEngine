@@ -4,8 +4,6 @@
 #include "file.h"
 #include "image.h"
 
-// TODO: Use data oriented design for content instead of object oriented
-
 typedef uint32_t Index;
 
 struct vertex {

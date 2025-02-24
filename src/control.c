@@ -1,8 +1,6 @@
 #include "control.h"
 
-// TODO: Not necessary here, remove when done
 #include "helper.h"
-
 #include "content.h"
 
 extern SDL_Window *window;

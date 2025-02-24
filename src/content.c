@@ -375,7 +375,7 @@ void loadAssets() {
 
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
-    uniformBuffer = mappedSharedMemory; // TODO: Directly write into shared memory
+    uniformBuffer = mappedSharedMemory;
 }
 
 void freeAssets() {

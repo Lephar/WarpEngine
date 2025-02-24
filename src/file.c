@@ -1,7 +1,5 @@
 #include "file.h"
 
-#include "helper.h" // TODO: Remove after use
-
 extern char rootPath[];
 
 void makeFullPath(const char *filename, const char *subdirectory, char outFullPath[]) {

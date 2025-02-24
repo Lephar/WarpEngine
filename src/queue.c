@@ -19,7 +19,7 @@ Queue *queueReferences[] = {
 uint32_t queueCount;
 uint32_t distinctQueueFamilyCount;
 
-// TODO: Add surface presentation support for queues
+// TODO: Check surface presentation support for queues
 void generateQueueDetails() {
     queueCount = sizeof(queueReferences) / sizeof(Queue *);
     debug("Queue count: %d",  queueCount);
