@@ -73,15 +73,15 @@ void copyBuffer(Buffer *source, Buffer *destination, VkDeviceSize sourceOffset, 
     endSingleTransferCommand(commandBuffer);
 }
 
-void stagingCopyHostToDevice(void *sourceBuffer, uint64_t sourceOffset, Buffer *destinationBuffer, VkDeviceSize destinationOffset, uint64_t size) {
+void stagingBufferCopy(void *sourceBuffer, uint64_t sourceOffset, VkDeviceSize destinationOffset, uint64_t size) {
     uint64_t internalOffset = 0;
     uint64_t remainingSize  = size;
 
-    while(internalOffset < size) {
+    while(remainingSize) {
         const uint64_t chunkSize = remainingSize <= sharedBuffer.size ? remainingSize : sharedBuffer.size;
 
         mempcpy(mappedSharedMemory, sourceBuffer + sourceOffset + internalOffset, chunkSize);
-        copyBuffer(&sharedBuffer, destinationBuffer, 0, destinationOffset + internalOffset, chunkSize);
+        copyBuffer(&sharedBuffer, &deviceBuffer, 0, destinationOffset + internalOffset, chunkSize);
 
         remainingSize  -= chunkSize;
         debug("Copied chunk of %lu bytes to the offset of %lu, remaining %lu bytes", chunkSize, internalOffset, remainingSize);

@@ -328,8 +328,8 @@ void loadAssets() {
     loadAsset("Scene.gltf");
     debug("Assets successfully loaded");
 
-    stagingCopyHostToDevice(indexBuffer,  0, &deviceBuffer, 0, indexBufferSize);
-    stagingCopyHostToDevice(vertexBuffer, 0, &deviceBuffer, indexBufferSize, vertexBufferSize);
+    stagingBufferCopy(indexBuffer,  0, 0, indexBufferSize);
+    stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
 
     free(vertexBuffer);
     free(indexBuffer);
