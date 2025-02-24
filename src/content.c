@@ -169,21 +169,34 @@ void loadTexture(const char *path, Image *outTexture) {
     debug("\tImage Path: %s", path);
     void *imageData = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
     outTexture->extent.depth = STBI_rgb_alpha;
-    VkDeviceSize size = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
+    VkDeviceSize imageSize = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
 
-    debug("\t\tImage Size:    %lu", size);
+    debug("\t\tImage Size:    %lu", imageSize);
     debug("\t\tMemory Offset: %lu", deviceMemory.offset);
-    memcpy(mappedSharedMemory, imageData, size);
-
-    stbi_image_free(imageData);
 
     // TODO: Check format, flags and usage
     createImage(outTexture, outTexture->extent.width, outTexture->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
     bindImageMemory(outTexture, &deviceMemory);
     createImageView(outTexture, VK_IMAGE_ASPECT_COLOR_BIT);
+
     transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    copyBufferToImage(&sharedBuffer, outTexture, 0);
+
+    if(imageSize <= sharedBuffer.size) {
+        debug("\t\tCopying image data using shared buffer");
+        memcpy(mappedSharedMemory, imageData, imageSize);
+        copyBufferToImage(&sharedBuffer, outTexture, 0);
+    } else if (imageSize <= deviceBuffer.size) {
+        debug("\t\tCopying image data using staging device local buffer");
+        stagingBufferCopy(imageData, 0, 0, imageSize);
+        copyBufferToImage(&deviceBuffer, outTexture, 0);
+    } else {
+        debug("Can't copy image data, increase shared or device local buffer size!");
+        assert(imageSize <= sharedBuffer.size || imageSize <= deviceBuffer.size);
+    }
+
     transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+    stbi_image_free(imageData);
     debug("\t\tImage created");
 }
 
