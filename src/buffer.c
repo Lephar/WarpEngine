@@ -84,7 +84,6 @@ void stagingBufferCopy(void *sourceBuffer, uint64_t sourceOffset, VkDeviceSize d
         copyBuffer(&sharedBuffer, &deviceBuffer, 0, destinationOffset + internalOffset, chunkSize);
 
         remainingSize  -= chunkSize;
-        debug("Copied chunk of %lu bytes to the offset of %lu, remaining %lu bytes", chunkSize, internalOffset, remainingSize);
         internalOffset += chunkSize;
     }
 }

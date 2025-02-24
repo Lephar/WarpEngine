@@ -170,16 +170,17 @@ void loadTexture(const char *path, Image *outTexture) {
     outTexture->extent.depth = STBI_rgb_alpha;
     VkDeviceSize imageSize = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
 
-    uint32_t maxDimension = outTexture->extent.width < outTexture->extent.height ? outTexture->extent.height : outTexture->extent.width;
+    uint32_t maxDimension = outTexture->extent.width > outTexture->extent.height ? outTexture->extent.height : outTexture->extent.width;
     uint32_t mips = (uint32_t) floor(log2(maxDimension)) + 1;
 
     debug("\t\tImage Size:    %lu", imageSize);
     debug("\t\tMemory Offset: %lu", deviceMemory.offset);
-    debug("\t\tMip Levels:    %u", mips);
 
     createImage(outTexture, outTexture->extent.width, outTexture->extent.height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
     bindImageMemory(outTexture, &deviceMemory);
     createImageView(outTexture);
+    debug("\t\tImage created");
+
     transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
     if(imageSize <= sharedBuffer.size) {
@@ -196,9 +197,9 @@ void loadTexture(const char *path, Image *outTexture) {
     }
 
     generateMipmaps(outTexture);
+    debug("\t\tMipmaps generated: %u", mips);
 
     stbi_image_free(imageData);
-    debug("\t\tImage created");
 }
 
 void createDescriptor(Material *material) {
