@@ -16,8 +16,6 @@ VkDescriptorSetLayout descriptorSetLayout;
 
 VkPipelineLayout pipelineLayout;
 
-VkSampler sampler;
-
 void createLayouts() {
     VkDescriptorSetLayoutBinding layoutBindings[] = {
         {
@@ -61,30 +59,6 @@ void createLayouts() {
 }
 
 void createDescriptorPool() {
-    VkSamplerCreateInfo samplerInfo = {
-        .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-        .pNext = NULL,
-        .flags = {},
-        .magFilter = VK_FILTER_LINEAR,
-        .minFilter = VK_FILTER_LINEAR,
-        .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-        .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .mipLodBias = 0.0f,
-        .anisotropyEnable = VK_FALSE, // TODO: Why?
-        .maxAnisotropy = 1.0f,
-        .compareEnable = VK_FALSE,
-        .compareOp = VK_COMPARE_OP_ALWAYS,
-        .minLod = 0.0f,
-        .maxLod = 1.0f,
-        .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
-        .unnormalizedCoordinates = VK_FALSE
-    };
-
-    vkCreateSampler(device, &samplerInfo, NULL, &sampler);
-    debug("Image sampler created");
-
     VkDescriptorPoolSize poolSizes[] = {
         {
             .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -109,9 +83,6 @@ void createDescriptorPool() {
 }
 
 void destroyPipeline() {
-    vkDestroySampler(device, sampler, NULL);
-    debug("Image sampler destroyed");
-
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);
     debug("Pipeline layout destroyed");
 

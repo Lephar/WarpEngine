@@ -17,7 +17,6 @@ extern void *mappedSharedMemory;
 
 extern VkDescriptorSetLayout descriptorSetLayout;
 extern VkDescriptorPool descriptorPool;
-extern VkSampler sampler;
 
 uint64_t indexCount;
 uint64_t vertexCount;
@@ -203,6 +202,30 @@ void loadTexture(const char *path, Image *outTexture) {
 }
 
 void createDescriptor(Material *material) {
+    VkSamplerCreateInfo samplerInfo = {
+        .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .magFilter = VK_FILTER_LINEAR,
+        .minFilter = VK_FILTER_LINEAR,
+        .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+        .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .mipLodBias = 0.0f,
+        .anisotropyEnable = VK_FALSE,
+        .maxAnisotropy = 1.0f,
+        .compareEnable = VK_FALSE,
+        .compareOp = VK_COMPARE_OP_NEVER,
+        .minLod = 0.0f,
+        .maxLod = (float) material->baseColor.mips,
+        .borderColor = VK_BORDER_COLOR_INT_OPAQUE_WHITE,
+        .unnormalizedCoordinates = VK_FALSE
+    };
+
+    vkCreateSampler(device, &samplerInfo, NULL, &material->sampler);
+    debug("\t\tImage sampler created");
+
     VkDescriptorSetAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = NULL,
@@ -220,7 +243,7 @@ void createDescriptor(Material *material) {
     };
 
     VkDescriptorImageInfo imageInfo = {
-        .sampler = sampler,
+        .sampler = material->sampler,
         .imageView = material->baseColor.view,
         .imageLayout = material->baseColor.layout
     };
@@ -357,6 +380,7 @@ void loadAssets() {
 
 void freeAssets() {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        vkDestroySampler(device, materials[materialIndex].sampler, NULL);
         destroyImageView(&materials[materialIndex].baseColor);
         destroyImage(&materials[materialIndex].baseColor);
     }
