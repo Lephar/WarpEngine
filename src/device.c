@@ -118,7 +118,7 @@ void createDevice() {
     VkDeviceCreateInfo deviceInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .pNext = &dynamicRenderingFeatures,
-        .flags = {},
+        .flags = 0,
         .queueCreateInfoCount = distinctQueueFamilyCount,
         .pQueueCreateInfos = queueInfos,
         .enabledLayerCount = 0,
