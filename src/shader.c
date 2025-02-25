@@ -120,7 +120,7 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    vertexShaderModule   = makeShaderModule("shaders/vertex_fixed.vert", FILE_TYPE_TEXT, shaderc_vertex_shader);
+    vertexShaderModule   = makeShaderModule("shaders/vertex.vert", FILE_TYPE_TEXT, shaderc_vertex_shader);
     fragmentShaderModule = makeShaderModule("shaders/fragment_fixed.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
 
     debug("Shader modules created");
