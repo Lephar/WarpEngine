@@ -314,21 +314,21 @@ void loadAsset(const char *assetName) {
     result = cgltf_parse_file(&assetOptions, fullPath, &data);
 
     if(result != cgltf_result_success) {
-        debug("Failed to read %s: %d", result);
+        debug("Failed to read %s: %d", assetName, result);
         assert(result == cgltf_result_success);
     }
 
     result = cgltf_validate(data);
 
     if(result != cgltf_result_success) {
-        debug("Failed to validate %s: %d", result);
+        debug("Failed to validate %s: %d", assetName, result);
         assert(result == cgltf_result_success);
     }
 
     result = cgltf_load_buffers(&assetOptions, data, fullPath);
 
     if(result != cgltf_result_success) {
-        debug("Failed to load buffers %s: %d", result);
+        debug("Failed to load buffers %s: %d", assetName, result);
         cgltf_free(data);
         assert(result == cgltf_result_success);
     }
@@ -363,8 +363,9 @@ void loadAssets() {
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-    //loadAsset("Lantern.gltf");
+    //loadAsset("Skybox.gltf");
     loadAsset("Scene.gltf");
+    //loadAsset("Lantern.gltf");
     debug("Assets successfully loaded");
 
     stagingBufferCopy(indexBuffer,  0, 0, indexBufferSize);
