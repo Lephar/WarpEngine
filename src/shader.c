@@ -12,6 +12,7 @@ extern VkDevice device;
 
 extern VkDescriptorSetLayout descriptorSetLayout;
 
+ShaderModule   skyboxShaderModule;
 ShaderModule   vertexShaderModule;
 ShaderModule fragmentShaderModule;
 
@@ -120,6 +121,7 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
+    skyboxShaderModule   = makeShaderModule("shaders/skybox.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
     vertexShaderModule   = makeShaderModule("shaders/vertex.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
     fragmentShaderModule = makeShaderModule("shaders/fragment.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
 
@@ -132,6 +134,7 @@ void destroyModules() {
 
     debug("Shader compiler and shader compile options released");
 
+    destroyShaderModule(&skyboxShaderModule);
     destroyShaderModule(&vertexShaderModule);
     destroyShaderModule(&fragmentShaderModule);
 
