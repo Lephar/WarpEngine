@@ -363,7 +363,7 @@ void loadAssets() {
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-    //loadAsset("Skybox.gltf");
+    loadAsset("Skybox.gltf");
     loadAsset("Scene.gltf");
     //loadAsset("Lantern.gltf");
     debug("Assets successfully loaded");

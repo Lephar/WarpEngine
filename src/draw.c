@@ -36,6 +36,7 @@ extern Uniform  *uniformBuffer;
 
 extern VkPipelineLayout pipelineLayout;
 
+extern ShaderModule skyboxShaderModule;
 extern ShaderModule vertexShaderModule;
 extern ShaderModule fragmentShaderModule;
 
@@ -181,7 +182,12 @@ void render() {
         fragmentShaderModule.stage
     };
 
-    VkShaderEXT shaders[] = {
+    VkShaderEXT skyboxShaders[] = {
+          skyboxShaderModule.module,
+        fragmentShaderModule.module
+    };
+
+    VkShaderEXT pipelineShaders[] = {
           vertexShaderModule.module,
         fragmentShaderModule.module
     };
@@ -238,9 +244,15 @@ void render() {
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
 
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
-    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, shaders);
 
-    for(uint32_t drawableIndex = 0; drawableIndex < drawableCount; drawableIndex++) {
+    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, skyboxShaders);
+
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, drawables[0].descriptorReference, 0, NULL);
+    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, drawables[0].indexCount, 1, drawables[0].indexBegin, drawables[0].vertexOffset, 0);
+
+    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, pipelineShaders);
+
+    for(uint32_t drawableIndex = 1; drawableIndex < drawableCount; drawableIndex++) {
         /*
         debug("Recording drawable %d...", drawableIndex);
         debug("\tIndex Begin:        %lu", drawables[drawableIndex].indexBegin);
