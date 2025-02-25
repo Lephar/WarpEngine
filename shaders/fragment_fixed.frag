@@ -11,5 +11,7 @@ layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-    outputColor = texture(textureSampler, inputTexcoord);
+    vec3 ambientLight = vec3(1.0f, 1.0f, 1.0f);
+
+    outputColor = vec4(ambientLight, 1.0f) * texture(textureSampler, inputTexcoord);
 }
