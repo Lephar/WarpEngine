@@ -3,8 +3,10 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(binding = 0) uniform Transform {
+    mat4 skyboxView;
     mat4 view;
     mat4 proj;
+    mat4 skyboxCamera;
     mat4 camera;
 };
 

@@ -107,6 +107,10 @@ void processEvents() {
 
     vec3 target;
     glm_vec3_add(position, forward, target);
+
+    glm_lookat(GLM_VEC3_ZERO, forward, upGlobal, uniformBuffer->skyboxView);
+    glm_mat4_mul(uniformBuffer->proj, uniformBuffer->skyboxView, uniformBuffer->skyboxCamera);
+
     glm_lookat(position, target, upGlobal, uniformBuffer->view);
     glm_mat4_mul(uniformBuffer->proj, uniformBuffer->view, uniformBuffer->camera);
 }
