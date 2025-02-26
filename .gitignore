@@ -2,6 +2,5 @@
 .vscode/
 build/
 
-assets/*.blend*
 assets/Scene*
 assets/Block*
