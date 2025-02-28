@@ -39,7 +39,7 @@ const uint32_t drawableCountLimit = 128;
 Material *materials;
 Drawable *drawables;
 
-void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
+void loadPrimitive(AssetType type, cgltf_primitive *primitive, mat4 transform) {
     assert(drawableCount < drawableCountLimit);
 
     Drawable *drawable = &drawables[drawableCount];
@@ -135,38 +135,38 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
     drawableCount++;
 }
 
-void loadMesh(cgltf_mesh *mesh, mat4 transform) {
+void loadMesh(AssetType type, cgltf_mesh *mesh, mat4 transform) {
     debug("\t\tMesh: %s", mesh->name);
 
     for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
-        loadPrimitive(&mesh->primitives[primitiveIndex], transform);
+        loadPrimitive(type, &mesh->primitives[primitiveIndex], transform);
     }
 }
 
-void loadNode(cgltf_node *node) {
+void loadNode(AssetType type, cgltf_node *node) {
     debug("\tNode: %s", node->name);
 
     mat4 transform;
     cgltf_node_transform_world(node, (cgltf_float *)transform);
 
     if(node->mesh) {
-        loadMesh(node->mesh, transform);
+        loadMesh(type, node->mesh, transform);
     }
 
     for(cgltf_size childIndex = 0; childIndex < node->children_count; childIndex++) {
-        loadNode(node->children[childIndex]);
+        loadNode(type, node->children[childIndex]);
     }
 }
 
-void loadScene(cgltf_scene *scene) {
+void loadScene(AssetType type, cgltf_scene *scene) {
     debug("Scene: %s", scene->name);
 
     for (cgltf_size nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
-        loadNode(scene->nodes[nodeIndex]);
+        loadNode(type, scene->nodes[nodeIndex]);
     }
 }
 
-void loadTexture(const char *path, Image *outTexture) {
+void loadTexture(AssetType type, const char *path, Image *outTexture) {
     debug("\tImage Path: %s", path);
     void *imageData = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
     outTexture->extent.depth = STBI_rgb_alpha;
@@ -204,7 +204,7 @@ void loadTexture(const char *path, Image *outTexture) {
     stbi_image_free(imageData);
 }
 
-void createDescriptor(Material *material) {
+void createDescriptor(AssetType type, Material *material) {
     VkSamplerCreateInfo samplerInfo = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
         .pNext = NULL,
@@ -281,7 +281,7 @@ void createDescriptor(Material *material) {
     debug("\t\tDescriptor created");
 }
 
-void loadMaterial(cgltf_material *materialData) {
+void loadMaterial(AssetType type, cgltf_material *materialData) {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
             return;
@@ -298,14 +298,14 @@ void loadMaterial(cgltf_material *materialData) {
         char textureFullPath[PATH_MAX];
         makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "assets", textureFullPath);
 
-        loadTexture(textureFullPath, &material->baseColor);
-        createDescriptor(material);
+        loadTexture(type, textureFullPath, &material->baseColor);
+        createDescriptor(type, material);
     }
 
     materialCount++;
 }
 
-void loadAsset(const char *assetName) {
+void loadAsset(AssetType type, const char *assetName) {
     char fullPath[PATH_MAX];
     makeFullPath(assetName, "assets", fullPath);
 
@@ -336,11 +336,11 @@ void loadAsset(const char *assetName) {
     }
 
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        loadMaterial(&data->materials[materialIndex]);
+        loadMaterial(type, &data->materials[materialIndex]);
     }
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
-        loadScene(&data->scenes[sceneIndex]);
+        loadScene(type, &data->scenes[sceneIndex]);
     }
 
     cgltf_free(data);
@@ -365,8 +365,8 @@ void loadAssets() {
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-    loadAsset("Skybox.gltf");
-    loadAsset("Scene.gltf");
+    loadAsset(CUBEMAP, "Skybox.gltf");
+    loadAsset(STATIONARY, "Scene.gltf");
     //loadAsset("Lantern.gltf");
     debug("Assets successfully loaded");
 
