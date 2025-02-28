@@ -39,6 +39,7 @@ void initializeControls() {
     glm_vec3_zero(up);
     glm_vec3_zero(upGlobal);
 
+    position[2] = 8.0f;
     forward[1]  = 1.0f;
     left[0]     = 1.0f;
     up[2]       = 1.0f;
