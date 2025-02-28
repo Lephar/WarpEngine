@@ -34,10 +34,11 @@ struct material {
 } typedef Material;
 
 struct drawable {
+    AssetType type;
+    Material *material;
     VkDeviceSize indexBegin;
     VkDeviceSize indexCount;
     VkDeviceSize vertexOffset;
-    VkDescriptorSet *descriptorReference;
 } typedef Drawable;
 
 void loadAssets();

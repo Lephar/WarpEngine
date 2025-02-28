@@ -47,15 +47,17 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
     debug("\t\t\tDrawable Count: %d", drawableCount);
     debug("\t\t\tPrimitive Type: %d", primitive->type);
 
+    drawable->material = NULL;
+
     for(cgltf_size materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         if(strncmp(primitive->material->name, materials[materialIndex].name, UINT8_MAX) == 0) {
-            drawable->descriptorReference = &materials[materialIndex].descriptor;
+            drawable->material = &materials[materialIndex];
             debug("\t\t\t\tMaterial matched: %s", primitive->material->name);
             break;
         }
     }
 
-    assert(drawable->descriptorReference != NULL);
+    assert(drawable->material != NULL);
 
     cgltf_accessor *accessor = primitive->indices;
     cgltf_buffer_view *view = accessor->buffer_view;

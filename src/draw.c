@@ -247,7 +247,7 @@ void render() {
 
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, skyboxShaders);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, drawables[0].descriptorReference, 0, NULL);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &drawables[0].material->descriptor, 0, NULL);
     vkCmdDrawIndexed(framebuffer->renderCommandBuffer, drawables[0].indexCount, 1, drawables[0].indexBegin, drawables[0].vertexOffset, 0);
 
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, pipelineShaders);
@@ -260,7 +260,7 @@ void render() {
         debug("\tVertex Offset:      %lu", drawables[drawableIndex].vertexOffset);
         debug("\tDescriptor Address: %p", drawables[drawableIndex].descriptorReference);
         */
-        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, drawables[drawableIndex].descriptorReference, 0, NULL);
+        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &drawables[drawableIndex].material->descriptor, 0, NULL);
         vkCmdDrawIndexed(framebuffer->renderCommandBuffer, drawables[drawableIndex].indexCount, 1, drawables[drawableIndex].indexBegin, drawables[drawableIndex].vertexOffset, 0);
     }
 
