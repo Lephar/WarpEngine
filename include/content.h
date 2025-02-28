@@ -4,6 +4,13 @@
 #include "file.h"
 #include "image.h"
 
+enum assetType {
+    CUBEMAP,
+    STATIONARY,
+    MOVABLE,
+    PORTAL
+} typedef AssetType;
+
 typedef uint32_t Index;
 
 struct vertex {
