@@ -24,6 +24,7 @@ struct uniform {
     mat4 proj;
     mat4 skyboxCamera;
     mat4 camera;
+    vec3 ambientLight;
 } typedef Uniform;
 
 struct material {
