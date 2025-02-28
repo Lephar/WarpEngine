@@ -52,7 +52,7 @@ void initializeControls() {
 
 void generatePerspective() {
     float aspectRatio = (float) extent.width / (float) extent.height;
-    float fieldOfView = M_PI_2;
+    float fieldOfView = M_PI_4;
 
     float nearPlane = 1.0f;
     float  farPlane = 1000.0f;
