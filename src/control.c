@@ -58,9 +58,7 @@ void generatePerspective() {
     float  farPlane = 1000.0f;
 
     // TODO: Make a separate light unit
-    glm_vec3_zero(uniformBuffer->ambientLight);
-    uniformBuffer->ambientLight[0] = 1.0f;
-    uniformBuffer->ambientLight[1] = 0.2f;
+    glm_vec3_one(uniformBuffer->ambientLight);
 
     glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, uniformBuffer->proj);
     debug("Perspective created");
