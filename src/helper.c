@@ -6,7 +6,8 @@ extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 extern VkInstance instance;
 
 void debug(const char *fmt, ...) {
-    if(DEBUG) {
+    //if(DEBUG) {
+    if(1) { //TODO: Enable debug messages in release mode until the validation layers are fixed
         va_list args;
         va_start(args, fmt);
         vprintf(fmt, args);
