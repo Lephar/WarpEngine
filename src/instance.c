@@ -7,9 +7,9 @@ extern uint32_t requiredInstanceExtensionCount;
 extern const char **requiredInstanceExtensionNames;
 
 VkInstance instance;
-#ifdef DEBUG
+#if DEBUG
 VkDebugUtilsMessengerEXT messenger;
-#endif // DEBUG
+#endif
 
 void createInstance() {
     uint32_t layerCount = 0;
@@ -25,7 +25,7 @@ void createInstance() {
 
     void *instanceNext = NULL;
 
-#ifdef DEBUG
+#if DEBUG
     layerNames[layerCount] = "VK_LAYER_KHRONOS_validation";
     layerCount++;
 
@@ -48,7 +48,7 @@ void createInstance() {
     };
 
     instanceNext = &messengerInfo;
-#endif // DEBUG
+#endif
 
     VkApplicationInfo applicationInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -84,26 +84,26 @@ void createInstance() {
     vkCreateInstance(&instanceInfo, NULL, &instance);
     debug("Instance created");
 
-#ifdef DEBUG
+#if DEBUG
     PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = loadFunction("vkCreateDebugUtilsMessengerEXT");
     assert(createDebugUtilsMessenger);
 
     createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
     debug("Messenger created");
-#endif // DEBUG
+#endif
 
     free(extensionNames);
     free(layerNames);
 }
 
 void destroyInstance() {
-#ifdef DEBUG
+#if DEBUG
     PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = loadFunction("vkDestroyDebugUtilsMessengerEXT");
     assert(destroyDebugUtilsMessenger);
 
     destroyDebugUtilsMessenger(instance, messenger, NULL);
     debug("Messenger destroyed");
-#endif // DEBUG
+#endif
 
     vkDestroyInstance(instance, NULL);
     debug("Instance destroyed");

@@ -65,7 +65,7 @@ void createWindow() {
     debug("\tHeight: %u", extent.height);
 }
 
-#ifdef DEBUG
+#if DEBUG
 uint32_t timerCallback(uint32_t interval, void *userData) {
     (void) userData;
 
@@ -79,16 +79,16 @@ uint32_t timerCallback(uint32_t interval, void *userData) {
 
     return interval;
 }
-#endif // DEBUG
+#endif
 
 void initializeMainLoop() {
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_SetWindowResizable(window, SDL_TRUE);
-#ifdef DEBUG
+#if DEBUG
     timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
     assert(timer);
-#endif // DEBUG
+#endif
     initializeControls();
     generatePerspective();
 
@@ -116,9 +116,9 @@ void pollEvents() {
 }
 
 void finalizeMainLoop() {
-#ifdef DEBUG
+#if DEBUG
     SDL_RemoveTimer(timer);
-#endif // DEBUG
+#endif
 
     debug("Main loop finalized");
 }
