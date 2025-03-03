@@ -19,17 +19,22 @@ void createInstance() {
 
     uint32_t extensionCount = requiredInstanceExtensionCount;
     // Reserve extra space for Validation Layers extension just in case
-    const char **extensionNames = malloc((extensionCount + 1) * sizeof(const char *));
+    const char **extensionNames = malloc((extensionCount + 2) * sizeof(const char *));
     memcpy(extensionNames, requiredInstanceExtensionNames, extensionCount * sizeof(const char *));
     extensionNames[extensionCount] = NULL;
 
     void *instanceNext = NULL;
 
 #if DEBUG
-    layerNames[layerCount] = "VK_LAYER_KHRONOS_validation";
+    const char *validationLayerName = "VK_LAYER_KHRONOS_validation";
+
+    layerNames[layerCount] = validationLayerName;
     layerCount++;
 
     extensionNames[extensionCount] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+    extensionCount++;
+
+    extensionNames[extensionCount] = VK_EXT_LAYER_SETTINGS_EXTENSION_NAME;
     extensionCount++;
 
     VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {
@@ -47,7 +52,56 @@ void createInstance() {
         .pUserData = NULL
     };
 
-    instanceNext = &messengerInfo;
+    VkBool32 valueTrue = VK_TRUE;
+
+    VkLayerSettingEXT settings[] = {
+        {
+            .pLayerName = validationLayerName,
+            .pSettingName = "validate_sync",
+            .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
+            .valueCount = 1,
+            .pValues = &valueTrue
+        },
+        {
+            .pLayerName = validationLayerName,
+            .pSettingName = "gpuav_enable",
+            .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
+            .valueCount = 1,
+            .pValues = &valueTrue
+        },
+        {
+            .pLayerName = validationLayerName,
+            .pSettingName = "gpuav_image_layout",
+            .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
+            .valueCount = 1,
+            .pValues = &valueTrue
+        },
+        {
+            .pLayerName = validationLayerName,
+            .pSettingName = "validate_best_practices",
+            .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
+            .valueCount = 1,
+            .pValues = &valueTrue
+        },
+        {
+            .pLayerName = validationLayerName,
+            .pSettingName = "validate_best_practices_nvidia",
+            .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
+            .valueCount = 1,
+            .pValues = &valueTrue
+        }
+    };
+
+    uint32_t settingsCount = sizeof(settings) / sizeof(VkLayerSettingEXT);
+
+    VkLayerSettingsCreateInfoEXT settingsInfo = {
+        .sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT,
+        .pNext = &messengerInfo,
+        .settingCount = settingsCount,
+        .pSettings = settings
+    };
+
+    instanceNext = &settingsInfo;
 #endif
 
     VkApplicationInfo applicationInfo = {
