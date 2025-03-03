@@ -243,10 +243,10 @@ void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, V
         targetAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
     } else if(layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
         targetStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        targetAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+        targetAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
     } else if(layout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
         targetStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        targetAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        targetAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
     } else if(layout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
         targetStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     } else if(layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
