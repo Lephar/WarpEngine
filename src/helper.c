@@ -6,8 +6,7 @@ extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 extern VkInstance instance;
 
 void debug(const char *fmt, ...) {
-    //if(DEBUG) {
-    if(1) { //TODO: Enable debug messages in release mode until the validation layers are fixed
+    if(DEBUG) {
         va_list args;
         va_start(args, fmt);
         vprintf(fmt, args);
@@ -20,12 +19,13 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagB
                                                 VkDebugUtilsMessageTypeFlagsEXT type,
                                                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                                                 void* pUserData) {
-    //(void)severity;
+    (void)severity;
     (void)type;
     (void)pUserData;
 
-    if(severity > VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
+    if(severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
         debug("%s", pCallbackData->pMessage);
+    }
 
     return VK_FALSE;
 }
