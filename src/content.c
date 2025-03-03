@@ -248,7 +248,7 @@ void createDescriptor(AssetType type, Material *material) {
         .pSetLayouts = &descriptorSetLayout
     };
 
-    vkAllocateDescriptorSets(device, &allocateInfo, &material->descriptor);
+    vkAllocateDescriptorSets(device, &allocateInfo, &material->samplerDescriptor);
 
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = sharedBuffer.buffer,
@@ -266,7 +266,7 @@ void createDescriptor(AssetType type, Material *material) {
         {
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .pNext = NULL,
-            .dstSet = material->descriptor,
+            .dstSet = material->samplerDescriptor,
             .dstBinding = 0,
             .dstArrayElement = 0,
             .descriptorCount = 1,
@@ -277,7 +277,7 @@ void createDescriptor(AssetType type, Material *material) {
         }, {
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .pNext = NULL,
-            .dstSet = material->descriptor,
+            .dstSet = material->samplerDescriptor,
             .dstBinding = 1,
             .dstArrayElement = 0,
             .descriptorCount = 1,

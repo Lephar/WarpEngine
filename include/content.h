@@ -5,6 +5,7 @@
 #include "image.h"
 
 enum assetType {
+    CAMERA,
     CUBEMAP,
     STATIONARY,
     MOVABLE,
@@ -40,6 +41,7 @@ struct drawable {
     VkDeviceSize indexBegin;
     VkDeviceSize indexCount;
     VkDeviceSize vertexOffset;
+    VkDeviceSize uniformOffset;
 } typedef Drawable;
 
 void loadAssets();
