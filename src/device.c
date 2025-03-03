@@ -21,6 +21,7 @@ extern Queue computeQueue;
 extern Queue transferQueue;
 
 extern Queue *queueReferences[];
+extern VkDeviceQueueCreateInfo *queueInfos;
 
 extern uint32_t queueCount;
 extern uint32_t distinctQueueFamilyCount;
@@ -85,7 +86,7 @@ void createDevice() {
         queuePriorities[index] = 1.0f;
     }
 
-    VkDeviceQueueCreateInfo *queueInfos = malloc(distinctQueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
+    queueInfos = malloc(distinctQueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
 
     for(uint32_t queueInfoIndex = 0; queueInfoIndex < distinctQueueFamilyCount; queueInfoIndex++) {
         queueInfos[queueInfoIndex].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -132,13 +133,15 @@ void createDevice() {
     vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
     debug("Device created");
 
-    free(queueInfos);
     free(queuePriorities);
 }
 
 void destroyDevice() {
     vkDeviceWaitIdle(device);
     vkDestroyDevice(device, NULL);
+
     free(queueFamilyProperties);
+    free(queueInfos);
+
     debug("Device destroyed");
 }

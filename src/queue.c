@@ -16,6 +16,8 @@ Queue *queueReferences[] = {
     &transferQueue
 };
 
+VkDeviceQueueCreateInfo *queueInfos;
+
 uint32_t queueCount;
 uint32_t distinctQueueFamilyCount;
 
