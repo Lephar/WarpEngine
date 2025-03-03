@@ -31,7 +31,7 @@ struct material {
     char name[UINT8_MAX];
     Image baseColor;
     VkSampler sampler;
-    VkDescriptorSet descriptor;
+    VkDescriptorSet samplerDescriptor;
 } typedef Material;
 
 struct drawable {
