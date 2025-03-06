@@ -205,14 +205,14 @@ void loadTexture(AssetType type, const char *path, Image *outTexture) {
         assert(imageSize <= sharedBuffer.size || imageSize <= deviceBuffer.size);
     }
 
+    stbi_image_free(imageData);
+
     if(type == CUBEMAP) {
         transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     } else {
         generateMipmaps(outTexture);
         debug("\t\tMipmaps generated: %u", mips);
     }
-
-    stbi_image_free(imageData);
 }
 
 void createDescriptor(AssetType type, Material *material) {
