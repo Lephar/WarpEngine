@@ -73,13 +73,6 @@ void createDevice() {
         debug("\t%s", extensionNames[index]);
     }
 
-    VkPhysicalDeviceFeatures deviceFeatures = {
-        .fillModeNonSolid = VK_TRUE,
-        .wideLines = VK_TRUE,
-        .largePoints = VK_TRUE,
-        .samplerAnisotropy = VK_TRUE
-    };
-
     float *queuePriorities = malloc(queueCount * sizeof(float));
 
     for(uint32_t index = 0; index < queueCount; index++) {
@@ -105,21 +98,34 @@ void createDevice() {
         }
     }
 
-    VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
-        .pNext = NULL,
-        .shaderObject = VK_TRUE
+    VkPhysicalDeviceFeatures deviceFeatures = {
+        .fillModeNonSolid = VK_TRUE,
+        .wideLines = VK_TRUE,
+        .largePoints = VK_TRUE,
+        .samplerAnisotropy = VK_TRUE,
     };
 
-    VkPhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
-        .pNext = &shaderObjectFeatures,
+    VkPhysicalDeviceVulkan13Features deviceFeatures13 = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
+        .pNext = NULL,
         .dynamicRendering = VK_TRUE
+    };
+
+    VkPhysicalDeviceVulkan14Features deviceFeatures14 = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
+        .pNext = &deviceFeatures13,
+        .hostImageCopy = VK_TRUE
+    };
+
+    VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
+        .pNext = &deviceFeatures14,
+        .shaderObject = VK_TRUE
     };
 
     VkDeviceCreateInfo deviceInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-        .pNext = &dynamicRenderingFeatures,
+        .pNext = &shaderObjectFeatures,
         .flags = 0,
         .queueCreateInfoCount = distinctQueueFamilyCount,
         .pQueueCreateInfos = queueInfos,
