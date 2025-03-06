@@ -92,7 +92,9 @@ void createInstance() {
         }
     };
 
-    uint32_t settingsCount = sizeof(settings) / sizeof(VkLayerSettingEXT);
+    // TODO: Enable from time to time
+    //uint32_t settingsCount = sizeof(settings) / sizeof(VkLayerSettingEXT);
+    uint32_t settingsCount = 0;
 
     VkLayerSettingsCreateInfoEXT settingsInfo = {
         .sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT,
