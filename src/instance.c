@@ -111,7 +111,7 @@ void createInstance() {
         .applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
         .pEngineName = executableName,
         .engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-        .apiVersion = VK_API_VERSION_1_3
+        .apiVersion = VK_API_VERSION_1_4
     };
 
     VkInstanceCreateInfo instanceInfo = {
