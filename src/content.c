@@ -108,10 +108,6 @@ void loadPrimitive(AssetType type, cgltf_primitive *primitive, mat4 transform) {
 
                 glm_mat4_mulv3(transform, positions[positionIndex], 1.0f, *position);
 
-                if(type == CUBEMAP) {
-                    (*position)[2] -= 30.0f;
-                }
-
                 // NOTICE: Use this if glTF model is exported with +Z up
                 (*position)[1] *= -1;
 
