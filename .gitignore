@@ -1,7 +1,12 @@
 .cache/
 .vscode/
+
 build/
 
 assets/Scene*
 assets/Block*
+
+assets/*.xcf
+
+assets/*.blend
 assets/*.blend1
