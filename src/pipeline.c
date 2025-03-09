@@ -9,12 +9,44 @@ extern VkDevice device;
 
 extern Buffer sharedBuffer;
 
+extern const uint32_t textureSizeMaxDimensionLimit;
+
 extern const uint32_t materialCountLimit;
+
+VkSampler sampler;
 
 VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
 
 VkPipelineLayout pipelineLayout;
+
+void createSampler() {
+    const uint32_t mipLevelLimit = floor(log2(textureSizeMaxDimensionLimit)) + 1;
+
+    VkSamplerCreateInfo samplerInfo = {
+        .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .magFilter = VK_FILTER_LINEAR,
+        .minFilter = VK_FILTER_LINEAR,
+        .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+        .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .mipLodBias = 0.0f,
+        .anisotropyEnable = VK_TRUE,
+        .maxAnisotropy = 16.0f,
+        .compareEnable = VK_FALSE,
+        .compareOp = VK_COMPARE_OP_NEVER,
+        .minLod = 0.0f,
+        .maxLod = mipLevelLimit,
+        .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+        .unnormalizedCoordinates = VK_FALSE
+    };
+
+    vkCreateSampler(device, &samplerInfo, NULL, &sampler);
+    debug("\t\tImage sampler created");
+}
 
 void createLayouts() {
     VkDescriptorSetLayoutBinding layoutBindings[] = {
@@ -83,6 +115,8 @@ void createDescriptorPool() {
 }
 
 void destroyPipeline() {
+    vkDestroySampler(device, sampler, NULL);
+
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);
     debug("Pipeline layout destroyed");
 

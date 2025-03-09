@@ -31,7 +31,6 @@ struct uniform {
 struct material {
     char name[UINT8_MAX];
     Image baseColor;
-    VkSampler sampler;
     VkDescriptorSet samplerDescriptor;
 } typedef Material;
 

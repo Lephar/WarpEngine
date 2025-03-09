@@ -15,6 +15,8 @@ extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
+extern VkSampler sampler;
+
 extern VkDescriptorSetLayout descriptorSetLayout;
 extern VkDescriptorPool descriptorPool;
 
@@ -32,6 +34,8 @@ Uniform *uniformBuffer;
 
 uint32_t materialCount;
 uint32_t drawableCount;
+
+const uint32_t textureSizeMaxDimensionLimit = 8192;
 
 const uint32_t materialCountLimit = 128;
 const uint32_t drawableCountLimit = 128;
@@ -211,31 +215,7 @@ void loadTexture(AssetType type, const char *path, Image *outTexture) {
     }
 }
 
-void createDescriptor(AssetType type, Material *material) {
-    VkSamplerCreateInfo samplerInfo = {
-        .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-        .pNext = NULL,
-        .flags = 0,
-        .magFilter = VK_FILTER_LINEAR,
-        .minFilter = VK_FILTER_LINEAR,
-        .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-        .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .mipLodBias = 0.0f,
-        .anisotropyEnable = VK_TRUE,
-        .maxAnisotropy = 16.0f,
-        .compareEnable = VK_FALSE,
-        .compareOp = VK_COMPARE_OP_NEVER,
-        .minLod = 0.0f,
-        .maxLod = type == CUBEMAP ? 1.0f : (float) material->baseColor.mips,
-        .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
-        .unnormalizedCoordinates = VK_FALSE
-    };
-
-    vkCreateSampler(device, &samplerInfo, NULL, &material->sampler);
-    debug("\t\tImage sampler created");
-
+void createDescriptor(Material *material) {
     VkDescriptorSetAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = NULL,
@@ -253,7 +233,7 @@ void createDescriptor(AssetType type, Material *material) {
     };
 
     VkDescriptorImageInfo imageInfo = {
-        .sampler = material->sampler,
+        .sampler = sampler,
         .imageView = material->baseColor.view,
         .imageLayout = material->baseColor.layout
     };
@@ -306,7 +286,7 @@ void loadMaterial(AssetType type, cgltf_material *materialData) {
         makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "assets", textureFullPath);
 
         loadTexture(type, textureFullPath, &material->baseColor);
-        createDescriptor(type, material);
+        createDescriptor(material);
     }
 
     materialCount++;
@@ -391,7 +371,6 @@ void loadAssets() {
 
 void freeAssets() {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        vkDestroySampler(device, materials[materialIndex].sampler, NULL);
         destroyImageView(&materials[materialIndex].baseColor);
         destroyImage(&materials[materialIndex].baseColor);
     }

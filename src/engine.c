@@ -34,6 +34,7 @@ void initialize(int argc, char *argv[]) {
     createDevice();
     getQueues();
     createSurface();
+    createSampler();
     createLayouts();
     createDescriptorPool();
     createModules();
