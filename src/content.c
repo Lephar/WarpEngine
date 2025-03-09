@@ -185,6 +185,8 @@ void loadTexture(AssetType type, const char *path, Image *outTexture) {
     uint32_t maxDimension = outTexture->extent.width > outTexture->extent.height ? outTexture->extent.height : outTexture->extent.width;
     uint32_t mips = type == CUBEMAP ? 1 : (uint32_t) floor(log2(maxDimension)) + 1;
 
+    assert(maxDimension <= textureSizeMaxDimensionLimit);
+
     createImage(outTexture, outTexture->extent.width, outTexture->extent.height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
     bindImageMemory(outTexture, &deviceMemory);
     createImageView(outTexture);
