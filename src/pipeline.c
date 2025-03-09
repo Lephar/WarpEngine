@@ -9,7 +9,7 @@ extern VkDevice device;
 
 extern Buffer sharedBuffer;
 
-extern size_t materialCountLimit;
+extern const uint32_t materialCountLimit;
 
 VkDescriptorPool descriptorPool;
 VkDescriptorSetLayout descriptorSetLayout;
