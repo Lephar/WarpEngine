@@ -12,7 +12,7 @@ file(GLOB_RECURSE EXTERNAL external/*.h)
 file(GLOB_RECURSE HEADERS include/*.h)
 file(GLOB_RECURSE SOURCES src/*.c)
 file(GLOB_RECURSE SHADERS shaders/*.vert shaders/*.frag)
-file(GLOB_RECURSE SOURCE_ASSETS assets/*)
+file(GLOB_RECURSE SOURCE_ASSETS data/*)
 
 set(CONFIG_TEMPLATE ${PROJECT_SOURCE_DIR}/config.txt)
 set(CONFIG_FILE ${PROJECT_BINARY_DIR}/config.txt)
@@ -41,7 +41,7 @@ endforeach(SHADER)
 
 foreach(SOURCE_MODEL ${SOURCE_ASSETS})
     get_filename_component(FILENAME ${SOURCE_MODEL} NAME)
-    set(TARGET_MODEL ${PROJECT_BINARY_DIR}/assets/${FILENAME})
+    set(TARGET_MODEL ${PROJECT_BINARY_DIR}/data/${FILENAME})
     add_custom_command(
         OUTPUT ${TARGET_MODEL}
         COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_MODEL} ${TARGET_MODEL}

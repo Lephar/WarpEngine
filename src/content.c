@@ -285,7 +285,7 @@ void loadMaterial(AssetType type, cgltf_material *materialData) {
 
     if(materialData->has_pbr_metallic_roughness) {
         char textureFullPath[PATH_MAX];
-        makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "assets", textureFullPath);
+        makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "data", textureFullPath);
 
         loadTexture(type, textureFullPath, &material->baseColor);
         createDescriptor(material);
@@ -296,7 +296,7 @@ void loadMaterial(AssetType type, cgltf_material *materialData) {
 
 void loadAsset(AssetType type, const char *assetName) {
     char fullPath[PATH_MAX];
-    makeFullPath(assetName, "assets", fullPath);
+    makeFullPath(assetName, "data", fullPath);
 
     cgltf_data *data = NULL;
     cgltf_options assetOptions = {};

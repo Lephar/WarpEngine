@@ -3,10 +3,10 @@
 
 build/
 
-assets/Scene*
-assets/Block*
+data/Scene*
+data/Block*
 
-assets/*.xcf
+data/*.xcf
 
-assets/*.blend
-assets/*.blend1
+data/*.blend
+data/*.blend1
