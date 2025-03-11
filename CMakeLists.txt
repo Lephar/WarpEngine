@@ -51,7 +51,7 @@ endforeach(SOURCE_MODEL)
 
 add_executable(${PROJECT_NAME} ${EXTERNAL} ${HEADERS} ${SOURCES} ${SHADERS} ${CODES} ${MODULES} ${SOURCE_ASSETS} ${TARGET_ASSETS} ${CONFIG_TEMPLATE} ${CONFIG_FILE})
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra)
-target_include_directories(${PROJECT_NAME} PUBLIC include external/include ${SDL2_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC include external/include external/include/ktx ${SDL2_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
 target_precompile_headers(${PROJECT_NAME} PUBLIC include/pch.h)
 target_link_directories(${PROJECT_NAME} PUBLIC external/lib)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${Vulkan_LIBRARIES} ktx shaderc_shared m)

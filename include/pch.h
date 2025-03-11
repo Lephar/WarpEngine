@@ -27,7 +27,7 @@
 
 #include "stb/stb_image.h"
 
-#include "ktx/ktxvulkan.h"
+#include "ktx/ktx.h"
 
 #include "cgltf/cgltf.h"
 
