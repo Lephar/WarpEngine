@@ -2,10 +2,14 @@
 
 #include "helper.h"
 #include "file.h"
+#include "queue.h"
 #include "memory.h"
 #include "buffer.h"
 
+extern VkPhysicalDevice physicalDevice;
 extern VkDevice device;
+
+extern Queue transferQueue;
 
 extern Memory deviceMemory;
 extern Memory sharedMemory;
@@ -31,6 +35,8 @@ const uint64_t vertexBufferSizeLimit  = 1L << 30;
 Index *indexBuffer;
 Vertex *vertexBuffer;
 Uniform *uniformBuffer;
+
+ktxVulkanDeviceInfo textureDeviceInfo;
 
 uint32_t materialCount;
 uint32_t drawableCount;
@@ -175,17 +181,35 @@ void loadScene(AssetType type, cgltf_scene *scene) {
 
 void loadTexture(AssetType type, const char *path, Image *outTexture) {
     debug("\tImage Path: %s", path);
+
+    ktxTexture* ktxTexture;
+    KTX_error_code ktxResult;
+
+    ktxResult = ktxTexture_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_NO_FLAGS, &ktxTexture);
+
+    if(ktxResult != KTX_SUCCESS) {
+        debug("\tLoading texture failed with message:\n\t\t%s", ktxErrorString(ktxResult));
+    }
+
+    /*
     void *imageData = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
     outTexture->extent.depth = STBI_rgb_alpha;
     VkDeviceSize imageSize = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
 
     debug("\t\tImage Size:    %lu", imageSize);
     debug("\t\tMemory Offset: %lu", deviceMemory.offset);
-
+    */
     uint32_t maxDimension = outTexture->extent.width > outTexture->extent.height ? outTexture->extent.height : outTexture->extent.width;
     uint32_t mips = type == CUBEMAP ? 1 : (uint32_t) floor(log2(maxDimension)) + 1;
 
     assert(maxDimension <= textureSizeMaxDimensionLimit);
+
+    ktxVulkanTexture ktxVkTexture;
+
+    ktxResult = ktxTexture_VkUploadEx(ktxTexture, &textureDeviceInfo, &ktxVkTexture,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     createImage(outTexture, outTexture->extent.width, outTexture->extent.height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
     bindImageMemory(outTexture, &deviceMemory);
@@ -353,6 +377,8 @@ void loadAssets() {
 
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
+
+    ktxVulkanDeviceInfo_Construct(&textureDeviceInfo, physicalDevice, device, transferQueue.queue, transferQueue.commandPool, NULL);
 
     loadAsset(CUBEMAP,    "Skybox.gltf");
     loadAsset(STATIONARY, "Scene.gltf");

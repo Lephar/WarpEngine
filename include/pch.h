@@ -27,6 +27,8 @@
 
 #include "stb/stb_image.h"
 
+#include "ktx/ktxvulkan.h"
+
 #include "cgltf/cgltf.h"
 
 #define CGLM_FORCE_DEPTH_ZERO_TO_ONE
