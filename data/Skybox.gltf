@@ -55,9 +55,9 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/jpeg",
+			"mimeType":"image/ktx2",
 			"name":"Skybox",
-			"uri":"Skybox.jpg"
+			"uri":"Skybox.ktx2"
 		}
 	],
 	"accessors":[
