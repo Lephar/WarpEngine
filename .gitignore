@@ -3,8 +3,7 @@
 
 build/
 
-data/Scene*
-data/Block*
+data/Terrain*
 
 data/*.xcf
 
