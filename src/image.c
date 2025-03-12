@@ -193,7 +193,7 @@ void generateMipmaps(Image *image) {
     image->layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 }
 
-void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) {
+void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, uint32_t mipLevel) {
     VkCommandBuffer commandBuffer = beginSingleTransferCommand();
 
     VkBufferImageCopy copyInfo = {
@@ -202,7 +202,7 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
         .bufferImageHeight = 0,
         .imageSubresource = {
             .aspectMask = image->aspect,
-            .mipLevel = 0,
+            .mipLevel = mipLevel,
             .baseArrayLayer = 0,
             .layerCount = 1
         },
@@ -211,7 +211,11 @@ void copyBufferToImage(Buffer *buffer, Image *image, VkDeviceSize bufferOffset) 
             .y = 0,
             .z = 0
         },
-        .imageExtent = image->extent
+        .imageExtent = {
+            .width  = image->extent.width  >> mipLevel,
+            .height = image->extent.height >> mipLevel,
+            .depth  = image->extent.depth
+        }
     };
 
     vkCmdCopyBufferToImage(commandBuffer, buffer->buffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyInfo);
