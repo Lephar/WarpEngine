@@ -36,8 +36,6 @@ Index *indexBuffer;
 Vertex *vertexBuffer;
 Uniform *uniformBuffer;
 
-ktxVulkanDeviceInfo textureDeviceInfo;
-
 uint32_t materialCount;
 uint32_t drawableCount;
 
@@ -179,66 +177,85 @@ void loadScene(AssetType type, cgltf_scene *scene) {
     }
 }
 
-void loadTexture(AssetType type, const char *path, Image *outTexture) {
+void loadTexture(const char *path, Image *texture) {
     debug("\tImage Path: %s", path);
 
-    ktxTexture* ktxTexture;
+    ktxTexture2 *textureObject;
     KTX_error_code ktxResult;
 
-    ktxResult = ktxTexture_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_NO_FLAGS, &ktxTexture);
+    ktxResult = ktxTexture2_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &textureObject);
 
     if(ktxResult != KTX_SUCCESS) {
-        debug("\tLoading texture failed with message:\n\t\t%s", ktxErrorString(ktxResult));
+        debug("\tLoading texture failed with message: %s", ktxErrorString(ktxResult));
+        assert(ktxResult == KTX_SUCCESS);
     }
 
-    /*
-    void *imageData = stbi_load(path, (int32_t *)&outTexture->extent.width, (int32_t *)&outTexture->extent.height, (int32_t *)&outTexture->extent.depth, STBI_rgb_alpha);
-    outTexture->extent.depth = STBI_rgb_alpha;
-    VkDeviceSize imageSize = outTexture->extent.width * outTexture->extent.height * outTexture->extent.depth;
+    ktxTexture *textureHandle = (ktxTexture *) textureObject;
+    debug("\tCompressed Size: %lu", ktxTexture_GetDataSize(textureHandle));
 
-    debug("\t\tImage Size:    %lu", imageSize);
-    debug("\t\tMemory Offset: %lu", deviceMemory.offset);
-    */
-    uint32_t maxDimension = outTexture->extent.width > outTexture->extent.height ? outTexture->extent.height : outTexture->extent.width;
-    uint32_t mips = type == CUBEMAP ? 1 : (uint32_t) floor(log2(maxDimension)) + 1;
+    if(ktxTexture2_NeedsTranscoding(textureObject)) {
+        ktxResult = ktxTexture2_TranscodeBasis(textureObject, KTX_TTF_BC7_RGBA, 0);
 
-    assert(maxDimension <= textureSizeMaxDimensionLimit);
+        if(ktxResult != KTX_SUCCESS) {
+            debug("\tTranscoding texture failed with message: %s", ktxErrorString(ktxResult));
+            assert(ktxResult == KTX_SUCCESS);
+        }
 
-    ktxVulkanTexture ktxVkTexture;
-
-    ktxResult = ktxTexture_VkUploadEx(ktxTexture, &textureDeviceInfo, &ktxVkTexture,
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-    createImage(outTexture, outTexture->extent.width, outTexture->extent.height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-    bindImageMemory(outTexture, &deviceMemory);
-    createImageView(outTexture);
-    debug("\t\tImage created");
-
-    transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
-    if(imageSize <= sharedBuffer.size) {
-        debug("\t\tCopying image data using shared buffer");
-        memcpy(mappedSharedMemory, imageData, imageSize);
-        copyBufferToImage(&sharedBuffer, outTexture, 0);
-    } else if (imageSize <= deviceBuffer.size) {
-        debug("\t\tCopying image data using staging device local buffer");
-        stagingBufferCopy(imageData, 0, 0, imageSize);
-        copyBufferToImage(&deviceBuffer, outTexture, 0);
-    } else {
-        debug("Can't copy image data, increase shared or device local buffer size!");
-        assert(imageSize <= sharedBuffer.size || imageSize <= deviceBuffer.size);
+        debug("\tTranscoded Size: %lu", ktxTexture_GetDataSize(textureHandle));
     }
 
-    stbi_image_free(imageData);
+    debug("\tMemory Offset:   %lu", deviceMemory.offset);
 
-    if(type == CUBEMAP) {
-        transitionImageLayout(outTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    } else {
-        generateMipmaps(outTexture);
-        debug("\t\tMipmaps generated: %u", mips);
+    ktx_uint32_t width  = textureObject->baseWidth;
+    ktx_uint32_t height = textureObject->baseHeight;
+    ktx_uint32_t depth  = textureObject->baseDepth;
+    ktx_uint32_t mips   = textureObject->numLevels;
+
+    debug("\tWidth:  %u", width);
+    debug("\tHeight: %u", height);
+    debug("\tDepth:  %u", depth);
+    debug("\tMips:   %u", mips);
+
+    assert(width <= textureSizeMaxDimensionLimit && height <= textureSizeMaxDimensionLimit);
+
+    createImage(texture, width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+    bindImageMemory(texture, &deviceMemory);
+    createImageView(texture);
+
+    debug("\tImage created");
+
+    transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    ktx_uint8_t *data = ktxTexture_GetData(textureHandle);
+
+    for(ktx_uint32_t level = 0; level < mips; level++) {
+        ktx_size_t offset;
+        ktxResult = ktxTexture_GetImageOffset(textureHandle, level, 0, 0, &offset);
+
+        if(ktxResult != KTX_SUCCESS) {
+            debug("\tGetting mip level %d data failed with message: %s", level, ktxErrorString(ktxResult));
+            assert(ktxResult == KTX_SUCCESS);
+        }
+
+        ktx_size_t levelSize = ktxTexture_GetImageSize(textureHandle, level);
+
+        if(levelSize <= sharedBuffer.size) {
+            memcpy(mappedSharedMemory, data + offset, levelSize);
+            copyBufferToImage(&sharedBuffer, 0, texture, level);
+        } else if (levelSize <= deviceBuffer.size) {
+            stagingBufferCopy(data, offset, 0, levelSize);
+            copyBufferToImage(&deviceBuffer, 0, texture, level);
+        } else {
+            debug("\tCan't copy image data, increase shared or device local buffer size!");
+            assert(levelSize <= sharedBuffer.size || levelSize <= deviceBuffer.size);
+        }
     }
+
+    debug("\tImage data copied");
+
+    transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+    ktxTexture_Destroy(textureHandle);
 }
 
 void createDescriptor(Material *material) {
@@ -291,10 +308,10 @@ void createDescriptor(Material *material) {
     };
 
     vkUpdateDescriptorSets(device, sizeof(descriptorWrites) / sizeof(VkWriteDescriptorSet), descriptorWrites, 0, NULL);
-    debug("\t\tDescriptor created");
+    debug("\tDescriptor created");
 }
 
-void loadMaterial(AssetType type, cgltf_material *materialData) {
+void loadMaterial(cgltf_material *materialData) {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
             return;
@@ -311,7 +328,7 @@ void loadMaterial(AssetType type, cgltf_material *materialData) {
         char textureFullPath[PATH_MAX];
         makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "data", textureFullPath);
 
-        loadTexture(type, textureFullPath, &material->baseColor);
+        loadTexture(textureFullPath, &material->baseColor);
         createDescriptor(material);
     }
 
@@ -349,7 +366,7 @@ void loadAsset(AssetType type, const char *assetName) {
     }
 
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        loadMaterial(type, &data->materials[materialIndex]);
+        loadMaterial(&data->materials[materialIndex]);
     }
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
@@ -378,11 +395,8 @@ void loadAssets() {
     materials = malloc(materialCountLimit * sizeof(Material));
     drawables = malloc(drawableCountLimit * sizeof(Drawable));
 
-    ktxVulkanDeviceInfo_Construct(&textureDeviceInfo, physicalDevice, device, transferQueue.queue, transferQueue.commandPool, NULL);
-
     loadAsset(CUBEMAP,    "Skybox.gltf");
-    loadAsset(STATIONARY, "Scene.gltf");
-    //loadAsset("Lantern.gltf");
+    loadAsset(STATIONARY, "Terrain.gltf");
     debug("Assets successfully loaded");
 
     stagingBufferCopy(indexBuffer,  0, 0, indexBufferSize);
