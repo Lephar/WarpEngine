@@ -52,7 +52,8 @@ void createInstance() {
         .pUserData = NULL
     };
 
-    VkBool32 valueTrue = VK_TRUE;
+    VkBool32 valueTrue  = VK_TRUE;
+    VkBool32 valueFalse = VK_FALSE;
 
     VkLayerSettingEXT settings[] = {
         {
@@ -60,7 +61,7 @@ void createInstance() {
             .pSettingName = "validate_sync",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
-            .pValues = &valueTrue
+            .pValues = &valueFalse
         },
         {
             .pLayerName = validationLayerName,
@@ -92,9 +93,7 @@ void createInstance() {
         }
     };
 
-    // TODO: Enable from time to time
-    //uint32_t settingsCount = sizeof(settings) / sizeof(VkLayerSettingEXT);
-    uint32_t settingsCount = 0;
+    uint32_t settingsCount = sizeof(settings) / sizeof(VkLayerSettingEXT);
 
     VkLayerSettingsCreateInfoEXT settingsInfo = {
         .sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT,
