@@ -2,7 +2,9 @@
 
 #include "pch.h"
 #include "file.h"
-#include "image.h"
+#include "texture.h"
+
+typedef struct material Material;
 
 enum assetType {
     CAMERA,
@@ -27,12 +29,6 @@ struct uniform {
     mat4 camera;
     vec3 ambientLight;
 } typedef Uniform;
-
-struct material {
-    char name[UINT8_MAX];
-    Image baseColor;
-    VkDescriptorSet samplerDescriptor;
-} typedef Material;
 
 struct drawable {
     AssetType type;
