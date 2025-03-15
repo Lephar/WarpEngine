@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "material.h"
 
 #include "file.h"
 #include "memory.h"

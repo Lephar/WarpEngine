@@ -2,7 +2,7 @@
 
 #include "pch.h"
 #include "file.h"
-#include "texture.h"
+#include "material.h"
 
 typedef struct material Material;
 
