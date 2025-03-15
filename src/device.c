@@ -62,6 +62,8 @@ void selectPhysicalDevice() {
 
 void createDevice() {
     const char *extensionNames[] = {
+        VK_KHR_MAINTENANCE_7_EXTENSION_NAME,
+     // VK_KHR_MAINTENANCE_8_EXTENSION_NAME, // TODO: Enable when SDK updates
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         VK_EXT_SHADER_OBJECT_EXTENSION_NAME
     };
@@ -117,9 +119,22 @@ void createDevice() {
         .hostImageCopy = VK_TRUE
     };
 
+    VkPhysicalDeviceMaintenance7FeaturesKHR maintenanceFeatures7 = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR,
+        .pNext = &deviceFeatures14,
+        .maintenance7 = VK_TRUE
+    };
+    /*
+    VkPhysicalDeviceMaintenance8FeaturesKHR maintenanceFeatures8 = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR,
+        .pNext = &maintenanceFeatures7,
+        .maintenance78 = VK_TRUE
+    };
+    */
     VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
-        .pNext = &deviceFeatures14,
+        .pNext = &maintenanceFeatures7,
+      //.pNext = &maintenanceFeatures8,
         .shaderObject = VK_TRUE
     };
 
