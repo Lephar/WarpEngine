@@ -6,28 +6,18 @@
 #include "memory.h"
 #include "buffer.h"
 
-extern VkPhysicalDevice physicalDevice;
 extern VkDevice device;
-
-extern Queue transferQueue;
-
-extern Memory deviceMemory;
-extern Memory sharedMemory;
 
 extern Buffer deviceBuffer;
 extern Buffer sharedBuffer;
 
 extern void *mappedSharedMemory;
 
-extern VkSampler sampler;
-
-extern VkDescriptorSetLayout descriptorSetLayout;
-extern VkDescriptorPool descriptorPool;
-
 uint64_t indexCount;
 uint64_t vertexCount;
 uint64_t indexBufferSize;
 uint64_t vertexBufferSize;
+uint64_t uniformBufferSize;
 
 const uint64_t indexBufferSizeLimit   = 1L << 30;
 const uint64_t vertexBufferSizeLimit  = 1L << 30;
@@ -36,15 +26,12 @@ Index *indexBuffer;
 Vertex *vertexBuffer;
 Uniform *uniformBuffer;
 
-uint32_t materialCount;
-uint32_t drawableCount;
+extern const uint32_t materialCountLimit;
+extern uint32_t materialCount;
+extern Material *materials;
 
-const uint32_t textureSizeMaxDimensionLimit = 8192;
-
-const uint32_t materialCountLimit = 128;
 const uint32_t drawableCountLimit = 128;
-
-Material *materials;
+uint32_t drawableCount;
 Drawable *drawables;
 
 void loadPrimitive(AssetType type, cgltf_primitive *primitive, mat4 transform) {
@@ -224,6 +211,8 @@ void loadAssets() {
 
     indexBufferSize   = 0;
     vertexBufferSize  = 0;
+
+    uniformBufferSize = sizeof(Uniform);
 
     indexBuffer   = malloc(indexBufferSizeLimit);
     vertexBuffer  = malloc(vertexBufferSizeLimit);

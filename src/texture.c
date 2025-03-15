@@ -1,5 +1,32 @@
 #include "texture.h"
 
+#include "file.h"
+#include "memory.h"
+#include "buffer.h"
+
+extern VkDevice device;
+
+extern Memory deviceMemory;
+extern Memory sharedMemory;
+
+extern Buffer deviceBuffer;
+extern Buffer sharedBuffer;
+
+extern void *mappedSharedMemory;
+
+extern uint64_t uniformBufferSize;
+
+extern VkSampler sampler;
+
+extern VkDescriptorSetLayout descriptorSetLayout;
+extern VkDescriptorPool descriptorPool;
+
+const uint32_t textureSizeMaxDimensionLimit = 8192;
+
+const uint32_t materialCountLimit = 128;
+uint32_t materialCount;
+Material *materials;
+
 void loadTexture(const char *path, Image *texture) {
     debug("\tImage Path: %s", path);
 
@@ -95,7 +122,7 @@ void createDescriptor(Material *material) {
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = sharedBuffer.buffer,
         .offset = 0,
-        .range = sizeof(Uniform)
+        .range = uniformBufferSize
     };
 
     VkDescriptorImageInfo imageInfo = {
