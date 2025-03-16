@@ -132,9 +132,9 @@ void render() {
         VK_COLOR_COMPONENT_B_BIT ;
 
     VkViewport viewport = {
-        .x = 0,
-        .y = extent.height,
-        .width = extent.width,
+        .x = 0.0f,
+        .y = (float) extent.height,
+        .width = (float) extent.width,
         .height = - (float) extent.height,
         .minDepth = 0.0f,
         .maxDepth = 1.0f
