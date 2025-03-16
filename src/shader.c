@@ -121,8 +121,7 @@ void createModules() {
     shaderc_compile_options_set_source_language(shaderCompileOptions, shaderc_source_language_glsl);
     shaderc_compile_options_set_target_env(shaderCompileOptions, shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_4);
     shaderc_compile_options_set_target_spirv(shaderCompileOptions, shaderc_spirv_version_1_6);
-    shaderc_compile_options_set_invert_y(shaderCompileOptions, VK_TRUE);
-
+    //shaderc_compile_options_set_invert_y(shaderCompileOptions, VK_TRUE); // TODO: Why doesn't this work?
 #if DEBUG
     shaderc_compile_options_set_generate_debug_info(shaderCompileOptions);
 #else

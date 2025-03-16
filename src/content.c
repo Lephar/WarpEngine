@@ -104,6 +104,7 @@ void loadPrimitive(AssetType type, cgltf_primitive *primitive, mat4 transform) {
                 glm_mat4_mulv3(transform, positions[positionIndex], 1.0f, *position);
 
                 // NOTICE: Use this if glTF model is exported with +Z up
+                // TODO: Temporary fix until --finvert-y flag for glslc is fixed
                 (*position)[1] *= -1;
 
                 /*// NOTICE: Use this if glTF model is exported with +Y up

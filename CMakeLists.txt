@@ -17,7 +17,7 @@ file(GLOB_RECURSE SOURCE_ASSETS data/*)
 set(CONFIG_TEMPLATE ${PROJECT_SOURCE_DIR}/data/config.txt)
 set(CONFIG_FILE ${PROJECT_BINARY_DIR}/data/config.txt)
 
-set(SHADER_COMPILE_OPTIONS -x glsl --target-env=vulkan1.4 --target-spv=spv1.6 #[[--finvert-y]])
+set(SHADER_COMPILE_OPTIONS -x glsl --target-env=vulkan1.4 --target-spv=spv1.6 #[[--finvert-y]]) # TODO: Investigate --finvert-y flag
 set(SOURCE_COMPILE_OPTIONS -Wall -Wextra)
 
 message(STATUS ${CMAKE_BUILD_TYPE})
@@ -27,7 +27,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     list(APPEND SOURCE_COMPILE_OPTIONS -g -Og)
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     list(APPEND SHADER_COMPILE_OPTIONS -O)
-    list(APPEND SOURCE_COMPILE_OPTIONS -Ofast -march=native -mtune=native)
+    list(APPEND SOURCE_COMPILE_OPTIONS -O3 -ffast-math -march=native -mtune=native)
 endif()
 
 add_custom_command(
