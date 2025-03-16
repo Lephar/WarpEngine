@@ -113,11 +113,21 @@ ShaderModule makeShaderModule(const char *file, FileType type, shaderc_shader_ki
 
 void createModules() {
     shaderCompiler = shaderc_compiler_initialize();
+    assert(shaderCompiler);
 
     shaderCompileOptions = shaderc_compile_options_initialize();
-#ifndef DEBUG
+    assert(shaderCompileOptions);
+
+    shaderc_compile_options_set_source_language(shaderCompileOptions, shaderc_source_language_glsl);
+    shaderc_compile_options_set_target_env(shaderCompileOptions, shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_4);
+    shaderc_compile_options_set_target_spirv(shaderCompileOptions, shaderc_spirv_version_1_6);
+    shaderc_compile_options_set_invert_y(shaderCompileOptions, VK_TRUE);
+
+#if DEBUG
+    shaderc_compile_options_set_generate_debug_info(shaderCompileOptions);
+#else
     shaderc_compile_options_set_optimization_level(shaderCompileOptions, shaderc_optimization_level_performance);
-#endif // DEBUG
+#endif
 
     debug("Shader compiler and shader compile options set");
 

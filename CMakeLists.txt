@@ -17,6 +17,19 @@ file(GLOB_RECURSE SOURCE_ASSETS data/*)
 set(CONFIG_TEMPLATE ${PROJECT_SOURCE_DIR}/data/config.txt)
 set(CONFIG_FILE ${PROJECT_BINARY_DIR}/data/config.txt)
 
+set(SHADER_COMPILE_OPTIONS -x glsl --target-env=vulkan1.4 --target-spv=spv1.6 #[[--finvert-y]])
+set(SOURCE_COMPILE_OPTIONS -Wall -Wextra)
+
+message(STATUS ${CMAKE_BUILD_TYPE})
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    list(APPEND SHADER_COMPILE_OPTIONS -g)
+    list(APPEND SOURCE_COMPILE_OPTIONS -g -Og)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    list(APPEND SHADER_COMPILE_OPTIONS -O)
+    list(APPEND SOURCE_COMPILE_OPTIONS -Ofast -march=native -mtune=native)
+endif()
+
 add_custom_command(
     OUTPUT ${CONFIG_FILE}
     COMMAND ${CMAKE_COMMAND} -E copy ${CONFIG_TEMPLATE} ${CONFIG_FILE}
@@ -34,7 +47,7 @@ foreach(SHADER ${SHADERS})
     set(SPIRV ${PROJECT_BINARY_DIR}/shaders/${FILENAME}.spv)
     add_custom_command(
         OUTPUT ${SPIRV}
-        COMMAND ${Vulkan_GLSLC_EXECUTABLE} ${SHADER} -o ${SPIRV}
+        COMMAND ${Vulkan_GLSLC_EXECUTABLE} ${SHADER} -o ${SPIRV} ${SHADER_COMPILE_OPTIONS}
         DEPENDS ${SHADER})
     list(APPEND MODULES ${SPIRV})
 endforeach(SHADER)
@@ -50,7 +63,7 @@ foreach(SOURCE_MODEL ${SOURCE_ASSETS})
 endforeach(SOURCE_MODEL)
 
 add_executable(${PROJECT_NAME} ${EXTERNAL} ${HEADERS} ${SOURCES} ${SHADERS} ${CODES} ${MODULES} ${SOURCE_ASSETS} ${TARGET_ASSETS} ${CONFIG_TEMPLATE} ${CONFIG_FILE})
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra)
+target_compile_options(${PROJECT_NAME} PUBLIC ${SOURCE_COMPILE_OPTIONS})
 target_include_directories(${PROJECT_NAME} PUBLIC include external/include ${SDL2_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
 target_precompile_headers(${PROJECT_NAME} PUBLIC include/pch.h)
 target_link_directories(${PROJECT_NAME} PUBLIC external/lib)
