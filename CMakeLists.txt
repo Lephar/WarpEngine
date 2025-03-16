@@ -20,8 +20,6 @@ set(CONFIG_FILE ${PROJECT_BINARY_DIR}/data/config.txt)
 set(SHADER_COMPILE_OPTIONS -x glsl --target-env=vulkan1.4 --target-spv=spv1.6 #[[--finvert-y]]) # TODO: Investigate --finvert-y flag
 set(SOURCE_COMPILE_OPTIONS -Wall -Wextra)
 
-message(STATUS ${CMAKE_BUILD_TYPE})
-
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     list(APPEND SHADER_COMPILE_OPTIONS -g)
     list(APPEND SOURCE_COMPILE_OPTIONS -g -Og)
