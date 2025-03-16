@@ -44,7 +44,7 @@ void configure(int argc, char *argv[]) {
     char config[PATH_MAX];
 
     if(argc < 2) {
-        length = snprintf(config, PATH_MAX, "%s/config.txt", rootPath);
+        length = snprintf(config, PATH_MAX, "%s/data/config.txt", rootPath);
         assert(length < PATH_MAX);
     } else {
         length = snprintf(config, PATH_MAX, "%s/%s", rootPath, argv[1]);

@@ -14,8 +14,8 @@ file(GLOB_RECURSE SOURCES src/*.c)
 file(GLOB_RECURSE SHADERS shaders/*.vert shaders/*.frag)
 file(GLOB_RECURSE SOURCE_ASSETS data/*)
 
-set(CONFIG_TEMPLATE ${PROJECT_SOURCE_DIR}/config.txt)
-set(CONFIG_FILE ${PROJECT_BINARY_DIR}/config.txt)
+set(CONFIG_TEMPLATE ${PROJECT_SOURCE_DIR}/data/config.txt)
+set(CONFIG_FILE ${PROJECT_BINARY_DIR}/data/config.txt)
 
 add_custom_command(
     OUTPUT ${CONFIG_FILE}
