@@ -7,6 +7,8 @@
 #include "framebuffer.h"
 #include "buffer.h"
 #include "content.h"
+#include "material.h"
+#include "primitive.h"
 #include "shader.h"
 
 extern VkDevice device;
@@ -42,8 +44,8 @@ extern ShaderModule fragmentShaderModule;
 
 extern uint32_t frameIndex;
 
-extern uint32_t drawableCount;
-extern Drawable *drawables;
+extern uint32_t primitiveCount;
+extern Primitive *primitives;
 
 void initializeDraw() {
     vkDeviceWaitIdle(device);
@@ -247,21 +249,21 @@ void render() {
 
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, skyboxShaders);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &drawables[0].material->samplerDescriptor, 0, NULL);
-    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, drawables[0].indexCount, 1, drawables[0].indexBegin, drawables[0].vertexOffset, 0);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[0].material->samplerDescriptor, 0, NULL);
+    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[0].indexCount, 1, primitives[0].indexBegin, primitives[0].vertexOffset, 0);
 
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, pipelineShaders);
 
-    for(uint32_t drawableIndex = 1; drawableIndex < drawableCount; drawableIndex++) {
+    for(uint32_t primitiveIndex = 1; primitiveIndex < primitiveCount; primitiveIndex++) {
         /*
-        debug("Recording drawable %d...", drawableIndex);
-        debug("\tIndex Begin:        %lu", drawables[drawableIndex].indexBegin);
-        debug("\tIndex Count:        %lu", drawables[drawableIndex].indexCount);
-        debug("\tVertex Offset:      %lu", drawables[drawableIndex].vertexOffset);
-        debug("\tDescriptor Address: %p", drawables[drawableIndex].descriptorReference);
+        debug("Recording primitive %d...", primitiveIndex);
+        debug("\tIndex Begin:        %lu", primitives[primitiveIndex].indexBegin);
+        debug("\tIndex Count:        %lu", primitives[primitiveIndex].indexCount);
+        debug("\tVertex Offset:      %lu", primitives[primitiveIndex].vertexOffset);
+        debug("\tDescriptor Address: %p", primitives[primitiveIndex].descriptorReference);
         */
-        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &drawables[drawableIndex].material->samplerDescriptor, 0, NULL);
-        vkCmdDrawIndexed(framebuffer->renderCommandBuffer, drawables[drawableIndex].indexCount, 1, drawables[drawableIndex].indexBegin, drawables[drawableIndex].vertexOffset, 0);
+        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[primitiveIndex].material->samplerDescriptor, 0, NULL);
+        vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[primitiveIndex].indexCount, 1, primitives[primitiveIndex].indexBegin, primitives[primitiveIndex].vertexOffset, 0);
     }
 
     vkCmdEndRendering(framebuffer->renderCommandBuffer);

@@ -4,22 +4,14 @@
 #include "file.h"
 #include "material.h"
 
-typedef struct material Material;
-
-enum assetType {
+enum contentType {
     CAMERA,
+    LIGHT,
     CUBEMAP,
     STATIONARY,
     MOVABLE,
     PORTAL
-} typedef AssetType;
-
-typedef uint32_t Index;
-
-struct vertex {
-    vec3 position;
-    vec2 texcoord;
-} typedef Vertex;
+} typedef ContentType;
 
 struct uniform {
     mat4 skyboxView;
@@ -30,14 +22,5 @@ struct uniform {
     vec3 ambientLight;
 } typedef Uniform;
 
-struct drawable {
-    AssetType type;
-    Material *material;
-    VkDeviceSize indexBegin;
-    VkDeviceSize indexCount;
-    VkDeviceSize vertexOffset;
-    VkDeviceSize uniformOffset;
-} typedef Drawable;
-
-void loadAssets();
-void freeAssets();
+void loadContent();
+void freeContent();

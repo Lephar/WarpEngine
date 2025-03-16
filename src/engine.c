@@ -40,7 +40,7 @@ void initialize(int argc, char *argv[]) {
     createModules();
     allocateMemories();
     createBuffers();
-    loadAssets();
+    loadContent();
     createSwapchain();
     createFramebufferSet();
 
@@ -91,7 +91,7 @@ void quit() {
     destroyFramebufferSet();
     destroySwapchain();
     destroyBuffers();
-    freeAssets();
+    freeContent();
     freeMemories();
     destroySurface();
     clearQueues();
