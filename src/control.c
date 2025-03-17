@@ -1,10 +1,10 @@
 #include "control.h"
 
+#include "window.h"
+#include "surface.h"
 #include "helper.h"
+#include "memory.h"
 #include "content.h"
-
-extern SDL_Window *window;
-extern VkExtent2D extent;
 
 struct timespec timeCurrent;
 float timeDelta; // In microseconds
@@ -21,10 +21,6 @@ vec3 movementInput;
 vec3 movement;
 
 float moveSpeed;
-
-extern VkDeviceSize uniformBufferSize;
-extern Uniform *uniformBuffer;
-extern void *mappedSharedMemory;
 
 void initializeControls() {
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);

@@ -1,25 +1,11 @@
 #include "material.h"
 
 #include "file.h"
+#include "device.h"
+#include "content.h"
+#include "pipeline.h"
 #include "memory.h"
 #include "buffer.h"
-
-extern VkDevice device;
-
-extern Memory deviceMemory;
-extern Memory sharedMemory;
-
-extern Buffer deviceBuffer;
-extern Buffer sharedBuffer;
-
-extern void *mappedSharedMemory;
-
-extern uint64_t uniformBufferSize;
-
-extern VkSampler sampler;
-
-extern VkDescriptorSetLayout descriptorSetLayout;
-extern VkDescriptorPool descriptorPool;
 
 const uint32_t textureSizeMaxDimensionLimit = 8192;
 

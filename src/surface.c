@@ -1,24 +1,25 @@
 #include "surface.h"
 
+#include "window.h"
+#include "instance.h"
+#include "device.h"
+
 #include "helper.h"
 #include "queue.h"
 
-extern SDL_bool windowCreated;
 SDL_bool surfaceCreated = SDL_FALSE;
 
-extern SDL_Window *window;
-extern VkExtent2D extent;
-
-extern VkInstance instance;
+VkExtent2D extent;
 VkSurfaceKHR surface;
-extern VkPhysicalDevice physicalDevice;
-extern Queue graphicsQueue;
 
 VkBool32 surfaceSupport;
+
 uint32_t surfaceFormatCount;
 VkSurfaceFormatKHR *surfaceFormats;
+
 uint32_t presentModeCount;
 VkPresentModeKHR *presentModes;
+
 VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
 void createSurface() {

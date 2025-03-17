@@ -1,22 +1,18 @@
 #include "window.h"
 
+#include "surface.h"
+#include "config.h"
+
 #include "helper.h"
 #include "control.h"
 
-extern char executableName[];
-
 SDL_bool systemInitialized = SDL_FALSE;
 SDL_bool windowCreated = SDL_FALSE;
-extern SDL_bool surfaceCreated;
 
 PFN_vkGetInstanceProcAddr getInstanceProcAddr;
 SDL_Window *window = NULL;
-VkExtent2D extent = {};
 uint32_t requiredInstanceExtensionCount = 0;
 const char **requiredInstanceExtensionNames = NULL;
-
-extern VkInstance instance;
-extern VkSurfaceKHR surface;
 
 SDL_TimerID timer = 0;
 

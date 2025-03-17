@@ -1,6 +1,5 @@
 #include "file.h"
-
-extern char rootPath[];
+#include "config.h"
 
 void makeFullPath(const char *filename, const char *subdirectory, char outFullPath[]) {
     if(subdirectory == NULL || strncmp(subdirectory, "", PATH_MAX) == 0) {

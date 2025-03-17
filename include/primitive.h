@@ -6,13 +6,6 @@
 
 typedef struct material Material;
 
-typedef uint32_t Index;
-
-struct vertex {
-    vec3 position;
-    vec2 texcoord;
-} typedef Vertex;
-
 struct primitive {
     ContentType type;
     Material *material;
@@ -21,5 +14,9 @@ struct primitive {
     VkDeviceSize vertexOffset;
     VkDeviceSize uniformOffset;
 } typedef Primitive;
+
+extern const uint32_t primitiveCountLimit;
+extern uint32_t primitiveCount;
+extern Primitive *primitives;
 
 void loadAsset(ContentType type, const char *assetName);

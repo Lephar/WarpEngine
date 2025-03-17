@@ -1,9 +1,8 @@
 #include "helper.h"
 
-extern char rootPath[];
-
-extern PFN_vkGetInstanceProcAddr getInstanceProcAddr;
-extern VkInstance instance;
+#include "window.h"
+#include "instance.h"
+#include "config.h"
 
 void debug(const char *fmt, ...) {
     if(DEBUG) {

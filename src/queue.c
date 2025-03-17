@@ -1,7 +1,7 @@
 #include "queue.h"
-#include "helper.h"
 
-extern VkDevice device;
+#include "helper.h"
+#include "device.h"
 
 uint32_t queueFamilyCount;
 VkQueueFamilyProperties *queueFamilyProperties;

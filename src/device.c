@@ -1,30 +1,17 @@
 #include "device.h"
-#include "queue.h"
-#include "helper.h"
 
-extern VkInstance instance;
+#include "instance.h"
+
+#include "queue.h"
+#include "memory.h"
+#include "helper.h"
 
 VkPhysicalDevice physicalDevice;
 
 VkPhysicalDeviceProperties physicalDeviceProperties;
 VkPhysicalDeviceFeatures physicalDeviceFeatures;
 
-extern VkPhysicalDeviceMemoryProperties memoryProperties;
-
-extern uint32_t queueFamilyCount;
-extern VkQueueFamilyProperties *queueFamilyProperties;
-
 VkDevice device;
-
-extern Queue graphicsQueue;
-extern Queue computeQueue;
-extern Queue transferQueue;
-
-extern Queue *queueReferences[];
-extern VkDeviceQueueCreateInfo *queueInfos;
-
-extern uint32_t queueCount;
-extern uint32_t distinctQueueFamilyCount;
 
 void selectPhysicalDevice() {
     uint32_t deviceCount;

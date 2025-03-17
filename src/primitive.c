@@ -1,18 +1,7 @@
 #include "primitive.h"
 
-extern uint64_t indexCount;
-extern uint64_t vertexCount;
-extern uint64_t indexBufferSize;
-extern uint64_t vertexBufferSize;
-extern uint64_t uniformBufferSize;
-
-extern Index *indexBuffer;
-extern Vertex *vertexBuffer;
-extern Uniform *uniformBuffer;
-
-extern const uint32_t materialCountLimit;
-extern uint32_t materialCount;
-extern Material *materials;
+#include "material.h"
+#include "content.h"
 
 const uint32_t primitiveCountLimit = 128;
 uint32_t primitiveCount;
@@ -24,8 +13,8 @@ void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform)
     Primitive *primitiveData = &primitives[primitiveCount];
     primitiveData->type = type;
 
-    debug("\t\t\tPrimitive Count: %d", primitiveCount);
-    debug("\t\t\tPrimitive Type: %d", primitive->type);
+    debug("\t\t\tPrimitive Index: %d", primitiveCount);
+    debug("\t\t\tPrimitive Type:  %d", primitive->type);
 
     primitiveData->material = NULL;
 

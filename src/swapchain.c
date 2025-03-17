@@ -1,17 +1,9 @@
 #include "swapchain.h"
 
 #include "helper.h"
+#include "surface.h"
+#include "device.h"
 #include "image.h"
-
-extern VkDevice device;
-extern VkSurfaceKHR surface;
-extern VkExtent2D extent;
-
-extern uint32_t surfaceFormatCount;
-extern VkSurfaceFormatKHR *surfaceFormats;
-extern uint32_t presentModeCount;
-extern VkPresentModeKHR *presentModes;
-extern VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
 Swapchain oldSwapchain;
 Swapchain swapchain;

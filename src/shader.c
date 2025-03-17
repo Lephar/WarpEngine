@@ -1,16 +1,14 @@
 #include "shader.h"
 
+#include "device.h"
 #include "helper.h"
 #include "file.h"
 #include "buffer.h"
 #include "content.h"
+#include "pipeline.h"
 
 shaderc_compiler_t shaderCompiler;
 shaderc_compile_options_t shaderCompileOptions;
-
-extern VkDevice device;
-
-extern VkDescriptorSetLayout descriptorSetLayout;
 
 ShaderModule   skyboxShaderModule;
 ShaderModule   vertexShaderModule;

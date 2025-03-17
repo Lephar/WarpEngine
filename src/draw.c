@@ -1,51 +1,19 @@
 #include "draw.h"
 
+#include "window.h"
 #include "helper.h"
-
+#include "surface.h"
+#include "device.h"
 #include "queue.h"
+#include "memory.h"
+#include "buffer.h"
 #include "swapchain.h"
 #include "framebuffer.h"
-#include "buffer.h"
 #include "content.h"
 #include "material.h"
 #include "primitive.h"
+#include "pipeline.h"
 #include "shader.h"
-
-extern VkDevice device;
-
-extern VkExtent2D extent;
-
-extern Queue graphicsQueue;
-
-extern Swapchain swapchain;
-extern FramebufferSet framebufferSet;
-
-extern Buffer deviceBuffer;
-extern Buffer sharedBuffer;
-
-extern void *mappedSharedBuffer;
-
-extern uint32_t  indexCount;
-extern uint32_t vertexCount;
-
-extern VkDeviceSize   indexBufferSize;
-extern VkDeviceSize  vertexBufferSize;
-extern VkDeviceSize uniformBufferSize;
-
-extern Index    *indexBuffer;
-extern Vertex   *vertexBuffer;
-extern Uniform  *uniformBuffer;
-
-extern VkPipelineLayout pipelineLayout;
-
-extern ShaderModule skyboxShaderModule;
-extern ShaderModule vertexShaderModule;
-extern ShaderModule fragmentShaderModule;
-
-extern uint32_t frameIndex;
-
-extern uint32_t primitiveCount;
-extern Primitive *primitives;
 
 void initializeDraw() {
     vkDeviceWaitIdle(device);
@@ -67,7 +35,7 @@ void render() {
     VkRenderingAttachmentInfo depthStencilAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
         .pNext = NULL,
-        .imageView = framebuffer->depthStencil.view,
+        .imageView = framebuffer->depthStencil->view,
         .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_NONE,
         .resolveImageView = VK_NULL_HANDLE,
@@ -85,10 +53,10 @@ void render() {
     VkRenderingAttachmentInfo colorAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
         .pNext = NULL,
-        .imageView = framebuffer->color.view,
+        .imageView = framebuffer->color->view,
         .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT,
-        .resolveImageView = framebuffer->resolve.view,
+        .resolveImageView = framebuffer->resolve->view,
         .resolveImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -255,13 +223,6 @@ void render() {
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, pipelineShaders);
 
     for(uint32_t primitiveIndex = 1; primitiveIndex < primitiveCount; primitiveIndex++) {
-        /*
-        debug("Recording primitive %d...", primitiveIndex);
-        debug("\tIndex Begin:        %lu", primitives[primitiveIndex].indexBegin);
-        debug("\tIndex Count:        %lu", primitives[primitiveIndex].indexCount);
-        debug("\tVertex Offset:      %lu", primitives[primitiveIndex].vertexOffset);
-        debug("\tDescriptor Address: %p", primitives[primitiveIndex].descriptorReference);
-        */
         vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[primitiveIndex].material->samplerDescriptor, 0, NULL);
         vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[primitiveIndex].indexCount, 1, primitives[primitiveIndex].indexBegin, primitives[primitiveIndex].vertexOffset, 0);
     }
@@ -299,7 +260,7 @@ void present() {
 
     VkImageBlit region = {
         .srcSubresource = {
-            .aspectMask = framebuffer->resolve.aspect,
+            .aspectMask = framebuffer->resolve->aspect,
             .mipLevel = 0,
             .baseArrayLayer = 0,
             .layerCount = 1
@@ -311,8 +272,8 @@ void present() {
                 .z = 0
             },
             {
-                .x = framebuffer->resolve.extent.width,
-                .y = framebuffer->resolve.extent.height,
+                .x = framebuffer->resolve->extent.width,
+                .y = framebuffer->resolve->extent.height,
                 .z = 1
             }
         },
@@ -367,10 +328,10 @@ void present() {
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
-    recordTransitionImageLayout(&framebuffer->presentCommandBuffer, &framebuffer->resolve, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+    recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, swapchainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, swapchainImage->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
-    recordTransitionImageLayout(&framebuffer->presentCommandBuffer, &framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, swapchainImage->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
+    recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, swapchainImage, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
     vkEndCommandBuffer(framebuffer->presentCommandBuffer);
 

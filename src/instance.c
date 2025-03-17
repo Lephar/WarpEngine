@@ -1,10 +1,8 @@
 #include "instance.h"
+
+#include "window.h"
 #include "helper.h"
-
-extern char executableName[];
-
-extern uint32_t requiredInstanceExtensionCount;
-extern const char **requiredInstanceExtensionNames;
+#include "config.h"
 
 VkInstance instance;
 #if DEBUG

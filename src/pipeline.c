@@ -1,17 +1,10 @@
 #include "pipeline.h"
 
 #include "helper.h"
-
+#include "device.h"
 #include "buffer.h"
 #include "content.h"
-
-extern VkDevice device;
-
-extern Buffer sharedBuffer;
-
-extern const uint32_t textureSizeMaxDimensionLimit;
-
-extern const uint32_t materialCountLimit;
+#include "material.h"
 
 VkSampler sampler;
 

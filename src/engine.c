@@ -18,11 +18,6 @@
 
 #include "draw.h"
 
-extern SDL_bool   quitEvent;
-extern SDL_bool resizeEvent;
-
-extern VkDevice device;
-
 void initialize(int argc, char *argv[]) {
     configure(argc, argv);
 

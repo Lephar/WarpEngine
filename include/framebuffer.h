@@ -2,12 +2,12 @@
 
 #include "pch.h"
 
-#include "image.h"
+typedef struct image Image;
 
 struct framebuffer {
-    Image depthStencil;
-    Image color;
-    Image resolve;
+    Image *depthStencil;
+    Image *color;
+    Image *resolve;
 
     VkCommandBuffer renderCommandBuffer;
     VkCommandBuffer presentCommandBuffer;
@@ -31,6 +31,9 @@ struct framebufferSet {
 
     Framebuffer *framebuffers;
 } typedef FramebufferSet;
+
+extern FramebufferSet oldFramebufferSet;
+extern FramebufferSet framebufferSet;
 
 void createFramebufferSet();
 void destroyFramebufferSet();

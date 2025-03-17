@@ -11,6 +11,13 @@ struct memory {
     VkDeviceMemory memory;
 } typedef Memory;
 
+extern VkPhysicalDeviceMemoryProperties memoryProperties;
+
+extern Memory deviceMemory;
+extern Memory sharedMemory;
+
+extern void *mappedSharedMemory;
+
 void allocateMemories();
 void freeMemories();
 

@@ -1,10 +1,10 @@
 #include "memory.h"
 
+#include "device.h"
+
 #include "helper.h"
 #include "buffer.h"
 #include "image.h"
-
-extern VkDevice device;
 
 VkPhysicalDeviceMemoryProperties memoryProperties;
 

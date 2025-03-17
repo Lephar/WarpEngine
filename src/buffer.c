@@ -1,18 +1,13 @@
 #include "buffer.h"
 
+#include "device.h"
+
 #include "helper.h"
 #include "memory.h"
 #include "queue.h"
 
-extern VkDevice device;
-
-extern Memory deviceMemory;
-extern Memory sharedMemory;
-
 Buffer deviceBuffer;
 Buffer sharedBuffer;
-
-extern void *mappedSharedMemory;
 
 void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size)
 {

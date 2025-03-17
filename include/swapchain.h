@@ -13,5 +13,8 @@ struct swapchain {
     Image *images;
 } typedef Swapchain;
 
+extern Swapchain oldSwapchain;
+extern Swapchain swapchain;
+
 void createSwapchain();
 void destroySwapchain();

@@ -11,6 +11,12 @@ struct material {
     VkDescriptorSet samplerDescriptor;
 } typedef Material;
 
+extern const uint32_t textureSizeMaxDimensionLimit;
+
+extern const uint32_t materialCountLimit;
+extern uint32_t materialCount;
+extern Material *materials;
+
 void loadTexture(const char *path, Image *texture);
 void createDescriptor(Material *material);
 void loadMaterial(cgltf_material *materialData);

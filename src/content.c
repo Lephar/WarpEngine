@@ -5,14 +5,9 @@
 #include "queue.h"
 #include "memory.h"
 #include "buffer.h"
+
 #include "primitive.h"
-
-extern VkDevice device;
-
-extern Buffer deviceBuffer;
-extern Buffer sharedBuffer;
-
-extern void *mappedSharedMemory;
+#include "material.h"
 
 uint64_t indexCount;
 uint64_t vertexCount;
@@ -26,14 +21,6 @@ const uint64_t vertexBufferSizeLimit  = 1L << 30;
 Index *indexBuffer;
 Vertex *vertexBuffer;
 Uniform *uniformBuffer;
-
-extern const uint32_t materialCountLimit;
-extern uint32_t materialCount;
-extern Material *materials;
-
-extern const uint32_t primitiveCountLimit;
-extern uint32_t primitiveCount;
-extern Primitive *primitives;
 
 void loadContent() {
     indexCount  = 0;

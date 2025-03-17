@@ -11,6 +11,19 @@ struct queue {
     VkCommandPool commandPool;
 } typedef Queue;
 
+extern uint32_t queueFamilyCount;
+extern VkQueueFamilyProperties *queueFamilyProperties;
+
+extern uint32_t distinctQueueFamilyCount;
+extern VkDeviceQueueCreateInfo *queueInfos;
+
+extern Queue graphicsQueue;
+extern Queue  computeQueue;
+extern Queue transferQueue;
+
+extern uint32_t queueCount;
+extern Queue *queueReferences[];
+
 void generateQueueDetails();
 void getQueues();
 VkCommandBuffer allocateSingleCommandBuffer(Queue *queue);

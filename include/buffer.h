@@ -13,6 +13,9 @@ struct buffer {
     Memory *memory;
 } typedef Buffer;
 
+extern Buffer deviceBuffer;
+extern Buffer sharedBuffer;
+
 void createBuffers();
 void destroyBuffers();
 

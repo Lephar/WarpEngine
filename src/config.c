@@ -2,14 +2,13 @@
 
 #include "helper.h"
 #include "file.h"
+#include "surface.h"
 #include "queue.h"
 #include "shader.h"
 #include "content.h"
 
 char rootPath[PATH_MAX];
 char executableName[PATH_MAX];
-
-extern VkExtent2D extent;
 
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);
