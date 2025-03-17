@@ -60,7 +60,7 @@ ShaderModule createShaderModule(ShaderCode shaderCode) {
         shaderModule.nextStage =  VK_SHADER_STAGE_FRAGMENT_BIT;
     } else if(shaderCode.stage == shaderc_fragment_shader) {
         shaderModule.stage     =  VK_SHADER_STAGE_FRAGMENT_BIT;
-    } //TODO: Add other shader types
+    } // TODO: Add other shader types
 
     VkShaderCreateInfoEXT shaderCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,

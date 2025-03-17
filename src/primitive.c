@@ -91,7 +91,7 @@ void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform)
             for(cgltf_size texcoordIndex = 0; texcoordIndex < attributeAccessor->count; texcoordIndex++) {
                 memcpy(vertexBuffer[vertexCount + texcoordIndex].texcoord, texcoords[texcoordIndex], sizeof(vec2));
             }
-        } //TODO: Load normal and tangent too
+        } // TODO: Load normal and tangent too
     }
 
     debug("\t\t\t\tIndex begin:   %lu", primitiveData->indexBegin);
