@@ -3,7 +3,10 @@
 #include "helper.h"
 #include "config.h"
 
+#include "window.h"
+
 VkInstance instance;
+PFN_vkGetInstanceProcAddr instanceLoader;
 #if DEBUG
 VkDebugUtilsMessengerEXT messenger;
 
@@ -17,6 +20,10 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
     return VK_FALSE;
 }
 #endif
+
+void *loadInstanceFunction(const char *name) {
+    return instanceLoader(instance, name);
+}
 
 void createInstance() {
 #if DEBUG
@@ -146,8 +153,12 @@ void createInstance() {
     vkCreateInstance(&instanceInfo, NULL, &instance);
     debug("Instance created");
 
+    PFN_vkGetInstanceProcAddr systemLoader = loadSystemFunction("vkGetInstanceProcAddr");
+    instanceLoader = (PFN_vkGetInstanceProcAddr) systemLoader(instance, "vkGetInstanceProcAddr");
+    debug("Instance function loader initialized");
+
 #if DEBUG
-    PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = loadFunction("vkCreateDebugUtilsMessengerEXT");
+    PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = loadInstanceFunction("vkCreateDebugUtilsMessengerEXT");
     createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
     debug("Messenger created");
 #endif
@@ -155,7 +166,7 @@ void createInstance() {
 
 void destroyInstance() {
 #if DEBUG
-    PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = loadFunction("vkDestroyDebugUtilsMessengerEXT");
+    PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = loadInstanceFunction("vkDestroyDebugUtilsMessengerEXT");
     destroyDebugUtilsMessenger(instance, messenger, NULL);
     debug("Messenger destroyed");
 #endif

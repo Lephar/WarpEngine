@@ -14,12 +14,6 @@ void debug(const char *fmt, ...) {
     }
 }
 
-void *loadFunction(const char *name) {
-    void  *functionPointer = getInstanceProcAddr(instance, name);
-    assert(functionPointer);
-    return functionPointer;
-}
-
 int32_t compareFloat(float first, float second) {
     float difference = first - second;
 
