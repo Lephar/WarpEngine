@@ -22,7 +22,9 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 #endif
 
 void *loadInstanceFunction(const char *name) {
-    return instanceLoader(instance, name);
+    void  *instanceFunction = instanceLoader(instance, name);
+    assert(instanceFunction);
+    return instanceFunction;
 }
 
 void createInstance() {

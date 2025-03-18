@@ -49,7 +49,9 @@ void initializeSystem() {
 }
 
 void *loadSystemFunction(const char *name) {
-    return systemLoader(NULL, name);
+    void  *systemFunction = systemLoader(NULL, name);
+    assert(systemFunction);
+    return systemFunction;
 }
 
 void createWindow() {

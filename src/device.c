@@ -15,7 +15,9 @@ VkDevice device;
 PFN_vkGetDeviceProcAddr deviceLoader;
 
 void *loadDeviceFunction(const char *name) {
-    return deviceLoader(device, name);
+    void  *deviceFunction = deviceLoader(device, name);
+    assert(deviceFunction);
+    return deviceFunction;
 }
 
 void selectPhysicalDevice() {
