@@ -2,12 +2,15 @@
 
 #include "pch.h"
 
+struct status {
+    SDL_bool resize;
+    SDL_bool quit;
+} typedef Status;
+
 extern SDL_Window *window;
 
 extern uint32_t frameIndex;
-
-extern SDL_bool quitEvent;
-extern SDL_bool resizeEvent;
+extern Status status;
 
 void initializeSystem();
 void createWindow();

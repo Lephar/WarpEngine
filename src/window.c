@@ -11,8 +11,7 @@ SDL_Window *window = NULL;
 uint32_t frameIndex = 0;
 uint32_t frameIndexCheckpoint = 0;
 
-SDL_bool   quitEvent = SDL_FALSE;
-SDL_bool resizeEvent = SDL_FALSE;
+Status status;
 
 #if DEBUG
 SDL_TimerID timer = 0;
@@ -83,13 +82,13 @@ void pollEvents() {
 
     while(SDL_PollEvent(&event)) {
         if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
-            quitEvent = SDL_TRUE;
+            status.quit = SDL_TRUE;
             return;
         } else if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
             debug("Recreating swapchain");
             SDL_Vulkan_GetDrawableSize(window, (int32_t *) &extent.width, (int32_t *) &extent.height);
             generatePerspective();
-            resizeEvent = SDL_TRUE;
+            status.resize = SDL_TRUE;
         }
     }
 
