@@ -55,7 +55,7 @@ void recreateSwapchain() {
 
     vkDeviceWaitIdle(device);
 
-    resizeEvent = SDL_FALSE;
+    status.resize = SDL_FALSE;
 }
 
 void loop() {
@@ -65,9 +65,9 @@ void loop() {
     while(1) {
         pollEvents();
 
-        if(quitEvent) {
+        if(status.quit) {
             break;
-        } else if(resizeEvent) {
+        } else if(status.resize) {
             recreateSwapchain();
         }
 

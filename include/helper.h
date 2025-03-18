@@ -4,7 +4,7 @@
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
-#endif //PATH_MAX
+#endif
 
 #define  SEC_TO_MSEC  1000.0f
 #define MSEC_TO_USEC  SEC_TO_MSEC

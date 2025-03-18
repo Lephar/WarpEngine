@@ -2,7 +2,7 @@
 
 #include "helper.h"
 #include "file.h"
-#include "surface.h"
+#include "window.h"
 #include "queue.h"
 #include "shader.h"
 #include "content.h"

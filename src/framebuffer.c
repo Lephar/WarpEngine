@@ -1,7 +1,7 @@
 #include "framebuffer.h"
 
 #include "helper.h"
-#include "surface.h"
+#include "window.h"
 #include "device.h"
 #include "queue.h"
 #include "memory.h"
