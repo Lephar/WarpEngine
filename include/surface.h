@@ -2,10 +2,6 @@
 
 #include "pch.h"
 
-extern SDL_bool surfaceCreated;
-
-extern VkExtent2D extent;
-
 extern VkSurfaceKHR surface;
 
 extern VkBool32 surfaceSupport;

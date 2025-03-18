@@ -7,9 +7,6 @@
 #include "helper.h"
 #include "queue.h"
 
-SDL_bool surfaceCreated = SDL_FALSE;
-
-VkExtent2D extent;
 VkSurfaceKHR surface;
 
 VkBool32 surfaceSupport;
@@ -23,11 +20,9 @@ VkPresentModeKHR *presentModes;
 VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
 void createSurface() {
-    assert(windowCreated && !surfaceCreated);
+    SDL_bool result = SDL_Vulkan_CreateSurface(window, instance, &surface);
+    assert(result);
 
-    SDL_Vulkan_CreateSurface(window, instance, &surface);
-
-    surfaceCreated = SDL_TRUE;
     debug("Surface created");
 
     vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, graphicsQueue.queueFamilyIndex, surface, &surfaceSupport);
@@ -54,13 +49,10 @@ void createSurface() {
 }
 
 void destroySurface() {
-    assert(surfaceCreated);
-
     vkDestroySurfaceKHR(instance, surface, NULL);
 
     free(presentModes);
     free(surfaceFormats);
 
-    surfaceCreated = SDL_FALSE;
     debug("Surface destroyed");
 }
