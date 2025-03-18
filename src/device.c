@@ -12,6 +12,11 @@ VkPhysicalDeviceProperties physicalDeviceProperties;
 VkPhysicalDeviceFeatures physicalDeviceFeatures;
 
 VkDevice device;
+PFN_vkGetDeviceProcAddr deviceLoader;
+
+void *loadFunction(const char *name) {
+    return deviceLoader(device, name);
+}
 
 void selectPhysicalDevice() {
     uint32_t deviceCount;
@@ -140,6 +145,10 @@ void createDevice() {
 
     vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
     debug("Device created");
+
+    PFN_vkGetDeviceProcAddr intermediateDeviceLoader = loadInstanceFunction("vkGetDeviceProcAddr");
+    deviceLoader = (PFN_vkGetDeviceProcAddr) intermediateDeviceLoader(device, "vkGetDeviceProcAddr");
+    debug("Device function loader initialized");
 
     free(queuePriorities);
 }

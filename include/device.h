@@ -5,6 +5,8 @@
 extern VkPhysicalDevice physicalDevice;
 extern VkDevice device;
 
+void *loadFunction(const char *name);
+
 void selectPhysicalDevice();
 void createDevice();
 void destroyDevice();
