@@ -22,8 +22,9 @@
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_vulkan.h>
+
 #include <vulkan/vulkan.h>
-#include <vulkan/vulkan_wayland.h>
+
 #include <shaderc/shaderc.h>
 
 #include "ktx/ktx.h"

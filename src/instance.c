@@ -36,17 +36,25 @@ void createInstance() {
 #endif
     };
 
-    const char *extensions[] = {
+    const uint32_t layerCount = sizeof(layers) / sizeof(const char *);
+
+    const char *baseExtensions[] = {
 #if DEBUG
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         VK_EXT_LAYER_SETTINGS_EXTENSION_NAME,
 #endif
-        VK_KHR_SURFACE_EXTENSION_NAME,
-        VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
     };
 
-    const uint32_t layerCount     = sizeof(layers)     / sizeof(const char *);
-    const uint32_t extensionCount = sizeof(extensions) / sizeof(const char *);
+    const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
+
+    uint32_t windowExtensionCount = 0;
+    getWindowExtensions(&windowExtensionCount, NULL);
+
+    const uint32_t extensionCount = baseExtensionCount + windowExtensionCount;
+    const char **extensions = malloc(extensionCount * sizeof(const char *));
+
+    memcpy(extensions, baseExtensions, baseExtensionCount * sizeof(const char *));
+    getWindowExtensions(&windowExtensionCount, extensions + baseExtensionCount);
 
     void *instanceNext = NULL;
 
