@@ -187,33 +187,33 @@ void render() {
 
     vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
     vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-    PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadFunction("vkCmdSetPolygonModeEXT");
+    PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadDeviceFunction("vkCmdSetPolygonModeEXT");
     cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
     //cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_LINE);
     //vkCmdSetLineWidth(framebuffer->renderCommandBuffer, 1.0f);
 
-    PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadFunction("vkCmdSetRasterizationSamplesEXT");
+    PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadDeviceFunction("vkCmdSetRasterizationSamplesEXT");
     cmdSetRasterizationSamples(framebuffer->renderCommandBuffer, framebufferSet.sampleCount);
-    PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadFunction("vkCmdSetSampleMaskEXT");
+    PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadDeviceFunction("vkCmdSetSampleMaskEXT");
     cmdSetSampleMask(framebuffer->renderCommandBuffer, framebufferSet.sampleCount, &sampleMask);
 
-    PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadFunction("vkCmdSetAlphaToOneEnableEXT");
+    PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadDeviceFunction("vkCmdSetAlphaToOneEnableEXT");
     cmdSetAlphaToOneEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-    PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadFunction("vkCmdSetAlphaToCoverageEnableEXT");
+    PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadDeviceFunction("vkCmdSetAlphaToCoverageEnableEXT");
     cmdSetAlphaToCoverageEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadFunction("vkCmdSetColorBlendEnableEXT");
+    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
     cmdSetColorBlendEnable(framebuffer->renderCommandBuffer, 0, 1, &colorBlend);
-    PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadFunction("vkCmdSetColorWriteMaskEXT");
+    PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadDeviceFunction("vkCmdSetColorWriteMaskEXT");
     cmdSetColorWriteMask(framebuffer->renderCommandBuffer, 0, 1, &colorWriteMask);
 
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
 
-    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadFunction("vkCmdSetVertexInputEXT");
+    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
 
-    PFN_vkCmdBindShadersEXT cmdBindShaders = loadFunction("vkCmdBindShadersEXT");
+    PFN_vkCmdBindShadersEXT cmdBindShaders = loadDeviceFunction("vkCmdBindShadersEXT");
 
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, skyboxShaders);
 

@@ -14,7 +14,7 @@ VkPhysicalDeviceFeatures physicalDeviceFeatures;
 VkDevice device;
 PFN_vkGetDeviceProcAddr deviceLoader;
 
-void *loadFunction(const char *name) {
+void *loadDeviceFunction(const char *name) {
     return deviceLoader(device, name);
 }
 

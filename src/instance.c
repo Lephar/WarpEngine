@@ -161,8 +161,8 @@ void createInstance() {
     vkCreateInstance(&instanceInfo, NULL, &instance);
     debug("Instance created");
 
-    PFN_vkGetInstanceProcAddr systemLoader = loadSystemFunction("vkGetInstanceProcAddr");
-    instanceLoader = (PFN_vkGetInstanceProcAddr) systemLoader(instance, "vkGetInstanceProcAddr");
+    PFN_vkGetInstanceProcAddr intermediateInstanceLoader = loadSystemFunction("vkGetInstanceProcAddr");
+    instanceLoader = (PFN_vkGetInstanceProcAddr) intermediateInstanceLoader(instance, "vkGetInstanceProcAddr");
     debug("Instance function loader initialized");
 
 #if DEBUG

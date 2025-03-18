@@ -79,9 +79,7 @@ ShaderModule createShaderModule(ShaderCode shaderCode) {
         .pSpecializationInfo = NULL
     };
 
-    PFN_vkCreateShadersEXT createShaders = loadFunction("vkCreateShadersEXT");
-    assert(createShaders);
-
+    PFN_vkCreateShadersEXT createShaders = loadDeviceFunction("vkCreateShadersEXT");
     createShaders(device, 1, &shaderCreateInfo, NULL, &shaderModule.module);
     debug("\tModule creation successful");
 
@@ -89,8 +87,7 @@ ShaderModule createShaderModule(ShaderCode shaderCode) {
 }
 
 void destroyShaderModule(ShaderModule *shaderModule) {
-    PFN_vkDestroyShaderEXT destroyShader = loadFunction("vkDestroyShaderEXT");
-    assert(destroyShader);
+    PFN_vkDestroyShaderEXT destroyShader = loadDeviceFunction("vkDestroyShaderEXT");
     destroyShader(device, shaderModule->module, NULL);
 }
 
