@@ -26,9 +26,8 @@ void initializeSystem() {
     assert(!systemInitialized);
 
     // NOTICE: RenderDoc doesn't support Wayland
-    SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11,wayland,windows");
-    //SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11,windows");
-    SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire,pulseaudio,directsound");
+    SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland");
+    SDL_SetHint(SDL_HINT_AUDIODRIVER, "pipewire");
 
     SDL_Init(SDL_INIT_EVERYTHING);
     debug("SDL Video Driver: %s", SDL_GetCurrentVideoDriver());
