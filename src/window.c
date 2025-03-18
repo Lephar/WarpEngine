@@ -5,6 +5,8 @@
 #include "helper.h"
 #include "control.h"
 
+PFN_vkGetInstanceProcAddr systemLoader;
+
 SDL_Window *window;
 VkExtent2D extent;
 
@@ -35,15 +37,19 @@ void initializeSystem() {
     // TODO: Ubuntu has issues with Wayland and RenderDoc doesn't support it yet, wait for update
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11,wayland,windows");
     SDL_SetHint(SDL_HINT_AUDIODRIVER, "pulseaudio,pipewire,directsound");
+
     SDL_Init(SDL_INIT_EVERYTHING);
+
+    SDL_Vulkan_LoadLibrary(NULL);
+    systemLoader = SDL_Vulkan_GetVkGetInstanceProcAddr();
 
     debug("System initialized:");
     debug("\tVideo Driver: %s", SDL_GetCurrentVideoDriver());
     debug("\tAudio Driver: %s", SDL_GetCurrentAudioDriver());
 }
 
-PFN_vkVoidFunction getSystemLoader() {
-    return SDL_Vulkan_GetVkGetInstanceProcAddr();
+void *loadSystemFunction(const char *name) {
+    return systemLoader(NULL, name);
 }
 
 void createWindow() {
