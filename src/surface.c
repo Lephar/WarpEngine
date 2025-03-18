@@ -2,7 +2,7 @@
 
 #include "window.h"
 #include "instance.h"
-#include "device.h"
+#include "physicalDevice.h"
 
 #include "helper.h"
 #include "queue.h"

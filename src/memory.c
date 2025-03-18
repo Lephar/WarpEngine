@@ -1,12 +1,11 @@
 #include "memory.h"
 
+#include "physicalDevice.h"
 #include "device.h"
 
 #include "helper.h"
 #include "buffer.h"
 #include "image.h"
-
-VkPhysicalDeviceMemoryProperties memoryProperties;
 
 Memory deviceMemory;
 Memory sharedMemory;

@@ -5,6 +5,7 @@
 
 #include "window.h"
 #include "instance.h"
+#include "physicalDevice.h"
 #include "device.h"
 #include "queue.h"
 #include "surface.h"

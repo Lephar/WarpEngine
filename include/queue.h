@@ -11,9 +11,6 @@ struct queue {
     VkCommandPool commandPool;
 } typedef Queue;
 
-extern uint32_t queueFamilyCount;
-extern VkQueueFamilyProperties *queueFamilyProperties;
-
 extern uint32_t distinctQueueFamilyCount;
 extern VkDeviceQueueCreateInfo *queueInfos;
 

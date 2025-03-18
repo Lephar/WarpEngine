@@ -1,25 +1,22 @@
 #include "queue.h"
 
 #include "helper.h"
+#include "physicalDevice.h"
 #include "device.h"
-
-uint32_t queueFamilyCount;
-VkQueueFamilyProperties *queueFamilyProperties;
 
 Queue graphicsQueue;
 Queue  computeQueue;
 Queue transferQueue;
 
+uint32_t queueCount;
 Queue *queueReferences[] = {
     &graphicsQueue,
     & computeQueue,
     &transferQueue
 };
 
-VkDeviceQueueCreateInfo *queueInfos;
-
-uint32_t queueCount;
 uint32_t distinctQueueFamilyCount;
+VkDeviceQueueCreateInfo *queueInfos;
 
 // TODO: Check surface presentation support for queues
 void generateQueueDetails() {
