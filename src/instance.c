@@ -1,6 +1,5 @@
 #include "instance.h"
 
-#include "window.h"
 #include "helper.h"
 #include "config.h"
 
@@ -10,31 +9,31 @@ VkDebugUtilsMessengerEXT messenger;
 #endif
 
 void createInstance() {
-    uint32_t layerCount = 0;
-    // Reserve extra space for Validation Layers just in case
-    const char **layerNames = malloc((layerCount + 1) * sizeof(const char *));
-    layerNames[layerCount] = NULL;
+#if DEBUG
+    const char *validationLayer = "VK_LAYER_KHRONOS_validation";
+#endif
 
-    uint32_t extensionCount = requiredInstanceExtensionCount;
-    // Reserve extra space for Validation Layers extension just in case
-    const char **extensionNames = malloc((extensionCount + 2) * sizeof(const char *));
-    memcpy(extensionNames, requiredInstanceExtensionNames, extensionCount * sizeof(const char *));
-    extensionNames[extensionCount] = NULL;
+    const char *layers[] = {
+#if DEBUG
+        validationLayer
+#endif
+    };
+
+    const char *extensions[] = {
+#if DEBUG
+        VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+        VK_EXT_LAYER_SETTINGS_EXTENSION_NAME,
+#endif
+        VK_KHR_SURFACE_EXTENSION_NAME,
+        VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
+    };
+
+    const uint32_t layerCount     = sizeof(layers)     / sizeof(const char *);
+    const uint32_t extensionCount = sizeof(extensions) / sizeof(const char *);
 
     void *instanceNext = NULL;
 
 #if DEBUG
-    const char *validationLayerName = "VK_LAYER_KHRONOS_validation";
-
-    layerNames[layerCount] = validationLayerName;
-    layerCount++;
-
-    extensionNames[extensionCount] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
-    extensionCount++;
-
-    extensionNames[extensionCount] = VK_EXT_LAYER_SETTINGS_EXTENSION_NAME;
-    extensionCount++;
-
     VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
         .pNext = NULL,
@@ -55,35 +54,35 @@ void createInstance() {
 
     VkLayerSettingEXT settings[] = {
         {
-            .pLayerName = validationLayerName,
+            .pLayerName = validationLayer,
             .pSettingName = "validate_sync",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueFalse
         },
         {
-            .pLayerName = validationLayerName,
+            .pLayerName = validationLayer,
             .pSettingName = "gpuav_enable",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueTrue
         },
         {
-            .pLayerName = validationLayerName,
+            .pLayerName = validationLayer,
             .pSettingName = "gpuav_image_layout",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueTrue
         },
         {
-            .pLayerName = validationLayerName,
+            .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueTrue
         },
         {
-            .pLayerName = validationLayerName,
+            .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices_nvidia",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
@@ -119,19 +118,19 @@ void createInstance() {
         .flags = 0,
         .pApplicationInfo = &applicationInfo,
         .enabledLayerCount = layerCount,
-        .ppEnabledLayerNames = layerNames,
+        .ppEnabledLayerNames = layers,
         .enabledExtensionCount = extensionCount,
-        .ppEnabledExtensionNames = extensionNames
+        .ppEnabledExtensionNames = extensions
     };
 
     debug("Instance layers (count = %d):", layerCount);
     for(uint32_t index = 0; index < layerCount; index++) {
-        debug("\t%s", layerNames[index]);
+        debug("\t%s", layers[index]);
     }
 
     debug("Instance extensions (count = %d):", extensionCount);
     for(uint32_t index = 0; index < extensionCount; index++) {
-        debug("\t%s", extensionNames[index]);
+        debug("\t%s", extensions[index]);
     }
 
     vkCreateInstance(&instanceInfo, NULL, &instance);
@@ -139,21 +138,14 @@ void createInstance() {
 
 #if DEBUG
     PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = loadFunction("vkCreateDebugUtilsMessengerEXT");
-    assert(createDebugUtilsMessenger);
-
     createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
     debug("Messenger created");
 #endif
-
-    free(extensionNames);
-    free(layerNames);
 }
 
 void destroyInstance() {
 #if DEBUG
     PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = loadFunction("vkDestroyDebugUtilsMessengerEXT");
-    assert(destroyDebugUtilsMessenger);
-
     destroyDebugUtilsMessenger(instance, messenger, NULL);
     debug("Messenger destroyed");
 #endif
