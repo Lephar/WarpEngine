@@ -19,11 +19,6 @@ struct data {
 
 void debug(const char *fmt, ...);
 
-VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT      severity,
-                                               VkDebugUtilsMessageTypeFlagsEXT             type,
-                                               const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                               void                                       *pUserData);
-
 void *loadFunction(const char *name);
 
 int32_t compareFloat(float first, float second);

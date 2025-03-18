@@ -6,6 +6,16 @@
 VkInstance instance;
 #if DEBUG
 VkDebugUtilsMessengerEXT messenger;
+
+VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+    (void)severity;
+    (void)type;
+    (void)pUserData;
+
+    debug("%s", pCallbackData->pMessage);
+
+    return VK_FALSE;
+}
 #endif
 
 void createInstance() {

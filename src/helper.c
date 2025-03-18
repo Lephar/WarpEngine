@@ -14,23 +14,10 @@ void debug(const char *fmt, ...) {
     }
 }
 
-VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback( VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-                                                VkDebugUtilsMessageTypeFlagsEXT type,
-                                                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                void* pUserData) {
-    (void)severity;
-    (void)type;
-    (void)pUserData;
-
-    if(severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
-        debug("%s", pCallbackData->pMessage);
-    }
-
-    return VK_FALSE;
-}
-
 void *loadFunction(const char *name) {
-    return getInstanceProcAddr(instance, name);
+    void  *functionPointer = getInstanceProcAddr(instance, name);
+    assert(functionPointer);
+    return functionPointer;
 }
 
 int32_t compareFloat(float first, float second) {
