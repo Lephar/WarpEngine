@@ -8,7 +8,7 @@ struct status {
 } typedef Status;
 
 extern SDL_Window *window;
-
+extern VkExtent2D extent;
 extern uint32_t frameIndex;
 extern Status status;
 

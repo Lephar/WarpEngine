@@ -1,20 +1,20 @@
 #include "window.h"
 
-#include "surface.h"
 #include "config.h"
 
 #include "helper.h"
 #include "control.h"
 
-SDL_Window *window = NULL;
+SDL_Window *window;
+VkExtent2D extent;
 
-uint32_t frameIndex = 0;
-uint32_t frameIndexCheckpoint = 0;
+uint32_t frameIndex;
+uint32_t frameIndexCheckpoint;
 
 Status status;
 
 #if DEBUG
-SDL_TimerID timer = 0;
+SDL_TimerID timer;
 
 uint32_t timerCallback(uint32_t interval, void *userData) {
     (void) userData;
