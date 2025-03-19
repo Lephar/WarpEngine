@@ -74,7 +74,7 @@ void stagingBufferCopy(void *sourceBuffer, uint64_t sourceOffset, VkDeviceSize d
     uint64_t remainingSize  = size;
 
     while(remainingSize) {
-        const uint64_t chunkSize = remainingSize <= sharedBuffer.size ? remainingSize : sharedBuffer.size;
+        const uint64_t chunkSize = ulmin(remainingSize, sharedBuffer.size);
 
         mempcpy(mappedSharedMemory, sourceBuffer + sourceOffset + internalOffset, chunkSize);
         copyBuffer(&sharedBuffer, &deviceBuffer, 0, destinationOffset + internalOffset, chunkSize);

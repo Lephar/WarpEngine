@@ -5,6 +5,8 @@
 #include "memory.h"
 #include "buffer.h"
 
+#include "numerics.h"
+
 void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
     image->extent.width = width;
     image->extent.height = height;
@@ -152,8 +154,8 @@ void generateMipmaps(Image *image) {
                     .z = 0
                 },
                 {
-                    .x = mipWidth  > 1 ? mipWidth  / 2 : 1,
-                    .y = mipHeight > 1 ? mipHeight / 2 : 1,
+                    .x = imax(1, mipWidth  / 2),
+                    .y = imax(1, mipHeight / 2),
                     .z = 1
                 }
             }
