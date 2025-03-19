@@ -11,7 +11,6 @@
 #include "logger.h"
 
 const uint32_t textureSizeMaxDimensionLimit = 8192;
-
 const uint32_t materialCountLimit = 128;
 uint32_t materialCount;
 Material *materials;
@@ -116,8 +115,8 @@ void createDescriptor(Material *material) {
 
     VkDescriptorImageInfo imageInfo = {
         .sampler = sampler,
-        .imageView = material->baseColor.view,
-        .imageLayout = material->baseColor.layout
+        .imageView = material->baseColor->view,
+        .imageLayout = material->baseColor->layout
     };
 
     VkWriteDescriptorSet descriptorWrites[] = {
@@ -158,7 +157,8 @@ void loadMaterial(cgltf_material *materialData) {
     }
 
     assert(materialCount < materialCountLimit);
-    Material *material = &materials[materialCount];
+    Material *material   = &materials[materialCount];
+    material->baseColor  = malloc(sizeof(Image));
 
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
@@ -167,7 +167,7 @@ void loadMaterial(cgltf_material *materialData) {
         char textureFullPath[PATH_MAX];
         makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, textureFullPath);
 
-        loadTexture(textureFullPath, &material->baseColor);
+        loadTexture(textureFullPath, material->baseColor);
         createDescriptor(material);
     }
 
