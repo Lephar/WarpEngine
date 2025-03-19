@@ -2,12 +2,12 @@
 
 #include "pch.h"
 
-#include "content.h"
+typedef enum contentType ContentType;
 
 typedef struct material Material;
 
 struct primitive {
-    ContentType type;
+    ContentType *type;
     Material *material;
     VkDeviceSize indexBegin;
     VkDeviceSize indexCount;

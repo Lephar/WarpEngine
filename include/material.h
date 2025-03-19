@@ -2,12 +2,11 @@
 
 #include "pch.h"
 
-#include "helper.h"
-#include "image.h"
+typedef struct image Image;
 
 struct material {
     char name[UINT8_MAX];
-    Image baseColor;
+    Image *baseColor;
     VkDescriptorSet samplerDescriptor;
 } typedef Material;
 

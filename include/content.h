@@ -2,8 +2,6 @@
 
 #include "pch.h"
 
-#include "file.h"
-
 enum contentType {
     CAMERA,
     LIGHT,

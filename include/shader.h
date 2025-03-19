@@ -2,12 +2,14 @@
 
 #include "pch.h"
 
-#include "file.h"
+typedef enum fileType FileType;
+
+typedef struct data Data;
 
 struct shaderCode {
-    FileType type;
+    FileType *type;
     shaderc_shader_kind stage;
-    Data data;
+    Data *data;
 } typedef ShaderCode;
 
 struct shaderModule {
