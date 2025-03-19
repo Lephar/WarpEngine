@@ -4,16 +4,6 @@
 #include "instance.h"
 #include "config.h"
 
-int32_t compareFloat(float first, float second) {
-    float difference = first - second;
-
-    return (difference > EPSILON) - (difference < -EPSILON);
-}
-
-float radians(float degrees) {
-    return M_PI * degrees / 180.0f;
-}
-
 Data wrapData(size_t size, char *content) {
     Data data = {
         .size = size,
