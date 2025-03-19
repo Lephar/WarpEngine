@@ -12,13 +12,9 @@ FramebufferSet oldFramebufferSet;
 FramebufferSet framebufferSet;
 
 void createFramebuffer(Framebuffer *framebuffer) {
-    framebuffer->depthStencil = malloc(sizeof(Image));
-    framebuffer->color        = malloc(sizeof(Image));
-    framebuffer->resolve      = malloc(sizeof(Image));
-
-    createImage(framebuffer->depthStencil, extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
-    createImage(framebuffer->color, extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-    createImage(framebuffer->resolve, extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+    framebuffer->depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
+    framebuffer->color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+    framebuffer->resolve      = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
 
     bindImageMemory(framebuffer->depthStencil, &deviceMemory);
     bindImageMemory(framebuffer->color, &deviceMemory);
@@ -105,10 +101,6 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
     destroyImage(framebuffer->resolve);
     destroyImage(framebuffer->color);
     destroyImage(framebuffer->depthStencil);
-
-    free(framebuffer->resolve);
-    free(framebuffer->color);
-    free(framebuffer->depthStencil);
 }
 
 void destroyFramebufferSet() {

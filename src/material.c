@@ -15,7 +15,7 @@ const uint32_t materialCountLimit = 128;
 uint32_t materialCount;
 Material *materials;
 
-void loadTexture(const char *path, Image *texture) {
+Image *loadTexture(const char *path) {
     debug("\tImage Path: %s", path);
 
     ktxTexture2 *textureObject;
@@ -56,7 +56,7 @@ void loadTexture(const char *path, Image *texture) {
 
     assert(width <= textureSizeMaxDimensionLimit && height <= textureSizeMaxDimensionLimit);
 
-    createImage(texture, width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
     bindImageMemory(texture, &deviceMemory);
     createImageView(texture);
 
@@ -94,6 +94,8 @@ void loadTexture(const char *path, Image *texture) {
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     ktxTexture_Destroy(textureHandle);
+
+    return texture;
 }
 
 void createDescriptor(Material *material) {
@@ -167,7 +169,7 @@ void loadMaterial(cgltf_material *materialData) {
         char textureFullPath[PATH_MAX];
         makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, textureFullPath);
 
-        loadTexture(textureFullPath, material->baseColor);
+        material->baseColor = loadTexture(textureFullPath);
         createDescriptor(material);
     }
 

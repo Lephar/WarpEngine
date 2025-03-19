@@ -10,7 +10,7 @@ struct swapchain {
     VkPresentModeKHR presentMode;
     VkSurfaceTransformFlagsKHR transform;
     VkSwapchainKHR swapchain;
-    Image *images;
+    Image **images;
 } typedef Swapchain;
 
 extern Swapchain oldSwapchain;

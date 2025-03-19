@@ -117,14 +117,14 @@ void createSwapchain() {
 
     vkGetSwapchainImagesKHR(device, swapchain.swapchain, &swapchain.imageCount, NULL);
     VkImage *handles = malloc(swapchain.imageCount * sizeof(VkImage));
-    swapchain.images = malloc(swapchain.imageCount * sizeof(Image));
+    swapchain.images = malloc(swapchain.imageCount * sizeof(Image *));
 
     vkGetSwapchainImagesKHR(device, swapchain.swapchain, &swapchain.imageCount, handles);
     debug("Retrieved %u swapchain images", swapchain.imageCount);
 
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
-        wrapImage(&swapchain.images[imageIndex], handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-        transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+        swapchain.images[imageIndex] = wrapImage(handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, swapchain.surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+        transitionImageLayout(swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
         debug("Wrapped and transitioned swapchain image %u", imageIndex);
     }
 
@@ -133,6 +133,12 @@ void createSwapchain() {
 
 void destroySwapchain() {
     vkDestroySwapchainKHR(device, swapchain.swapchain, NULL);
+
+    for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
+        free(swapchain.images[imageIndex]);
+    }
+
     free(swapchain.images);
+
     debug("Swapchain destroyed");
 }

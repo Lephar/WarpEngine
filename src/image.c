@@ -7,7 +7,9 @@
 
 #include "numerics.h"
 
-void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
+Image *wrapImage(VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
+    Image *image = malloc(sizeof(Image));
+
     image->extent.width = width;
     image->extent.height = height;
     image->extent.depth = 1;
@@ -20,9 +22,11 @@ void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, ui
     image->image = handle;
 
     vkGetImageMemoryRequirements(device, image->image, &image->memoryRequirements);
+
+    return image;
 }
 
-void createImage(Image *image, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
+Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
     uint32_t queueFamilyIndices[distinctQueueFamilyCount];
 
     for(uint32_t queueIndex = 0; queueIndex < distinctQueueFamilyCount; queueIndex++) {
@@ -54,7 +58,7 @@ void createImage(Image *image, uint32_t width, uint32_t height, uint32_t mips, V
     VkImage handle;
     vkCreateImage(device, &imageInfo, NULL, &handle);
 
-    wrapImage(image, handle, width, height, mips, samples, format, usage, aspect);
+    return wrapImage(handle, width, height, mips, samples, format, usage, aspect);
 }
 
 void bindImageMemory(Image *image, Memory *memory) {
@@ -293,4 +297,6 @@ void destroyImage(Image *image) {
     vkDestroyImage(device, image->image, NULL);
 
     image->memory = NULL;
+
+    free(image);
 }

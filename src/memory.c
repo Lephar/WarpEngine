@@ -66,19 +66,16 @@ void *mapMemory(Memory *memory) {
 }
 
 void allocateMemories() {
-    Image temporaryImage;
-    VkMemoryRequirements imageMemoryRequirements;
-
-    Buffer temporaryBuffer;
-    VkMemoryRequirements bufferMemoryRequirements;
-
     uint32_t typeFilter; // TODO: Syntax highlighting fails for %b but it compiles, contribute to clangd maybe?
 
-    createImage(&temporaryImage, 800, 600, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
+    Image *temporaryImage = createImage(800, 600, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-    vkGetImageMemoryRequirements(device, temporaryImage.image, &imageMemoryRequirements);
+    VkMemoryRequirements imageMemoryRequirements;
+    vkGetImageMemoryRequirements(device, temporaryImage->image, &imageMemoryRequirements);
 
+    Buffer temporaryBuffer;
     createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 1L << 20);
+    VkMemoryRequirements bufferMemoryRequirements;
     vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
     typeFilter = imageMemoryRequirements.memoryTypeBits & bufferMemoryRequirements.memoryTypeBits;
@@ -88,7 +85,7 @@ void allocateMemories() {
 
     allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 2L << 30);
     destroyBuffer(&temporaryBuffer);
-    destroyImage(&temporaryImage);
+    destroyImage(temporaryImage);
 
     debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
     debug("\t%ld bytes allocated", deviceMemory.size);
