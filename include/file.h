@@ -11,8 +11,9 @@ enum fileType {
     FILE_TYPE_BINARY
 } typedef FileType;
 
+typedef struct data Data;
 
 void makeFullPath(const char *filename, const char *subdirectory, char outFullPath[]);
 
 // WARN: Free the output data!
-Data readFile(const char *path, FileType type);
+Data *readFile(const char *path, FileType type);
