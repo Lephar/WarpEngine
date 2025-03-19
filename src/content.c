@@ -1,13 +1,12 @@
 #include "content.h"
 
-#include "helper.h"
-#include "file.h"
-#include "queue.h"
 #include "memory.h"
 #include "buffer.h"
-
-#include "primitive.h"
+#include "image.h"
 #include "material.h"
+#include "primitive.h"
+
+#include "logger.h"
 
 uint64_t indexCount;
 uint64_t vertexCount;

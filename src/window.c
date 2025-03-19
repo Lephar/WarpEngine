@@ -1,9 +1,9 @@
 #include "window.h"
 
 #include "config.h"
-
-#include "helper.h"
 #include "control.h"
+#include "numerics.h"
+#include "logger.h"
 
 PFN_vkGetInstanceProcAddr systemLoader;
 

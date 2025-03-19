@@ -1,11 +1,9 @@
 #include "config.h"
 
-#include "helper.h"
-#include "file.h"
 #include "window.h"
-#include "queue.h"
-#include "shader.h"
-#include "content.h"
+
+#include "file.h"
+#include "logger.h"
 
 char rootPath[PATH_MAX];
 char executableName[PATH_MAX];

@@ -1,10 +1,11 @@
 #include "swapchain.h"
 
-#include "helper.h"
 #include "window.h"
 #include "surface.h"
 #include "device.h"
 #include "image.h"
+
+#include "logger.h"
 
 Swapchain oldSwapchain;
 Swapchain swapchain;

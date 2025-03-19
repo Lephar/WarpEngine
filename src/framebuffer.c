@@ -1,12 +1,12 @@
 #include "framebuffer.h"
 
-#include "helper.h"
 #include "window.h"
 #include "device.h"
 #include "queue.h"
 #include "memory.h"
 #include "image.h"
-#include "swapchain.h"
+
+#include "logger.h"
 
 FramebufferSet oldFramebufferSet;
 FramebufferSet framebufferSet;

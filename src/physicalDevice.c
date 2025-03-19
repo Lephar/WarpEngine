@@ -1,7 +1,8 @@
 #include "physicalDevice.h"
 
-#include "helper.h"
 #include "instance.h"
+
+#include "logger.h"
 
 VkPhysicalDevice physicalDevice;
 

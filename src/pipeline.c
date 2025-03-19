@@ -1,10 +1,9 @@
 #include "pipeline.h"
 
-#include "helper.h"
 #include "device.h"
-#include "buffer.h"
-#include "content.h"
 #include "material.h"
+
+#include "logger.h"
 
 VkSampler sampler;
 

@@ -1,7 +1,10 @@
 #include "primitive.h"
 
-#include "material.h"
 #include "content.h"
+#include "material.h"
+
+#include "file.h"
+#include "logger.h"
 
 const uint32_t primitiveCountLimit = 128;
 uint32_t primitiveCount;

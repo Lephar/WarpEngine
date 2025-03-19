@@ -1,9 +1,9 @@
 #include "instance.h"
 
-#include "helper.h"
-#include "config.h"
-
 #include "window.h"
+
+#include "config.h"
+#include "logger.h"
 
 VkInstance instance;
 PFN_vkGetInstanceProcAddr instanceLoader;

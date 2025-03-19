@@ -1,19 +1,19 @@
 #include "draw.h"
 
 #include "window.h"
-#include "helper.h"
-#include "surface.h"
 #include "device.h"
 #include "queue.h"
-#include "memory.h"
 #include "buffer.h"
+#include "image.h"
 #include "swapchain.h"
 #include "framebuffer.h"
+#include "pipeline.h"
 #include "content.h"
+#include "shader.h"
 #include "material.h"
 #include "primitive.h"
-#include "pipeline.h"
-#include "shader.h"
+
+#include "logger.h"
 
 void initializeDraw() {
     vkDeviceWaitIdle(device);

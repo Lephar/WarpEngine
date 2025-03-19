@@ -1,5 +1,7 @@
 #include "file.h"
+
 #include "config.h"
+#include "data.h"
 
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]) {
     if(subdirectory == NULL || strncmp(subdirectory, "", PATH_MAX) == 0) {

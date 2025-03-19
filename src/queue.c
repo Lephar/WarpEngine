@@ -1,8 +1,9 @@
 #include "queue.h"
 
-#include "helper.h"
 #include "physicalDevice.h"
 #include "device.h"
+
+#include "logger.h"
 
 Queue graphicsQueue;
 Queue  computeQueue;

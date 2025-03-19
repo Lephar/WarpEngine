@@ -1,22 +1,19 @@
 #include "engine.h"
 
-#include "helper.h"
 #include "config.h"
-
 #include "window.h"
 #include "instance.h"
 #include "physicalDevice.h"
+#include "surface.h"
 #include "device.h"
 #include "queue.h"
-#include "surface.h"
 #include "memory.h"
-#include "swapchain.h"
 #include "buffer.h"
+#include "swapchain.h"
 #include "framebuffer.h"
 #include "pipeline.h"
-#include "shader.h"
 #include "content.h"
-
+#include "shader.h"
 #include "draw.h"
 
 void initialize(int argc, char *argv[]) {

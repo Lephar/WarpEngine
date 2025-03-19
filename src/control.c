@@ -1,10 +1,10 @@
 #include "control.h"
 
 #include "window.h"
-#include "surface.h"
-#include "helper.h"
-#include "memory.h"
 #include "content.h"
+
+#include "numerics.h"
+#include "logger.h"
 
 struct timespec timeCurrent;
 float timeDelta; // In microseconds

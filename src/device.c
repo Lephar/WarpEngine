@@ -2,10 +2,9 @@
 
 #include "instance.h"
 #include "physicalDevice.h"
-
 #include "queue.h"
-#include "memory.h"
-#include "helper.h"
+
+#include "logger.h"
 
 VkDevice device;
 PFN_vkGetDeviceProcAddr deviceLoader;

@@ -1,11 +1,14 @@
 #include "material.h"
 
-#include "file.h"
 #include "device.h"
-#include "content.h"
-#include "pipeline.h"
 #include "memory.h"
 #include "buffer.h"
+#include "image.h"
+#include "pipeline.h"
+#include "content.h"
+
+#include "file.h"
+#include "logger.h"
 
 const uint32_t textureSizeMaxDimensionLimit = 8192;
 

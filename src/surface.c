@@ -3,9 +3,9 @@
 #include "window.h"
 #include "instance.h"
 #include "physicalDevice.h"
-
-#include "helper.h"
 #include "queue.h"
+
+#include "logger.h"
 
 VkSurfaceKHR surface;
 

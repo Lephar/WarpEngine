@@ -1,10 +1,11 @@
 #include "buffer.h"
 
 #include "device.h"
-
-#include "helper.h"
-#include "memory.h"
 #include "queue.h"
+#include "memory.h"
+
+#include "numerics.h"
+#include "logger.h"
 
 Buffer deviceBuffer;
 Buffer sharedBuffer;
