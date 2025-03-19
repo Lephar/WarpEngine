@@ -13,23 +13,24 @@ Primitive *primitives;
 void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform) {
     assert(primitiveCount < primitiveCountLimit);
 
-    Primitive *primitiveData = &primitives[primitiveCount];
-    primitiveData->type = type;
+    Primitive *primitiveReference = &primitives[primitiveCount];
+     primitiveReference->type = malloc(sizeof(ContentType));
+    *primitiveReference->type = type;
 
     debug("\t\t\tPrimitive Index: %d", primitiveCount);
     debug("\t\t\tPrimitive Type:  %d", primitive->type);
 
-    primitiveData->material = NULL;
+    primitiveReference->material = NULL;
 
     for(cgltf_size materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         if(strncmp(primitive->material->name, materials[materialIndex].name, UINT8_MAX) == 0) {
-            primitiveData->material = &materials[materialIndex];
+            primitiveReference->material = &materials[materialIndex];
             debug("\t\t\t\tMaterial matched: %s", primitive->material->name);
             break;
         }
     }
 
-    assert(primitiveData->material != NULL);
+    assert(primitiveReference->material != NULL);
 
     cgltf_accessor *accessor = primitive->indices;
     cgltf_buffer_view *view = accessor->buffer_view;
@@ -37,9 +38,9 @@ void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform)
 
     void *data = buffer->data + view->offset;
 
-    primitiveData->indexBegin   = indexCount;
-    primitiveData->indexCount   = accessor->count;
-    primitiveData->vertexOffset = vertexCount;
+    primitiveReference->indexBegin   = indexCount;
+    primitiveReference->indexCount   = accessor->count;
+    primitiveReference->vertexOffset = vertexCount;
 
     debug("\t\t\t\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
@@ -97,9 +98,9 @@ void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform)
         } // TODO: Load normal and tangent too
     }
 
-    debug("\t\t\t\tIndex begin:   %lu", primitiveData->indexBegin);
-    debug("\t\t\t\tIndex count:   %lu", primitiveData->indexCount);
-    debug("\t\t\t\tVertex offset: %lu", primitiveData->vertexOffset);
+    debug("\t\t\t\tIndex begin:   %lu", primitiveReference->indexBegin);
+    debug("\t\t\t\tIndex count:   %lu", primitiveReference->indexCount);
+    debug("\t\t\t\tVertex offset: %lu", primitiveReference->vertexOffset);
 
     indexCount  += accessor->count;
     vertexCount += primitiveVertexCount;
