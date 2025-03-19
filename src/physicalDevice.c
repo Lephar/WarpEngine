@@ -43,7 +43,7 @@ void selectPhysicalDevice() {
     queueFamilyProperties = malloc(queueFamilyCount * sizeof(VkQueueFamilyProperties));
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilyProperties);
 
-    debug("Device selected: %s", physicalDeviceProperties.deviceName);
+    debug("Physical device selected: %s", physicalDeviceProperties.deviceName);
 
     free(devices);
 }

@@ -5,6 +5,9 @@
 
 #include "logger.h"
 
+uint32_t distinctQueueFamilyCount;
+VkDeviceQueueCreateInfo *queueInfos;
+
 Queue graphicsQueue;
 Queue  computeQueue;
 Queue transferQueue;
@@ -15,9 +18,6 @@ Queue *queueReferences[] = {
     & computeQueue,
     &transferQueue
 };
-
-uint32_t distinctQueueFamilyCount;
-VkDeviceQueueCreateInfo *queueInfos;
 
 // TODO: Check surface presentation support for queues
 void generateQueueDetails() {

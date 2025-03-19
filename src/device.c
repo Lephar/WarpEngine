@@ -18,7 +18,7 @@ void *loadDeviceFunction(const char *name) {
 void createDevice() {
     const char *extensionNames[] = {
         VK_KHR_MAINTENANCE_7_EXTENSION_NAME,
-     // VK_KHR_MAINTENANCE_8_EXTENSION_NAME, // TODO: Enable when SDK updates
+         // VK_KHR_MAINTENANCE_8_EXTENSION_NAME, // TODO: Enable when SDK updates
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         VK_EXT_SHADER_OBJECT_EXTENSION_NAME
     };
