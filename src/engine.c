@@ -84,7 +84,6 @@ void quit() {
     destroyFramebufferSet();
     destroySwapchain();
     destroyBuffers();
-    freeContent();
     freeMemories();
     destroySurface();
     clearQueues();

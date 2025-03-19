@@ -14,9 +14,6 @@ uint64_t indexBufferSize;
 uint64_t vertexBufferSize;
 uint64_t uniformBufferSize;
 
-const uint64_t indexBufferSizeLimit   = 1L << 30;
-const uint64_t vertexBufferSizeLimit  = 1L << 30;
-
 Index *indexBuffer;
 Vertex *vertexBuffer;
 Uniform *uniformBuffer;
@@ -25,21 +22,24 @@ void loadContent() {
     indexCount  = 0;
     vertexCount = 0;
 
-    indexBufferSize   = 0;
-    vertexBufferSize  = 0;
+    indexBufferSize  = 0;
+    vertexBufferSize = 0;
 
     uniformBufferSize = sizeof(Uniform);
 
-    indexBuffer   = malloc(indexBufferSizeLimit);
-    vertexBuffer  = malloc(vertexBufferSizeLimit);
+    const uint64_t indexBufferSizeLimit   = 1L << 30;
+    const uint64_t vertexBufferSizeLimit  = 1L << 30;
+
+    indexBuffer  = malloc(indexBufferSizeLimit);
+    vertexBuffer = malloc(vertexBufferSizeLimit);
 
     assert(indexBuffer);
     assert(vertexBuffer);
 
+    materialCount  = 0;
     primitiveCount = 0;
-    materialCount = 0;
 
-    materials = malloc(materialCountLimit * sizeof(Material));
+    materials  = malloc(materialCountLimit  * sizeof(Material ));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
     loadAsset(CUBEMAP,    "Skybox.gltf");
@@ -47,26 +47,13 @@ void loadContent() {
     loadAsset(MOVABLE,    "Suzanne.gltf");
     debug("Assets successfully loaded");
 
-    stagingBufferCopy(indexBuffer,  0, 0, indexBufferSize);
+    stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
-
-    free(vertexBuffer);
-    free(indexBuffer);
     debug("Index and vertex data copied into device memory");
 
+    free(vertexBuffer);
+    free(indexBuffer );
     memset(mappedSharedMemory, 0, sharedBuffer.size);
-
     uniformBuffer = mappedSharedMemory;
-}
-
-void freeContent() {
-    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        destroyImageView(&materials[materialIndex].baseColor);
-        destroyImage(&materials[materialIndex].baseColor);
-    }
-
-    free(materials);
-    free(primitives);
-
-    debug("Assets freed");
+    debug("Shared memory cleared and set for uniform buffer usage");
 }
