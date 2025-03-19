@@ -140,7 +140,7 @@ void loadScene(ContentType type, cgltf_scene *scene) {
 
 void loadAsset(ContentType type, const char *assetName) {
     char fullPath[PATH_MAX];
-    makeFullPath(assetName, "data", fullPath);
+    makeFullPath("data", assetName, fullPath);
 
     cgltf_data *data = NULL;
     cgltf_options assetOptions = {};

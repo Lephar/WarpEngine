@@ -162,7 +162,7 @@ void loadMaterial(cgltf_material *materialData) {
 
     if(materialData->has_pbr_metallic_roughness) {
         char textureFullPath[PATH_MAX];
-        makeFullPath(materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, "data", textureFullPath);
+        makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, textureFullPath);
 
         loadTexture(textureFullPath, &material->baseColor);
         createDescriptor(material);

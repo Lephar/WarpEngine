@@ -1,7 +1,7 @@
 #include "file.h"
 #include "config.h"
 
-void makeFullPath(const char *filename, const char *subdirectory, char outFullPath[]) {
+void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]) {
     if(subdirectory == NULL || strncmp(subdirectory, "", PATH_MAX) == 0) {
         snprintf(outFullPath, PATH_MAX, "%s/%s", rootPath, filename);
     } else {
@@ -11,7 +11,7 @@ void makeFullPath(const char *filename, const char *subdirectory, char outFullPa
 
 Data readFile(const char *path, FileType type) {
     char fullPath[PATH_MAX];
-    makeFullPath(path, NULL, fullPath);
+    makeFullPath(NULL, path, fullPath);
 
     FILE *file = fopen(fullPath, type == FILE_TYPE_BINARY ? "rb" : "r");
     fseek(file, 0, SEEK_END);
