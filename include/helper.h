@@ -17,8 +17,6 @@ struct data {
     void *content;
 } typedef Data;
 
-void debug(const char *fmt, ...);
-
 int32_t compareFloat(float first, float second);
 
 float radians(float degrees);

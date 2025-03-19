@@ -4,16 +4,6 @@
 #include "instance.h"
 #include "config.h"
 
-void debug(const char *fmt, ...) {
-    if(DEBUG) {
-        va_list args;
-        va_start(args, fmt);
-        vprintf(fmt, args);
-        printf("\n");
-        va_end(args);
-    }
-}
-
 int32_t compareFloat(float first, float second) {
     float difference = first - second;
 
