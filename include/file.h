@@ -2,7 +2,9 @@
 
 #include "pch.h"
 
-#include "helper.h"
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 enum fileType {
     FILE_TYPE_TEXT,
