@@ -15,10 +15,13 @@ ShaderModule   vertexShaderModule;
 ShaderModule fragmentShaderModule;
 
 ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
+    char fullPath[PATH_MAX];
+    makeFullPath("data", path, fullPath);
+
     ShaderCode shaderCode = {
         .type = malloc(sizeof(FileType)),
         .stage = stage,
-        .data = readFile(path, type)
+        .data = readFile(fullPath, type)
     };
 
     *shaderCode.type = type;
