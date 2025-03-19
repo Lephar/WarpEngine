@@ -16,7 +16,7 @@ ShaderModule fragmentShaderModule;
 
 ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
     char fullPath[PATH_MAX];
-    makeFullPath("data", path, fullPath);
+    makeFullPath("shaders", path, fullPath);
 
     ShaderCode shaderCode = {
         .type = malloc(sizeof(FileType)),
@@ -32,7 +32,7 @@ ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind s
 }
 
 void compileShaderCode(ShaderCode *shaderCode) {
-    assert(shaderCode->type == FILE_TYPE_TEXT);
+    assert(*shaderCode->type == FILE_TYPE_TEXT);
 
     shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data->content, shaderCode->data->size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
     shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
@@ -43,9 +43,9 @@ void compileShaderCode(ShaderCode *shaderCode) {
         assert(status == shaderc_compilation_status_success);
     }
 
-    *shaderCode->type = FILE_TYPE_BINARY,
     freeData(shaderCode->data);
     shaderCode->data = makeData(shaderc_result_get_length(result), shaderc_result_get_bytes(result));
+    *shaderCode->type = FILE_TYPE_BINARY,
     shaderc_result_release(result);
 
     debug("\tCode compilation successful");
@@ -131,9 +131,9 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    skyboxShaderModule   = makeShaderModule("shaders/skybox.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
-    vertexShaderModule   = makeShaderModule("shaders/vertex.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
-    fragmentShaderModule = makeShaderModule("shaders/fragment.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
+    skyboxShaderModule   = makeShaderModule("skybox.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
+    vertexShaderModule   = makeShaderModule("vertex.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
+    fragmentShaderModule = makeShaderModule("fragment.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
 
     debug("Shader modules created");
 }
