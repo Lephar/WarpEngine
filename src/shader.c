@@ -16,10 +16,12 @@ ShaderModule fragmentShaderModule;
 
 ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
     ShaderCode shaderCode = {
-        .type = type,
+        .type = malloc(sizeof(FileType)),
         .stage = stage,
         .data = readFile(path, type)
     };
+
+    *shaderCode.type = type;
 
     debug("\tFile loading successful");
 
@@ -29,7 +31,7 @@ ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind s
 void compileShaderCode(ShaderCode *shaderCode) {
     assert(shaderCode->type == FILE_TYPE_TEXT);
 
-    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data.content, shaderCode->data.size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
+    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data->content, shaderCode->data->size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
     shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
 
     if(status != shaderc_compilation_status_success) {
@@ -38,8 +40,8 @@ void compileShaderCode(ShaderCode *shaderCode) {
         assert(status == shaderc_compilation_status_success);
     }
 
-    shaderCode->type = FILE_TYPE_BINARY,
-    freeData(&shaderCode->data);
+    *shaderCode->type = FILE_TYPE_BINARY,
+    freeData(shaderCode->data);
     shaderCode->data = makeData(shaderc_result_get_length(result), shaderc_result_get_bytes(result));
     shaderc_result_release(result);
 
@@ -47,7 +49,8 @@ void compileShaderCode(ShaderCode *shaderCode) {
 }
 
 void freeShaderCode(ShaderCode *shaderCode) {
-    freeData(&shaderCode->data);
+    freeData(shaderCode->data);
+    free(shaderCode->type);
 }
 
 ShaderModule createShaderModule(ShaderCode shaderCode) {
@@ -69,8 +72,8 @@ ShaderModule createShaderModule(ShaderCode shaderCode) {
         .stage = shaderModule.stage,
         .nextStage = shaderModule.nextStage,
         .codeType = VK_SHADER_CODE_TYPE_SPIRV_EXT,
-        .codeSize = shaderCode.data.size,
-        .pCode = shaderCode.data.content,
+        .codeSize = shaderCode.data->size,
+        .pCode = shaderCode.data->content,
         .pName = "main",
         .setLayoutCount = 1,
         .pSetLayouts = &descriptorSetLayout,
