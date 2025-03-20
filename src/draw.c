@@ -300,7 +300,6 @@ void present() {
     vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
     vkResetFences(device, 1, &framebuffer->blitFence);
 
-    // TODO: Investigate multiple swapchain image acquisition at startup
     uint32_t swapchainImageIndex = UINT32_MAX;
     VkResult swapchainStatus = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
 
@@ -310,18 +309,19 @@ void present() {
         swapchainStatus == VK_ERROR_OUT_OF_DATE_KHR      ||
         swapchainStatus == VK_ERROR_SURFACE_LOST_KHR     ||
         swapchainStatus == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
-        debug("Hard error on swapchain image acquisition");
+        debug("Hard error on swapchain image acquisition, skipping");
         return;
-    } else if(  swapchainStatus == VK_TIMEOUT   ||
-                swapchainStatus == VK_NOT_READY ||
-                swapchainStatus == VK_SUBOPTIMAL_KHR) {
-        debug("Soft error on swapchain image acquisition");
-        //return; // TODO: Draw anyway?
+    } else if(  swapchainStatus == VK_TIMEOUT ||
+                swapchainStatus == VK_NOT_READY) {
+        debug("No swapchain image ready for the acquisition, skipping");
+        return;
+    } else if(swapchainStatus == VK_SUBOPTIMAL_KHR) {
+        debug("Suboptimal swapchain image, drawing anyway");
     }
 
     // TODO: Can this happen when no error code returned?
     if(swapchainImageIndex >= swapchain.imageCount) {
-        debug("Faulty swapchain image index returned");
+        debug("Faulty swapchain image index returned, this shouldn't happen");
         return;
     }
 

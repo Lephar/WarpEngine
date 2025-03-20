@@ -11,7 +11,6 @@ Swapchain oldSwapchain;
 Swapchain swapchain;
 
 void createSwapchain() {
-    // TODO: Why segmentation fault when add an extra image?
     swapchain.imageCount = surfaceCapabilities.minImageCount + 1;
     swapchain.transform = surfaceCapabilities.currentTransform;
 
