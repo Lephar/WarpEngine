@@ -27,13 +27,13 @@ void initializeControls() {
 
     int32_t discard;
     SDL_GetRelativeMouseState(&discard, &discard);
-    glm_vec2_zero(mouseDelta);
+    glmc_vec2_zero(mouseDelta);
 
-    glm_vec3_zero(position);
-    glm_vec3_zero(forward);
-    glm_vec3_zero(left);
-    glm_vec3_zero(up);
-    glm_vec3_zero(upGlobal);
+    glmc_vec3_zero(position);
+    glmc_vec3_zero(forward);
+    glmc_vec3_zero(left);
+    glmc_vec3_zero(up);
+    glmc_vec3_zero(upGlobal);
 
     position[2] = 8.0f; // TODO: Load starting position as an asset
     forward[1]  = 1.0f;
@@ -54,9 +54,9 @@ void generatePerspective() {
     float  farPlane = 1000.0f;
 
     // TODO: Make a separate light unit
-    glm_vec3_one(uniformBuffer->ambientLight);
+    glmc_vec3_one(uniformBuffer->ambientLight);
 
-    glm_perspective(fieldOfView, aspectRatio, nearPlane, farPlane, uniformBuffer->proj);
+    glmc_perspective_lh_zo(fieldOfView, aspectRatio, nearPlane, farPlane, uniformBuffer->proj);
     debug("Perspective created");
 }
 
@@ -74,12 +74,12 @@ void processEvents() {
     mouseDelta[1] = -2.0f * mouseY / extent.height;
 
     // TODO: Limit vertical rotation on global up and down
-    if(compareFloat(glm_vec2_norm2(mouseDelta), 0)) {
-        glm_vec3_rotate(forward, mouseDelta[0], upGlobal);
-        glm_vec3_rotate(left   , mouseDelta[0], upGlobal);
-        glm_vec3_rotate(up     , mouseDelta[0], upGlobal);
-        glm_vec3_rotate(forward, mouseDelta[1], left    );
-        glm_vec3_rotate(up     , mouseDelta[1], left    );
+    if(compareFloat(glmc_vec2_norm2(mouseDelta), 0)) {
+        glmc_vec3_rotate(forward, mouseDelta[0], upGlobal);
+        glmc_vec3_rotate(left   , mouseDelta[0], upGlobal);
+        glmc_vec3_rotate(up     , mouseDelta[0], upGlobal);
+        glmc_vec3_rotate(forward, mouseDelta[1], left    );
+        glmc_vec3_rotate(up     , mouseDelta[1], left    );
     }
 
     int keyCount = 0;
@@ -89,28 +89,28 @@ void processEvents() {
     movementInput[1] = states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D];
     movementInput[2] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
 
-    if(compareFloat(glm_vec3_norm2(movementInput), 0)) {
+    if(compareFloat(glmc_vec3_norm2(movementInput), 0)) {
         vec3 forwardMovement;
         vec3 leftMovement;
         vec3 upMovement;
 
-        glm_vec3_scale_as(movementInput, moveSpeed * timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
+        glmc_vec3_scale_as(movementInput, moveSpeed * timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
 
-        glm_vec3_scale_as(forward, movementInput[0], forwardMovement);
-        glm_vec3_scale_as(left   , movementInput[1], leftMovement   );
-        glm_vec3_scale_as(up     , movementInput[2], upMovement     );
+        glmc_vec3_scale_as(forward, movementInput[0], forwardMovement);
+        glmc_vec3_scale_as(left   , movementInput[1], leftMovement   );
+        glmc_vec3_scale_as(up     , movementInput[2], upMovement     );
 
-        glm_vec3_add(forwardMovement, position, position);
-        glm_vec3_add(leftMovement   , position, position);
-        glm_vec3_add(upMovement     , position, position);
+        glmc_vec3_add(forwardMovement, position, position);
+        glmc_vec3_add(leftMovement   , position, position);
+        glmc_vec3_add(upMovement     , position, position);
     }
 
     vec3 target;
-    glm_vec3_add(position, forward, target);
+    glmc_vec3_add(position, forward, target);
 
-    glm_lookat(GLM_VEC3_ZERO, forward, upGlobal, uniformBuffer->skyboxView);
-    glm_mat4_mul(uniformBuffer->proj, uniformBuffer->skyboxView, uniformBuffer->skyboxCamera);
+    glmc_lookat_lh_zo(GLM_VEC3_ZERO, forward, upGlobal, uniformBuffer->skyboxView);
+    glmc_mat4_mul(uniformBuffer->proj, uniformBuffer->skyboxView, uniformBuffer->skyboxCamera);
 
-    glm_lookat(position, target, upGlobal, uniformBuffer->view);
-    glm_mat4_mul(uniformBuffer->proj, uniformBuffer->view, uniformBuffer->camera);
+    glmc_lookat_lh_zo(position, target, upGlobal, uniformBuffer->view);
+    glmc_mat4_mul(uniformBuffer->proj, uniformBuffer->view, uniformBuffer->camera);
 }

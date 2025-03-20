@@ -23,15 +23,11 @@
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_vulkan.h>
-
 #include <vulkan/vulkan.h>
-
 #include <shaderc/shaderc.h>
 
 #include "ktx/ktx.h"
-
 #include "cgltf/cgltf.h"
-
-#define CGLM_FORCE_DEPTH_ZERO_TO_ONE
-#define CGLM_FORCE_LEFT_HANDED
-#include "cglm/cglm.h" // TODO: Move to call.h after macro definitions are fixed
+#include "cglm/call.h"
+#include "cglm/call/clipspace/view_lh_zo.h"
+#include "cglm/call/clipspace/persp_lh_zo.h"

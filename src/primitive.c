@@ -78,7 +78,7 @@ void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform)
             for(cgltf_size positionIndex = 0; positionIndex < attributeAccessor->count; positionIndex++) {
                 vec3 *position = &vertexBuffer[vertexCount + positionIndex].position;
 
-                glm_mat4_mulv3(transform, positions[positionIndex], 1.0f, *position);
+                glmc_mat4_mulv3(transform, positions[positionIndex], 1.0f, *position);
 
                 // NOTICE: Use this if glTF model is exported with +Z up
                 // TODO: Temporary fix until --finvert-y flag for glslc is fixed
