@@ -29,5 +29,5 @@
 #include "ktx/ktx.h"
 #include "cgltf/cgltf.h"
 #include "cglm/call.h"
-#include "cglm/call/clipspace/view_lh_zo.h"
-#include "cglm/call/clipspace/persp_lh_zo.h"
+#include "cglm/call/clipspace/view_rh_zo.h"
+#include "cglm/call/clipspace/persp_rh_zo.h"

@@ -17,7 +17,7 @@ file(GLOB_RECURSE SOURCE_ASSETS data/*)
 set(CONFIG_TEMPLATE ${PROJECT_SOURCE_DIR}/data/config.txt)
 set(CONFIG_FILE ${PROJECT_BINARY_DIR}/data/config.txt)
 
-set(SHADER_COMPILE_OPTIONS -x glsl --target-env=vulkan1.4 --target-spv=spv1.6 #[[-finvert-y]]) # TODO: Investigate -finvert-y flag
+set(SHADER_COMPILE_OPTIONS -x glsl --target-env=vulkan1.4 --target-spv=spv1.6)
 set(SOURCE_COMPILE_OPTIONS -Wall -Wextra)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
