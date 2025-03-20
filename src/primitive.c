@@ -144,8 +144,8 @@ void loadAsset(ContentType type, const char *assetName) {
 
     cgltf_data *data = NULL;
     cgltf_options assetOptions = {};
-
     cgltf_result result;
+
     result = cgltf_parse_file(&assetOptions, fullPath, &data);
 
     if(result != cgltf_result_success) {
@@ -177,4 +177,9 @@ void loadAsset(ContentType type, const char *assetName) {
     }
 
     cgltf_free(data);
+}
+
+void destroyPrimitive(Primitive *primitive) {
+    free(primitive->type);
+    primitive->material = NULL;
 }

@@ -79,12 +79,13 @@ void loop() {
 void quit() {
     vkDeviceWaitIdle(device);
 
-    destroyModules();
-    destroyPipeline();
     destroyFramebufferSet();
     destroySwapchain();
+    freeContent();
     destroyBuffers();
     freeMemories();
+    destroyPipeline();
+    destroyModules();
     destroySurface();
     clearQueues();
     destroyDevice();

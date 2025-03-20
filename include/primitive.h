@@ -20,3 +20,4 @@ extern uint32_t primitiveCount;
 extern Primitive *primitives;
 
 void loadAsset(ContentType type, const char *assetName);
+void destroyPrimitive(Primitive *primitive);

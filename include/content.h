@@ -38,3 +38,4 @@ extern Vertex *vertexBuffer;
 extern Uniform *uniformBuffer;
 
 void loadContent();
+void freeContent();

@@ -175,3 +175,9 @@ void loadMaterial(cgltf_material *materialData) {
 
     materialCount++;
 }
+
+void destroyMaterial(Material *material) {
+    destroyImageView(material->baseColor);
+    destroyImage(material->baseColor);
+    material->baseColor = NULL;
+}

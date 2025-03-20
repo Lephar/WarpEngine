@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-#define  SEC_TO_MSEC  1000.0f
+#define  SEC_TO_MSEC      1000.0f
 #define MSEC_TO_USEC  SEC_TO_MSEC
 #define USEC_TO_NSEC MSEC_TO_USEC
 

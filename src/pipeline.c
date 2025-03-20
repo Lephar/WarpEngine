@@ -86,10 +86,10 @@ void createDescriptorPool() {
     VkDescriptorPoolSize poolSizes[] = {
         {
             .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .descriptorCount = 1
+            .descriptorCount = materialCountLimit // TODO: We will need to separate
         }, {
             .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = 1
+            .descriptorCount = materialCountLimit
         }
     };
 

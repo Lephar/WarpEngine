@@ -53,7 +53,24 @@ void loadContent() {
 
     free(vertexBuffer);
     free(indexBuffer );
+
     memset(mappedSharedMemory, 0, sharedBuffer.size);
+
     uniformBuffer = mappedSharedMemory;
+
     debug("Shared memory cleared and set for uniform buffer usage");
+}
+
+void freeContent() {
+    for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
+        destroyPrimitive(&primitives[primitiveIndex]);
+    }
+
+    free(primitives);
+
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        destroyMaterial(&materials[materialIndex]);
+    }
+
+    free(materials);
 }
