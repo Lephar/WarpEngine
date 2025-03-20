@@ -7,24 +7,21 @@
 #include "file.h"
 #include "logger.h"
 
-shaderc_compiler_t shaderCompiler;
+shaderc_compiler_t        shaderCompiler;
 shaderc_compile_options_t shaderCompileOptions;
 
 ShaderModule   skyboxShaderModule;
 ShaderModule   vertexShaderModule;
 ShaderModule fragmentShaderModule;
 
-ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind stage) {
+ShaderCode loadShaderCode(const char *path, bool binary, shaderc_shader_kind stage) {
     char fullPath[PATH_MAX];
     makeFullPath("shaders", path, fullPath);
 
     ShaderCode shaderCode = {
-        .type = malloc(sizeof(FileType)),
         .stage = stage,
-        .data = readFile(fullPath, type)
+        .data = readFile(binary, fullPath)
     };
-
-    *shaderCode.type = type;
 
     debug("\tFile loading successful");
 
@@ -32,7 +29,7 @@ ShaderCode loadShaderCode(const char *path, FileType type, shaderc_shader_kind s
 }
 
 void compileShaderCode(ShaderCode *shaderCode) {
-    assert(*shaderCode->type == FILE_TYPE_TEXT);
+    assert(!shaderCode->data->binary);
 
     shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data->content, shaderCode->data->size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
     shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
@@ -44,8 +41,7 @@ void compileShaderCode(ShaderCode *shaderCode) {
     }
 
     freeData(shaderCode->data);
-    shaderCode->data = makeData(shaderc_result_get_length(result), shaderc_result_get_bytes(result));
-    *shaderCode->type = FILE_TYPE_BINARY,
+    shaderCode->data = makeData(true, shaderc_result_get_length(result), shaderc_result_get_bytes(result));
     shaderc_result_release(result);
 
     debug("\tCode compilation successful");
@@ -53,7 +49,6 @@ void compileShaderCode(ShaderCode *shaderCode) {
 
 void freeShaderCode(ShaderCode *shaderCode) {
     freeData(shaderCode->data);
-    free(shaderCode->type);
 }
 
 ShaderModule createShaderModule(ShaderCode shaderCode) {
@@ -97,12 +92,12 @@ void destroyShaderModule(ShaderModule *shaderModule) {
     destroyShader(device, shaderModule->module, NULL);
 }
 
-ShaderModule makeShaderModule(const char *file, FileType type, shaderc_shader_kind stage) {
+ShaderModule makeShaderModule(const char *file, bool binary, shaderc_shader_kind stage) {
     debug("Loading and creating shader module %s", file);
 
-    ShaderCode shaderCode = loadShaderCode(file, type, stage);
+    ShaderCode shaderCode = loadShaderCode(file, binary, stage);
 
-    if(type == FILE_TYPE_TEXT) {
+    if(!binary) {
         compileShaderCode(&shaderCode);
     }
 
@@ -131,9 +126,9 @@ void createModules() {
 
     debug("Shader compiler and shader compile options set");
 
-    skyboxShaderModule   = makeShaderModule("skybox.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
-    vertexShaderModule   = makeShaderModule("vertex.vert",       FILE_TYPE_TEXT,   shaderc_vertex_shader);
-    fragmentShaderModule = makeShaderModule("fragment.frag.spv", FILE_TYPE_BINARY, shaderc_fragment_shader);
+    skyboxShaderModule   = makeShaderModule("skybox.vert",       false,  shaderc_vertex_shader);
+    vertexShaderModule   = makeShaderModule("vertex.vert",       false,  shaderc_vertex_shader);
+    fragmentShaderModule = makeShaderModule("fragment.frag.spv", true, shaderc_fragment_shader);
 
     debug("Shader modules created");
 }

@@ -8,13 +8,7 @@
 
 typedef struct data Data;
 
-// TODO: Move this into Data
-enum fileType {
-    FILE_TYPE_TEXT,
-    FILE_TYPE_BINARY
-} typedef FileType;
-
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]);
 
 // WARN: Free the output data!
-Data *readFile(const char *path, FileType type);
+Data *readFile(bool binary, const char *path);

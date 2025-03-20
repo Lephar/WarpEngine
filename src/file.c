@@ -11,19 +11,19 @@ void makeFullPath(const char *subdirectory, const char *filename, char outFullPa
     }
 }
 
-Data *readFile(const char *path, FileType type) {
-    FILE *file = fopen(path, type == FILE_TYPE_BINARY ? "rb" : "r");
+Data *readFile(bool binary, const char *path) {
+    FILE *file = fopen(path, binary ? "rb" : "r");
     fseek(file, 0, SEEK_END);
-    size_t size = ftell(file) + (type == FILE_TYPE_BINARY ? 0 : 1);
+    size_t size = ftell(file) + !binary;
     rewind(file);
 
-    Data *data = allocateData(size);
+    Data *data = allocateData(binary, size);
 
     size_t length = fread(data->content, 1, data->size, file);
-    assert(length + (type == FILE_TYPE_BINARY ? 0 : 1) == data->size);
+    assert(length + !binary == data->size);
     fclose(file);
 
-    if(type == FILE_TYPE_TEXT) {
+    if(!binary) {
         ((char *) data->content)[data->size - 1] = '\0';
     }
 

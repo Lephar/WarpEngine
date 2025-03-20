@@ -10,12 +10,13 @@
 #include <math.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <stdbit.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <limits.h>
 #include <assert.h>
+#include <stdbit.h>
+#include <stdbool.h>
 #include <sys/mman.h>
 
 #include <SDL2/SDL.h>
