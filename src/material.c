@@ -164,14 +164,13 @@ void loadMaterial(cgltf_material *materialData) {
 
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
+    assert(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu);
 
-    if(materialData->has_pbr_metallic_roughness) {
-        char textureFullPath[PATH_MAX];
-        makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, textureFullPath);
+    char textureFullPath[PATH_MAX];
+    makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, textureFullPath);
 
-        material->baseColor = loadTexture(textureFullPath);
-        createDescriptor(material);
-    }
+    material->baseColor = loadTexture(textureFullPath);
+    createDescriptor(material);
 
     materialCount++;
 }
