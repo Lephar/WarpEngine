@@ -5,6 +5,7 @@
 #include "buffer.h"
 #include "image.h"
 
+#include "numerics.h"
 #include "logger.h"
 
 Memory deviceMemory;
@@ -13,7 +14,7 @@ Memory sharedMemory;
 void *mappedSharedMemory;
 
 VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements) {
-    VkDeviceSize bindOffset = (memory->offset + memoryRequirements.alignment - 1) / memoryRequirements.alignment * memoryRequirements.alignment;
+    VkDeviceSize bindOffset = align(memory->offset, memoryRequirements.alignment);
 
     memory->offset = bindOffset + memoryRequirements.size;
 

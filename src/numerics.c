@@ -19,6 +19,10 @@
 
 // END OF NOTICE
 
+uint64_t align(uint64_t value, uint64_t alignment) {
+    return (value + alignment - 1) / alignment * alignment;
+}
+
 int32_t compareFloat(float first, float second) {
     float difference = first - second;
 

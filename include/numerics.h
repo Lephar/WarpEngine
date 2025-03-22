@@ -8,9 +8,11 @@
 
 #define EPSILON 0.000000000931322574615478515625f // 2 ^ -30
 
-float radians(float degrees);
+uint64_t align(uint64_t value, uint64_t alignment);
 
 int32_t compareFloat(float first, float second);
+
+float radians(float degrees);
 
 int8_t bmin(int8_t first, int8_t second);
 int8_t bmax(int8_t first, int8_t second);
