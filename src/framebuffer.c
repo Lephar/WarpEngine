@@ -1,11 +1,13 @@
 #include "framebuffer.h"
 
 #include "window.h"
+#include "physicalDevice.h"
 #include "device.h"
 #include "queue.h"
 #include "memory.h"
 #include "image.h"
 
+#include "numerics.h"
 #include "logger.h"
 
 FramebufferSet oldFramebufferSet;
@@ -13,22 +15,22 @@ FramebufferSet framebufferSet;
 
 void createFramebuffer(Framebuffer *framebuffer) {
     framebuffer->depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
-    framebuffer->color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-    framebuffer->resolve      = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+    framebuffer->color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT);
+    framebuffer->resolve      = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT,      framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,   VK_IMAGE_ASPECT_COLOR_BIT);
 
     bindImageMemory(framebuffer->depthStencil, &deviceMemory);
-    bindImageMemory(framebuffer->color, &deviceMemory);
-    bindImageMemory(framebuffer->resolve, &deviceMemory);
+    bindImageMemory(framebuffer->color,        &deviceMemory);
+    bindImageMemory(framebuffer->resolve,      &deviceMemory);
 
     createImageView(framebuffer->depthStencil);
     createImageView(framebuffer->color);
     createImageView(framebuffer->resolve);
 
     transitionImageLayout(framebuffer->depthStencil, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-    transitionImageLayout(framebuffer->color, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-    transitionImageLayout(framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    transitionImageLayout(framebuffer->color,        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    transitionImageLayout(framebuffer->resolve,      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-    framebuffer->renderCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
+    framebuffer->renderCommandBuffer  = allocateSingleCommandBuffer(&graphicsQueue);
     framebuffer->presentCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
 
     VkSemaphoreCreateInfo semaphoreInfo = {
@@ -70,16 +72,22 @@ void createFramebuffer(Framebuffer *framebuffer) {
 void createFramebufferSet() {
     deviceMemory.reusableMemoryOffset = deviceMemory.offset;
 
-    framebufferSet.framebufferImageCount = 2;
+    framebufferSet.imageCount = 2;
+
+    framebufferSet.frameUniformBufferSize = align(physicalDeviceProperties.limits.maxUniformBufferRange / framebufferSet.imageCount,
+        physicalDeviceProperties.limits.minUniformBufferOffsetAlignment) - physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
+    assert(framebufferSet.frameUniformBufferSize > 0);
 
     framebufferSet.sampleCount = VK_SAMPLE_COUNT_4_BIT;
+    assert(framebufferSet.sampleCount & physicalDeviceProperties.limits.framebufferDepthSampleCounts);
+    assert(framebufferSet.sampleCount & physicalDeviceProperties.limits.framebufferColorSampleCounts);
 
     framebufferSet.depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT;
     framebufferSet.colorFormat = VK_FORMAT_B8G8R8A8_SRGB;
 
-    framebufferSet.framebuffers = malloc(framebufferSet.framebufferImageCount * sizeof(Framebuffer));
+    framebufferSet.framebuffers = malloc(framebufferSet.imageCount * sizeof(Framebuffer));
 
-    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.framebufferImageCount; framebufferIndex++) {
+    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.imageCount; framebufferIndex++) {
         createFramebuffer(&framebufferSet.framebuffers[framebufferIndex]);
         debug("Framebuffer %d created", framebufferIndex);
     }
@@ -89,9 +97,9 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
     vkDestroyFence(device, framebuffer->drawFence, NULL);
     vkDestroyFence(device, framebuffer->blitFence, NULL);
 
-    vkDestroySemaphore(device, framebuffer->acquireSemaphore, NULL);
-    vkDestroySemaphore(device, framebuffer->drawSemaphore, NULL);
-    vkDestroySemaphore(device, framebuffer->blitSemaphoreRender, NULL);
+    vkDestroySemaphore(device, framebuffer->acquireSemaphore,     NULL);
+    vkDestroySemaphore(device, framebuffer->drawSemaphore,        NULL);
+    vkDestroySemaphore(device, framebuffer->blitSemaphoreRender,  NULL);
     vkDestroySemaphore(device, framebuffer->blitSemaphorePresent, NULL);
 
     destroyImageView(framebuffer->resolve);
@@ -104,7 +112,7 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
 }
 
 void destroyFramebufferSet() {
-    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.framebufferImageCount; framebufferIndex++) {
+    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.imageCount; framebufferIndex++) {
         destroyFramebuffer(&framebufferSet.framebuffers[framebufferIndex]);
         debug("Framebuffer %d destroyed", framebufferIndex);
     }

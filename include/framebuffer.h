@@ -22,7 +22,7 @@ struct framebuffer {
 } typedef Framebuffer;
 
 struct framebufferSet {
-    uint32_t framebufferImageCount;
+    uint32_t imageCount;
 
     VkSampleCountFlags sampleCount;
 
@@ -30,6 +30,8 @@ struct framebufferSet {
     VkFormat colorFormat;
 
     Framebuffer *framebuffers;
+
+    VkDeviceSize frameUniformBufferSize;
 } typedef FramebufferSet;
 
 extern FramebufferSet oldFramebufferSet;

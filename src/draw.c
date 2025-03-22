@@ -22,7 +22,7 @@ void initializeDraw() {
 }
 
 void render() {
-    uint32_t framebufferIndex = frameIndex % framebufferSet.framebufferImageCount;
+    uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
@@ -248,7 +248,7 @@ void render() {
 }
 
 void present() {
-    uint32_t framebufferIndex = frameIndex % framebufferSet.framebufferImageCount;
+    uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {

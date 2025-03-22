@@ -1,6 +1,7 @@
 #include "material.h"
 
 #include "device.h"
+#include "physicalDevice.h"
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
@@ -112,7 +113,7 @@ void createDescriptor(Material *material) {
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = sharedBuffer.buffer,
         .offset = 0,
-        .range = uniformBufferSize
+        .range = physicalDeviceProperties.limits.maxUniformBufferRange
     };
 
     VkDescriptorImageInfo imageInfo = {

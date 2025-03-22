@@ -12,7 +12,6 @@ uint64_t indexCount;
 uint64_t vertexCount;
 uint64_t indexBufferSize;
 uint64_t vertexBufferSize;
-uint64_t uniformBufferSize;
 
 Index *indexBuffer;
 Vertex *vertexBuffer;
@@ -24,8 +23,6 @@ void loadContent() {
 
     indexBufferSize  = 0;
     vertexBufferSize = 0;
-
-    uniformBufferSize = sizeof(Uniform);
 
     const uint64_t indexBufferSizeLimit   = 1L << 30;
     const uint64_t vertexBufferSizeLimit  = 1L << 30;
