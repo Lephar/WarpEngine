@@ -20,6 +20,7 @@ void createDevice() {
         VK_KHR_MAINTENANCE_7_EXTENSION_NAME,
          // VK_KHR_MAINTENANCE_8_EXTENSION_NAME, // TODO: Enable when driver updates
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+        VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME,
         VK_EXT_SHADER_OBJECT_EXTENSION_NAME
     };
 
@@ -96,10 +97,16 @@ void createDevice() {
         .maintenance8 = VK_TRUE
     };
     */
+    VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT swapchainMaintenance1Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT,
+        .pNext = &maintenance7Features,
+      //.pNext = &maintenance8Features,
+        .swapchainMaintenance1 = VK_TRUE
+    };
+
     VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
-        .pNext = &maintenanceFeatures7,
-      //.pNext = &maintenanceFeatures8,
+        .pNext = &swapchainMaintenance1Features,
         .shaderObject = VK_TRUE
     };
 

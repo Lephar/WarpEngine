@@ -90,9 +90,17 @@ void createSwapchain() {
         swapchain.presentMode = presentModes[0];
     }
 
+    // TODO: Research the non-trivial use-case
+    VkSwapchainPresentModesCreateInfoEXT presentModesInfo = {
+        .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_EXT,
+        .pNext = NULL,
+        .presentModeCount = 1,
+        .pPresentModes = &swapchain.presentMode
+    };
+
     VkSwapchainCreateInfoKHR swapchainInfo = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-        .pNext = NULL,
+        .pNext = &presentModesInfo,
         .flags = 0,
         .surface = surface,
         .minImageCount = swapchain.imageCount,
