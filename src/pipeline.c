@@ -37,7 +37,7 @@ void createSampler() {
     };
 
     vkCreateSampler(device, &samplerInfo, NULL, &sampler);
-    debug("\t\tImage sampler created");
+    debug("Image sampler created");
 }
 
 void createLayouts() {

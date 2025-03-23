@@ -18,7 +18,7 @@ void *loadDeviceFunction(const char *name) {
 void createDevice() {
     const char *extensionNames[] = {
         VK_KHR_MAINTENANCE_7_EXTENSION_NAME,
-         // VK_KHR_MAINTENANCE_8_EXTENSION_NAME, // TODO: Enable when SDK updates
+         // VK_KHR_MAINTENANCE_8_EXTENSION_NAME, // TODO: Enable when driver updates
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         VK_EXT_SHADER_OBJECT_EXTENSION_NAME
     };
@@ -62,28 +62,38 @@ void createDevice() {
         .samplerAnisotropy = VK_TRUE,
     };
 
-    VkPhysicalDeviceVulkan13Features deviceFeatures13 = {
+    VkPhysicalDeviceVulkan11Features version11Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
+        .pNext = NULL
+    };
+
+    VkPhysicalDeviceVulkan12Features version12Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+        .pNext = &version11Features
+    };
+
+    VkPhysicalDeviceVulkan13Features version13Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
-        .pNext = NULL,
+        .pNext = &version12Features,
         .dynamicRendering = VK_TRUE
     };
 
-    VkPhysicalDeviceVulkan14Features deviceFeatures14 = {
+    VkPhysicalDeviceVulkan14Features version14Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
-        .pNext = &deviceFeatures13,
+        .pNext = &version13Features,
         .hostImageCopy = VK_TRUE
     };
 
-    VkPhysicalDeviceMaintenance7FeaturesKHR maintenanceFeatures7 = {
+    VkPhysicalDeviceMaintenance7FeaturesKHR maintenance7Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR,
-        .pNext = &deviceFeatures14,
+        .pNext = &version14Features,
         .maintenance7 = VK_TRUE
     };
     /*
-    VkPhysicalDeviceMaintenance8FeaturesKHR maintenanceFeatures8 = {
+    VkPhysicalDeviceMaintenance8FeaturesKHR maintenance8Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR,
-        .pNext = &maintenanceFeatures7,
-        .maintenance78 = VK_TRUE
+        .pNext = &maintenance7Features,
+        .maintenance8 = VK_TRUE
     };
     */
     VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
