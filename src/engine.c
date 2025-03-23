@@ -24,9 +24,9 @@ void initialize(int argc, char *argv[]) {
     createInstance();
     selectPhysicalDevice();
     generateQueueDetails();
+    createSurface();
     createDevice();
     getQueues();
-    createSurface();
     createSampler();
     createLayouts();
     createDescriptorPool();
