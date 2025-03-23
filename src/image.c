@@ -214,8 +214,8 @@ void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, 
             .z = 0
         },
         .imageExtent = {
-            .width  = image->extent.width  >> mipLevel,
-            .height = image->extent.height >> mipLevel,
+            .width  = umax(1, image->extent.width  >> mipLevel),
+            .height = umax(1, image->extent.height >> mipLevel),
             .depth  = image->extent.depth
         }
     };
