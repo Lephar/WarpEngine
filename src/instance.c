@@ -45,6 +45,8 @@ void createInstance() {
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
         VK_EXT_LAYER_SETTINGS_EXTENSION_NAME,
 #endif
+        VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME,
+        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME
     };
 
     const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);

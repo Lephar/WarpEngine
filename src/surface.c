@@ -28,17 +28,49 @@ void createSurface() {
     vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, graphicsQueue.queueFamilyIndex, surface, &surfaceSupport);
     assert(surfaceSupport);
 
-    vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, NULL);
+    VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
+        .pNext = NULL,
+        .surface = surface
+    };
+
+    vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo, &surfaceFormatCount, NULL);
+
+    VkSurfaceFormat2KHR *surfaceFormats2 = malloc(surfaceFormatCount * sizeof(VkSurfaceFormat2KHR));
+
+    for(uint32_t surfaceFormatIndex = 0; surfaceFormatIndex < surfaceFormatCount; surfaceFormatIndex++) {
+        surfaceFormats2[surfaceFormatIndex].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
+        surfaceFormats2[surfaceFormatIndex].pNext = NULL;
+        memset(&surfaceFormats2[surfaceFormatIndex].surfaceFormat, 0, sizeof(VkSurfaceFormatKHR));
+    }
+
+    vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo, &surfaceFormatCount, surfaceFormats2);
+
     surfaceFormats = malloc(surfaceFormatCount * sizeof(VkSurfaceFormatKHR));
-    vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, surfaceFormats);
+
+    for(uint32_t surfaceFormatIndex = 0; surfaceFormatIndex < surfaceFormatCount; surfaceFormatIndex++) {
+        surfaceFormats[surfaceFormatIndex] = surfaceFormats2[surfaceFormatIndex].surfaceFormat;
+    }
+
+    free(surfaceFormats2);
 
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, NULL);
     presentModes = malloc(presentModeCount * sizeof(VkPresentModeKHR));
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
 
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCapabilities);
+    VkSurfaceCapabilities2KHR surfaceCapabilities2 = {
+        .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
+        .pNext = NULL,
+        .surfaceCapabilities = {}
+    };
 
-    if(surfaceCapabilities.currentExtent.width != UINT32_MAX && surfaceCapabilities.currentExtent.height != UINT32_MAX) {
+    vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, &surfaceInfo, &surfaceCapabilities2);
+
+    surfaceCapabilities = surfaceCapabilities2.surfaceCapabilities;
+
+    if( surfaceCapabilities.currentExtent.width != 0          && surfaceCapabilities.currentExtent.height != 0 &&
+        surfaceCapabilities.currentExtent.width != 1          && surfaceCapabilities.currentExtent.height != 1 &&
+        surfaceCapabilities.currentExtent.width != UINT32_MAX && surfaceCapabilities.currentExtent.height != UINT32_MAX) {
         extent = surfaceCapabilities.currentExtent;
     }
 
