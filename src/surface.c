@@ -11,13 +11,53 @@ VkSurfaceKHR surface;
 
 VkBool32 surfaceSupport;
 
+VkPresentModeKHR presentMode;
+
 uint32_t surfaceFormatCount;
 VkSurfaceFormatKHR *surfaceFormats;
 
-uint32_t presentModeCount;
-VkPresentModeKHR *presentModes;
-
 VkSurfaceCapabilitiesKHR surfaceCapabilities;
+
+void selectPresentMode() {
+    uint32_t presentModeCount;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, NULL);
+
+    VkPresentModeKHR *presentModes = malloc(presentModeCount * sizeof(VkPresentModeKHR));
+    vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
+
+    VkPresentModeKHR preferredPresentModes[] = {
+        VK_PRESENT_MODE_MAILBOX_KHR,
+        VK_PRESENT_MODE_IMMEDIATE_KHR
+    };
+
+    uint32_t preferredPresentModeCount = sizeof(preferredPresentModes) / sizeof(VkPresentModeKHR);
+
+    VkBool32 presentModeMatched = VK_FALSE;
+
+    for(uint32_t preferredPresentModeIndex = 0; preferredPresentModeIndex < preferredPresentModeCount; preferredPresentModeIndex++) {
+        VkPresentModeKHR preferredPresentMode = preferredPresentModes[preferredPresentModeIndex];
+
+        for(uint32_t supportedPresentModeIndex = 0; supportedPresentModeIndex < presentModeCount; supportedPresentModeIndex++) {
+            VkPresentModeKHR supportedPresentMode = presentModes[supportedPresentModeIndex];
+
+            if(preferredPresentMode == supportedPresentMode) {
+                presentMode = preferredPresentMode;
+                presentModeMatched = VK_TRUE;
+                break;
+            }
+        }
+
+        if(presentModeMatched) {
+            break;
+        }
+    }
+
+    if(!presentModeMatched) {
+        presentMode = presentModes[0];
+    }
+
+    free(presentModes);
+}
 
 void createSurface() {
     SDL_bool result = SDL_Vulkan_CreateSurface(window, instance, &surface);
@@ -27,6 +67,8 @@ void createSurface() {
 
     vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, graphicsQueue.queueFamilyIndex, surface, &surfaceSupport);
     assert(surfaceSupport);
+
+    selectPresentMode();
 
     VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
@@ -54,10 +96,6 @@ void createSurface() {
 
     free(surfaceFormats2);
 
-    vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, NULL);
-    presentModes = malloc(presentModeCount * sizeof(VkPresentModeKHR));
-    vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
-
     VkSurfaceCapabilities2KHR surfaceCapabilities2 = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
         .pNext = NULL,
@@ -76,14 +114,11 @@ void createSurface() {
 
     debug("Surface details set:");
     debug("\tSurface extent: %u %u", extent.width, extent.height);
-    debug("\tSurface format count: %u", surfaceFormatCount);
-    debug("\tPresent mode count: %u", presentModeCount);
 }
 
 void destroySurface() {
     vkDestroySurfaceKHR(instance, surface, NULL);
 
-    free(presentModes);
     free(surfaceFormats);
 
     debug("Surface destroyed");

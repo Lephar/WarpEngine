@@ -59,36 +59,7 @@ void createSwapchain() {
         swapchain.surfaceFormat = surfaceFormats[0];
     }
 
-    VkPresentModeKHR preferredPresentModes[] = {
-        VK_PRESENT_MODE_MAILBOX_KHR,
-        VK_PRESENT_MODE_IMMEDIATE_KHR
-    };
-
-    uint32_t preferredPresentModeCount = sizeof(preferredPresentModes) / sizeof(VkPresentModeKHR);
-
-    VkBool32 presentModeMatched = VK_FALSE;
-
-    for(uint32_t preferredPresentModeIndex = 0; preferredPresentModeIndex < preferredPresentModeCount; preferredPresentModeIndex++) {
-        VkPresentModeKHR preferredPresentMode = preferredPresentModes[preferredPresentModeIndex];
-
-        for(uint32_t supportedPresentModeIndex = 0; supportedPresentModeIndex < presentModeCount; supportedPresentModeIndex++) {
-            VkPresentModeKHR supportedPresentMode = presentModes[supportedPresentModeIndex];
-
-            if(preferredPresentMode == supportedPresentMode) {
-                swapchain.presentMode = preferredPresentMode;
-                presentModeMatched = VK_TRUE;
-                break;
-            }
-        }
-
-        if(presentModeMatched) {
-            break;
-        }
-    }
-
-    if(!presentModeMatched) {
-        swapchain.presentMode = presentModes[0];
-    }
+    swapchain.presentMode = presentMode;
 
     // TODO: Research the non-trivial use-case
     VkSwapchainPresentModesCreateInfoEXT presentModesInfo = {
