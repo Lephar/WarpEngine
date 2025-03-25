@@ -4,8 +4,6 @@
 
 extern VkSurfaceKHR surface;
 
-extern VkBool32 surfaceSupport;
-
 extern VkPresentModeKHR presentMode;
 extern VkSurfaceFormatKHR surfaceFormat;
 
