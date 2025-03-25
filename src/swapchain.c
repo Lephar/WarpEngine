@@ -14,52 +14,8 @@ void createSwapchain() {
     swapchain.imageCount = surfaceCapabilities.minImageCount + 1;
     swapchain.transform = surfaceCapabilities.currentTransform;
 
-    VkSurfaceFormatKHR preferredSurfaceFormats[] = {
-        {
-            .format = VK_FORMAT_B8G8R8A8_SRGB,
-            .colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
-        },
-        {
-            .format = VK_FORMAT_R8G8B8A8_SRGB,
-            .colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
-        },
-        {
-            .format = VK_FORMAT_B8G8R8_SRGB,
-            .colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
-        },
-        {
-            .format = VK_FORMAT_R8G8B8_SRGB,
-            .colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
-        }
-    };
-
-    uint32_t preferredSurfaceFormatCount = sizeof(preferredSurfaceFormats) / sizeof(VkSurfaceFormatKHR);
-
-    VkBool32 surfaceFormatMatched = VK_FALSE;
-
-    for(uint32_t preferredSurfaceFormatIndex = 0; preferredSurfaceFormatIndex < preferredSurfaceFormatCount; preferredSurfaceFormatIndex++) {
-        VkSurfaceFormatKHR preferredSurfaceFormat = preferredSurfaceFormats[preferredSurfaceFormatIndex];
-
-        for(uint32_t supportedSurfaceFormatIndex = 0; supportedSurfaceFormatIndex < surfaceFormatCount; supportedSurfaceFormatIndex++) {
-            VkSurfaceFormatKHR supportedSurfaceFormat = surfaceFormats[supportedSurfaceFormatIndex];
-
-            if(preferredSurfaceFormat.format == supportedSurfaceFormat.format && preferredSurfaceFormat.colorSpace == supportedSurfaceFormat.colorSpace) {
-                swapchain.surfaceFormat = preferredSurfaceFormat;
-                surfaceFormatMatched = VK_TRUE;
-                break;
-            }
-        }
-
-        if(surfaceFormatMatched) {
-            break;
-        }
-    }
-
-    if(!surfaceFormatMatched) {
-        swapchain.surfaceFormat = surfaceFormats[0];
-    }
-
-    swapchain.presentMode = presentMode;
+    swapchain.presentMode   = presentMode;
+    swapchain.surfaceFormat = surfaceFormat;
 
     // TODO: Research the non-trivial use-case
     VkSwapchainPresentModesCreateInfoEXT presentModesInfo = {

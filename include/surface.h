@@ -7,9 +7,7 @@ extern VkSurfaceKHR surface;
 extern VkBool32 surfaceSupport;
 
 extern VkPresentModeKHR presentMode;
-
-extern uint32_t surfaceFormatCount;
-extern VkSurfaceFormatKHR *surfaceFormats;
+extern VkSurfaceFormatKHR surfaceFormat;
 
 extern VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
