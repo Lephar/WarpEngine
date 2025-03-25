@@ -325,7 +325,7 @@ void present() {
         return;
     }
 
-    Image *swapchainImage = swapchain.images[swapchainImageIndex];
+    Image *swapchainImage = &swapchain.images[swapchainImageIndex];
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);

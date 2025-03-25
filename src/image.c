@@ -7,9 +7,7 @@
 
 #include "numerics.h"
 
-Image *wrapImage(VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
-    Image *image = malloc(sizeof(Image));
-
+void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
     image->extent.width = width;
     image->extent.height = height;
     image->extent.depth = 1;
@@ -22,8 +20,6 @@ Image *wrapImage(VkImage handle, uint32_t width, uint32_t height, uint32_t mips,
     image->image = handle;
 
     vkGetImageMemoryRequirements(device, image->image, &image->memoryRequirements);
-
-    return image;
 }
 
 Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
@@ -58,7 +54,9 @@ Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCount
     VkImage handle;
     vkCreateImage(device, &imageInfo, NULL, &handle);
 
-    return wrapImage(handle, width, height, mips, samples, format, usage, aspect);
+    Image *image = malloc(sizeof(Image));
+    wrapImage(image, handle, width, height, mips, samples, format, usage, aspect);
+    return image;
 }
 
 void bindImageMemory(Image *image, Memory *memory) {

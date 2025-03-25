@@ -7,7 +7,7 @@ typedef struct image Image;
 struct swapchain {
     uint32_t imageCount;
     VkSwapchainKHR swapchain;
-    Image **images;
+    Image *images;
 } typedef Swapchain;
 
 extern Swapchain oldSwapchain;
