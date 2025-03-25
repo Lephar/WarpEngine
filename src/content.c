@@ -10,8 +10,10 @@
 
 uint64_t indexCount;
 uint64_t vertexCount;
+
 uint64_t indexBufferSize;
 uint64_t vertexBufferSize;
+uint64_t uniformBufferSize;
 
 Index *indexBuffer;
 Vertex *vertexBuffer;
@@ -21,14 +23,17 @@ void loadContent() {
     indexCount  = 0;
     vertexCount = 0;
 
-    indexBufferSize  = 0;
-    vertexBufferSize = 0;
+    indexBufferSize   = 0;
+    vertexBufferSize  = 0;
+    uniformBufferSize = 0;
 
-    const uint64_t indexBufferSizeLimit   = 1L << 30;
-    const uint64_t vertexBufferSizeLimit  = 1L << 30;
+    const uint64_t indexBufferSizeLimit    = deviceMemory.size / 2;
+    const uint64_t vertexBufferSizeLimit   = deviceMemory.size / 2;
+    const uint64_t uniformBufferSizeLimit  = sharedMemory.size;
 
-    indexBuffer  = malloc(indexBufferSizeLimit);
-    vertexBuffer = malloc(vertexBufferSizeLimit);
+    indexBuffer   = malloc(indexBufferSizeLimit);
+    vertexBuffer  = malloc(vertexBufferSizeLimit);
+    uniformBuffer = malloc(uniformBufferSizeLimit);
 
     assert(indexBuffer);
     assert(vertexBuffer);
@@ -52,8 +57,6 @@ void loadContent() {
     free(indexBuffer );
 
     memset(mappedSharedMemory, 0, sharedBuffer.size);
-
-    uniformBuffer = mappedSharedMemory;
 
     debug("Shared memory cleared and set for uniform buffer usage");
 }
