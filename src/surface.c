@@ -116,21 +116,35 @@ void selectSurfaceFormat() {
 }
 
 void generateSurfaceCapabilities() {
+    VkSurfacePresentModeEXT presentModeInfo = {
+        .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_EXT,
+        .pNext = NULL,
+        .presentMode = presentMode
+    };
+
     VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
-        .pNext = NULL,
+        .pNext = &presentModeInfo,
         .surface = surface
     };
 
-    VkSurfaceCapabilities2KHR surfaceCapabilities2 = {
-        .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
+    // NOTICE: We don't care about the other present modes compatible with the current one
+    VkSurfacePresentModeCompatibilityEXT presentModeCompatibilityInfo = {
+        .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_EXT,
         .pNext = NULL,
+        .presentModeCount = 0,
+        .pPresentModes = NULL
+    };
+
+    VkSurfaceCapabilities2KHR surfaceCapabilitiesInfo = {
+        .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
+        .pNext = &presentModeCompatibilityInfo,
         .surfaceCapabilities = {}
     };
 
-    vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, &surfaceInfo, &surfaceCapabilities2);
+    vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, &surfaceInfo, &surfaceCapabilitiesInfo);
 
-    surfaceCapabilities = surfaceCapabilities2.surfaceCapabilities;
+    surfaceCapabilities = surfaceCapabilitiesInfo.surfaceCapabilities;
 }
 
 void createSurface() {
