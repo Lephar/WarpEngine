@@ -6,6 +6,7 @@
 #include "material.h"
 #include "primitive.h"
 
+#include "file.h"
 #include "logger.h"
 
 uint64_t indexCount;
@@ -18,6 +19,90 @@ uint64_t uniformBufferSize;
 Index  *indexBuffer;
 Vertex *vertexBuffer;
 void   *uniformBuffer;
+
+void loadMesh(cgltf_mesh *mesh, mat4 transform) {
+    debug("\t\tMesh: %s", mesh->name);
+
+    for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
+        assert(primitiveCount < primitiveCountLimit);
+
+        Primitive *primitiveReference = &primitives[primitiveCount];
+
+        loadPrimitive(primitiveReference, &mesh->primitives[primitiveIndex], transform);
+
+        primitiveCount++;
+    }
+}
+
+void loadNode(cgltf_node *node) {
+    debug("\tNode: %s", node->name);
+
+    mat4 transform;
+    cgltf_node_transform_world(node, (cgltf_float *)transform);
+
+    if(node->mesh) {
+        loadMesh(node->mesh, transform);
+    }
+
+    for(cgltf_size childIndex = 0; childIndex < node->children_count; childIndex++) {
+        loadNode(node->children[childIndex]);
+    }
+}
+
+void loadScene(cgltf_scene *scene) {
+    debug("Scene: %s", scene->name);
+
+    for (cgltf_size nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
+        loadNode(scene->nodes[nodeIndex]);
+    }
+}
+
+cgltf_data *loadAsset(const char *name) {
+    char fullPath[PATH_MAX];
+    makeFullPath("data", name, fullPath);
+
+    cgltf_data *data = NULL;
+    cgltf_options assetOptions = {};
+    cgltf_result result;
+
+    result = cgltf_parse_file(&assetOptions, fullPath, &data);
+
+    if(result != cgltf_result_success) {
+        debug("Failed to read %s: %d", name, result);
+        assert(result == cgltf_result_success);
+    }
+
+    result = cgltf_validate(data);
+
+    if(result != cgltf_result_success) {
+        debug("Failed to validate %s: %d", name, result);
+        assert(result == cgltf_result_success);
+    }
+
+    result = cgltf_load_buffers(&assetOptions, data, fullPath);
+
+    if(result != cgltf_result_success) {
+        debug("Failed to load buffers %s: %d", name, result);
+        cgltf_free(data);
+        assert(result == cgltf_result_success);
+    }
+
+    return data;
+}
+
+void processAsset(cgltf_data *data) {
+    for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
+        loadMaterial(&data->materials[materialIndex]);
+    }
+
+    for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
+        loadScene(&data->scenes[sceneIndex]);
+    }
+}
+
+void freeAsset(cgltf_data *data) {
+    cgltf_free(data);
+}
 
 void loadContent() {
     indexCount  = 0;
