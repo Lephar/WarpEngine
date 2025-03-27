@@ -2,6 +2,7 @@
 
 #include "window.h"
 #include "content.h"
+#include "material.h"
 #include "primitive.h"
 
 vec3 worldUp;
@@ -48,4 +49,18 @@ void loadCamera(float fieldOfView, float nearPlane, float farPlane) {
     persective();
     lookAt    ();
     combine   ();
+}
+
+void loadSkybox(cgltf_data *data) {
+    cgltf_scene *scene = data->scene;
+    cgltf_node *node = scene->nodes[0];
+    cgltf_mesh *mesh = node->mesh;
+    cgltf_primitive *primitive = &mesh->primitives[0];
+    cgltf_material *material = primitive->material;
+
+    mat4 transform;
+    cgltf_node_transform_world(node, (cgltf_float *)transform);
+
+    loadMaterial(material);
+    loadPrimitive(&skybox, primitive, transform);
 }
