@@ -16,4 +16,6 @@ extern const uint32_t primitiveCountLimit;
 extern uint32_t primitiveCount;
 extern Primitive *primitives;
 
-void loadAsset(const char *assetName);
+cgltf_data *loadAsset(const char *assetName);
+void processAsset(cgltf_data *data);
+void freeAsset(cgltf_data *data);

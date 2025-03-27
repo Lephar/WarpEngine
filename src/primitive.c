@@ -136,7 +136,7 @@ void loadScene(cgltf_scene *scene) {
     }
 }
 
-void loadAsset(const char *assetName) {
+cgltf_data *loadAsset(const char *assetName) {
     char fullPath[PATH_MAX];
     makeFullPath("data", assetName, fullPath);
 
@@ -166,6 +166,10 @@ void loadAsset(const char *assetName) {
         assert(result == cgltf_result_success);
     }
 
+    return data;
+}
+
+void processAsset(cgltf_data *data) {
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
         loadMaterial(&data->materials[materialIndex]);
     }
@@ -173,6 +177,8 @@ void loadAsset(const char *assetName) {
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
         loadScene(&data->scenes[sceneIndex]);
     }
+}
 
+void freeAsset(cgltf_data *data) {
     cgltf_free(data);
 }
