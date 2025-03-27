@@ -10,12 +10,10 @@ const uint32_t primitiveCountLimit = 128;
 uint32_t primitiveCount;
 Primitive *primitives;
 
-void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform) {
+void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
     assert(primitiveCount < primitiveCountLimit);
 
     Primitive *primitiveReference = &primitives[primitiveCount];
-     primitiveReference->type = malloc(sizeof(ContentType));
-    *primitiveReference->type = type;
 
     debug("\t\t\tPrimitive Index: %d", primitiveCount);
     debug("\t\t\tPrimitive Type:  %d", primitive->type);
@@ -107,38 +105,38 @@ void loadPrimitive(ContentType type, cgltf_primitive *primitive, mat4 transform)
     primitiveCount++;
 }
 
-void loadMesh(ContentType type, cgltf_mesh *mesh, mat4 transform) {
+void loadMesh(cgltf_mesh *mesh, mat4 transform) {
     debug("\t\tMesh: %s", mesh->name);
 
     for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
-        loadPrimitive(type, &mesh->primitives[primitiveIndex], transform);
+        loadPrimitive(&mesh->primitives[primitiveIndex], transform);
     }
 }
 
-void loadNode(ContentType type, cgltf_node *node) {
+void loadNode(cgltf_node *node) {
     debug("\tNode: %s", node->name);
 
     mat4 transform;
     cgltf_node_transform_world(node, (cgltf_float *)transform);
 
     if(node->mesh) {
-        loadMesh(type, node->mesh, transform);
+        loadMesh(node->mesh, transform);
     }
 
     for(cgltf_size childIndex = 0; childIndex < node->children_count; childIndex++) {
-        loadNode(type, node->children[childIndex]);
+        loadNode(node->children[childIndex]);
     }
 }
 
-void loadScene(ContentType type, cgltf_scene *scene) {
+void loadScene(cgltf_scene *scene) {
     debug("Scene: %s", scene->name);
 
     for (cgltf_size nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
-        loadNode(type, scene->nodes[nodeIndex]);
+        loadNode(scene->nodes[nodeIndex]);
     }
 }
 
-void loadAsset(ContentType type, const char *assetName) {
+void loadAsset(const char *assetName) {
     char fullPath[PATH_MAX];
     makeFullPath("data", assetName, fullPath);
 
@@ -173,13 +171,8 @@ void loadAsset(ContentType type, const char *assetName) {
     }
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
-        loadScene(type, &data->scenes[sceneIndex]);
+        loadScene(&data->scenes[sceneIndex]);
     }
 
     cgltf_free(data);
-}
-
-void destroyPrimitive(Primitive *primitive) {
-    free(primitive->type);
-    primitive->material = NULL;
 }

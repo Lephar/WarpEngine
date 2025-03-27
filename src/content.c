@@ -44,9 +44,9 @@ void loadContent() {
     materials  = malloc(materialCountLimit  * sizeof(Material ));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
-    loadAsset(CUBEMAP,    "Skybox.gltf");
-    loadAsset(STATIONARY, "Terrain.gltf");
-    loadAsset(MOVABLE,    "Suzanne.gltf");
+    loadAsset("Skybox.gltf");
+    loadAsset("Terrain.gltf");
+    loadAsset("Suzanne.gltf");
     debug("Assets successfully loaded");
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
@@ -62,10 +62,6 @@ void loadContent() {
 }
 
 void freeContent() {
-    for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
-        destroyPrimitive(&primitives[primitiveIndex]);
-    }
-
     free(primitives);
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {

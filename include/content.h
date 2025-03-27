@@ -2,15 +2,6 @@
 
 #include "pch.h"
 
-enum contentType {
-    CAMERA,
-    LIGHT,
-    CUBEMAP,
-    STATIONARY,
-    MOVABLE,
-    PORTAL
-} typedef ContentType;
-
 typedef uint32_t Index;
 
 struct vertex {

@@ -2,12 +2,9 @@
 
 #include "pch.h"
 
-typedef enum contentType ContentType;
-
 typedef struct material Material;
 
 struct primitive {
-    ContentType *type;
     Material *material;
     VkDeviceSize indexBegin;
     VkDeviceSize indexCount;
@@ -19,5 +16,4 @@ extern const uint32_t primitiveCountLimit;
 extern uint32_t primitiveCount;
 extern Primitive *primitives;
 
-void loadAsset(ContentType type, const char *assetName);
-void destroyPrimitive(Primitive *primitive);
+void loadAsset(const char *assetName);
