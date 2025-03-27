@@ -11,10 +11,10 @@ Player player;
 Camera camera;
 Primitive skybox;
 
-void loadPlayer(vec3 *position, vec3 *forward, vec3 *left) {
-    glm_vec3_copy(*position, player.position);
-    glm_vec3_copy(*forward,  player.forward);
-    glm_vec3_copy(*left,     player.left);
+void loadPlayer(vec3 position, vec3 forward, vec3 right) {
+    glm_vec3_copy(position, player.position);
+    glm_vec3_copy(forward,  player.forward);
+    glm_vec3_copy(right,    player.right);
 }
 
 void persective() {
