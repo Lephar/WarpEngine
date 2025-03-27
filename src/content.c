@@ -15,9 +15,9 @@ uint64_t indexBufferSize;
 uint64_t vertexBufferSize;
 uint64_t uniformBufferSize;
 
-Index *indexBuffer;
+Index  *indexBuffer;
 Vertex *vertexBuffer;
-Uniform *uniformBuffer;
+void   *uniformBuffer;
 
 void loadContent() {
     indexCount  = 0;
