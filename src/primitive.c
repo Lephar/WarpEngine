@@ -9,31 +9,31 @@ const uint32_t primitiveCountLimit = 128;
 uint32_t primitiveCount;
 Primitive *primitives;
 
-void loadPrimitive(Primitive *primitiveReference, cgltf_primitive *primitive, mat4 transform) {
+void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 transform) {
     debug("\t\t\tPrimitive Index: %d", primitiveCount);
-    debug("\t\t\tPrimitive Type:  %d", primitive->type);
+    debug("\t\t\tPrimitive Type:  %d", primitiveData->type);
 
-    primitiveReference->material = NULL;
+    primitive->material = NULL;
 
     for(cgltf_size materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        if(strncmp(primitive->material->name, materials[materialIndex].name, UINT8_MAX) == 0) {
-            primitiveReference->material = &materials[materialIndex];
-            debug("\t\t\t\tMaterial matched: %s", primitive->material->name);
+        if(strncmp(primitiveData->material->name, materials[materialIndex].name, UINT8_MAX) == 0) {
+            primitive->material = &materials[materialIndex];
+            debug("\t\t\t\tMaterial matched: %s", primitiveData->material->name);
             break;
         }
     }
 
-    assert(primitiveReference->material != NULL);
+    assert(primitive->material != NULL);
 
-    cgltf_accessor *accessor = primitive->indices;
+    cgltf_accessor *accessor = primitiveData->indices;
     cgltf_buffer_view *view = accessor->buffer_view;
     cgltf_buffer *buffer = view->buffer;
 
     void *data = buffer->data + view->offset;
 
-    primitiveReference->indexBegin   = indexCount;
-    primitiveReference->indexCount   = accessor->count;
-    primitiveReference->vertexOffset = vertexCount;
+    primitive->indexBegin   = indexCount;
+    primitive->indexCount   = accessor->count;
+    primitive->vertexOffset = vertexCount;
 
     debug("\t\t\t\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
@@ -47,8 +47,8 @@ void loadPrimitive(Primitive *primitiveReference, cgltf_primitive *primitive, ma
 
     cgltf_size primitiveVertexCount = 0;
 
-    for(cgltf_size attributeIndex = 0; attributeIndex < primitive->attributes_count; attributeIndex++) {
-        cgltf_attribute *attribute = &primitive->attributes[attributeIndex];
+    for(cgltf_size attributeIndex = 0; attributeIndex < primitiveData->attributes_count; attributeIndex++) {
+        cgltf_attribute *attribute = &primitiveData->attributes[attributeIndex];
 
         cgltf_accessor *attributeAccessor = attribute->data;
         cgltf_buffer_view *attributeView = attributeAccessor->buffer_view;
@@ -87,9 +87,9 @@ void loadPrimitive(Primitive *primitiveReference, cgltf_primitive *primitive, ma
         } // TODO: Load normal and tangent too
     }
 
-    debug("\t\t\t\tIndex begin:   %lu", primitiveReference->indexBegin);
-    debug("\t\t\t\tIndex count:   %lu", primitiveReference->indexCount);
-    debug("\t\t\t\tVertex offset: %lu", primitiveReference->vertexOffset);
+    debug("\t\t\t\tIndex begin:   %lu", primitive->indexBegin);
+    debug("\t\t\t\tIndex count:   %lu", primitive->indexCount);
+    debug("\t\t\t\tVertex offset: %lu", primitive->vertexOffset);
 
     indexCount  += accessor->count;
     vertexCount += primitiveVertexCount;

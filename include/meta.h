@@ -20,3 +20,4 @@ struct camera {
 
 void loadPlayer(vec3 *position, vec3 *forward, vec3 *left);
 void loadCamera(float fieldOfView, float nearPlane, float farPlane);
+void loadSkybox(cgltf_data *data);

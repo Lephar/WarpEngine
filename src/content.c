@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "image.h"
 #include "material.h"
+#include "meta.h"
 #include "primitive.h"
 
 #include "file.h"

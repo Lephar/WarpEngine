@@ -18,7 +18,7 @@ void loadPlayer(vec3 *position, vec3 *forward, vec3 *left) {
 }
 
 void persective() {
-    float aspectRatio = (float) extent.width / (float) extent.height;
+    float aspectRatio = ((float) extent.width) / ((float) extent.height);
     glmc_perspective_rh_zo(camera.fieldOfView, aspectRatio, camera.nearPlane, camera.farPlane, uniformBuffer + camera.projOffset);
 }
 
