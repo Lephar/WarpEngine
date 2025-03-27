@@ -10,11 +10,7 @@ const uint32_t primitiveCountLimit = 128;
 uint32_t primitiveCount;
 Primitive *primitives;
 
-void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
-    assert(primitiveCount < primitiveCountLimit);
-
-    Primitive *primitiveReference = &primitives[primitiveCount];
-
+void loadPrimitive(Primitive *primitiveReference, cgltf_primitive *primitive, mat4 transform) {
     debug("\t\t\tPrimitive Index: %d", primitiveCount);
     debug("\t\t\tPrimitive Type:  %d", primitive->type);
 
@@ -101,15 +97,19 @@ void loadPrimitive(cgltf_primitive *primitive, mat4 transform) {
 
     indexBufferSize  += accessor->count      * sizeof(Index);
     vertexBufferSize += primitiveVertexCount * sizeof(Vertex);
-
-    primitiveCount++;
 }
 
 void loadMesh(cgltf_mesh *mesh, mat4 transform) {
     debug("\t\tMesh: %s", mesh->name);
 
     for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
-        loadPrimitive(&mesh->primitives[primitiveIndex], transform);
+        assert(primitiveCount < primitiveCountLimit);
+
+        Primitive *primitiveReference = &primitives[primitiveCount];
+
+        loadPrimitive(primitiveReference, &mesh->primitives[primitiveIndex], transform);
+
+        primitiveCount++;
     }
 }
 
