@@ -130,9 +130,23 @@ void loadContent() {
     materials  = malloc(materialCountLimit  * sizeof(Material ));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
-    loadAsset("Skybox.gltf");
-    loadAsset("Terrain.gltf");
-    loadAsset("Suzanne.gltf");
+    cgltf_data *data;
+
+    loadPlayer((vec3){0.0f, 0.0f, 8.0f}, (vec3){0.0f, 1.0f, 0.0f}, (vec3){1.0f, 0.0f, 0.0f});
+    loadCamera(M_PI_4, 1.0f, 100.0f);
+
+    data = loadAsset("Skybox.gltf");
+    loadSkybox(data);
+    freeAsset(data);
+
+    data = loadAsset("Terrain.gltf");
+    processAsset(data);
+    freeAsset(data);
+
+    data = loadAsset("Suzanne.gltf");
+    processAsset(data);
+    freeAsset(data);
+
     debug("Assets successfully loaded");
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
