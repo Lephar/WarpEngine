@@ -93,7 +93,13 @@ cgltf_data *loadAsset(const char *name) {
 
 void processAsset(cgltf_data *data) {
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        loadMaterial(&data->materials[materialIndex]);
+        assert(materialCount < materialCountLimit);
+
+        Material *material = &materials[materialCount];
+
+        loadMaterial(material, &data->materials[materialIndex]);
+
+        materialCount++;
     }
 
     for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {

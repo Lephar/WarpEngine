@@ -17,5 +17,5 @@ extern Material *materials;
 
 Image *loadTexture(const char *path);
 void createDescriptor(Material *material);
-void loadMaterial(cgltf_material *materialData);
+void loadMaterial(Material *material, cgltf_material *materialData);
 void destroyMaterial(Material *material);

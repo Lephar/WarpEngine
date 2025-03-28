@@ -152,16 +152,12 @@ void createDescriptor(Material *material) {
     debug("\tDescriptor created");
 }
 
-void loadMaterial(cgltf_material *materialData) {
+void loadMaterial(Material *material, cgltf_material *materialData) {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
             return;
         }
     }
-
-    assert(materialCount < materialCountLimit);
-    Material *material   = &materials[materialCount];
-    material->baseColor  = malloc(sizeof(Image));
 
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
@@ -172,8 +168,6 @@ void loadMaterial(cgltf_material *materialData) {
 
     material->baseColor = loadTexture(textureFullPath);
     createDescriptor(material);
-
-    materialCount++;
 }
 
 void destroyMaterial(Material *material) {
