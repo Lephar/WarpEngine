@@ -15,7 +15,5 @@ extern const uint32_t materialCountLimit;
 extern uint32_t materialCount;
 extern Material *materials;
 
-Image *loadTexture(const char *path);
-void createDescriptor(Material *material);
 void loadMaterial(Material *material, cgltf_material *materialData);
 void destroyMaterial(Material *material);
