@@ -21,43 +21,6 @@ Index  *indexBuffer;
 Vertex *vertexBuffer;
 void   *uniformBuffer;
 
-void loadMesh(cgltf_mesh *mesh, mat4 transform) {
-    debug("\t\tMesh: %s", mesh->name);
-
-    for(cgltf_size primitiveIndex = 0; primitiveIndex < mesh->primitives_count; primitiveIndex++) {
-        assert(primitiveCount < primitiveCountLimit);
-
-        Primitive *primitiveReference = &primitives[primitiveCount];
-
-        loadPrimitive(primitiveReference, &mesh->primitives[primitiveIndex], transform);
-
-        primitiveCount++;
-    }
-}
-
-void loadNode(cgltf_node *node) {
-    debug("\tNode: %s", node->name);
-
-    mat4 transform;
-    cgltf_node_transform_world(node, (cgltf_float *)transform);
-
-    if(node->mesh) {
-        loadMesh(node->mesh, transform);
-    }
-
-    for(cgltf_size childIndex = 0; childIndex < node->children_count; childIndex++) {
-        loadNode(node->children[childIndex]);
-    }
-}
-
-void loadScene(cgltf_scene *scene) {
-    debug("Scene: %s", scene->name);
-
-    for (cgltf_size nodeIndex = 0; nodeIndex < scene->nodes_count; nodeIndex++) {
-        loadNode(scene->nodes[nodeIndex]);
-    }
-}
-
 cgltf_data *loadAsset(const char *name) {
     char fullPath[PATH_MAX];
     makeFullPath("data", name, fullPath);
@@ -103,12 +66,26 @@ void processAsset(cgltf_data *data) {
         Material *material = &materials[materialCount];
 
         loadMaterial(material, materialData);
-
         materialCount++;
     }
 
-    for(cgltf_size sceneIndex = 0; sceneIndex < data->scenes_count; sceneIndex++) {
-        loadScene(&data->scenes[sceneIndex]);
+    for(cgltf_size nodeIndex = 0; nodeIndex < data->nodes_count; nodeIndex++) {
+        cgltf_node *nodeData = &data->nodes[nodeIndex];
+
+        if(nodeData->mesh) {
+            mat4 transform;
+            cgltf_node_transform_world(nodeData, (cgltf_float *) transform);
+
+            cgltf_mesh *meshData = nodeData->mesh;
+
+            for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
+                assert(primitiveCount < primitiveCountLimit);
+                Primitive *primitiveReference = &primitives[primitiveCount];
+
+                loadPrimitive(primitiveReference, &meshData->primitives[primitiveIndex], transform);
+                primitiveCount++;
+            }
+        }
     }
 }
 
