@@ -124,7 +124,7 @@ void freeAsset(cgltf_data *data) {
     cgltf_free(data);
 }
 
-void loadContent() {
+void createContentBuffers() {
     indexCount  = 0;
     vertexCount = 0;
 
@@ -132,9 +132,9 @@ void loadContent() {
     vertexBufferSize  = 0;
     uniformBufferSize = 0;
 
-    const uint64_t indexBufferSizeLimit    = deviceMemory.size / 2;
-    const uint64_t vertexBufferSizeLimit   = deviceMemory.size / 2;
-    const uint64_t uniformBufferSizeLimit  = sharedMemory.size;
+    const uint64_t indexBufferSizeLimit   = deviceMemory.size / 2;
+    const uint64_t vertexBufferSizeLimit  = deviceMemory.size / 2;
+    const uint64_t uniformBufferSizeLimit = sharedMemory.size;
 
     indexBuffer   = malloc(indexBufferSizeLimit);
     vertexBuffer  = malloc(vertexBufferSizeLimit);
@@ -142,6 +142,7 @@ void loadContent() {
 
     assert(indexBuffer);
     assert(vertexBuffer);
+    assert(uniformBuffer);
 
     materialCount  = 0;
     primitiveCount = 0;
@@ -149,6 +150,10 @@ void loadContent() {
     materials  = malloc(materialCountLimit  * sizeof(Material ));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
+    debug("Content buffers created");
+}
+
+void loadContent() {
     vec3 position = {0.0f, 0.0f, 8.0f};
     vec3 forward  = {0.0f, 1.0f, 0.0f};
     vec3 right    = {1.0f, 0.0f, 0.0f};
@@ -160,6 +165,8 @@ void loadContent() {
     float farPlane    = 100.0f;
 
     loadCamera(fieldOfView, nearPlane, farPlane);
+
+    debug("Meta materials successfully loaded");
 
     cgltf_data *data;
 
@@ -181,9 +188,12 @@ void loadContent() {
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
 
     debug("Index and vertex data copied into device memory");
+}
 
+void destroyContentBuffers() {
+    free(uniformBuffer);
     free(vertexBuffer);
-    free(indexBuffer );
+    free(indexBuffer);
 
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 

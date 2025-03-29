@@ -33,7 +33,9 @@ void initialize(int argc, char *argv[]) {
     createModules();
     allocateMemories();
     createBuffers();
+    createContentBuffers();
     loadContent();
+    destroyContentBuffers();
     createSwapchain();
     createFramebufferSet();
 

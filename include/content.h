@@ -20,5 +20,7 @@ extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 extern void   *uniformBuffer;
 
+void createContentBuffers();
 void loadContent();
+void destroyContentBuffers();
 void freeContent();
