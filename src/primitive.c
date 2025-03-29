@@ -13,21 +13,15 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
     debug("\t\t\tPrimitive Index: %d", primitiveCount);
     debug("\t\t\tPrimitive Type:  %d", primitiveData->type);
 
-    primitive->material = NULL;
+    uint32_t materialIndex = findMaterial(primitiveData->material);
+    assert(materialIndex < materialCount);
 
-    for(cgltf_size materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        if(strncmp(primitiveData->material->name, materials[materialIndex].name, UINT8_MAX) == 0) {
-            primitive->material = &materials[materialIndex];
-            debug("\t\t\t\tMaterial matched: %s", primitiveData->material->name);
-            break;
-        }
-    }
+    primitive->material = &materials[materialIndex];
+    debug("\t\t\t\tMaterial matched: %s", primitiveData->material->name);
 
-    assert(primitive->material != NULL);
-
-    cgltf_accessor *accessor = primitiveData->indices;
-    cgltf_buffer_view *view = accessor->buffer_view;
-    cgltf_buffer *buffer = view->buffer;
+    cgltf_accessor    *accessor = primitiveData->indices;
+    cgltf_buffer_view *view     = accessor->buffer_view;
+    cgltf_buffer      *buffer   = view->buffer;
 
     void *data = buffer->data + view->offset;
 

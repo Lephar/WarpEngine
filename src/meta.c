@@ -52,15 +52,21 @@ void loadCamera(float fieldOfView, float nearPlane, float farPlane) {
 }
 
 void loadSkybox(cgltf_data *data) {
-    cgltf_scene *scene = data->scene;
-    cgltf_node *node = scene->nodes[0];
-    cgltf_mesh *mesh = node->mesh;
-    cgltf_primitive *primitive = &mesh->primitives[0];
-    cgltf_material *material = primitive->material;
+    cgltf_scene *sceneData = data->scene;
+    cgltf_node  *nodeData  = sceneData->nodes[0];
+    cgltf_mesh  *meshData  = nodeData->mesh;
+
+    cgltf_primitive *primitiveData = &meshData->primitives[0];
+    cgltf_material  *materialData  = primitiveData->material;
+
+    Material *material = &materials[materialCount];
+
+    if( findMaterial(materialData) >= materialCount) {
+        loadMaterial(material, materialData);
+    }
 
     mat4 transform;
-    cgltf_node_transform_world(node, (cgltf_float *)transform);
+    cgltf_node_transform_world(nodeData, (cgltf_float *) transform);
 
-    loadMaterial(material);
-    loadPrimitive(&skybox, primitive, transform);
+    loadPrimitive(&skybox, primitiveData, transform);
 }

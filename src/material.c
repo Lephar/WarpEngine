@@ -16,6 +16,16 @@ const uint32_t materialCountLimit = 128;
 uint32_t materialCount;
 Material *materials;
 
+uint32_t findMaterial(cgltf_material *materialData) {
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
+            return materialIndex;
+        }
+    }
+
+    return UINT32_MAX;
+}
+
 Image *loadTexture(const char *path) {
     debug("\tImage Path: %s", path);
 
