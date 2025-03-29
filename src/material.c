@@ -99,7 +99,9 @@ Image *loadTexture(const char *path) {
     return texture;
 }
 
-void createDescriptor(Material *material) {
+VkDescriptorSet createDescriptor(Image *texture) {
+    VkDescriptorSet samplerDescriptor;
+
     VkDescriptorSetAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = NULL,
@@ -108,7 +110,7 @@ void createDescriptor(Material *material) {
         .pSetLayouts = &descriptorSetLayout
     };
 
-    vkAllocateDescriptorSets(device, &allocateInfo, &material->samplerDescriptor);
+    vkAllocateDescriptorSets(device, &allocateInfo, &samplerDescriptor);
 
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = sharedBuffer.buffer,
@@ -118,15 +120,15 @@ void createDescriptor(Material *material) {
 
     VkDescriptorImageInfo imageInfo = {
         .sampler = sampler,
-        .imageView = material->baseColor->view,
-        .imageLayout = material->baseColor->layout
+        .imageView = texture->view,
+        .imageLayout = texture->layout
     };
 
     VkWriteDescriptorSet descriptorWrites[] = {
         {
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .pNext = NULL,
-            .dstSet = material->samplerDescriptor,
+            .dstSet = samplerDescriptor,
             .dstBinding = 0,
             .dstArrayElement = 0,
             .descriptorCount = 1,
@@ -137,7 +139,7 @@ void createDescriptor(Material *material) {
         }, {
             .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             .pNext = NULL,
-            .dstSet = material->samplerDescriptor,
+            .dstSet = samplerDescriptor,
             .dstBinding = 1,
             .dstArrayElement = 0,
             .descriptorCount = 1,
@@ -150,6 +152,8 @@ void createDescriptor(Material *material) {
 
     vkUpdateDescriptorSets(device, sizeof(descriptorWrites) / sizeof(VkWriteDescriptorSet), descriptorWrites, 0, NULL);
     debug("\tDescriptor created");
+
+    return samplerDescriptor;
 }
 
 void loadMaterial(Material *material, cgltf_material *materialData) {
@@ -166,8 +170,8 @@ void loadMaterial(Material *material, cgltf_material *materialData) {
     char textureFullPath[PATH_MAX];
     makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, textureFullPath);
 
-    material->baseColor = loadTexture(textureFullPath);
-    createDescriptor(material);
+    material->baseColor         = loadTexture     (textureFullPath);
+    material->samplerDescriptor = createDescriptor(material->baseColor);
 }
 
 void destroyMaterial(Material *material) {
