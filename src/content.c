@@ -149,10 +149,19 @@ void loadContent() {
     materials  = malloc(materialCountLimit  * sizeof(Material ));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
-    cgltf_data *data;
+    vec3 position = {0.0f, 0.0f, 8.0f};
+    vec3 forward  = {0.0f, 1.0f, 0.0f};
+    vec3 right    = {1.0f, 0.0f, 0.0f};
 
-    loadPlayer((vec3){0.0f, 0.0f, 8.0f}, (vec3){0.0f, 1.0f, 0.0f}, (vec3){1.0f, 0.0f, 0.0f});
-    loadCamera(M_PI_4, 1.0f, 100.0f);
+    loadPlayer(position, forward, right);
+
+    float fieldOfView = M_PI_4;
+    float nearPlane   =   1.0f;
+    float farPlane    = 100.0f;
+
+    loadCamera(fieldOfView, nearPlane, farPlane);
+
+    cgltf_data *data;
 
     data = loadAsset("Skybox.gltf");
     loadSkybox(data);
@@ -170,6 +179,7 @@ void loadContent() {
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
+
     debug("Index and vertex data copied into device memory");
 
     free(vertexBuffer);
