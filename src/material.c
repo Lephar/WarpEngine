@@ -157,12 +157,6 @@ VkDescriptorSet createDescriptor(Image *texture) {
 }
 
 void loadMaterial(Material *material, cgltf_material *materialData) {
-    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
-            return;
-        }
-    }
-
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
     assert(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu);

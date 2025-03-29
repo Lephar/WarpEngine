@@ -93,11 +93,24 @@ cgltf_data *loadAsset(const char *name) {
 
 void processAsset(cgltf_data *data) {
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        assert(materialCount < materialCountLimit);
+        cgltf_bool materialExists = VK_FALSE;
+        cgltf_material *materialData = &data->materials[materialIndex];
 
+        for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+            if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
+                materialExists = VK_TRUE;
+                break;
+            }
+        }
+
+        if(materialExists) {
+            continue;
+        }
+
+        assert(materialCount < materialCountLimit);
         Material *material = &materials[materialCount];
 
-        loadMaterial(material, &data->materials[materialIndex]);
+        loadMaterial(material, materialData);
 
         materialCount++;
     }
