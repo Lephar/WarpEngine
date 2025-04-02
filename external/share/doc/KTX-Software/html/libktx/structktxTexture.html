@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">libktx Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -97,6 +97,16 @@ $(document).ready(function(){initNavTree('structktxTexture.html',''); initResiza
  <a href="structktxTexture.html#details">More...</a></p>
 
 <p><code>#include &lt;ktx.h&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for ktxTexture:</div>
+<div class="dyncontent">
+<div class="center"><img src="structktxTexture__coll__graph.png" border="0" usemap="#aktxTexture_coll__map" alt="Collaboration graph"/></div>
+<map name="aktxTexture_coll__map" id="aktxTexture_coll__map">
+<area shape="rect" title="Base class representing a texture." alt="" coords="99,95,190,121"/>
+<area shape="rect" href="structktxTexture__vtbl.html" title="Table of virtual ktxTexture methods." alt="" coords="83,331,206,357"/>
+<area shape="rect" title=" " alt="" coords="85,5,204,32"/>
+</map>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -115,20 +125,8 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abf498bb06f9a41b3df821e0d2a52f7ef"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structktxAstcParams.html">ktxAstcParams</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#abf498bb06f9a41b3df821e0d2a52f7ef">astcDefaultOptions</a> ()</td></tr>
-<tr class="memdesc:abf498bb06f9a41b3df821e0d2a52f7ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates default ASTC parameters.  <a href="structktxTexture.html#abf498bb06f9a41b3df821e0d2a52f7ef">More...</a><br /></td></tr>
-<tr class="separator:abf498bb06f9a41b3df821e0d2a52f7ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab30c7f529ebd2c74aa9ab8105f422435"><td class="memItemLeft" align="right" valign="top">static VkFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#ab30c7f529ebd2c74aa9ab8105f422435">astcVkFormat</a> (ktx_uint32_t block_size, bool sRGB)</td></tr>
-<tr class="memdesc:ab30c7f529ebd2c74aa9ab8105f422435"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should be used to get VkFormat from ASTC block enum.  <a href="structktxTexture.html#ab30c7f529ebd2c74aa9ab8105f422435">More...</a><br /></td></tr>
-<tr class="separator:ab30c7f529ebd2c74aa9ab8105f422435"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab7a2ad4d1d251b403c8f8fea697941c"><td class="memItemLeft" align="right" valign="top">static astcenc_profile&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#aab7a2ad4d1d251b403c8f8fea697941c">astcEncoderAction</a> (const <a class="el" href="structktxAstcParams.html">ktxAstcParams</a> &amp;params, const uint32_t *bdb)</td></tr>
-<tr class="memdesc:aab7a2ad4d1d251b403c8f8fea697941c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates valid ASTC encoder action from string.  <a href="structktxTexture.html#aab7a2ad4d1d251b403c8f8fea697941c">More...</a><br /></td></tr>
-<tr class="separator:aab7a2ad4d1d251b403c8f8fea697941c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc2340b7387e1de253eedc9b425dbf9d"><td class="memItemLeft" align="right" valign="top">static astcenc_swizzle&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#afc2340b7387e1de253eedc9b425dbf9d">astcSwizzle</a> (const <a class="el" href="structktxAstcParams.html">ktxAstcParams</a> &amp;params)</td></tr>
-<tr class="memdesc:afc2340b7387e1de253eedc9b425dbf9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates valid ASTC encoder swizzle from string.  <a href="structktxTexture.html#afc2340b7387e1de253eedc9b425dbf9d">More...</a><br /></td></tr>
-<tr class="separator:afc2340b7387e1de253eedc9b425dbf9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga516367e94731f99a23a83fb029e9a441"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">ktxTexture_GLUpload</a> (<a class="el" href="structktxTexture.html">ktxTexture</a> *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</td></tr>
-<tr class="memdesc:ga516367e94731f99a23a83fb029e9a441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a GL texture object from a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> object.  <a href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">More...</a><br /></td></tr>
+<tr class="memdesc:ga516367e94731f99a23a83fb029e9a441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a GL texture object from a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object.  <a href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">More...</a><br /></td></tr>
 <tr class="separator:ga516367e94731f99a23a83fb029e9a441"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa8dfc7a981b69d26eab73c5405d7182b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reader.html#gaa8dfc7a981b69d26eab73c5405d7182b">ktxTexture_CreateFromStream</a> (<a class="el" href="structktxStream.html">ktxStream</a> *pStream, <a class="el" href="structktxTexture.html#a1cce9de12eb3974a236becfd098bd057">ktxTextureCreateFlags</a> createFlags, <a class="el" href="structktxTexture.html">ktxTexture</a> **newTex)</td></tr>
 <tr class="memdesc:gaa8dfc7a981b69d26eab73c5405d7182b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a ktx1 or ktx2 texture according to the stream data.  <a href="group__reader.html#gaa8dfc7a981b69d26eab73c5405d7182b">More...</a><br /></td></tr>
@@ -155,7 +153,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:gae7c4b8bbe26379f2076f93050c0673c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate over the levels or faces in a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object.  <a href="group__reader.html#gae7c4b8bbe26379f2076f93050c0673c1">More...</a><br /></td></tr>
 <tr class="separator:gae7c4b8bbe26379f2076f93050c0673c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacf9e393ff766982ccb79ad915975971f"><td class="memItemLeft" align="right" valign="top">ktx_uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reader.html#gacf9e393ff766982ccb79ad915975971f">ktxTexture_GetRowPitch</a> (<a class="el" href="structktxTexture.html">ktxTexture</a> *This, ktx_uint32_t level)</td></tr>
-<tr class="memdesc:gacf9e393ff766982ccb79ad915975971f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return pitch betweeb rows of a texture image level in bytes.  <a href="group__reader.html#gacf9e393ff766982ccb79ad915975971f">More...</a><br /></td></tr>
+<tr class="memdesc:gacf9e393ff766982ccb79ad915975971f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return pitch between rows of a texture image level in bytes.  <a href="group__reader.html#gacf9e393ff766982ccb79ad915975971f">More...</a><br /></td></tr>
 <tr class="separator:gacf9e393ff766982ccb79ad915975971f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8d9b0820e70dd0239b2c1bdc0a7713f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ktx__vkloader.html#ga8d9b0820e70dd0239b2c1bdc0a7713f7">ktxTexture_VkUploadEx_WithSuballocator</a> (<a class="el" href="structktxTexture.html">ktxTexture</a> *This, <a class="el" href="structktxVulkanDeviceInfo.html">ktxVulkanDeviceInfo</a> *vdi, <a class="el" href="structktxVulkanTexture.html">ktxVulkanTexture</a> *vkTexture, VkImageTiling tiling, VkImageUsageFlags usageFlags, VkImageLayout finalLayout, <a class="el" href="structktxVulkanTexture__subAllocatorCallbacks.html">ktxVulkanTexture_subAllocatorCallbacks</a> *subAllocatorCallbacks)</td></tr>
 <tr class="memdesc:ga8d9b0820e70dd0239b2c1bdc0a7713f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a Vulkan image object from a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object.  <a href="group__ktx__vkloader.html#ga8d9b0820e70dd0239b2c1bdc0a7713f7">More...</a><br /></td></tr>
@@ -190,10 +188,13 @@ struct ktxTexture_protected *&#160;</td><td class="memItemRight" valign="bottom"
 <tr class="separator:ae904839d65da570a3b066a93e4573dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4664b1e11971ef492e66ada152fe8eb1"><td class="memItemLeft" align="right" valign="top">ktx_bool_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#a4664b1e11971ef492e66ada152fe8eb1">isCubemap</a></td></tr>
 <tr class="separator:a4664b1e11971ef492e66ada152fe8eb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82413c1c0d1371a81cda55b6cbf79edc"><td class="memItemLeft" align="right" valign="top">ktx_bool_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a></td></tr>
+<tr class="separator:a82413c1c0d1371a81cda55b6cbf79edc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4159f859437a820d7984beda366e2eaa"><td class="memItemLeft" align="right" valign="top">ktx_bool_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#a4159f859437a820d7984beda366e2eaa">generateMipmaps</a></td></tr>
 <tr class="separator:a4159f859437a820d7984beda366e2eaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d78c81b4e9f18f448c3b85f9ece712e"><td class="memItemLeft" align="right" valign="top">ktx_uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#a9d78c81b4e9f18f448c3b85f9ece712e">baseWidth</a></td></tr>
-<tr class="memdesc:a9d78c81b4e9f18f448c3b85f9ece712e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Width of the texture's base level.  <a href="structktxTexture.html#a9d78c81b4e9f18f448c3b85f9ece712e">More...</a><br /></td></tr>
+<tr class="memitem:a9d78c81b4e9f18f448c3b85f9ece712e"><td class="memItemLeft" align="right" valign="top"><a id="a9d78c81b4e9f18f448c3b85f9ece712e"></a>
+ktx_uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#a9d78c81b4e9f18f448c3b85f9ece712e">baseWidth</a></td></tr>
+<tr class="memdesc:a9d78c81b4e9f18f448c3b85f9ece712e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Width of the texture's base level. <br /></td></tr>
 <tr class="separator:a9d78c81b4e9f18f448c3b85f9ece712e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d16167996baa4ba678c1a610aaf26cc"><td class="memItemLeft" align="right" valign="top"><a id="a5d16167996baa4ba678c1a610aaf26cc"></a>
 ktx_uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTexture.html#a5d16167996baa4ba678c1a610aaf26cc">baseHeight</a></td></tr>
@@ -325,132 +326,11 @@ ktx_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div><div class="memdoc">
 
 <p>Enum for requesting, or not, allocation of storage for images. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__writer.html#ga761f4c933557aefa157900c076357c3e" title="Create a new empty ktxTexture1.">ktxTexture1_Create()</a> and <a class="el" href="group__writer.html#ga9ff411caf2251c100a581960deaf9bb7" title="Create a new empty ktxTexture2.">ktxTexture2_Create()</a>. </dd></dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="abf498bb06f9a41b3df821e0d2a52f7ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf498bb06f9a41b3df821e0d2a52f7ef">&#9670;&nbsp;</a></span>astcDefaultOptions()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="structktxAstcParams.html">ktxAstcParams</a> astcDefaultOptions </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates default ASTC parameters. </p>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structktxAstcParams.html" title="Structure for passing extended parameters to ktxTexture_CompressAstc.">ktxAstcParams</a> with default options for ASTC compressor </dd></dl>
-
-</div>
-</div>
-<a id="aab7a2ad4d1d251b403c8f8fea697941c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab7a2ad4d1d251b403c8f8fea697941c">&#9670;&nbsp;</a></span>astcEncoderAction()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">static astcenc_profile astcEncoderAction </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structktxAstcParams.html">ktxAstcParams</a> &amp;&#160;</td>
-          <td class="paramname"><em>params</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint32_t *&#160;</td>
-          <td class="paramname"><em>bdb</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates valid ASTC encoder action from string. </p>
-<dl class="section return"><dt>Returns</dt><dd>Valid astc_profile from string </dd></dl>
-
-</div>
-</div>
-<a id="afc2340b7387e1de253eedc9b425dbf9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc2340b7387e1de253eedc9b425dbf9d">&#9670;&nbsp;</a></span>astcSwizzle()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">static astcenc_swizzle astcSwizzle </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structktxAstcParams.html">ktxAstcParams</a> &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Creates valid ASTC encoder swizzle from string. </p>
-<dl class="section return"><dt>Returns</dt><dd>Valid astcenc_swizzle from string </dd></dl>
-
-</div>
-</div>
-<a id="ab30c7f529ebd2c74aa9ab8105f422435"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab30c7f529ebd2c74aa9ab8105f422435">&#9670;&nbsp;</a></span>astcVkFormat()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">static VkFormat astcVkFormat </td>
-          <td>(</td>
-          <td class="paramtype">ktx_uint32_t&#160;</td>
-          <td class="paramname"><em>block_size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sRGB</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Should be used to get VkFormat from ASTC block enum. </p>
-<dl class="section return"><dt>Returns</dt><dd>VKFormat for a specific ASTC block size </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__writer.html#ga9ad46bface6dab07a35579c0635877d3" title="Create a new empty ktxTexture1.">ktxTexture1_Create()</a> and <a class="el" href="group__writer.html#gaa8e29216921eadd3c09c3a76bc286acd" title="Create a new empty ktxTexture2.">ktxTexture2_Create()</a>. </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="a9d78c81b4e9f18f448c3b85f9ece712e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d78c81b4e9f18f448c3b85f9ece712e">&#9670;&nbsp;</a></span>baseWidth</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">baseWidth</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Width of the texture's base level. </p>
-<p>n </p>
-
-</div>
-</div>
 <a id="ac838c216df52582085ca9e1eb6d19d07"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac838c216df52582085ca9e1eb6d19d07">&#9670;&nbsp;</a></span>classId</h2>
 
@@ -481,7 +361,7 @@ ktx_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
         </tr>
       </table>
 </div><div class="memdoc">
-<p>KTX_TRUE if mipmaps should be generated for the texture by <a class="el" href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441" title="Create a GL texture object from a ktxTexture1 object.">ktxTexture_GLUpload()</a> or <a class="el" href="group__ktx__vkloader.html#ga377a4a2c177956ea661549ee502d60da" title="Create a Vulkan image object from a ktxTexture object.">ktxTexture_VkUpload()</a>. </p>
+<p>KTX_TRUE if mipmaps should be generated for the texture by <a class="el" href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441" title="Create a GL texture object from a ktxTexture object.">ktxTexture_GLUpload()</a> or <a class="el" href="group__ktx__vkloader.html#ga377a4a2c177956ea661549ee502d60da" title="Create a Vulkan image object from a ktxTexture object.">ktxTexture_VkUpload()</a>. </p>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a12">glloader.c</a>.</dd>
 </dl>
 
@@ -504,6 +384,23 @@ ktx_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
+<a id="a82413c1c0d1371a81cda55b6cbf79edc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82413c1c0d1371a81cda55b6cbf79edc">&#9670;&nbsp;</a></span>isCompressed</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">isCompressed</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>KTX_TRUE if the texture's format is a block compressed format. </p>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a10">glloader.c</a>.</dd>
+</dl>
+
+</div>
+</div>
 <a id="a4664b1e11971ef492e66ada152fe8eb1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4664b1e11971ef492e66ada152fe8eb1">&#9670;&nbsp;</a></span>isCubemap</h2>
 
@@ -515,8 +412,7 @@ ktx_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
         </tr>
       </table>
 </div><div class="memdoc">
-<p>KTX_TRUE if the texture is a cubemap or cubemap array.</p>
-<p>KTX_TRUE if the texture's format is a block compressed format. </p>
+<p>KTX_TRUE if the texture is a cubemap or cubemap array. </p>
 
 </div>
 </div>
@@ -580,7 +476,7 @@ ktx_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structktxTexture.html">ktxTexture</a></li>
-    <li class="footer">Generated on Wed Mar 20 2024 17:41:34 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:32:46 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

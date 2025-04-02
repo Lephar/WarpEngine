@@ -1,4 +1,4 @@
-.TH "ktx_help" 1 "Wed Mar 20 2024" "Version 4.3.2" "KTX Tools Reference" \" -*- nroff -*-
+.TH "ktx_help" 1 "Sun Mar 30 2025" "Version 4.4.0" "KTX Tools Reference" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -6,30 +6,51 @@ ktx_help \- ktx help
 Display help information about the ktx tool\&.
 .SH "SYNOPSIS"
 .PP
-ktx help [option\&.\&.\&.] \fI\fP[command]
+ktx help [option\&.\&.\&.] [\fIcommand\fP]
 .SH "DESCRIPTION"
 .PP
 \fBktx\fP \fBhelp\fP displays the man page of a specific ktx command specified as the \fIcommand\fP argument\&. On windows systems the man pages are opened with the system default browser in html format\&. On systems derived from Unix the man pages are opened with the man command\&.
 .PP
 To support custom install locations the tool first tries to use the man files relative to the executable and falls back to the system man pages\&.
 .PP
-The following options are available: 
-.IP "\fBcommand \fP" 1c
-Specifies which command's man page will be displayed\&. If the command option is missing the main ktx tool man page will be displayed\&. Possible options are: 
+\fIcommand\fP specifies which command's man page will be displayed\&. If \fIcommand\fP is s missing the main ktx tool man page will be displayed\&. Possible choices are: 
 .br
- \fBcreate\fP 
+.IP "\(bu" 2
+\fBcompare\fP 
 .br
- \fBextract\fP 
+
+.IP "\(bu" 2
+\fBcreate\fP 
 .br
- \fBencode\fP 
+
+.IP "\(bu" 2
+\fBdeflate\fP 
 .br
- \fBtranscode\fP 
+
+.IP "\(bu" 2
+\fBencode\fP 
 .br
- \fBinfo\fP 
+
+.IP "\(bu" 2
+\fBextract\fP 
 .br
- \fBvalidate\fP 
+
+.IP "\(bu" 2
+\fBinfo\fP 
 .br
- \fBhelp\fP  
+
+.IP "\(bu" 2
+\fBtranscode\fP 
+.br
+
+.IP "\(bu" 2
+\fBvalidate\fP 
+.br
+
+.IP "\(bu" 2
+\fBhelp\fP
+.PP
+.SH "OPTIONS"
 .PP
 .IP "\fB-h, --help \fP" 1c
 Print this usage message and exit\&. 

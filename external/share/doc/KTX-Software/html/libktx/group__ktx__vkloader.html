@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">libktx Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -269,7 +269,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a Vulkan image object from a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> object. </p>
-<p>Calls <a class="el" href="group__ktx__vkloader.html#ga8d9b0820e70dd0239b2c1bdc0a7713f7">ktxTexture_VkUploadEx_WithSuballocator()</a> with no supplied suballocator callbacks. Use that for complete control. </p>
+<p>This simply calls <a class="el" href="group__ktx__vkloader.html#ga153164adbd7307ad1844c3e117faa325">ktxTexture_VkUploadEx()</a>. </p>
 
 </div>
 </div>
@@ -478,8 +478,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a Vulkan image object from a <a class="el" href="structktxTexture2.html" title="Class representing a KTX version 2 format texture.">ktxTexture2</a> object. </p>
-<p>This simply calls <a class="el" href="group__ktx__vkloader.html#ga153164adbd7307ad1844c3e117faa325">ktxTexture_VkUploadEx()</a>.</p>
-<p>Calls <a class="el" href="group__ktx__vkloader.html#ga8d9b0820e70dd0239b2c1bdc0a7713f7">ktxTexture_VkUploadEx_WithSuballocator()</a> with no supplied suballocator callbacks. Use that for complete control. </p>
+<p>This simply calls <a class="el" href="group__ktx__vkloader.html#ga153164adbd7307ad1844c3e117faa325">ktxTexture_VkUploadEx()</a>. </p>
 
 </div>
 </div>
@@ -635,7 +634,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a Vulkan image object from a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object. </p>
-<p>Calls <a class="el" href="group__ktx__vkloader.html#ga153164adbd7307ad1844c3e117faa325">ktxTexture_VkUploadEx()</a> with the most commonly used options: <code>VK_IMAGE_TILING_OPTIMAL</code>, <code>VK_IMAGE_USAGE_SAMPLED_BIT</code> and <code>VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</code>. Use that for complete control. </p>
+<p>Calls <a class="el" href="group__ktx__vkloader.html#ga153164adbd7307ad1844c3e117faa325" title="Create a Vulkan image object from a ktxTexture object.">ktxTexture_VkUploadEx()</a> with the most commonly used options: <code>VK_IMAGE_TILING_OPTIMAL</code>, <code>VK_IMAGE_USAGE_SAMPLED_BIT</code> and <code>VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</code>. Use that for complete control. </p>
 
 </div>
 </div>
@@ -690,7 +689,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a Vulkan image object from a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object. </p>
-<p>Calls <a class="el" href="group__ktx__vkloader.html#ga8d9b0820e70dd0239b2c1bdc0a7713f7">ktxTexture_VkUploadEx_WithSuballocator()</a> with no supplied suballocator callbacks. Use that for complete control. </p>
+<p>Calls <a class="el" href="group__ktx__vkloader.html#ga8d9b0820e70dd0239b2c1bdc0a7713f7" title="Create a Vulkan image object from a ktxTexture object.">ktxTexture_VkUploadEx_WithSuballocator()</a> with no supplied suballocator callbacks. Use that for complete control. </p>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="vkload_8cpp-example.html#a8">vkload.cpp</a>.</dd>
 </dl>
 
@@ -1231,7 +1230,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Mar 20 2024 17:41:33 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:32:46 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

@@ -25,12 +25,19 @@
 var NAVTREE =
 [
   [ "KTX Javascript Wrappers Reference", "index.html", [
-    [ "libktx Binding", "libktx_js.html", null ],
+    [ "libktx Binding", "libktx_js.html", [
+      [ "WebIDL for the binding", "libktx_js.html#autotoc_md1", null ],
+      [ "How to use", "libktx_js.html#autotoc_md2", [
+        [ "Create an instance of the ktx module", "libktx_js.html#autotoc_md3", null ]
+      ] ],
+      [ "Downloading and using an existing KTX texture.", "libktx_js.html#autotoc_md4", null ],
+      [ "Creating a new KTX texture", "libktx_js.html#autotoc_md5", null ]
+    ] ],
     [ "Basis Universal Image Transcoder binding", "msc_basis_transcoder.html", null ],
     [ "Package", "../index.html", null ],
     [ "KTX Tools Reference", "../ktxtools/index.html", null ],
     [ "libktx Reference", "../libktx/index.html", null ],
-    [ "pyktx Reference", "pyktx/index.html", null ],
+    [ "pyktx Reference", "../pyktx/index.html", null ],
     [ "License", "../license.html", null ]
   ] ]
 ];

@@ -1,6 +1,6 @@
 var structktxTexture1 =
 [
-    [ "ktxTexture1_Create", "group__writer.html#ga761f4c933557aefa157900c076357c3e", null ],
+    [ "ktxTexture1_Create", "group__writer.html#ga9ad46bface6dab07a35579c0635877d3", null ],
     [ "ktxTexture1_CreateFromMemory", "group__reader.html#ga1f289eb80601208b79561804d2ec0121", null ],
     [ "ktxTexture1_CreateFromNamedFile", "group__reader.html#ga0319d9a33d3ea78da2ef786205f2a956", null ],
     [ "ktxTexture1_CreateFromStdioStream", "group__reader.html#ga4557b9714b41e7c575d295b65e19ed12", null ],
@@ -9,6 +9,7 @@ var structktxTexture1 =
     [ "ktxTexture1_GetDataSizeUncompressed", "group__reader.html#ga65cd751a3d1a6eed97cb19b7a88d736c", null ],
     [ "ktxTexture1_GetImageOffset", "group__reader.html#ga2c471eb79f1ac62d63cae86ca6c519bf", null ],
     [ "ktxTexture1_GetImageSize", "group__reader.html#gac1dc0703bc613180a92a8e1c5901dd50", null ],
+    [ "ktxTexture1_GetLevelSize", "group__reader.html#ga8a1bf5e13f88af082585a875e85dfdeb", null ],
     [ "ktxTexture1_GetVkFormat", "group__ktx__vkloader.html#ga11fb504b749453140e04ca69711633d6", null ],
     [ "ktxTexture1_GLUpload", "group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f", null ],
     [ "ktxTexture1_IterateLevels", "group__reader.html#ga400a2581bf935beb6c0192a6e9844914", null ],

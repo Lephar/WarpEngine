@@ -1,4 +1,4 @@
-.TH "ktx_transcode" 1 "Wed Mar 20 2024" "Version 4.3.2" "KTX Tools Reference" \" -*- nroff -*-
+.TH "ktx_transcode" 1 "Sun Mar 30 2025" "Version 4.4.0" "KTX Tools Reference" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,6 +10,7 @@ ktx transcode [option\&.\&.\&.] \fIinput-file\fP \fIoutput-file\fP
 .SH "DESCRIPTION"
 .PP
 \fBktx\fP \fBtranscode\fP can transcode the KTX file specified as the \fIinput-file\fP argument, optionally supercompress the result, and save it as the \fIoutput-file\fP\&. If the \fIinput-file\fP is '-' the file will be read from the stdin\&. If the \fIoutput-path\fP is '-' the output file will be written to the stdout\&. The input file must be transcodable (it must be either BasisLZ supercompressed or has UASTC color model in the DFD)\&. If the input file is invalid the first encountered validation error is displayed to the stderr and the command exits with the relevant non-zero status code\&.
+.SH "OPTIONS"
 .PP
 The following options are available: 
 .IP "\fB--target <target> \fP" 1c

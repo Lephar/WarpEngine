@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">libktx Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -96,15 +96,27 @@ $(document).ready(function(){initNavTree('structktxTexture1.html',''); initResiz
  <a href="structktxTexture1.html#details">More...</a></p>
 
 <p><code>#include &lt;ktx.h&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for ktxTexture1:</div>
+<div class="dyncontent">
+<div class="center"><img src="structktxTexture1__coll__graph.png" border="0" usemap="#aktxTexture1_coll__map" alt="Collaboration graph"/></div>
+<map name="aktxTexture1_coll__map" id="aktxTexture1_coll__map">
+<area shape="rect" title="Class representing a KTX version 1 format texture." alt="" coords="110,420,209,447"/>
+<area shape="rect" title=" " alt="" coords="5,5,124,32"/>
+<area shape="rect" href="structktxTexture.html" title="Base class representing a texture." alt="" coords="114,95,205,121"/>
+<area shape="rect" href="structktxTexture__vtbl.html" title="Table of virtual ktxTexture methods." alt="" coords="98,331,221,357"/>
+<area shape="rect" title=" " alt="" coords="245,331,397,357"/>
+</map>
+<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ga058297b66c5a7fd1f1bbaf718a887b9f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f">ktxTexture1_GLUpload</a> (<a class="el" href="structktxTexture1.html">ktxTexture1</a> *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</td></tr>
 <tr class="memdesc:ga058297b66c5a7fd1f1bbaf718a887b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a GL texture object from a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> object.  <a href="group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f">More...</a><br /></td></tr>
 <tr class="separator:ga058297b66c5a7fd1f1bbaf718a887b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga761f4c933557aefa157900c076357c3e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__writer.html#ga761f4c933557aefa157900c076357c3e">ktxTexture1_Create</a> (<a class="el" href="structktxTextureCreateInfo.html">ktxTextureCreateInfo</a> *createInfo, ktxTextureCreateStorageEnum storageAllocation, <a class="el" href="structktxTexture1.html">ktxTexture1</a> **newTex)</td></tr>
-<tr class="memdesc:ga761f4c933557aefa157900c076357c3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new empty <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a>.  <a href="group__writer.html#ga761f4c933557aefa157900c076357c3e">More...</a><br /></td></tr>
-<tr class="separator:ga761f4c933557aefa157900c076357c3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9ad46bface6dab07a35579c0635877d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__writer.html#ga9ad46bface6dab07a35579c0635877d3">ktxTexture1_Create</a> (const <a class="el" href="structktxTextureCreateInfo.html">ktxTextureCreateInfo</a> *const createInfo, ktxTextureCreateStorageEnum storageAllocation, <a class="el" href="structktxTexture1.html">ktxTexture1</a> **newTex)</td></tr>
+<tr class="memdesc:ga9ad46bface6dab07a35579c0635877d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new empty <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a>.  <a href="group__writer.html#ga9ad46bface6dab07a35579c0635877d3">More...</a><br /></td></tr>
+<tr class="separator:ga9ad46bface6dab07a35579c0635877d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4557b9714b41e7c575d295b65e19ed12"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reader.html#ga4557b9714b41e7c575d295b65e19ed12">ktxTexture1_CreateFromStdioStream</a> (FILE *stdioStream, ktxTextureCreateFlags createFlags, <a class="el" href="structktxTexture1.html">ktxTexture1</a> **newTex)</td></tr>
 <tr class="memdesc:ga4557b9714b41e7c575d295b65e19ed12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> from a stdio stream reading from a KTX source.  <a href="group__reader.html#ga4557b9714b41e7c575d295b65e19ed12">More...</a><br /></td></tr>
 <tr class="separator:ga4557b9714b41e7c575d295b65e19ed12"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,6 +141,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:gac1dc0703bc613180a92a8e1c5901dd50"><td class="memItemLeft" align="right" valign="top">ktx_size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reader.html#gac1dc0703bc613180a92a8e1c5901dd50">ktxTexture1_GetImageSize</a> (<a class="el" href="structktxTexture1.html">ktxTexture1</a> *This, ktx_uint32_t level)</td></tr>
 <tr class="memdesc:gac1dc0703bc613180a92a8e1c5901dd50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate &amp; return the size in bytes of an image at the specified mip level.  <a href="group__reader.html#gac1dc0703bc613180a92a8e1c5901dd50">More...</a><br /></td></tr>
 <tr class="separator:gac1dc0703bc613180a92a8e1c5901dd50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8a1bf5e13f88af082585a875e85dfdeb"><td class="memItemLeft" align="right" valign="top">ktx_size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reader.html#ga8a1bf5e13f88af082585a875e85dfdeb">ktxTexture1_GetLevelSize</a> (<a class="el" href="structktxTexture1.html">ktxTexture1</a> *This, ktx_uint32_t level)</td></tr>
+<tr class="memdesc:ga8a1bf5e13f88af082585a875e85dfdeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate &amp; return the size in bytes of all the images in the specified mip level.  <a href="group__reader.html#ga8a1bf5e13f88af082585a875e85dfdeb">More...</a><br /></td></tr>
+<tr class="separator:ga8a1bf5e13f88af082585a875e85dfdeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga400a2581bf935beb6c0192a6e9844914"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reader.html#ga400a2581bf935beb6c0192a6e9844914">ktxTexture1_IterateLevels</a> (<a class="el" href="structktxTexture1.html">ktxTexture1</a> *This, PFNKTXITERCB iterCb, void *userdata)</td></tr>
 <tr class="memdesc:ga400a2581bf935beb6c0192a6e9844914"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate over the mip levels in a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> object.  <a href="group__reader.html#ga400a2581bf935beb6c0192a6e9844914">More...</a><br /></td></tr>
 <tr class="separator:ga400a2581bf935beb6c0192a6e9844914"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -197,7 +212,7 @@ Data Fields</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class representing a KTX version 1 format texture. </p>
 <p>ktxTextures should be created only by one of the ktxTexture_Create* functions and these fields should be considered read-only. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#_a18">glloader.c</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#_a17">glloader.c</a>.</dd>
 </dl>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a2113cfebb1a5e3328ce7a89d21e7cdab"></a>
@@ -289,7 +304,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structktxTexture1.html">ktxTexture1</a></li>
-    <li class="footer">Generated on Wed Mar 20 2024 17:41:34 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:32:46 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

@@ -93,10 +93,10 @@
 <span></span><span class="c1"># Copyright (c) 2023, Shukant Pal and Contributors</span>
 <span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
 
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
 
 
-<div class="viewcode-block" id="KtxErrorCode"><a class="viewcode-back" href="../../docs/pyktx.ktx_error_code.html#pyktx.ktx_error_code.KtxErrorCode">[docs]</a><span class="k">class</span> <span class="nc">KtxErrorCode</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<div class="viewcode-block" id="KtxErrorCode"><a class="viewcode-back" href="../../docs/pyktx.ktx_error_code.html#pyktx.ktx_error_code.KtxErrorCode">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KtxErrorCode</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Error codes thrown by library functions.&quot;&quot;&quot;</span>
 
     <span class="n">SUCCESS</span> <span class="o">=</span> <span class="mi">0</span>
@@ -166,7 +166,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;For safety checks.&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="KtxError"><a class="viewcode-back" href="../../docs/pyktx.ktx_error_code.html#pyktx.ktx_error_code.KtxError">[docs]</a><span class="k">class</span> <span class="nc">KtxError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="KtxError"><a class="viewcode-back" href="../../docs/pyktx.ktx_error_code.html#pyktx.ktx_error_code.KtxError">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KtxError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Error thrown when native operation does not succeed.&quot;&quot;&quot;</span>
 
     <span class="n">invocation</span><span class="p">:</span> <span class="nb">str</span>
@@ -175,11 +175,11 @@
     <span class="n">code</span><span class="p">:</span> <span class="n">KtxErrorCode</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The error code returned by libktx.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">invocation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="n">KtxErrorCode</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">invocation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="n">KtxErrorCode</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">invocation</span> <span class="o">=</span> <span class="n">invocation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invocation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; returned with &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span></div>
 </pre></div>
 
@@ -190,7 +190,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Shukant Pal.</p>
+    <p>&#169; Copyright 2025, Khronos Group, Inc. 2023, Shukant Pal.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

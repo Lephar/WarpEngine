@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">KTX Tools Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -96,15 +96,19 @@ ktx Overview</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadLeft">Tool   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Equivalent old tool    </th></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><a class="el" href="ktx_compare.html">ktx compare</a>   </td><td class="markdownTableBodyNone">Compare two KTX2 files.   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft"><a class="el" href="ktx_create.html">ktx create</a>   </td><td class="markdownTableBodyNone">Create a KTX2 file from various input files   </td><td class="markdownTableBodyNone"><code>toktx</code>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><a class="el" href="ktx_deflate.html">ktx deflate</a>   </td><td class="markdownTableBodyNone">Deflate (supercompress) a KTX2 file.   </td><td class="markdownTableBodyNone"><code>ktxsc</code>    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft"><a class="el" href="ktx_extract.html">ktx extract</a>   </td><td class="markdownTableBodyNone">Export selected images from a KTX2 file   </td><td class="markdownTableBodyNone">-    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft"><a class="el" href="ktx_encode.html">ktx encode</a>   </td><td class="markdownTableBodyNone">Encode a KTX2 file   </td><td class="markdownTableBodyNone"><code>ktxsc</code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyLeft"><a class="el" href="ktx_transcode.html">ktx transcode</a>   </td><td class="markdownTableBodyNone">Transcode a KTX2 file   </td><td class="markdownTableBodyNone">-    </td></tr>
-<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft"><a class="el" href="ktx_info.html">ktx info</a>   </td><td class="markdownTableBodyNone">Prints information about a KTX2 file   </td><td class="markdownTableBodyNone"><code>ktxinfo</code>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><a class="el" href="ktx_transcode.html">ktx transcode</a>   </td><td class="markdownTableBodyNone">Transcode a KTX2 file   </td><td class="markdownTableBodyNone">-    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft"><a class="el" href="ktx_validate.html">ktx validate</a>   </td><td class="markdownTableBodyNone">Validate a KTX2 file   </td><td class="markdownTableBodyNone"><code>ktx2check</code>    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -116,10 +120,7 @@ ktx Overview</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadCenter">Old Tool   </th><th class="markdownTableHeadCenter">New Tool   </th><th class="markdownTableHeadNone">Missing Features    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyCenter"><a class="el" href="toktx.html">toktx</a>   </td><td class="markdownTableBodyCenter"><a class="el" href="ktx_create.html">create</a>   </td><td class="markdownTableBodyNone">JPEG and NBPM input and scaling/resizing of input images.    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyCenter"><a class="el" href="ktxsc.html">ktxsc</a>   </td><td class="markdownTableBodyCenter"><a class="el" href="ktx_encode.html">encode</a>   </td><td class="markdownTableBodyNone">ASTC encoding. This can be done in <code>create</code>.<br  />
-Deflation of a KTX2 file with zlib or zstd.   </td></tr>
+<td class="markdownTableBodyCenter"><a class="el" href="toktx.html">toktx</a>   </td><td class="markdownTableBodyCenter"><a class="el" href="ktx_create.html">create</a>   </td><td class="markdownTableBodyNone">JPEG and NBPM input.   </td></tr>
 </table>
 <p>The command-line syntax and semantics differ from the old tools including, but not limited to:</p>
 <ul>
@@ -130,21 +131,21 @@ Deflation of a KTX2 file with zlib or zstd.   </td></tr>
 <li>The <code>ktx validate</code> tool also supports validating KTX 2.0 files against the additional restrictions defined by the <em>KHR_texture_basisu</em> extension. Use the <code>--gltf-basisu</code> command-line option to verify glTF and WebGL compatibility.</li>
 <li>The new <code>ktx info</code> tool produces a unified and complete output of all metadata in KTX 2.0 files and can provide output in human readable text format or in JSON format (both formatted and minified options are available), as controlled by the <code>--format</code> command-line option.</li>
 <li>The source repository also includes the JSON schemas that the JSON outputs of the <code>ktx info</code> and <code>ktx validate</code> tools comply to.</li>
-<li>The <code>ktx create</code> tool takes an explicit Vulkan format argument (<code>--format</code>) instead of inferring the format based on the provided input files as <code>toktx</code>, and thus doesn't perform any implicit color-space conversions except gamma 2.2 to sRGB. Use the <code>--assign-oetf</code>, <code>--convert-oetf</code>, <code>--assign-primaries</code>, and the new <code>--convert-primaries</code> for fine grained control over color-space interpretation and conversion.</li>
+<li>The <code>ktx create</code> tool takes an explicit Vulkan format argument (<code>--format</code>) instead of inferring the format based on the provided input files as <code>toktx</code>, and thus doesn't perform any implicit color-space conversions except gamma 2.2 to sRGB. Use the <code>--assign-tf</code>, <code>--convert-tf</code>, <code>--assign-primaries</code>, and the new <code>--convert-primaries</code> for fine grained control over color-space interpretation and conversion.</li>
 <li>The <code>ktx create</code> tool does not support resizing or scaling like <code>toktx</code>, and, in general, does not perform any image transformations except the optional color-space conversion and mipmap generation options. Users should resize input images to the appropriate resolution before converting them to KTX 2.0 files.</li>
 <li>The <code>ktx create</code> and <code>ktx extract</code> tools consume and produce, respectively, image file formats that best suit the used Vulkan format. In general, barring special cases, 8-bit and 16-bit normalized integer formats are imported from and exported to PNG files, while integer and floating point formats are imported from and exported to EXR files based on predefined rules. This may be extended in the future using additional command line options and in response to support for other image file formats.</li>
 <li>The new tools and updated <code>libktx</code> support ZLIB supercompression besides the BasisLZ and Zstd supercompression schemes supported previously.</li>
 </ul>
 <p>Please refer to the manual pages or use the <code>--help</code> command-line option for further details on the options available and associated semantics for each individual command.</p>
 <hr  />
- <dl class="section user"><dt>This page last modified $Date: Fri Dec 22 22:46:49 2023 +0900 $</dt><dd></dd></dl>
+ <dl class="section user"><dt>This page last modified $Date: Sun Mar 16 22:00:50 2025 +0900 $</dt><dd></dd></dl>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Mar 20 2024 17:40:15 for KTX Tools Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:31:50 for KTX Tools Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

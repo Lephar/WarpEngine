@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">KTX Tools Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -97,6 +97,8 @@ DESCRIPTION</h1>
 <p><b>ktx</b> <b>info</b> prints information about the KTX2 file specified as the <em>input-file</em> argument. If the <em>input-file</em> is '-' the file will be read from the stdin. The command implicitly calls <a class="el" href="ktx_validate.html">validate</a> and prints any found errors and warnings to stdout. If the specified input file is invalid the information is displayed based on best effort and may be incomplete.</p>
 <p>The JSON output formats conform to the <a href="https://schema.khronos.org/ktx/info_v0.json">https://schema.khronos.org/ktx/info_v0.json</a> schema even if the input file is invalid and certain information cannot be parsed or displayed. Additionally, for JSON outputs the KTX file identifier is printed using "\u001A" instead of "\x1A" as an unescaped "\x1A" sequence inside a JSON string breaks nearly every JSON tool. Note that this does not change the value of the string only its representation.</p>
 <dl class="section note"><dt>Note</dt><dd><b>ktx</b> <b>info</b> prints using UTF-8 encoding. If your console is not set for UTF-8 you will see incorrect characters in output of the file identifier on each side of the "KTX nn".</dd></dl>
+<h1><a class="anchor" id="ktx_info_options"></a>
+OPTIONS</h1>
 <p>The following options are available: <dl>
 <dt>--format text | json | mini-json </dt>
 <dd>Specifies the report output format. Possible options are: <br  />
@@ -142,7 +144,7 @@ AUTHOR</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Mar 20 2024 17:40:15 for KTX Tools Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:31:50 for KTX Tools Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

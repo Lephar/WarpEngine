@@ -93,20 +93,20 @@
 <span></span><span class="c1"># Copyright (c) 2023, Shukant Pal and Contributors</span>
 <span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
 
-<span class="kn">from</span> <span class="nn">.gl_internalformat</span> <span class="kn">import</span> <span class="n">GlInternalformat</span>
-<span class="kn">from</span> <span class="nn">.ktx_error_code</span> <span class="kn">import</span> <span class="n">KtxErrorCode</span><span class="p">,</span> <span class="n">KtxError</span>
-<span class="kn">from</span> <span class="nn">.ktx_texture</span> <span class="kn">import</span> <span class="n">KtxTexture</span><span class="p">,</span> <span class="n">KtxVersionMismatchError</span>
-<span class="kn">from</span> <span class="nn">.ktx_texture_create_flag_bits</span> <span class="kn">import</span> <span class="n">KtxTextureCreateFlagBits</span>
-<span class="kn">from</span> <span class="nn">.ktx_texture_create_info</span> <span class="kn">import</span> <span class="n">KtxTextureCreateInfo</span>
-<span class="kn">from</span> <span class="nn">.ktx_texture_create_storage</span> <span class="kn">import</span> <span class="n">KtxTextureCreateStorage</span>
-<span class="kn">from</span> <span class="nn">pyktx.native</span> <span class="kn">import</span> <span class="n">ffi</span><span class="p">,</span> <span class="n">lib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.gl_internalformat</span><span class="w"> </span><span class="kn">import</span> <span class="n">GlInternalformat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_error_code</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxErrorCode</span><span class="p">,</span> <span class="n">KtxError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_texture</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxTexture</span><span class="p">,</span> <span class="n">KtxVersionMismatchError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_texture_create_flag_bits</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxTextureCreateFlagBits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_texture_create_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxTextureCreateInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_texture_create_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxTextureCreateStorage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyktx.native</span><span class="w"> </span><span class="kn">import</span> <span class="n">ffi</span><span class="p">,</span> <span class="n">lib</span>
 
 
-<div class="viewcode-block" id="KtxTexture1"><a class="viewcode-back" href="../../docs/pyktx.ktx_texture1.html#pyktx.ktx_texture1.KtxTexture1">[docs]</a><span class="k">class</span> <span class="nc">KtxTexture1</span><span class="p">(</span><span class="n">KtxTexture</span><span class="p">):</span>
+<div class="viewcode-block" id="KtxTexture1"><a class="viewcode-back" href="../../docs/pyktx.ktx_texture1.html#pyktx.ktx_texture1.KtxTexture1">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KtxTexture1</span><span class="p">(</span><span class="n">KtxTexture</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing a KTX version 1 format texture.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="KtxTexture1.create"><a class="viewcode-back" href="../../docs/pyktx.ktx_texture1.html#pyktx.ktx_texture1.KtxTexture1.create">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">create_info</span><span class="p">:</span> <span class="n">KtxTextureCreateInfo</span><span class="p">,</span> <span class="n">storage_allocation</span><span class="p">:</span> <span class="n">KtxTextureCreateStorage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;KtxTexture1&#39;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">create_info</span><span class="p">:</span> <span class="n">KtxTextureCreateInfo</span><span class="p">,</span> <span class="n">storage_allocation</span><span class="p">:</span> <span class="n">KtxTextureCreateStorage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;KtxTexture1&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new empty KtxTexture1.&quot;&quot;&quot;</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">PY_ktxTexture1_Create</span><span class="p">(</span><span class="n">create_info</span><span class="o">.</span><span class="n">gl_internal_format</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -129,7 +129,7 @@
         <span class="k">return</span> <span class="n">KtxTexture1</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">texture</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="KtxTexture1.create_from_named_file"><a class="viewcode-back" href="../../docs/pyktx.ktx_texture1.html#pyktx.ktx_texture1.KtxTexture1.create_from_named_file">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_named_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create_flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">KtxTextureCreateFlagBits</span><span class="o">.</span><span class="n">NO_FLAGS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;KtxTexture1&#39;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_from_named_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create_flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">KtxTextureCreateFlagBits</span><span class="o">.</span><span class="n">NO_FLAGS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;KtxTexture1&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a KtxTexture1 from a named KTX file according to the file contents.&quot;&quot;&quot;</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">PY_ktxTexture_CreateFromNamedFile</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">create_flags</span><span class="p">))</span>
@@ -145,7 +145,7 @@
         <span class="k">return</span> <span class="n">texture</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gl_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gl_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Format of the texture data, e.g. GL_RGB.</span>
 
@@ -154,7 +154,7 @@
         <span class="k">return</span> <span class="n">lib</span><span class="o">.</span><span class="n">PY_ktxTexture1_get_glFormat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ptr</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gl_internalformat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gl_internalformat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Internal format of the texture data. See GlInternalformat.</span>
 
@@ -164,7 +164,7 @@
         <span class="k">return</span> <span class="n">GlInternalformat</span><span class="p">(</span><span class="n">lib</span><span class="o">.</span><span class="n">PY_ktxTexture1_get_glInternalformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ptr</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gl_baseinternalformat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gl_baseinternalformat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Base format of the texture data, e.g., GL_RGB.</span>
 
@@ -174,7 +174,7 @@
         <span class="k">return</span> <span class="n">lib</span><span class="o">.</span><span class="n">PY_ktxTexture1_get_glBaseInternalformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ptr</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gl_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gl_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Type of the texture data, e.g, GL_UNSIGNED_BYTE.</span>
 
@@ -190,7 +190,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Shukant Pal.</p>
+    <p>&#169; Copyright 2025, Khronos Group, Inc. 2023, Shukant Pal.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

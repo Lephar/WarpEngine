@@ -93,17 +93,17 @@
 <span></span><span class="c1"># Copyright (c) 2023, Shukant Pal and Contributors</span>
 <span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">.ktx_pack_astc_block_dimension</span> <span class="kn">import</span> <span class="n">KtxPackAstcBlockDimension</span>
-<span class="kn">from</span> <span class="nn">.ktx_pack_astc_encoder_mode</span> <span class="kn">import</span> <span class="n">KtxPackAstcEncoderMode</span>
-<span class="kn">from</span> <span class="nn">.ktx_pack_astc_quality_levels</span> <span class="kn">import</span> <span class="n">KtxPackAstcQualityLevels</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_pack_astc_block_dimension</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxPackAstcBlockDimension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_pack_astc_encoder_mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxPackAstcEncoderMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ktx_pack_astc_quality_levels</span><span class="w"> </span><span class="kn">import</span> <span class="n">KtxPackAstcQualityLevels</span>
 
 <span class="n">swizzle_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^[rgba01]</span><span class="si">{4}</span><span class="s1">$&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="KtxAstcParams"><a class="viewcode-back" href="../../docs/pyktx.ktx_astc_params.html#pyktx.ktx_astc_params.KtxAstcParams">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">KtxAstcParams</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KtxAstcParams</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data for passing extended parameters to KtxTexture2.compress_astc().&quot;&quot;&quot;</span>
 
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -146,7 +146,7 @@
 <span class="sd">    It must match the regular expression /^[rgba01]{4}$/.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="KtxAstcParams.parse_swizzle"><a class="viewcode-back" href="../../docs/pyktx.ktx_astc_params.html#pyktx.ktx_astc_params.KtxAstcParams.parse_swizzle">[docs]</a>    <span class="k">def</span> <span class="nf">parse_swizzle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">swizzle</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="KtxAstcParams.parse_swizzle"><a class="viewcode-back" href="../../docs/pyktx.ktx_astc_params.html#pyktx.ktx_astc_params.KtxAstcParams.parse_swizzle">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">parse_swizzle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">swizzle</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">swizzle_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">swizzle</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">swizzle</span>
                              <span class="o">+</span> <span class="s2">&quot; does not match the appropriate format &quot;</span>
@@ -163,7 +163,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Shukant Pal.</p>
+    <p>&#169; Copyright 2025, Khronos Group, Inc. 2023, Shukant Pal.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

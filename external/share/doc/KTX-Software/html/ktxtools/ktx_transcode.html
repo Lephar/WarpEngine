@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">KTX Tools Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -95,6 +95,8 @@ SYNOPSIS</h1>
 <h1><a class="anchor" id="ktx_transcode_description"></a>
 DESCRIPTION</h1>
 <p><b>ktx</b> <b>transcode</b> can transcode the KTX file specified as the <em>input-file</em> argument, optionally supercompress the result, and save it as the <em>output-file</em>. If the <em>input-file</em> is '-' the file will be read from the stdin. If the <em>output-path</em> is '-' the output file will be written to the stdout. The input file must be transcodable (it must be either BasisLZ supercompressed or has UASTC color model in the DFD). If the input file is invalid the first encountered validation error is displayed to the stderr and the command exits with the relevant non-zero status code.</p>
+<h1><a class="anchor" id="ktx_transcode_options"></a>
+OPTIONS</h1>
 <p>The following options are available: </p><dl>
 <dt>--target &lt;target&gt; </dt>
 <dd>Target transcode format. If the target option is not set the r8, rg8, rgb8 or rgba8 target will be selected based on the number of channels in the input texture. Block compressed transcode targets can only be saved in raw format. Case-insensitive. Possible options are: etc-rgb | etc-rgba | eac-r11 | eac-rg11 | bc1 | bc3 | bc4 | bc5 | bc7 | astc | r8 | rg8 | rgb8 | rgba8. etc-rgb is ETC1; etc-rgba, eac-r11 and eac-rg11 are ETC2.  </dd>
@@ -142,7 +144,7 @@ AUTHOR</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Mar 20 2024 17:40:15 for KTX Tools Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:31:50 for KTX Tools Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

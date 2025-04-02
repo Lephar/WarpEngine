@@ -1,0 +1,6 @@
+<map id="ktxTexture2" name="ktxTexture2">
+<area shape="rect" id="node1" title="Class representing a KTX version 2 format texture." alt="" coords="15,420,114,447"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,124,32"/>
+<area shape="rect" id="node4" href="$structktxTexture.html" title="Base class representing a texture." alt="" coords="114,95,205,121"/>
+<area shape="rect" id="node3" href="$structktxTexture__vtbl.html" title="Table of virtual ktxTexture methods." alt="" coords="98,331,221,357"/>
+</map>

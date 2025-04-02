@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">libktx Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -86,22 +86,6 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 <div class="contents">
 &#160;
 
-<h3><a id="index_a"></a>- a -</h3><ul>
-<li>astcDefaultOptions()
-: <a class="el" href="structktxTexture.html#abf498bb06f9a41b3df821e0d2a52f7ef">ktxTexture</a>
-</li>
-<li>astcEncoderAction()
-: <a class="el" href="structktxTexture.html#aab7a2ad4d1d251b403c8f8fea697941c">ktxTexture</a>
-</li>
-<li>astcSwizzle()
-: <a class="el" href="structktxTexture.html#afc2340b7387e1de253eedc9b425dbf9d">ktxTexture</a>
-</li>
-<li>astcVkFormat()
-: <a class="el" href="structktxTexture.html#ab30c7f529ebd2c74aa9ab8105f422435">ktxTexture</a>
-</li>
-</ul>
-
-
 <h3><a id="index_h"></a>- h -</h3><ul>
 <li>ktxHashList_AddKVPair()
 : <a class="el" href="classktxHashList.html#ad013c9dd666f3b57e3b0a717e0186277">ktxHashList</a>
@@ -159,7 +143,7 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 
 <h3><a id="index_t"></a>- t -</h3><ul>
 <li>ktxTexture1_Create()
-: <a class="el" href="group__writer.html#ga761f4c933557aefa157900c076357c3e">ktxTexture1</a>
+: <a class="el" href="group__writer.html#ga9ad46bface6dab07a35579c0635877d3">ktxTexture1</a>
 </li>
 <li>ktxTexture1_CreateFromMemory()
 : <a class="el" href="group__reader.html#ga1f289eb80601208b79561804d2ec0121">ktxTexture1</a>
@@ -184,6 +168,9 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 </li>
 <li>ktxTexture1_GetImageSize()
 : <a class="el" href="group__reader.html#gac1dc0703bc613180a92a8e1c5901dd50">ktxTexture1</a>
+</li>
+<li>ktxTexture1_GetLevelSize()
+: <a class="el" href="group__reader.html#ga8a1bf5e13f88af082585a875e85dfdeb">ktxTexture1</a>
 </li>
 <li>ktxTexture1_GetVkFormat()
 : <a class="el" href="group__ktx__vkloader.html#ga11fb504b749453140e04ca69711633d6">ktxTexture1</a>
@@ -252,7 +239,7 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 : <a class="el" href="group__writer.html#ga0e75755e3cc69964e57363dad82ffd77">ktxTexture2</a>
 </li>
 <li>ktxTexture2_Create()
-: <a class="el" href="group__writer.html#ga9ff411caf2251c100a581960deaf9bb7">ktxTexture2</a>
+: <a class="el" href="group__writer.html#gaa8e29216921eadd3c09c3a76bc286acd">ktxTexture2</a>
 </li>
 <li>ktxTexture2_CreateCopy()
 : <a class="el" href="group__writer.html#ga5fcfdc3d237419ab65287639e1f4aeb1">ktxTexture2</a>
@@ -293,6 +280,9 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 <li>ktxTexture2_GetImageSize()
 : <a class="el" href="group__reader.html#gaa4b800f418f57b10737ac6533f1769d2">ktxTexture2</a>
 </li>
+<li>ktxTexture2_GetLevelSize()
+: <a class="el" href="group__reader.html#gac344745350aff9cf5bcc2969729b7f0e">ktxTexture2</a>
+</li>
 <li>ktxTexture2_GetNumComponents()
 : <a class="el" href="group__reader.html#gacc7762adb6ff311ca65cfe5ed89db21e">ktxTexture2</a>
 </li>
@@ -304,6 +294,12 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 </li>
 <li>ktxTexture2_GetPremultipliedAlpha()
 : <a class="el" href="group__reader.html#gab773b3ad45bacb6f487b62c4b0a07fcf">ktxTexture2</a>
+</li>
+<li>ktxTexture2_GetPrimaries_e()
+: <a class="el" href="group__reader.html#gac7323c6f9fe75f442484392506b2024b">ktxTexture2</a>
+</li>
+<li>ktxTexture2_GetTransferFunction_e()
+: <a class="el" href="group__reader.html#ga37cd5b4ae9ee373d825197dc8998d0bb">ktxTexture2</a>
 </li>
 <li>ktxTexture2_GetVkFormat()
 : <a class="el" href="group__ktx__vkloader.html#ga7a9baaf3aa2e114c6f6e58fe68051815">ktxTexture2</a>
@@ -317,8 +313,11 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 <li>ktxTexture2_IterateLoadLevelFaces()
 : <a class="el" href="group__reader.html#gaf57628ec7f9a554b46ba84ab9c214bab">ktxTexture2</a>
 </li>
+<li>ktxTexture2_LoadDeflatedImageData()
+: <a class="el" href="group__reader.html#gaa1f681c144baa70ef9af6db4c7333b3c">ktxTexture2</a>
+</li>
 <li>ktxTexture2_LoadImageData()
-: <a class="el" href="group__reader.html#ga09ecbaccf2a058f9e756ebb317230162">ktxTexture2</a>
+: <a class="el" href="group__reader.html#ga032b7f1926861c8b40655527b84f5533">ktxTexture2</a>
 </li>
 <li>ktxTexture2_NeedsTranscoding()
 : <a class="el" href="group__reader.html#gade1ffc5d31c2f9b5f1e861b59e7619ce">ktxTexture2</a>
@@ -328,6 +327,12 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 </li>
 <li>ktxTexture2_SetImageFromStdioStream()
 : <a class="el" href="group__writer.html#ga50a5ecf22586b26977da62cf19a78518">ktxTexture2</a>
+</li>
+<li>ktxTexture2_SetOETF()
+: <a class="el" href="group__writer.html#ga9894284fd16fed4697505353043bbeae">ktxTexture2</a>
+</li>
+<li>ktxTexture2_SetPrimaries()
+: <a class="el" href="group__writer.html#gaa623fd7f433e3827a52cdb499f9162f9">ktxTexture2</a>
 </li>
 <li>ktxTexture2_TranscodeBasis()
 : <a class="el" href="group__reader.html#ga90cc33928a2dae962fb94b3fa2f6575d">ktxTexture2</a>
@@ -429,7 +434,7 @@ $(document).ready(function(){initNavTree('functions_func.html',''); initResizabl
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Mar 20 2024 17:41:34 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:32:46 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

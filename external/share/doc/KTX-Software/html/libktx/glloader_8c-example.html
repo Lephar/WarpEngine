@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">libktx Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -360,16 +360,16 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (target == GL_TEXTURE_1D &amp;&amp;</div>
-<div class="line">        ((This-&gt;<a name="a10"></a>isCompressed &amp;&amp; (gl.glCompressedTexImage1D == NULL)) ||</div>
-<div class="line">         (!This-&gt;isCompressed &amp;&amp; (gl.glTexImage1D == NULL))))</div>
+<div class="line">        ((This-&gt;<a name="a10"></a><a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glCompressedTexImage1D == NULL)) ||</div>
+<div class="line">         (!This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glTexImage1D == NULL))))</div>
 <div class="line">    {</div>
 <div class="line">        <span class="keywordflow">return</span> <a name="a11"></a><a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cad3d82ba3467063bec92486a94a38d21d">KTX_UNSUPPORTED_TEXTURE_TYPE</a>;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* Reject 3D texture if unsupported. */</span></div>
 <div class="line">    <span class="keywordflow">if</span> (target == GL_TEXTURE_3D &amp;&amp;</div>
-<div class="line">        ((This-&gt;isCompressed &amp;&amp; (gl.glCompressedTexImage3D == NULL)) ||</div>
-<div class="line">         (!This-&gt;isCompressed &amp;&amp; (gl.glTexImage3D == NULL))))</div>
+<div class="line">        ((This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glCompressedTexImage3D == NULL)) ||</div>
+<div class="line">         (!This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glTexImage3D == NULL))))</div>
 <div class="line">    {</div>
 <div class="line">        <span class="keywordflow">return</span> <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cad3d82ba3467063bec92486a94a38d21d">KTX_UNSUPPORTED_TEXTURE_TYPE</a>;</div>
 <div class="line">    }</div>
@@ -383,15 +383,15 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">switch</span> (dimensions) {</div>
 <div class="line">      <span class="keywordflow">case</span> 1:</div>
-<div class="line">        iterCb = This-&gt;isCompressed</div>
+<div class="line">        iterCb = This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a></div>
 <div class="line">                  ? compressedTexImage1DCallback : texImage1DCallback;</div>
 <div class="line">        <span class="keywordflow">break</span>;</div>
 <div class="line">      <span class="keywordflow">case</span> 2:</div>
-<div class="line">        iterCb = This-&gt;isCompressed</div>
+<div class="line">        iterCb = This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a></div>
 <div class="line">                  ? compressedTexImage2DCallback : texImage2DCallback;</div>
 <div class="line">            <span class="keywordflow">break</span>;</div>
 <div class="line">      <span class="keywordflow">case</span> 3:</div>
-<div class="line">        iterCb = This-&gt;isCompressed</div>
+<div class="line">        iterCb = This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a></div>
 <div class="line">                  ? compressedTexImage3DCallback : texImage3DCallback;</div>
 <div class="line">        <span class="keywordflow">break</span>;</div>
 <div class="line">      <span class="keywordflow">default</span>:</div>
@@ -414,7 +414,7 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">        cbData.glTarget = target;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordflow">if</span> (!This-&gt;isCompressed) {</div>
+<div class="line">    <span class="keywordflow">if</span> (!This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a>) {</div>
 <div class="line"><span class="preprocessor">#if SUPPORT_LEGACY_FORMAT_CONVERSION</span></div>
 <div class="line">        <span class="comment">// If sized legacy formats are supported there is no need to convert.</span></div>
 <div class="line">        <span class="comment">// If only unsized formats are supported, there is no point in</span></div>
@@ -437,10 +437,10 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line"><span class="preprocessor">#endif</span></div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordflow">if</span> (ktxTexture_isActiveStream(<a name="a14"></a><a class="code" href="ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709">ktxTexture</a>(This)))</div>
-<div class="line">        result = <a name="a15"></a><a class="code" href="ktx_8h.html#ae5fd56d78ae250ac5f7511d8041ec514">ktxTexture_IterateLoadLevelFaces</a>(This, iterCb, &amp;cbData);</div>
+<div class="line">    <span class="keywordflow">if</span> (ktxTexture_isActiveStream(<a class="code" href="structktxTexture.html">ktxTexture</a>(This)))</div>
+<div class="line">        result = <a name="a14"></a><a class="code" href="ktx_8h.html#ae5fd56d78ae250ac5f7511d8041ec514">ktxTexture_IterateLoadLevelFaces</a>(This, iterCb, &amp;cbData);</div>
 <div class="line">    <span class="keywordflow">else</span></div>
-<div class="line">        result = <a name="a16"></a><a class="code" href="group__reader.html#gae7c4b8bbe26379f2076f93050c0673c1">ktxTexture_IterateLevelFaces</a>(This, iterCb, &amp;cbData);</div>
+<div class="line">        result = <a name="a15"></a><a class="code" href="group__reader.html#gae7c4b8bbe26379f2076f93050c0673c1">ktxTexture_IterateLevelFaces</a>(This, iterCb, &amp;cbData);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* GL errors are the only reason for failure. */</span></div>
 <div class="line">    <span class="keywordflow">if</span> (result != <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cafdb7a07b23399df43e1ecf161963cf98">KTX_SUCCESS</a> &amp;&amp; cbData.glError != GL_NO_ERROR) {</div>
@@ -463,12 +463,12 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> result;</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup__reader_html_gae7c4b8bbe26379f2076f93050c0673c1"><div class="ttname"><a href="group__reader.html#gae7c4b8bbe26379f2076f93050c0673c1">ktxTexture::ktxTexture_IterateLevelFaces</a></div><div class="ttdeci">KTX_error_code ktxTexture_IterateLevelFaces(ktxTexture *This, PFNKTXITERCB iterCb, void *userdata)</div><div class="ttdoc">Iterate over the levels or faces in a ktxTexture object.</div><div class="ttdef"><b>Definition:</b> texture.c:588</div></div>
+<div class="ttc" id="agroup__reader_html_gae7c4b8bbe26379f2076f93050c0673c1"><div class="ttname"><a href="group__reader.html#gae7c4b8bbe26379f2076f93050c0673c1">ktxTexture::ktxTexture_IterateLevelFaces</a></div><div class="ttdeci">KTX_error_code ktxTexture_IterateLevelFaces(ktxTexture *This, PFNKTXITERCB iterCb, void *userdata)</div><div class="ttdoc">Iterate over the levels or faces in a ktxTexture object.</div><div class="ttdef"><b>Definition:</b> texture.c:589</div></div>
 <div class="ttc" id="aktx_8h_html_a7780d97ec4de6aa30c4726fb71e3116cad3d82ba3467063bec92486a94a38d21d"><div class="ttname"><a href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cad3d82ba3467063bec92486a94a38d21d">KTX_UNSUPPORTED_TEXTURE_TYPE</a></div><div class="ttdeci">@ KTX_UNSUPPORTED_TEXTURE_TYPE</div><div class="ttdef"><b>Definition:</b> ktx.h:186</div></div>
-<div class="ttc" id="aktx_8h_html_a79b8339fc0e74d9549aee5b9d6b03709"><div class="ttname"><a href="ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709">ktxTexture</a></div><div class="ttdeci">#define ktxTexture(t)</div><div class="ttdoc">Helper for casting ktxTexture1 and ktxTexture2 to ktxTexture.</div><div class="ttdef"><b>Definition:</b> ktx.h:716</div></div>
-<div class="ttc" id="aktx_8h_html_ae5fd56d78ae250ac5f7511d8041ec514"><div class="ttname"><a href="ktx_8h.html#ae5fd56d78ae250ac5f7511d8041ec514">ktxTexture_IterateLoadLevelFaces</a></div><div class="ttdeci">#define ktxTexture_IterateLoadLevelFaces(This, iterCb, userdata)</div><div class="ttdoc">Helper for calling the IterateLoadLevelFaces virtual method of a ktxTexture.</div><div class="ttdef"><b>Definition:</b> ktx.h:574</div></div>
+<div class="ttc" id="aktx_8h_html_ae5fd56d78ae250ac5f7511d8041ec514"><div class="ttname"><a href="ktx_8h.html#ae5fd56d78ae250ac5f7511d8041ec514">ktxTexture_IterateLoadLevelFaces</a></div><div class="ttdeci">#define ktxTexture_IterateLoadLevelFaces(This, iterCb, userdata)</div><div class="ttdoc">Helper for calling the IterateLoadLevelFaces virtual method of a ktxTexture.</div><div class="ttdef"><b>Definition:</b> ktx.h:585</div></div>
 <div class="ttc" id="astructktxTexture_html"><div class="ttname"><a href="structktxTexture.html">ktxTexture</a></div><div class="ttdoc">Base class representing a texture.</div><div class="ttdef"><b>Definition:</b> ktx.h:287</div></div>
 <div class="ttc" id="astructktxTexture_html_a4159f859437a820d7984beda366e2eaa"><div class="ttname"><a href="structktxTexture.html#a4159f859437a820d7984beda366e2eaa">ktxTexture::generateMipmaps</a></div><div class="ttdeci">ktx_bool_t generateMipmaps</div><div class="ttdef"><b>Definition:</b> ktx.h:288</div></div>
+<div class="ttc" id="astructktxTexture_html_a82413c1c0d1371a81cda55b6cbf79edc"><div class="ttname"><a href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">ktxTexture::isCompressed</a></div><div class="ttdeci">ktx_bool_t isCompressed</div><div class="ttdef"><b>Definition:</b> ktx.h:288</div></div>
 <div class="ttc" id="astructktxTexture_html_aad80dfe68bfa0c1ddcc127c4c6e1dda8"><div class="ttname"><a href="structktxTexture.html#aad80dfe68bfa0c1ddcc127c4c6e1dda8">ktxTexture::numLevels</a></div><div class="ttdeci">ktx_uint32_t numLevels</div><div class="ttdoc">Number of mip levels in the texture.</div><div class="ttdef"><b>Definition:</b> ktx.h:288</div></div>
 <div class="ttc" id="astructktxTexture_html_aca6d87118e724ac77f17e0576e191513"><div class="ttname"><a href="structktxTexture.html#aca6d87118e724ac77f17e0576e191513">ktxTexture::PFNKTXITERCB</a></div><div class="ttdeci">KTX_error_code(* PFNKTXITERCB)(int miplevel, int face, int width, int height, int depth, ktx_uint64_t faceLodSize, void *pixels, void *userdata)</div><div class="ttdoc">Signature of function called by the ktxTexture_Iterate* functions to receive image data.</div><div class="ttdef"><b>Definition:</b> ktx.h:442</div></div>
 <div class="ttc" id="astructktxTexture_html_acc36239d64c8e0562a7a14ccd140af70"><div class="ttname"><a href="structktxTexture.html#acc36239d64c8e0562a7a14ccd140af70">ktxTexture::numFaces</a></div><div class="ttdeci">ktx_uint32_t numFaces</div><div class="ttdoc">Number of faces: 6 for cube maps, 1 otherwise.</div><div class="ttdef"><b>Definition:</b> ktx.h:288</div></div>
@@ -1050,16 +1050,16 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (target == GL_TEXTURE_1D &amp;&amp;</div>
-<div class="line">        ((This-&gt;isCompressed &amp;&amp; (gl.glCompressedTexImage1D == NULL)) ||</div>
-<div class="line">         (!This-&gt;isCompressed &amp;&amp; (gl.glTexImage1D == NULL))))</div>
+<div class="line">        ((This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glCompressedTexImage1D == NULL)) ||</div>
+<div class="line">         (!This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glTexImage1D == NULL))))</div>
 <div class="line">    {</div>
 <div class="line">        <span class="keywordflow">return</span> <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cad3d82ba3467063bec92486a94a38d21d">KTX_UNSUPPORTED_TEXTURE_TYPE</a>;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* Reject 3D texture if unsupported. */</span></div>
 <div class="line">    <span class="keywordflow">if</span> (target == GL_TEXTURE_3D &amp;&amp;</div>
-<div class="line">        ((This-&gt;isCompressed &amp;&amp; (gl.glCompressedTexImage3D == NULL)) ||</div>
-<div class="line">         (!This-&gt;isCompressed &amp;&amp; (gl.glTexImage3D == NULL))))</div>
+<div class="line">        ((This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glCompressedTexImage3D == NULL)) ||</div>
+<div class="line">         (!This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a> &amp;&amp; (gl.glTexImage3D == NULL))))</div>
 <div class="line">    {</div>
 <div class="line">        <span class="keywordflow">return</span> <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cad3d82ba3467063bec92486a94a38d21d">KTX_UNSUPPORTED_TEXTURE_TYPE</a>;</div>
 <div class="line">    }</div>
@@ -1073,15 +1073,15 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">switch</span> (dimensions) {</div>
 <div class="line">      <span class="keywordflow">case</span> 1:</div>
-<div class="line">        iterCb = This-&gt;isCompressed</div>
+<div class="line">        iterCb = This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a></div>
 <div class="line">                  ? compressedTexImage1DCallback : texImage1DCallback;</div>
 <div class="line">        <span class="keywordflow">break</span>;</div>
 <div class="line">      <span class="keywordflow">case</span> 2:</div>
-<div class="line">        iterCb = This-&gt;isCompressed</div>
+<div class="line">        iterCb = This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a></div>
 <div class="line">                  ? compressedTexImage2DCallback : texImage2DCallback;</div>
 <div class="line">            <span class="keywordflow">break</span>;</div>
 <div class="line">      <span class="keywordflow">case</span> 3:</div>
-<div class="line">        iterCb = This-&gt;isCompressed</div>
+<div class="line">        iterCb = This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a></div>
 <div class="line">                  ? compressedTexImage3DCallback : texImage3DCallback;</div>
 <div class="line">        <span class="keywordflow">break</span>;</div>
 <div class="line">      <span class="keywordflow">default</span>:</div>
@@ -1104,7 +1104,7 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">        cbData.glTarget = target;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordflow">if</span> (!This-&gt;isCompressed) {</div>
+<div class="line">    <span class="keywordflow">if</span> (!This-&gt;<a class="code" href="structktxTexture.html#a82413c1c0d1371a81cda55b6cbf79edc">isCompressed</a>) {</div>
 <div class="line"><span class="preprocessor">#if SUPPORT_LEGACY_FORMAT_CONVERSION</span></div>
 <div class="line">        <span class="comment">// If sized legacy formats are supported there is no need to convert.</span></div>
 <div class="line">        <span class="comment">// If only unsized formats are supported, there is no point in</span></div>
@@ -1127,7 +1127,7 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line"><span class="preprocessor">#endif</span></div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordflow">if</span> (ktxTexture_isActiveStream(<a class="code" href="ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709">ktxTexture</a>(This)))</div>
+<div class="line">    <span class="keywordflow">if</span> (ktxTexture_isActiveStream(<a class="code" href="structktxTexture.html">ktxTexture</a>(This)))</div>
 <div class="line">        result = <a class="code" href="ktx_8h.html#ae5fd56d78ae250ac5f7511d8041ec514">ktxTexture_IterateLoadLevelFaces</a>(This, iterCb, &amp;cbData);</div>
 <div class="line">    <span class="keywordflow">else</span></div>
 <div class="line">        result = <a class="code" href="group__reader.html#gae7c4b8bbe26379f2076f93050c0673c1">ktxTexture_IterateLevelFaces</a>(This, iterCb, &amp;cbData);</div>
@@ -1156,7 +1156,7 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line"><span class="comment">/* [loadGLTexture] */</span></div>
 <div class="line"> </div>
 <div class="line"><a class="code" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a></div>
-<div class="line"><a name="a17"></a><a class="code" href="group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f">ktxTexture1_GLUpload</a>(<a name="_a18"></a><a class="code" href="structktxTexture1.html">ktxTexture1</a>* This, GLuint* pTexture, GLenum* pTarget,</div>
+<div class="line"><a name="a16"></a><a class="code" href="group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f">ktxTexture1_GLUpload</a>(<a name="_a17"></a><a class="code" href="structktxTexture1.html">ktxTexture1</a>* This, GLuint* pTexture, GLenum* pTarget,</div>
 <div class="line">                     GLenum* pGlerror)</div>
 <div class="line">{</div>
 <div class="line">    GLint                 previousUnpackAlignment;</div>
@@ -1164,18 +1164,16 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">    ktx_glformatinfo      formatInfo;</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (!This) {</div>
-<div class="line">        <span class="keywordflow">return</span> <a name="a19"></a><a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116ca7da41bb3195d6cc93a513ac18bc91e4f">KTX_INVALID_VALUE</a>;</div>
+<div class="line">        <span class="keywordflow">return</span> <a name="a18"></a><a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116ca7da41bb3195d6cc93a513ac18bc91e4f">KTX_INVALID_VALUE</a>;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (!pTarget) {</div>
 <div class="line">        <span class="keywordflow">return</span> <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116ca7da41bb3195d6cc93a513ac18bc91e4f">KTX_INVALID_VALUE</a>;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordflow">if</span> (!ktxOpenGLModuleHandle) {</div>
-<div class="line">        result = ktxLoadOpenGLLibrary();</div>
-<div class="line">        <span class="keywordflow">if</span> (result != <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cafdb7a07b23399df43e1ecf161963cf98">KTX_SUCCESS</a>) {</div>
-<div class="line">            <span class="keywordflow">return</span> result;</div>
-<div class="line">        }</div>
+<div class="line">    result = <a name="a19"></a><a class="code" href="group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6">ktxLoadOpenGL</a>(NULL);</div>
+<div class="line">    <span class="keywordflow">if</span> (result != <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cafdb7a07b23399df43e1ecf161963cf98">KTX_SUCCESS</a>) {</div>
+<div class="line">        <span class="keywordflow">return</span> result;</div>
 <div class="line">    }</div>
 <div class="line">    <span class="comment">/* KTX 1 files require an unpack alignment of 4 */</span></div>
 <div class="line">    glGetIntegerv(GL_UNPACK_ALIGNMENT, &amp;previousUnpackAlignment);</div>
@@ -1188,7 +1186,7 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">    formatInfo.glBaseInternalformat = This-&gt;<a name="a23"></a><a class="code" href="structktxTexture1.html#aaadefe13bf76c26cb921afa52fb29192">glBaseInternalformat</a>;</div>
 <div class="line">    formatInfo.glType = This-&gt;<a name="a24"></a><a class="code" href="structktxTexture1.html#ac8a870c675f1e36c456c9de2e3ac9855">glType</a>;</div>
 <div class="line"> </div>
-<div class="line">    result = ktxTexture_GLUploadPrivate(<a class="code" href="ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709">ktxTexture</a>(This), &amp;formatInfo,</div>
+<div class="line">    result = ktxTexture_GLUploadPrivate(<a class="code" href="structktxTexture.html">ktxTexture</a>(This), &amp;formatInfo,</div>
 <div class="line">                                        pTexture, pTarget, pGlerror);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* restore previous GL state */</span></div>
@@ -1215,11 +1213,9 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">        <span class="keywordflow">return</span> <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116ca7da41bb3195d6cc93a513ac18bc91e4f">KTX_INVALID_VALUE</a>;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    <span class="keywordflow">if</span> (!ktxOpenGLModuleHandle) {</div>
-<div class="line">        result = ktxLoadOpenGLLibrary();</div>
-<div class="line">        <span class="keywordflow">if</span> (result != <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cafdb7a07b23399df43e1ecf161963cf98">KTX_SUCCESS</a>) {</div>
-<div class="line">            <span class="keywordflow">return</span> result;</div>
-<div class="line">        }</div>
+<div class="line">    result = <a class="code" href="group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6">ktxLoadOpenGL</a>(NULL);</div>
+<div class="line">    <span class="keywordflow">if</span> (result != <a class="code" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cafdb7a07b23399df43e1ecf161963cf98">KTX_SUCCESS</a>) {</div>
+<div class="line">        <span class="keywordflow">return</span> result;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (This-&gt;<a name="a27"></a>vkFormat != VK_FORMAT_UNDEFINED) {</div>
@@ -1254,7 +1250,7 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);</div>
 <div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">    result = ktxTexture_GLUploadPrivate(<a class="code" href="ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709">ktxTexture</a>(This), &amp;formatInfo,</div>
+<div class="line">    result = ktxTexture_GLUploadPrivate(<a class="code" href="structktxTexture.html">ktxTexture</a>(This), &amp;formatInfo,</div>
 <div class="line">                                        pTexture, pTarget, pGlerror);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* restore previous GL state */</span></div>
@@ -1278,24 +1274,25 @@ $(document).ready(function(){initNavTree('glloader_8c-example.html',''); initRes
 <div class="line">}</div>
 <div class="line"> </div>
 <div class="ttc" id="agroup__ktx__glloader_html_ga058297b66c5a7fd1f1bbaf718a887b9f"><div class="ttname"><a href="group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f">ktxTexture1::ktxTexture1_GLUpload</a></div><div class="ttdeci">KTX_error_code ktxTexture1_GLUpload(ktxTexture1 *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</div><div class="ttdoc">Create a GL texture object from a ktxTexture1 object.</div><div class="ttdef"><b>Definition:</b> glloader.c:912</div></div>
-<div class="ttc" id="agroup__ktx__glloader_html_ga516367e94731f99a23a83fb029e9a441"><div class="ttname"><a href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">ktxTexture::ktxTexture_GLUpload</a></div><div class="ttdeci">KTX_error_code ktxTexture_GLUpload(ktxTexture *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</div><div class="ttdoc">Create a GL texture object from a ktxTexture1 object.</div><div class="ttdef"><b>Definition:</b> glloader.c:1074</div></div>
-<div class="ttc" id="agroup__ktx__glloader_html_ga7624860df8e44573862fa5754ea2976c"><div class="ttname"><a href="group__ktx__glloader.html#ga7624860df8e44573862fa5754ea2976c">ktxTexture2::ktxTexture2_GLUpload</a></div><div class="ttdeci">KTX_error_code ktxTexture2_GLUpload(ktxTexture2 *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</div><div class="ttdoc">Create a GL texture object from a ktxTexture2 object.</div><div class="ttdef"><b>Definition:</b> glloader.c:998</div></div>
+<div class="ttc" id="agroup__ktx__glloader_html_ga516367e94731f99a23a83fb029e9a441"><div class="ttname"><a href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">ktxTexture::ktxTexture_GLUpload</a></div><div class="ttdeci">KTX_error_code ktxTexture_GLUpload(ktxTexture *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</div><div class="ttdoc">Create a GL texture object from a ktxTexture object.</div><div class="ttdef"><b>Definition:</b> glloader.c:1070</div></div>
+<div class="ttc" id="agroup__ktx__glloader_html_ga7624860df8e44573862fa5754ea2976c"><div class="ttname"><a href="group__ktx__glloader.html#ga7624860df8e44573862fa5754ea2976c">ktxTexture2::ktxTexture2_GLUpload</a></div><div class="ttdeci">KTX_error_code ktxTexture2_GLUpload(ktxTexture2 *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</div><div class="ttdoc">Create a GL texture object from a ktxTexture2 object.</div><div class="ttdef"><b>Definition:</b> glloader.c:996</div></div>
+<div class="ttc" id="agroup__ktx__glloader_html_gada67f60796793d1ed9eb1f3f2d61d4a6"><div class="ttname"><a href="group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6">ktxLoadOpenGL</a></div><div class="ttdeci">KTX_API KTX_error_code KTX_APIENTRY ktxLoadOpenGL(PFNGLGETPROCADDRESS pfnGLGetProcAddress)</div><div class="ttdoc">Load pointers for the GL functions used by the ktxTexture*_GLUpload functions.</div><div class="ttdef"><b>Definition:</b> gl_funcs.c:216</div></div>
 <div class="ttc" id="aktx_8h_html_a7780d97ec4de6aa30c4726fb71e3116c"><div class="ttname"><a href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116c">ktx_error_code_e</a></div><div class="ttdeci">ktx_error_code_e</div><div class="ttdoc">Error codes returned by library functions.</div><div class="ttdef"><b>Definition:</b> ktx.h:169</div></div>
 <div class="ttc" id="aktx_8h_html_a7780d97ec4de6aa30c4726fb71e3116ca7da41bb3195d6cc93a513ac18bc91e4f"><div class="ttname"><a href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116ca7da41bb3195d6cc93a513ac18bc91e4f">KTX_INVALID_VALUE</a></div><div class="ttdeci">@ KTX_INVALID_VALUE</div><div class="ttdef"><b>Definition:</b> ktx.h:181</div></div>
 <div class="ttc" id="aktx_8h_html_ad5dd0ebf8aaef8c150603bd95d61b94a"><div class="ttname"><a href="ktx_8h.html#ad5dd0ebf8aaef8c150603bd95d61b94a">KTX_GL_UNPACK_ALIGNMENT</a></div><div class="ttdeci">#define KTX_GL_UNPACK_ALIGNMENT</div><div class="ttdoc">Required unpack alignment.</div><div class="ttdef"><b>Definition:</b> ktx.h:159</div></div>
-<div class="ttc" id="astructktxTexture1_html"><div class="ttname"><a href="structktxTexture1.html">ktxTexture1</a></div><div class="ttdoc">Class representing a KTX version 1 format texture.</div><div class="ttdef"><b>Definition:</b> ktx.h:656</div></div>
-<div class="ttc" id="astructktxTexture1_html_a05fa4fecc2735f68d34651a62493ecd9"><div class="ttname"><a href="structktxTexture1.html#a05fa4fecc2735f68d34651a62493ecd9">ktxTexture1::glFormat</a></div><div class="ttdeci">ktx_uint32_t glFormat</div><div class="ttdef"><b>Definition:</b> ktx.h:658</div></div>
-<div class="ttc" id="astructktxTexture1_html_a1318d73f800ff61d045b740331939596"><div class="ttname"><a href="structktxTexture1.html#a1318d73f800ff61d045b740331939596">ktxTexture1::glInternalformat</a></div><div class="ttdeci">ktx_uint32_t glInternalformat</div><div class="ttdef"><b>Definition:</b> ktx.h:659</div></div>
-<div class="ttc" id="astructktxTexture1_html_aaadefe13bf76c26cb921afa52fb29192"><div class="ttname"><a href="structktxTexture1.html#aaadefe13bf76c26cb921afa52fb29192">ktxTexture1::glBaseInternalformat</a></div><div class="ttdeci">ktx_uint32_t glBaseInternalformat</div><div class="ttdef"><b>Definition:</b> ktx.h:661</div></div>
-<div class="ttc" id="astructktxTexture1_html_ac8a870c675f1e36c456c9de2e3ac9855"><div class="ttname"><a href="structktxTexture1.html#ac8a870c675f1e36c456c9de2e3ac9855">ktxTexture1::glType</a></div><div class="ttdeci">ktx_uint32_t glType</div><div class="ttdef"><b>Definition:</b> ktx.h:663</div></div>
-<div class="ttc" id="astructktxTexture2_html"><div class="ttname"><a href="structktxTexture2.html">ktxTexture2</a></div><div class="ttdoc">Class representing a KTX version 2 format texture.</div><div class="ttdef"><b>Definition:</b> ktx.h:699</div></div>
+<div class="ttc" id="astructktxTexture1_html"><div class="ttname"><a href="structktxTexture1.html">ktxTexture1</a></div><div class="ttdoc">Class representing a KTX version 1 format texture.</div><div class="ttdef"><b>Definition:</b> ktx.h:667</div></div>
+<div class="ttc" id="astructktxTexture1_html_a05fa4fecc2735f68d34651a62493ecd9"><div class="ttname"><a href="structktxTexture1.html#a05fa4fecc2735f68d34651a62493ecd9">ktxTexture1::glFormat</a></div><div class="ttdeci">ktx_uint32_t glFormat</div><div class="ttdef"><b>Definition:</b> ktx.h:669</div></div>
+<div class="ttc" id="astructktxTexture1_html_a1318d73f800ff61d045b740331939596"><div class="ttname"><a href="structktxTexture1.html#a1318d73f800ff61d045b740331939596">ktxTexture1::glInternalformat</a></div><div class="ttdeci">ktx_uint32_t glInternalformat</div><div class="ttdef"><b>Definition:</b> ktx.h:670</div></div>
+<div class="ttc" id="astructktxTexture1_html_aaadefe13bf76c26cb921afa52fb29192"><div class="ttname"><a href="structktxTexture1.html#aaadefe13bf76c26cb921afa52fb29192">ktxTexture1::glBaseInternalformat</a></div><div class="ttdeci">ktx_uint32_t glBaseInternalformat</div><div class="ttdef"><b>Definition:</b> ktx.h:672</div></div>
+<div class="ttc" id="astructktxTexture1_html_ac8a870c675f1e36c456c9de2e3ac9855"><div class="ttname"><a href="structktxTexture1.html#ac8a870c675f1e36c456c9de2e3ac9855">ktxTexture1::glType</a></div><div class="ttdeci">ktx_uint32_t glType</div><div class="ttdef"><b>Definition:</b> ktx.h:674</div></div>
+<div class="ttc" id="astructktxTexture2_html"><div class="ttname"><a href="structktxTexture2.html">ktxTexture2</a></div><div class="ttdoc">Class representing a KTX version 2 format texture.</div><div class="ttdef"><b>Definition:</b> ktx.h:706</div></div>
 <div class="ttc" id="astructktxTexture_html_ac838c216df52582085ca9e1eb6d19d07"><div class="ttname"><a href="structktxTexture.html#ac838c216df52582085ca9e1eb6d19d07">ktxTexture::classId</a></div><div class="ttdeci">class_id classId</div><div class="ttdoc">Identify the class type.</div><div class="ttdef"><b>Definition:</b> ktx.h:288</div></div>
 </div><!-- fragment --> </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Mar 20 2024 17:41:33 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:32:46 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

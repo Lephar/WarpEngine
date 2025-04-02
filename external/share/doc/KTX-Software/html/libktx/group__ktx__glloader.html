@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">libktx Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -96,6 +96,9 @@ $(document).ready(function(){initNavTree('group__ktx__glloader.html',''); initRe
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gada67f60796793d1ed9eb1f3f2d61d4a6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116c">ktx_error_code_e</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6">ktxLoadOpenGL</a> (<a class="el" href="ktx_8h.html#abd811f6d192904064584f26258d68e51">PFNGLGETPROCADDRESS</a> pfnGLGetProcAddress)</td></tr>
+<tr class="memdesc:gada67f60796793d1ed9eb1f3f2d61d4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load pointers for the GL functions used by the ktxTexture*_GLUpload functions.  <a href="group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6">More...</a><br /></td></tr>
+<tr class="separator:gada67f60796793d1ed9eb1f3f2d61d4a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga058297b66c5a7fd1f1bbaf718a887b9f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f">ktxTexture1_GLUpload</a> (<a class="el" href="structktxTexture1.html">ktxTexture1</a> *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</td></tr>
 <tr class="memdesc:ga058297b66c5a7fd1f1bbaf718a887b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a GL texture object from a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> object.  <a href="group__ktx__glloader.html#ga058297b66c5a7fd1f1bbaf718a887b9f">More...</a><br /></td></tr>
 <tr class="separator:ga058297b66c5a7fd1f1bbaf718a887b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,12 +106,39 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga7624860df8e44573862fa5754ea2976c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a GL texture object from a <a class="el" href="structktxTexture2.html" title="Class representing a KTX version 2 format texture.">ktxTexture2</a> object.  <a href="group__ktx__glloader.html#ga7624860df8e44573862fa5754ea2976c">More...</a><br /></td></tr>
 <tr class="separator:ga7624860df8e44573862fa5754ea2976c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga516367e94731f99a23a83fb029e9a441"><td class="memItemLeft" align="right" valign="top"><a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">ktxTexture_GLUpload</a> (<a class="el" href="structktxTexture.html">ktxTexture</a> *This, GLuint *pTexture, GLenum *pTarget, GLenum *pGlerror)</td></tr>
-<tr class="memdesc:ga516367e94731f99a23a83fb029e9a441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a GL texture object from a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> object.  <a href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">More...</a><br /></td></tr>
+<tr class="memdesc:ga516367e94731f99a23a83fb029e9a441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a GL texture object from a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object.  <a href="group__ktx__glloader.html#ga516367e94731f99a23a83fb029e9a441">More...</a><br /></td></tr>
 <tr class="separator:ga516367e94731f99a23a83fb029e9a441"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Create texture objects in current OpenGL context. </p>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="gada67f60796793d1ed9eb1f3f2d61d4a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gada67f60796793d1ed9eb1f3f2d61d4a6">&#9670;&nbsp;</a></span>ktxLoadOpenGL()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116c">ktx_error_code_e</a> ktxLoadOpenGL </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="ktx_8h.html#abd811f6d192904064584f26258d68e51">PFNGLGETPROCADDRESS</a>&#160;</td>
+          <td class="paramname"><em>pfnGLGetProcAddress</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Load pointers for the GL functions used by the ktxTexture*_GLUpload functions. </p>
+<p>Should be called by an application before its first call to a ktxTexture*_GLUpload function, passing a pointer to the GLGetProcAddress function provided by whatever OpenGL framework it is using. For backward compatibility, the ktxTexture*_GLUpload functions call this with a NULL pointer causing an attempt to load the pointers from the program module using <code>dlsym</code> (GNU/Linux, macOS), <code>wglGetProcAddr</code> and <code>GetProcAddr</code> (Windows) or <code>emscripten_GetProcAddress</code> (Web). This works with the vast majority of OpenGL implementations but issues have been seen on Fedora systems particularly with NVIDIA hardware. For full robustness, applications should call this function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pfnGLGetProcAddress</td><td>pointer to function for retrieving pointers to GL functions. If NULL, retrieval is attempted using system dependent generic functions. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga058297b66c5a7fd1f1bbaf718a887b9f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga058297b66c5a7fd1f1bbaf718a887b9f">&#9670;&nbsp;</a></span>ktxTexture1_GLUpload()</h2>
 
@@ -170,7 +200,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a17">glloader.c</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a16">glloader.c</a>.</dd>
 </dl>
 
 </div>
@@ -278,7 +308,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Create a GL texture object from a <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> object. </p>
+<p>Create a GL texture object from a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object. </p>
 <p>In order to ensure that the GL uploader is not linked into an application unless explicitly called, this is not a virtual function. It determines the texture type then dispatches to the correct function.</p>
 <p>Sets the texture object's GL_TEXTURE_MAX_LEVEL parameter according to the number of levels in the KTX data, provided the context supports this feature.</p>
 <p>Unpacks compressed GL_ETC1_RGB8_OES and GL_ETC2_* format textures in software when the format is not supported by the GL context, provided the library has been compiled with <code>SUPPORT_SOFTWARE_ETC_UNPACK</code> defined as 1.</p>
@@ -312,7 +342,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Mar 20 2024 17:41:33 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:32:46 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

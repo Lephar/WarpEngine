@@ -28,5 +28,5 @@ var menudata={children:[
 {text:"Package",url:"../index.html"},
 {text:"KTX Tools Reference",url:"../ktxtools/index.html"},
 {text:"libktx Reference",url:"../libktx/index.html"},
-{text:"pyktx Reference",url:"pyktx/index.html"},
+{text:"pyktx Reference",url:"../pyktx/index.html"},
 {text:"License",url:"../license.html"}]}

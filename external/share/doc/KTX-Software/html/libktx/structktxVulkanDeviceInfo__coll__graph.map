@@ -1,0 +1,4 @@
+<map id="ktxVulkanDeviceInfo" name="ktxVulkanDeviceInfo">
+<area shape="rect" id="node1" title="Struct for passing information about the Vulkan device on which to create images to the texture image..." alt="" coords="5,95,161,121"/>
+<area shape="rect" id="node2" href="$structktxVulkanFunctions.html" title="Struct for applications to pass Vulkan function pointers to the ktxTexture_VkUpload functions via a k..." alt="" coords="9,5,157,32"/>
+</map>

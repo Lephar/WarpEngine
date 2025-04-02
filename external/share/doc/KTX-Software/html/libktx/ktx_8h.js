@@ -17,16 +17,13 @@ var ktx_8h =
     [ "KTX_ORIENTATION3_FMT", "ktx_8h.html#ae34c19ed0ef799a902fa50dc3a0bbb20", null ],
     [ "KTX_ORIENTATION_KEY", "ktx_8h.html#a7eebf850576083e740cf1f418eed39a0", null ],
     [ "KTX_SWIZZLE_KEY", "ktx_8h.html#a526ee1e695723619c057875af35c93d6", null ],
-    [ "ktx_texture_decode_flags", "ktx_8h.html#adf92eb2b732707d41d423258188917fe", null ],
-    [ "ktx_texture_transcode_fmt_e", "ktx_8h.html#a21462c4d7c10f5ed6fe039516a4fa194", null ],
     [ "KTX_WRITER_KEY", "ktx_8h.html#aa23b5bdd596b2c6a6a2891a2ac48dc2c", null ],
     [ "KTX_WRITER_SCPARAMS_KEY", "ktx_8h.html#a6a0fd67c05e916710effcf59ba36f44f", null ],
-    [ "ktxTexture", "ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709", null ],
     [ "ktxTexture_Destroy", "ktx_8h.html#a0becd37ccf729eed8723b969bb93df3d", null ],
     [ "ktxTexture_GetDataSizeUncompressed", "ktx_8h.html#a920a40b531d615e674d797fe87d87e09", null ],
     [ "ktxTexture_GetImageOffset", "ktx_8h.html#afdb41471bee56cef8241060de72d6735", null ],
     [ "ktxTexture_GetImageSize", "ktx_8h.html#a56402340391b57f18d8c18e477e97280", null ],
-    [ "ktxTexture_GetSize", "ktx_8h.html#a1d1587ea530bd4a86063204f30c4f54b", null ],
+    [ "ktxTexture_GetLevelSize", "ktx_8h.html#a850617576a50a67b6c21d8c8ce1158be", null ],
     [ "ktxTexture_IterateLevels", "ktx_8h.html#a7ca1ab524f2161c1facbb716f4cfab00", null ],
     [ "ktxTexture_IterateLoadLevelFaces", "ktx_8h.html#ae5fd56d78ae250ac5f7511d8041ec514", null ],
     [ "ktxTexture_LoadImageData", "ktx_8h.html#a1410163f284e12d74ef942dd9d48c3cf", null ],
@@ -55,6 +52,8 @@ var ktx_8h =
     [ "ktxStream_skip", "ktx_8h.html#a0890fb8e1623b63c86883d50a0d841aa", null ],
     [ "ktxStream_write", "ktx_8h.html#a3d5d2a3a413c5e549dedc54873afc668", null ],
     [ "ktxSupercmpScheme", "ktx_8h.html#a5edebc0f71559845a8620cf6b1bf65ca", null ],
+    [ "PFNGLGETPROCADDRESS", "ktx_8h.html#abd811f6d192904064584f26258d68e51", null ],
+    [ "PFNVOIDFUNCTION", "ktx_8h.html#a9353b45ed2db17633fc8aaf6895b330d", null ],
     [ "ktx_error_code_e", "ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116c", [
       [ "KTX_SUCCESS", "ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116cafdb7a07b23399df43e1ecf161963cf98", null ],
       [ "KTX_FILE_DATA_ERROR", "ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116ca0a3b899c794df326ebcea8dd3a679c14", null ],
@@ -146,11 +145,11 @@ var ktx_8h =
       [ "KTX_SS_NONE", "ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa9559585b30aa7fe5d510753ceae6fcc6", null ],
       [ "KTX_SS_BASIS_LZ", "ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaaf66da31ed897385538dab6c591e5bf5c", null ],
       [ "KTX_SS_ZSTD", "ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa29f7da526697257766534b667fd706ef", null ],
-      [ "KTX_SS_ZLIB", "ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa01c22adc03102420ef016d614cb5e0f5", null ],
-      [ "KTX_SUPERCOMPRESSION_BASIS", "ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa40c3320ec64db332ad39012929ea4d7a", null ],
-      [ "KTX_SUPERCOMPRESSION_ZSTD", "ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaaa36d92f52c18c80530eed96cbb0b1049", null ]
+      [ "KTX_SS_ZLIB", "ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa01c22adc03102420ef016d614cb5e0f5", null ]
     ] ],
     [ "ktxErrorString", "ktx_8h.html#add3b8485a66060a565beb13f64c62907", null ],
+    [ "ktxLoadOpenGL", "group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6", null ],
     [ "ktxSupercompressionSchemeString", "ktx_8h.html#a40e503d472db2920bdb652490e81da90", null ],
+    [ "ktxTexture2_DecodeAstc", "group__reader.html#gaea0edab86daca9c288d4cd6b47b34e28", null ],
     [ "ktxTranscodeFormatString", "ktx_8h.html#ab734279243e3dd129c76852fbcf3ffc5", null ]
 ];

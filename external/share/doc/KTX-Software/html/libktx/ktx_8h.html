@@ -27,7 +27,7 @@
   <td id="projectlogo"><img alt="Logo" src="ktx_logo_200.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">libktx Reference
-   &#160;<span id="projectnumber">4.3.2</span>
+   &#160;<span id="projectnumber">4.4.0</span>
    </div>
    <div id="projectbrief">Libraries and tools to create and read KTX image texture files.</div>
   </td>
@@ -101,8 +101,32 @@ $(document).ready(function(){initNavTree('ktx_8h.html',''); initResizable(); });
 <code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdbool.h&gt;</code><br />
 <code>#include &lt;sys/types.h&gt;</code><br />
-<code>#include &lt;<a class="el" href="khr__df_8h.html">KHR/khr_df.h</a>&gt;</code><br />
+<code>#include &lt;KHR/khr_df.h&gt;</code><br />
 <code>#include &lt;stdint.h&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for ktx.h:</div>
+<div class="dyncontent">
+<div class="center"><img src="ktx_8h__incl.png" border="0" usemap="#ainclude_2ktx_8h" alt=""/></div>
+<map name="ainclude_2ktx_8h" id="ainclude_2ktx_8h">
+<area shape="rect" title="Declares the public functions and structures of the KTX API." alt="" coords="179,5,286,32"/>
+<area shape="rect" title=" " alt="" coords="5,80,76,107"/>
+<area shape="rect" title=" " alt="" coords="101,80,167,107"/>
+<area shape="rect" title=" " alt="" coords="191,80,274,107"/>
+<area shape="rect" title=" " alt="" coords="298,80,394,107"/>
+<area shape="rect" title=" " alt="" coords="419,80,489,107"/>
+</map>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="ktx_8h__dep__incl.png" border="0" usemap="#ainclude_2ktx_8hdep" alt=""/></div>
+<map name="ainclude_2ktx_8hdep" id="ainclude_2ktx_8hdep">
+<area shape="rect" title="Declares the public functions and structures of the KTX API." alt="" coords="133,5,239,32"/>
+<area shape="rect" href="strings_8c.html" title="Functions to return a string corresponding to various enumerations." alt="" coords="5,80,103,107"/>
+<area shape="rect" href="filestream_8c.html" title="Implementation of ktxStream for FILE." alt="" coords="127,80,245,107"/>
+<area shape="rect" href="memstream_8c.html" title="Implementation of ktxStream for memory." alt="" coords="270,80,403,107"/>
+</map>
+</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -122,7 +146,7 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class representing a KTX version 2 format texture.  <a href="structktxTexture2.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxTextureCreateInfo.html">ktxTextureCreateInfo</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure for passing texture information to <a class="el" href="group__writer.html#ga761f4c933557aefa157900c076357c3e" title="Create a new empty ktxTexture1.">ktxTexture1_Create()</a> and <a class="el" href="group__writer.html#ga9ff411caf2251c100a581960deaf9bb7" title="Create a new empty ktxTexture2.">ktxTexture2_Create()</a>.  <a href="structktxTextureCreateInfo.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure for passing texture information to <a class="el" href="group__writer.html#ga9ad46bface6dab07a35579c0635877d3" title="Create a new empty ktxTexture1.">ktxTexture1_Create()</a> and <a class="el" href="group__writer.html#gaa8e29216921eadd3c09c3a76bc286acd" title="Create a new empty ktxTexture2.">ktxTexture2_Create()</a>.  <a href="structktxTextureCreateInfo.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structktxStream.html">ktxStream</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface of <a class="el" href="structktxStream.html" title="Interface of ktxStream.">ktxStream</a>.  <a href="structktxStream.html#details">More...</a><br /></td></tr>
@@ -187,6 +211,9 @@ Macros</h2></td></tr>
 <tr class="memitem:a56402340391b57f18d8c18e477e97280"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a56402340391b57f18d8c18e477e97280">ktxTexture_GetImageSize</a>(This,  level)&#160;&#160;&#160;            (This)-&gt;vtbl-&gt;GetImageSize(This, level)</td></tr>
 <tr class="memdesc:a56402340391b57f18d8c18e477e97280"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for calling the GetImageSize virtual method of a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>.  <a href="ktx_8h.html#a56402340391b57f18d8c18e477e97280">More...</a><br /></td></tr>
 <tr class="separator:a56402340391b57f18d8c18e477e97280"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a850617576a50a67b6c21d8c8ce1158be"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a850617576a50a67b6c21d8c8ce1158be">ktxTexture_GetLevelSize</a>(This,  level)&#160;&#160;&#160;            (This)-&gt;vtbl-&gt;GetLevelSize(This, level)</td></tr>
+<tr class="memdesc:a850617576a50a67b6c21d8c8ce1158be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for calling the GetImageSize virtual method of a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>.  <a href="ktx_8h.html#a850617576a50a67b6c21d8c8ce1158be">More...</a><br /></td></tr>
+<tr class="separator:a850617576a50a67b6c21d8c8ce1158be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ca1ab524f2161c1facbb716f4cfab00"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a7ca1ab524f2161c1facbb716f4cfab00">ktxTexture_IterateLevels</a>(This,  iterCb,  userdata)&#160;&#160;&#160;                            (This)-&gt;vtbl-&gt;IterateLevels(This, iterCb, userdata)</td></tr>
 <tr class="memdesc:a7ca1ab524f2161c1facbb716f4cfab00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for calling the IterateLevels virtual method of a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>.  <a href="ktx_8h.html#a7ca1ab524f2161c1facbb716f4cfab00">More...</a><br /></td></tr>
 <tr class="separator:a7ca1ab524f2161c1facbb716f4cfab00"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -217,15 +244,6 @@ Macros</h2></td></tr>
 <tr class="memitem:a8dc8bad175207b3431d409abadd251d3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a8dc8bad175207b3431d409abadd251d3">ktxTexture_WriteToStream</a>(This,  dststr)&#160;&#160;&#160;                  (This)-&gt;vtbl-&gt;WriteToStream(This, dststr)</td></tr>
 <tr class="memdesc:a8dc8bad175207b3431d409abadd251d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for calling the WriteToStream virtual method of a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>.  <a href="ktx_8h.html#a8dc8bad175207b3431d409abadd251d3">More...</a><br /></td></tr>
 <tr class="separator:a8dc8bad175207b3431d409abadd251d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79b8339fc0e74d9549aee5b9d6b03709"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709">ktxTexture</a>(t)&#160;&#160;&#160;((<a class="el" href="structktxTexture.html">ktxTexture</a>*)t)</td></tr>
-<tr class="memdesc:a79b8339fc0e74d9549aee5b9d6b03709"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for casting <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> and <a class="el" href="structktxTexture2.html" title="Class representing a KTX version 2 format texture.">ktxTexture2</a> to <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>.  <a href="ktx_8h.html#a79b8339fc0e74d9549aee5b9d6b03709">More...</a><br /></td></tr>
-<tr class="separator:a79b8339fc0e74d9549aee5b9d6b03709"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21462c4d7c10f5ed6fe039516a4fa194"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a21462c4d7c10f5ed6fe039516a4fa194">ktx_texture_transcode_fmt_e</a>&#160;&#160;&#160;<a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5">ktx_transcode_fmt_e</a></td></tr>
-<tr class="separator:a21462c4d7c10f5ed6fe039516a4fa194"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf92eb2b732707d41d423258188917fe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#adf92eb2b732707d41d423258188917fe">ktx_texture_decode_flags</a>&#160;&#160;&#160;ktx_transcode_flag_bits</td></tr>
-<tr class="separator:adf92eb2b732707d41d423258188917fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d1587ea530bd4a86063204f30c4f54b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a1d1587ea530bd4a86063204f30c4f54b">ktxTexture_GetSize</a>&#160;&#160;&#160;ktxTexture_GetDatasize</td></tr>
-<tr class="separator:a1d1587ea530bd4a86063204f30c4f54b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -269,6 +287,14 @@ typedef <a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_e
 typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#ab703620f9a5c5911d6013debf72393d6">ktxStream_destruct</a>) (<a class="el" href="structktxStream.html">ktxStream</a> *str)</td></tr>
 <tr class="memdesc:ab703620f9a5c5911d6013debf72393d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destruct a stream. <br /></td></tr>
 <tr class="separator:ab703620f9a5c5911d6013debf72393d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9353b45ed2db17633fc8aaf6895b330d"><td class="memItemLeft" align="right" valign="top"><a id="a9353b45ed2db17633fc8aaf6895b330d"></a>
+typedef void(KTX_APIENTRY *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a9353b45ed2db17633fc8aaf6895b330d">PFNVOIDFUNCTION</a>) (void)</td></tr>
+<tr class="memdesc:a9353b45ed2db17633fc8aaf6895b330d"><td class="mdescLeft">&#160;</td><td class="mdescRight">typedef of function pointer returned by GLGetProcAddress functions. <br /></td></tr>
+<tr class="separator:a9353b45ed2db17633fc8aaf6895b330d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd811f6d192904064584f26258d68e51"><td class="memItemLeft" align="right" valign="top"><a id="abd811f6d192904064584f26258d68e51"></a>
+typedef <a class="el" href="ktx_8h.html#a9353b45ed2db17633fc8aaf6895b330d">PFNVOIDFUNCTION</a>(KTX_APIENTRY *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#abd811f6d192904064584f26258d68e51">PFNGLGETPROCADDRESS</a>) (const char *proc)</td></tr>
+<tr class="memdesc:abd811f6d192904064584f26258d68e51"><td class="mdescLeft">&#160;</td><td class="mdescRight">typedef of pointer to function for retrieving OpenGL function pointers. <br /></td></tr>
+<tr class="separator:abd811f6d192904064584f26258d68e51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c20092a7ccf1454c1de41fe55a54e92"><td class="memItemLeft" align="right" valign="top"><a id="a2c20092a7ccf1454c1de41fe55a54e92"></a>
 typedef enum <a class="el" href="ktx_8h.html#a9cb85e48ab10ea04747de7ef12087670">ktx_pack_uastc_flag_bits_e</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a2c20092a7ccf1454c1de41fe55a54e92">ktx_pack_uastc_flag_bits_e</a></td></tr>
 <tr class="memdesc:a2c20092a7ccf1454c1de41fe55a54e92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags specifiying UASTC encoding options. <br /></td></tr>
@@ -333,21 +359,15 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:a7780d97ec4de6aa30c4726fb71e3116c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error codes returned by library functions.  <a href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116c">More...</a><br /></td></tr>
 <tr class="separator:a7780d97ec4de6aa30c4726fb71e3116c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a011cf6c6de4e1acd2307ec7d24ee5daa"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daa">ktxSupercmpScheme</a> { <br />
-&#160;&#160;<a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa9559585b30aa7fe5d510753ceae6fcc6">KTX_SS_NONE</a> = 0
+<tr class="memitem:a011cf6c6de4e1acd2307ec7d24ee5daa"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daa">ktxSupercmpScheme</a> { <a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa9559585b30aa7fe5d510753ceae6fcc6">KTX_SS_NONE</a> = 0
 , <a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaaf66da31ed897385538dab6c591e5bf5c">KTX_SS_BASIS_LZ</a> = 1
 , <a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa29f7da526697257766534b667fd706ef">KTX_SS_ZSTD</a> = 2
 , <a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa01c22adc03102420ef016d614cb5e0f5">KTX_SS_ZLIB</a> = 3
-, <br />
-&#160;&#160;<b>KTX_SS_BEGIN_RANGE</b> = KTX_SS_NONE
+, <b>KTX_SS_BEGIN_RANGE</b> = KTX_SS_NONE
 , <b>KTX_SS_END_RANGE</b> = KTX_SS_ZLIB
 , <b>KTX_SS_BEGIN_VENDOR_RANGE</b> = 0x10000
 , <b>KTX_SS_END_VENDOR_RANGE</b> = 0x1ffff
-, <br />
-&#160;&#160;<b>KTX_SS_BEGIN_RESERVED</b> = 0x20000
-, <a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaa40c3320ec64db332ad39012929ea4d7a">KTX_SUPERCOMPRESSION_BASIS</a> = KTX_SS_BASIS_LZ
-, <a class="el" href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daaaa36d92f52c18c80530eed96cbb0b1049">KTX_SUPERCOMPRESSION_ZSTD</a> = KTX_SS_ZSTD
-<br />
+, <b>KTX_SS_BEGIN_RESERVED</b> = 0x20000
  }</td></tr>
 <tr class="memdesc:a011cf6c6de4e1acd2307ec7d24ee5daa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumerators identifying the supercompression scheme.  <a href="ktx_8h.html#a011cf6c6de4e1acd2307ec7d24ee5daa">More...</a><br /></td></tr>
 <tr class="separator:a011cf6c6de4e1acd2307ec7d24ee5daa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -440,6 +460,12 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gada67f60796793d1ed9eb1f3f2d61d4a6"><td class="memItemLeft" align="right" valign="top">KTX_API <a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a> KTX_APIENTRY&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6">ktxLoadOpenGL</a> (<a class="el" href="ktx_8h.html#abd811f6d192904064584f26258d68e51">PFNGLGETPROCADDRESS</a> pfnGLGetProcAddress)</td></tr>
+<tr class="memdesc:gada67f60796793d1ed9eb1f3f2d61d4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load pointers for the GL functions used by the ktxTexture*_GLUpload functions.  <a href="group__ktx__glloader.html#gada67f60796793d1ed9eb1f3f2d61d4a6">More...</a><br /></td></tr>
+<tr class="separator:gada67f60796793d1ed9eb1f3f2d61d4a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaea0edab86daca9c288d4cd6b47b34e28"><td class="memItemLeft" align="right" valign="top">KTX_API <a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a> KTX_APIENTRY&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__reader.html#gaea0edab86daca9c288d4cd6b47b34e28">ktxTexture2_DecodeAstc</a> (<a class="el" href="structktxTexture2.html">ktxTexture2</a> *This)</td></tr>
+<tr class="memdesc:gaea0edab86daca9c288d4cd6b47b34e28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes a ktx2 texture object, if it is ASTC encoded.  <a href="group__reader.html#gaea0edab86daca9c288d4cd6b47b34e28">More...</a><br /></td></tr>
+<tr class="separator:gaea0edab86daca9c288d4cd6b47b34e28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add3b8485a66060a565beb13f64c62907"><td class="memItemLeft" align="right" valign="top">KTX_API const char *KTX_APIENTRY&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ktx_8h.html#add3b8485a66060a565beb13f64c62907">ktxErrorString</a> (<a class="el" href="ktx_8h.html#ad2efa40e38ebae48371375db92d34eaa">KTX_error_code</a> error)</td></tr>
 <tr class="memdesc:add3b8485a66060a565beb13f64c62907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a string corresponding to a KTX error code.  <a href="ktx_8h.html#add3b8485a66060a565beb13f64c62907">More...</a><br /></td></tr>
 <tr class="separator:add3b8485a66060a565beb13f64c62907"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -471,61 +497,8 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
 </div><div class="memdoc">
 
 <p>For backward compatibility. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd></dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a7780d97ec4de6aa30c4726fb71e3116c" title="Error codes returned by library functions.">ktx_error_code_e</a>. </dd></dl>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a0">glloader.c</a>, and <a class="el" href="vkload_8cpp-example.html#a3">vkload.cpp</a>.</dd>
-</dl>
-
-</div>
-</div>
-<a id="adf92eb2b732707d41d423258188917fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf92eb2b732707d41d423258188917fe">&#9670;&nbsp;</a></span>ktx_texture_decode_flags</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ktx_texture_decode_flags&#160;&#160;&#160;ktx_transcode_flag_bits</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated:</a></b></dt><dd>Will be dropped before V4 release. </dd></dl>
-
-</div>
-</div>
-<a id="a21462c4d7c10f5ed6fe039516a4fa194"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21462c4d7c10f5ed6fe039516a4fa194">&#9670;&nbsp;</a></span>ktx_texture_transcode_fmt_e</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ktx_texture_transcode_fmt_e&#160;&#160;&#160;<a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5">ktx_transcode_fmt_e</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd>Will be dropped before V4 release. </dd></dl>
-
-</div>
-</div>
-<a id="a79b8339fc0e74d9549aee5b9d6b03709"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79b8339fc0e74d9549aee5b9d6b03709">&#9670;&nbsp;</a></span>ktxTexture</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define <a class="el" href="structktxTexture.html">ktxTexture</a></td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">t</td><td>)</td>
-          <td>&#160;&#160;&#160;((<a class="el" href="structktxTexture.html">ktxTexture</a>*)t)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Helper for casting <a class="el" href="structktxTexture1.html" title="Class representing a KTX version 1 format texture.">ktxTexture1</a> and <a class="el" href="structktxTexture2.html" title="Class representing a KTX version 2 format texture.">ktxTexture2</a> to <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>. </p>
-<p>Use with caution. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a14">glloader.c</a>.</dd>
 </dl>
 
 </div>
@@ -694,18 +667,42 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
 
 </div>
 </div>
-<a id="a1d1587ea530bd4a86063204f30c4f54b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d1587ea530bd4a86063204f30c4f54b">&#9670;&nbsp;</a></span>ktxTexture_GetSize</h2>
+<a id="a850617576a50a67b6c21d8c8ce1158be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a850617576a50a67b6c21d8c8ce1158be">&#9670;&nbsp;</a></span>ktxTexture_GetLevelSize</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ktxTexture_GetSize&#160;&#160;&#160;ktxTexture_GetDatasize</td>
+          <td class="memname">#define ktxTexture_GetLevelSize</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">This, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">level&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;            (This)-&gt;vtbl-&gt;GetLevelSize(This, level)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated:</a></b></dt><dd>Will be dropped before V4 release. </dd></dl>
+
+<p>Helper for calling the GetImageSize virtual method of a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>. </p>
+<p>Calculate &amp; return the size in bytes of an image at the specified mip level. For arrays, this is the size of a layer, for cubemaps, the size of a face and for 3D textures, the size of a depth slice.</p>
+<p>The size reflects the padding of each row to KTX_GL_UNPACK_ALIGNMENT.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">This</td><td>pointer to the <a class="el" href="structktxTexture2.html" title="Class representing a KTX version 2 format texture.">ktxTexture2</a> object of interest. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>level of interest. * </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -820,7 +817,7 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a15">glloader.c</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="glloader_8c-example.html#a14">glloader.c</a>.</dd>
 </dl>
 
 </div>
@@ -960,6 +957,7 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
 <p>Helper for calling the SetImageFromMemory virtual method of a <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a>. </p>
 <p>Set image for level, layer, faceSlice from an image in memory. Uncompressed images in memory are expected to have their rows tightly packed as is the norm for most image file formats. KTX 2 also requires tight packing this function does not add any padding.</p>
 <p>Level, layer, faceSlice rather than offset are specified to enable some validation.</p>
+<dl class="section note"><dt>Note</dt><dd>The caller is responsible for freeing the original image memory referred to by <code>src</code>.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">This</td><td>pointer to the target <a class="el" href="structktxTexture.html" title="Base class representing a texture.">ktxTexture</a> object. </td></tr>
@@ -1332,9 +1330,9 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
 <p>If you only want default values, use <a class="el" href="group__writer.html#ga405c44d6daf8ddf83dc805810bf4f989" title="Supercompress a KTX2 texture with uncompressed images.">ktxTexture2_CompressBasis()</a>. Here, at a minimum you must initialize the structure as follows: </p><div class="fragment"><div class="line"><a class="code" href="structktxBasisParams.html">ktxBasisParams</a> params = {0};</div>
 <div class="line">params.<a class="code" href="structktxBasisParams.html#a51fe881fb2eae346ba017f7f55a1d642">structSize</a> = <span class="keyword">sizeof</span>(params);</div>
 <div class="line">params.<a class="code" href="structktxBasisParams.html#a27652d35542830750e195ab57dd1f3b1">compressionLevel</a> = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL;</div>
-<div class="ttc" id="astructktxBasisParams_html"><div class="ttname"><a href="structktxBasisParams.html">ktxBasisParams</a></div><div class="ttdoc">Structure for passing extended parameters to ktxTexture2_CompressBasisEx().</div><div class="ttdef"><b>Definition:</b> ktx.h:1279</div></div>
-<div class="ttc" id="astructktxBasisParams_html_a27652d35542830750e195ab57dd1f3b1"><div class="ttname"><a href="structktxBasisParams.html#a27652d35542830750e195ab57dd1f3b1">ktxBasisParams::compressionLevel</a></div><div class="ttdeci">ktx_uint32_t compressionLevel</div><div class="ttdef"><b>Definition:</b> ktx.h:1298</div></div>
-<div class="ttc" id="astructktxBasisParams_html_a51fe881fb2eae346ba017f7f55a1d642"><div class="ttname"><a href="structktxBasisParams.html#a51fe881fb2eae346ba017f7f55a1d642">ktxBasisParams::structSize</a></div><div class="ttdeci">ktx_uint32_t structSize</div><div class="ttdef"><b>Definition:</b> ktx.h:1280</div></div>
+<div class="ttc" id="astructktxBasisParams_html"><div class="ttname"><a href="structktxBasisParams.html">ktxBasisParams</a></div><div class="ttdoc">Structure for passing extended parameters to ktxTexture2_CompressBasisEx().</div><div class="ttdef"><b>Definition:</b> ktx.h:1376</div></div>
+<div class="ttc" id="astructktxBasisParams_html_a27652d35542830750e195ab57dd1f3b1"><div class="ttname"><a href="structktxBasisParams.html#a27652d35542830750e195ab57dd1f3b1">ktxBasisParams::compressionLevel</a></div><div class="ttdeci">ktx_uint32_t compressionLevel</div><div class="ttdef"><b>Definition:</b> ktx.h:1395</div></div>
+<div class="ttc" id="astructktxBasisParams_html_a51fe881fb2eae346ba017f7f55a1d642"><div class="ttname"><a href="structktxBasisParams.html#a51fe881fb2eae346ba017f7f55a1d642">ktxBasisParams::structSize</a></div><div class="ttdeci">ktx_uint32_t structSize</div><div class="ttdef"><b>Definition:</b> ktx.h:1377</div></div>
 </div><!-- fragment --><p><em>compressionLevel</em> has to be explicitly set because 0 is a valid <em>compressionLevel</em> but is not the default used by the BasisU encoder when no value is set. Only the other settings that are to be non-default must be non-zero. </p>
 
 </div>
@@ -1574,25 +1572,25 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5ae1906b8161119e9aca1add331ecf6de6"></a>KTX_TTF_BC1_OR_3&#160;</td><td class="fielddoc"><p>Automatically selects <code>KTX_TTF_BC1_RGB</code> or <code>KTX_TTF_BC3_RGBA</code> according to presence of alpha. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a4d5ff56c820f41b01ceaa7b1056fd38c"></a>KTX_TF_ETC1&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a6b1967cc612417644b7ecb86bdc2de48">KTX_TTF_ETC1_RGB</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a4d5ff56c820f41b01ceaa7b1056fd38c"></a>KTX_TF_ETC1&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a6b1967cc612417644b7ecb86bdc2de48">KTX_TTF_ETC1_RGB</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5ad0aacfd9b57f902f7e140a9fe4a501bd"></a>KTX_TF_ETC2&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000009">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5ad5caffd2fe438bbac51f2e314a3dd7c3">KTX_TTF_ETC</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5ad0aacfd9b57f902f7e140a9fe4a501bd"></a>KTX_TF_ETC2&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5ad5caffd2fe438bbac51f2e314a3dd7c3">KTX_TTF_ETC</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5abb672255cb647aceeb99b05e7f6d99b2"></a>KTX_TF_BC1&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a7b596baf4e8088b0ddda7615971e274e">KTX_TTF_BC1_RGB</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5abb672255cb647aceeb99b05e7f6d99b2"></a>KTX_TF_BC1&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a7b596baf4e8088b0ddda7615971e274e">KTX_TTF_BC1_RGB</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a6a05289216c33a4c731e7b9670e83eab"></a>KTX_TF_BC3&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000011">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a352f7aeb953d220e0fa4abc025a6f880">KTX_TTF_BC3_RGBA</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a6a05289216c33a4c731e7b9670e83eab"></a>KTX_TF_BC3&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a352f7aeb953d220e0fa4abc025a6f880">KTX_TTF_BC3_RGBA</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a260df90000f23f2bf1a06368304f5985"></a>KTX_TF_BC4&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aebbc72211dd8662af91b2f910fda4be3">KTX_TTF_BC4_R</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a260df90000f23f2bf1a06368304f5985"></a>KTX_TF_BC4&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000007">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aebbc72211dd8662af91b2f910fda4be3">KTX_TTF_BC4_R</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a39a369e112f19db1769f6c02b26f283b"></a>KTX_TF_BC5&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000013">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5af030f0703301f830ece442aa508195b0">KTX_TTF_BC5_RG</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a39a369e112f19db1769f6c02b26f283b"></a>KTX_TF_BC5&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5af030f0703301f830ece442aa508195b0">KTX_TTF_BC5_RG</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5ad84ab9c0ac149b791721ce08a4498d74"></a>KTX_TTF_BC7_M6_RGB&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000014">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aacba582511ea35fbec2fa8fa92a900cc">KTX_TTF_BC7_RGBA</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5ad84ab9c0ac149b791721ce08a4498d74"></a>KTX_TTF_BC7_M6_RGB&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000009">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aacba582511ea35fbec2fa8fa92a900cc">KTX_TTF_BC7_RGBA</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a0725a0280faa5a362e823daa958b9e5d"></a>KTX_TTF_BC7_M5_RGBA&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000015">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aacba582511ea35fbec2fa8fa92a900cc">KTX_TTF_BC7_RGBA</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a0725a0280faa5a362e823daa958b9e5d"></a>KTX_TTF_BC7_M5_RGBA&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aacba582511ea35fbec2fa8fa92a900cc">KTX_TTF_BC7_RGBA</a>. </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5afcf0ab81c08710d1c1ad1a0445a4775f"></a>KTX_TF_BC7_M6_OPAQUE_ONLY&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000016">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aacba582511ea35fbec2fa8fa92a900cc">KTX_TTF_BC7_RGBA</a> </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5afcf0ab81c08710d1c1ad1a0445a4775f"></a>KTX_TF_BC7_M6_OPAQUE_ONLY&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000011">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5aacba582511ea35fbec2fa8fa92a900cc">KTX_TTF_BC7_RGBA</a> </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a2117d164feecb02ba5199b4ee72d2f04"></a>KTX_TF_PVRTC1_4_OPAQUE_ONLY&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000017">Deprecated:</a></b></dt><dd>. Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a6d129443f90dd85da21fd1fc1fd50e36">KTX_TTF_PVRTC1_4_RGB</a>. </dd></dl>
+<tr><td class="fieldname"><a id="a30cc58c576392303d9a5a54b57ef29b5a2117d164feecb02ba5199b4ee72d2f04"></a>KTX_TF_PVRTC1_4_OPAQUE_ONLY&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000012">Deprecated:</a></b></dt><dd>Use <a class="el" href="ktx_8h.html#a30cc58c576392303d9a5a54b57ef29b5a6d129443f90dd85da21fd1fc1fd50e36">KTX_TTF_PVRTC1_4_RGB</a>. </dd></dl>
 </td></tr>
 </table>
 
@@ -1619,10 +1617,6 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
 <tr><td class="fieldname"><a id="a011cf6c6de4e1acd2307ec7d24ee5daaa29f7da526697257766534b667fd706ef"></a>KTX_SS_ZSTD&#160;</td><td class="fielddoc"><p>ZStd supercompression. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a011cf6c6de4e1acd2307ec7d24ee5daaa01c22adc03102420ef016d614cb5e0f5"></a>KTX_SS_ZLIB&#160;</td><td class="fielddoc"><p>ZLIB supercompression. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a011cf6c6de4e1acd2307ec7d24ee5daaa40c3320ec64db332ad39012929ea4d7a"></a>KTX_SUPERCOMPRESSION_BASIS&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Will be removed before v4 release. Use KTX_SS_BASIS_LZ instead. </dd></dl>
-</td></tr>
-<tr><td class="fieldname"><a id="a011cf6c6de4e1acd2307ec7d24ee5daaaa36d92f52c18c80530eed96cbb0b1049"></a>KTX_SUPERCOMPRESSION_ZSTD&#160;</td><td class="fielddoc"><dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>Will be removed before v4 release. Use KTX_SS_ZSTD instead. </dd></dl>
 </td></tr>
 </table>
 
@@ -1718,7 +1712,7 @@ Based on original work by Georg Kolling, Imagination Technology</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="ktx_8h.html">ktx.h</a></li>
-    <li class="footer">Generated on Wed Mar 20 2024 17:41:33 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Mar 30 2025 09:32:46 for libktx Reference by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
