@@ -27,9 +27,7 @@ void initialize(int argc, char *argv[]) {
     createSurface();
     createDevice();
     getQueues();
-    createSampler();
-    createLayouts();
-    createDescriptorPool();
+    createPipeline();
     createModules();
     allocateMemories();
     createBuffers();

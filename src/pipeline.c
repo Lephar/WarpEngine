@@ -2,19 +2,89 @@
 
 #include "device.h"
 #include "material.h"
+#include "primitive.h"
 
 #include "logger.h"
 
+VkDescriptorSetLayout descriptorSetLayout;
+VkPipelineLayout           pipelineLayout;
+
+VkDescriptorPool    modelDescriptorPool;
+VkDescriptorPool   cameraDescriptorPool;
+VkDescriptorPool materialDescriptorPool;
+
 VkSampler sampler;
 
-VkDescriptorPool descriptorPool;
-VkDescriptorSetLayout descriptorSetLayout;
+void createDescriptorSetLayout() {
+    VkDescriptorSetLayoutBinding layoutBindings[] = {
+        {
+            .binding = 0,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+            .descriptorCount = 1,
+            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+            .pImmutableSamplers = NULL
+        }, {
+            .binding = 2,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .descriptorCount = 1,
+            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+            .pImmutableSamplers = NULL
+        },{
+            .binding = 3,
+            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            .descriptorCount = 1,
+            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+            .pImmutableSamplers = NULL
+        }
+    };
 
-VkPipelineLayout pipelineLayout;
+    VkDescriptorSetLayoutCreateInfo layoutInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .bindingCount = sizeof(layoutBindings) / sizeof(VkDescriptorSetLayoutBinding),
+        .pBindings = layoutBindings
+    };
 
-void createSampler() {
-    const uint32_t mipLevelLimit = floor(log2(textureSizeMaxDimensionLimit)) + 1;
+    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
+    debug("Descriptor set layout created");
+}
 
+void createPipelineLayout() {
+    VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .setLayoutCount = 1,
+        .pSetLayouts = &descriptorSetLayout,
+        .pushConstantRangeCount = 0,
+        .pPushConstantRanges = NULL
+    };
+
+    vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &pipelineLayout);
+    debug("Pipeline layout created");
+}
+
+void createDescriptorPool(VkDescriptorType type, uint32_t count, VkDescriptorPool *outDescriptorPool) {
+    VkDescriptorPoolSize poolSize = {
+        .type = type,
+        .descriptorCount = 1
+    };
+
+    VkDescriptorPoolCreateInfo poolInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .maxSets = count,
+        .poolSizeCount = 1,
+        .pPoolSizes = &poolSize
+    };
+
+    vkCreateDescriptorPool(device, &poolInfo, NULL, outDescriptorPool);
+    debug("Descriptor pool created");
+}
+
+void createSampler(uint32_t mipLevelLimit, VkSampler *outSampler) {
     VkSamplerCreateInfo samplerInfo = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
         .pNext = NULL,
@@ -36,84 +106,33 @@ void createSampler() {
         .unnormalizedCoordinates = VK_FALSE
     };
 
-    vkCreateSampler(device, &samplerInfo, NULL, &sampler);
+    vkCreateSampler(device, &samplerInfo, NULL, outSampler);
     debug("Image sampler created");
 }
 
-void createLayouts() {
-    VkDescriptorSetLayoutBinding layoutBindings[] = {
-        {
-            .binding = 0,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .descriptorCount = 1,
-            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-            .pImmutableSamplers = NULL
-        },{
-            .binding = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = 1,
-            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .pImmutableSamplers = NULL
-        }
-    };
+void createPipeline() {
+    createDescriptorSetLayout();
+    createPipelineLayout();
 
-    VkDescriptorSetLayoutCreateInfo layoutInfo = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .pNext = NULL,
-        .flags = 0,
-        .bindingCount = sizeof(layoutBindings) / sizeof(VkDescriptorSetLayoutBinding),
-        .pBindings = layoutBindings
-    };
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                  &   modelDescriptorPool);
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         1,                  &  cameraDescriptorPool);
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, &materialDescriptorPool);
 
-    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
-    debug("Descriptor set layout created");
-
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .pNext = NULL,
-        .flags = 0,
-        .setLayoutCount = 1,
-        .pSetLayouts = &descriptorSetLayout,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges = NULL
-    };
-
-    vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &pipelineLayout);
-    debug("Pipeline layout created");
-}
-
-void createDescriptorPool() {
-    VkDescriptorPoolSize poolSizes[] = {
-        {
-            .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .descriptorCount = materialCountLimit // TODO: We will need to separate
-        }, {
-            .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = materialCountLimit
-        }
-    };
-
-    VkDescriptorPoolCreateInfo poolInfo = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-        .pNext = NULL,
-        .flags = 0,
-        .maxSets = materialCountLimit,
-        .poolSizeCount = sizeof(poolSizes) / sizeof(VkDescriptorPoolSize),
-        .pPoolSizes = poolSizes
-    };
-
-    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
-    debug("Descriptor pool created");
+    const uint32_t mipLevelLimit = floor(log2(textureSizeMaxDimensionLimit)) + 1;
+    createSampler( mipLevelLimit, &sampler);
 }
 
 void destroyPipeline() {
     vkDestroySampler(device, sampler, NULL);
+    debug("Combined image sampler destroyed");
+
+    vkDestroyDescriptorPool(device, materialDescriptorPool, NULL);
+    vkDestroyDescriptorPool(device, cameraDescriptorPool,   NULL);
+    vkDestroyDescriptorPool(device, modelDescriptorPool,    NULL);
+    debug("Descriptor pools destroyed");
 
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);
     debug("Pipeline layout destroyed");
-
-    vkDestroyDescriptorPool(device, descriptorPool, NULL);
-    debug("Descriptor pool destroyed");
 
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, NULL);
     debug("Descriptor set layout destroyed");
