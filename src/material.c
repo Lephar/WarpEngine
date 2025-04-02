@@ -39,6 +39,7 @@ Image *loadTexture(const char *path) {
         assert(ktxResult == KTX_SUCCESS);
     }
 
+    // TODO: Most ktxTexture2_* functions exist in the docs but aren't really exposed. Remove this old handle when they update.
     ktxTexture *textureHandle = (ktxTexture *) textureObject;
     debug("\tCompressed Size: %lu", ktxTexture_GetDataSize(textureHandle));
 
@@ -79,7 +80,7 @@ Image *loadTexture(const char *path) {
 
     for(ktx_uint32_t level = 0; level < mips; level++) {
         ktx_size_t offset;
-        ktxResult = ktxTexture_GetImageOffset(textureHandle, level, 0, 0, &offset);
+        ktxResult = ktxTexture2_GetImageOffset(textureObject, level, 0, 0, &offset);
 
         if(ktxResult != KTX_SUCCESS) {
             debug("\tGetting mip level %d data failed with message: %s", level, ktxErrorString(ktxResult));
@@ -104,7 +105,7 @@ Image *loadTexture(const char *path) {
 
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-    ktxTexture_Destroy(textureHandle);
+    ktxTexture2_Destroy(textureObject);
 
     return texture;
 }
