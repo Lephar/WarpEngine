@@ -47,16 +47,17 @@ void initializeControls() {
 }
 
 void generatePerspective() {
+    /*
     float aspectRatio = (float) extent.width / (float) extent.height;
     float fieldOfView = M_PI_4;
 
     float nearPlane = 1.0f;
     float  farPlane = 1000.0f;
-
+    */
     // TODO: Make a separate light unit
-    glmc_vec3_one(uniformBuffer->ambientLight);
+    //glmc_vec3_one(uniformBuffer->ambientLight);
 
-    glmc_perspective_rh_zo(fieldOfView, aspectRatio, nearPlane, farPlane, uniformBuffer->proj);
+    //glmc_perspective_rh_zo(fieldOfView, aspectRatio, nearPlane, farPlane, uniformBuffer->proj);
     debug("Perspective created");
 }
 
@@ -108,9 +109,9 @@ void processEvents() {
     vec3 target;
     glmc_vec3_add(position, forward, target);
 
-    glmc_lookat_rh_zo(GLM_VEC3_ZERO, forward, upWorld, uniformBuffer->skyboxView);
-    glmc_mat4_mul(uniformBuffer->proj, uniformBuffer->skyboxView, uniformBuffer->skyboxCamera);
+    //glmc_lookat_rh_zo(GLM_VEC3_ZERO, forward, upWorld, uniformBuffer->skyboxView);
+    //glmc_mat4_mul(uniformBuffer->proj, uniformBuffer->skyboxView, uniformBuffer->skyboxCamera);
 
-    glmc_lookat_rh_zo(position, target, upWorld, uniformBuffer->view);
-    glmc_mat4_mul(uniformBuffer->proj, uniformBuffer->view, uniformBuffer->camera);
+    //glmc_lookat_rh_zo(position, target, upWorld, uniformBuffer->view);
+    //glmc_mat4_mul(uniformBuffer->proj, uniformBuffer->view, uniformBuffer->camera);
 }
