@@ -9,8 +9,8 @@
 VkDescriptorSetLayout descriptorSetLayout;
 VkPipelineLayout           pipelineLayout;
 
-VkDescriptorPool    modelDescriptorPool;
-VkDescriptorPool   cameraDescriptorPool;
+VkDescriptorPool sceneDescriptorPool;
+VkDescriptorPool primitiveDescriptorPool;
 VkDescriptorPool materialDescriptorPool;
 
 VkSampler sampler;
@@ -23,14 +23,16 @@ void createDescriptorSetLayout() {
             .descriptorCount = 1,
             .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
             .pImmutableSamplers = NULL
-        }, {
-            .binding = 2,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        },
+        {
+            .binding = 1,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
             .descriptorCount = 1,
             .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
             .pImmutableSamplers = NULL
-        },{
-            .binding = 3,
+        },
+        {
+            .binding = 2,
             .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             .descriptorCount = 1,
             .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -107,15 +109,15 @@ void createSampler(uint32_t mipLevelLimit, VkSampler *outSampler) {
     };
 
     vkCreateSampler(device, &samplerInfo, NULL, outSampler);
-    debug("Image sampler created");
+    debug("Texture sampler created");
 }
 
 void createPipeline() {
     createDescriptorSetLayout();
     createPipelineLayout();
 
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                  &   modelDescriptorPool);
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         1,                  &  cameraDescriptorPool);
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                  &sceneDescriptorPool);
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                  &primitiveDescriptorPool);
     createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, &materialDescriptorPool);
 
     const uint32_t mipLevelLimit = floor(log2(textureSizeMaxDimensionLimit)) + 1;
@@ -124,11 +126,11 @@ void createPipeline() {
 
 void destroyPipeline() {
     vkDestroySampler(device, sampler, NULL);
-    debug("Combined image sampler destroyed");
+    debug("Texture sampler destroyed");
 
-    vkDestroyDescriptorPool(device, materialDescriptorPool, NULL);
-    vkDestroyDescriptorPool(device, cameraDescriptorPool,   NULL);
-    vkDestroyDescriptorPool(device, modelDescriptorPool,    NULL);
+    vkDestroyDescriptorPool(device, materialDescriptorPool,  NULL);
+    vkDestroyDescriptorPool(device, primitiveDescriptorPool, NULL);
+    vkDestroyDescriptorPool(device, sceneDescriptorPool,     NULL);
     debug("Descriptor pools destroyed");
 
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);

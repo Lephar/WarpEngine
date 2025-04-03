@@ -5,8 +5,8 @@
 extern VkDescriptorSetLayout descriptorSetLayout;
 extern VkPipelineLayout pipelineLayout;
 
-extern VkDescriptorPool modelDescriptorPool;
-extern VkDescriptorPool cameraDescriptorPool;
+extern VkDescriptorPool sceneDescriptorPool;
+extern VkDescriptorPool primitiveDescriptorPool;
 extern VkDescriptorPool materialDescriptorPool;
 
 extern VkSampler sampler;
