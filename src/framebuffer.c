@@ -10,13 +10,15 @@
 #include "numerics.h"
 #include "logger.h"
 
+const uint32_t framebufferCountLimit = 4u;
+
 FramebufferSet oldFramebufferSet;
 FramebufferSet framebufferSet;
 
 void createFramebuffer(Framebuffer *framebuffer) {
     framebuffer->depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
     framebuffer->color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT);
-    framebuffer->resolve      = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT,      framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,   VK_IMAGE_ASPECT_COLOR_BIT);
+    framebuffer->resolve      = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT,      framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
 
     bindImageMemory(framebuffer->depthStencil, &deviceMemory);
     bindImageMemory(framebuffer->color,        &deviceMemory);

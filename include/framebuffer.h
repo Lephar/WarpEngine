@@ -34,6 +34,8 @@ struct framebufferSet {
     VkDeviceSize frameUniformBufferSize;
 } typedef FramebufferSet;
 
+extern const uint32_t framebufferCountLimit;
+
 extern FramebufferSet oldFramebufferSet;
 extern FramebufferSet framebufferSet;
 
