@@ -3,6 +3,7 @@
 #include "device.h"
 #include "material.h"
 #include "primitive.h"
+#include "framebuffer.h"
 
 #include "logger.h"
 
@@ -19,7 +20,7 @@ void createDescriptorSetLayout() {
     VkDescriptorSetLayoutBinding layoutBindings[] = {
         {
             .binding = 0,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             .descriptorCount = 1,
             .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
             .pImmutableSamplers = NULL
@@ -116,9 +117,9 @@ void createPipeline() {
     createDescriptorSetLayout();
     createPipelineLayout();
 
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                  &sceneDescriptorPool);
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                  &primitiveDescriptorPool);
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, &materialDescriptorPool);
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, &sceneDescriptorPool);
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, &primitiveDescriptorPool);
+    createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    &materialDescriptorPool);
 
     const uint32_t mipLevelLimit = floor(log2(textureSizeMaxDimensionLimit)) + 1;
     createSampler( mipLevelLimit, &sampler);
