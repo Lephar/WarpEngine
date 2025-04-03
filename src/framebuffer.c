@@ -32,6 +32,9 @@ void createFramebuffer(Framebuffer *framebuffer) {
     transitionImageLayout(framebuffer->color,        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
     transitionImageLayout(framebuffer->resolve,      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
+    framebuffer->sceneDescriptorSet     = allocateSceneDescriptorSet();
+    framebuffer->primitiveDescriptorSet = allocatePrimitiveDescriptorSet();
+
     framebuffer->renderCommandBuffer  = allocateSingleCommandBuffer(&graphicsQueue);
     framebuffer->presentCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
 

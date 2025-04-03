@@ -9,6 +9,9 @@ struct framebuffer {
     Image *color;
     Image *resolve;
 
+    VkDescriptorSet sceneDescriptorSet;
+    VkDescriptorSet primitiveDescriptorSet;
+
     VkCommandBuffer renderCommandBuffer;
     VkCommandBuffer presentCommandBuffer;
 
