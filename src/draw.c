@@ -217,13 +217,13 @@ void render() {
 
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, skyboxShaders);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[0].material->samplerDescriptor, 0, NULL);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[0].material->descriptorSet, 0, NULL);
     vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[0].indexCount, 1, primitives[0].indexBegin, primitives[0].vertexOffset, 0);
 
     cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, pipelineShaders);
 
     for(uint32_t primitiveIndex = 1; primitiveIndex < primitiveCount; primitiveIndex++) {
-        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[primitiveIndex].material->samplerDescriptor, 0, NULL);
+        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[primitiveIndex].material->descriptorSet, 0, NULL);
         vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[primitiveIndex].indexCount, 1, primitives[primitiveIndex].indexBegin, primitives[primitiveIndex].vertexOffset, 0);
     }
 
