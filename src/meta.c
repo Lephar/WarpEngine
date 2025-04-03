@@ -1,9 +1,15 @@
 #include "meta.h"
 
 #include "window.h"
+#include "physicalDevice.h"
+#include "device.h"
+#include "buffer.h"
+#include "pipeline.h"
 #include "content.h"
 #include "material.h"
 #include "primitive.h"
+
+#include "logger.h"
 
 vec3 worldUp;
 
@@ -69,4 +75,42 @@ void loadSkybox(cgltf_data *data) {
     cgltf_node_transform_world(nodeData, (cgltf_float *) transform);
 
     loadPrimitive(&skybox, primitiveData, transform);
+}
+
+VkDescriptorSet createSceneDescriptorSet() {
+    VkDescriptorSet descriptorSet;
+
+    VkDescriptorSetAllocateInfo allocateInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .pNext = NULL,
+        .descriptorPool = sceneDescriptorPool,
+        .descriptorSetCount = 1,
+        .pSetLayouts = &descriptorSetLayout
+    };
+
+    vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
+
+    VkDescriptorBufferInfo bufferInfo = {
+        .buffer = sharedBuffer.buffer,
+        .offset = 0,
+        .range = physicalDeviceProperties.limits.maxUniformBufferRange
+    };
+
+    VkWriteDescriptorSet descriptorWrite = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = NULL,
+        .dstSet = descriptorSet,
+        .dstBinding = 1,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+        .pImageInfo = NULL,
+        .pBufferInfo = &bufferInfo,
+        .pTexelBufferView = NULL
+    };
+
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+    debug("\tDescriptor created");
+
+    return descriptorSet;
 }
