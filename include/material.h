@@ -7,7 +7,7 @@ typedef struct image Image;
 struct material {
     char name[UINT8_MAX];
     Image *baseColor;
-    VkDescriptorSet samplerDescriptor;
+    VkDescriptorSet descriptorSet;
 } typedef Material;
 
 extern const uint32_t textureSizeMaxDimensionLimit;

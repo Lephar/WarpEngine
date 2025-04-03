@@ -110,24 +110,18 @@ Image *loadTexture(const char *path) {
     return texture;
 }
 
-VkDescriptorSet createDescriptor(Image *texture) {
-    VkDescriptorSet samplerDescriptor;
+VkDescriptorSet createMaterialDescriptorSet(Image *texture) {
+    VkDescriptorSet descriptorSet;
 
     VkDescriptorSetAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = NULL,
-        .descriptorPool = descriptorPool,
+        .descriptorPool = materialDescriptorPool,
         .descriptorSetCount = 1,
         .pSetLayouts = &descriptorSetLayout
     };
 
-    vkAllocateDescriptorSets(device, &allocateInfo, &samplerDescriptor);
-
-    VkDescriptorBufferInfo bufferInfo = {
-        .buffer = sharedBuffer.buffer,
-        .offset = 0,
-        .range = physicalDeviceProperties.limits.maxUniformBufferRange
-    };
+    vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
 
     VkDescriptorImageInfo imageInfo = {
         .sampler = sampler,
@@ -135,36 +129,24 @@ VkDescriptorSet createDescriptor(Image *texture) {
         .imageLayout = texture->layout
     };
 
-    VkWriteDescriptorSet descriptorWrites[] = {
-        {
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext = NULL,
-            .dstSet = samplerDescriptor,
-            .dstBinding = 0,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            .pImageInfo = NULL,
-            .pBufferInfo = &bufferInfo,
-            .pTexelBufferView = NULL
-        }, {
-            .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext = NULL,
-            .dstSet = samplerDescriptor,
-            .dstBinding = 1,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .pImageInfo = &imageInfo,
-            .pBufferInfo = NULL,
-            .pTexelBufferView = NULL
-        }
+    VkWriteDescriptorSet descriptorWrite = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = NULL,
+        .dstSet = descriptorSet,
+        .dstBinding = 2,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        .pImageInfo = &imageInfo,
+        .pBufferInfo = NULL,
+        .pTexelBufferView = NULL
+
     };
 
-    vkUpdateDescriptorSets(device, sizeof(descriptorWrites) / sizeof(VkWriteDescriptorSet), descriptorWrites, 0, NULL);
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
     debug("\tDescriptor created");
 
-    return samplerDescriptor;
+    return descriptorSet;
 }
 
 void loadMaterial(Material *material, cgltf_material *materialData) {
@@ -175,8 +157,8 @@ void loadMaterial(Material *material, cgltf_material *materialData) {
     char textureFullPath[PATH_MAX];
     makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, textureFullPath);
 
-    material->baseColor         = loadTexture     (textureFullPath);
-    material->samplerDescriptor = createDescriptor(material->baseColor);
+    material->baseColor     = loadTexture(textureFullPath);
+    material->descriptorSet = createMaterialDescriptorSet(material->baseColor);
 }
 
 void destroyMaterial(Material *material) {
