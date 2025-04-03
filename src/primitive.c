@@ -1,5 +1,9 @@
 #include "primitive.h"
 
+#include "physicalDevice.h"
+#include "device.h"
+#include "buffer.h"
+#include "pipeline.h"
 #include "content.h"
 #include "material.h"
 
@@ -8,6 +12,44 @@
 const uint32_t primitiveCountLimit = 128;
 uint32_t primitiveCount;
 Primitive *primitives;
+
+VkDescriptorSet createPrimitiveDescriptorSet() {
+    VkDescriptorSet descriptorSet;
+
+    VkDescriptorSetAllocateInfo allocateInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        .pNext = NULL,
+        .descriptorPool = primitiveDescriptorPool,
+        .descriptorSetCount = 1,
+        .pSetLayouts = &descriptorSetLayout
+    };
+
+    vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
+
+    VkDescriptorBufferInfo bufferInfo = {
+        .buffer = sharedBuffer.buffer,
+        .offset = 0,
+        .range = physicalDeviceProperties.limits.maxUniformBufferRange
+    };
+
+    VkWriteDescriptorSet descriptorWrite = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = NULL,
+        .dstSet = descriptorSet,
+        .dstBinding = 1,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+        .pImageInfo = NULL,
+        .pBufferInfo = &bufferInfo,
+        .pTexelBufferView = NULL
+    };
+
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+    debug("\tDescriptor created");
+
+    return descriptorSet;
+}
 
 void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 transform) {
     debug("\t\t\tPrimitive Index: %d", primitiveCount);
