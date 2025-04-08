@@ -3,6 +3,7 @@
 #include "physicalDevice.h"
 #include "device.h"
 #include "buffer.h"
+#include "image.h"
 #include "logger.h"
 
 VkDescriptorSetLayout descriptorSetLayout;
@@ -100,6 +101,31 @@ void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, Buffer *buffer) {
         .pImageInfo = NULL,
         .pBufferInfo = &bufferInfo,
         .pTexelBufferView = NULL
+    };
+
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+    debug("\tDescriptor created");
+}
+
+void makeSamplerDescriptorSet(VkDescriptorSet descriptorSet, VkSampler sampler, Image *image) {
+    VkDescriptorImageInfo imageInfo = {
+        .sampler = sampler,
+        .imageView = image->view,
+        .imageLayout = image->layout
+    };
+
+    VkWriteDescriptorSet descriptorWrite = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = NULL,
+        .dstSet = descriptorSet,
+        .dstBinding = 2,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        .pImageInfo = &imageInfo,
+        .pBufferInfo = NULL,
+        .pTexelBufferView = NULL
+
     };
 
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
