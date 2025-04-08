@@ -81,3 +81,27 @@ VkDescriptorSet allocateDescriptorSet(VkDescriptorPool descriptorPool) {
     vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
     return descriptorSet;
 }
+
+void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, Buffer *buffer) {
+    VkDescriptorBufferInfo bufferInfo = {
+        .buffer = buffer->buffer,
+        .offset = 0,
+        .range = physicalDeviceProperties.limits.maxUniformBufferRange
+    };
+
+    VkWriteDescriptorSet descriptorWrite = {
+        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+        .pNext = NULL,
+        .dstSet = descriptorSet,
+        .dstBinding = 1,
+        .dstArrayElement = 0,
+        .descriptorCount = 1,
+        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+        .pImageInfo = NULL,
+        .pBufferInfo = &bufferInfo,
+        .pTexelBufferView = NULL
+    };
+
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+    debug("\tDescriptor created");
+}
