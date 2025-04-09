@@ -1,6 +1,5 @@
 #include "descriptor.h"
 
-#include "physicalDevice.h"
 #include "device.h"
 #include "buffer.h"
 #include "image.h"
@@ -49,7 +48,7 @@ void createDescriptorSetLayout() {
     debug("Descriptor set layout created");
 }
 
-void createDescriptorPool(VkDescriptorType type, uint32_t count, VkDescriptorPool *outDescriptorPool) {
+VkDescriptorPool createDescriptorPool(VkDescriptorType type, uint32_t count) {
     VkDescriptorPoolSize poolSize = {
         .type = type,
         .descriptorCount = 1
@@ -64,8 +63,11 @@ void createDescriptorPool(VkDescriptorType type, uint32_t count, VkDescriptorPoo
         .pPoolSizes = &poolSize
     };
 
-    vkCreateDescriptorPool(device, &poolInfo, NULL, outDescriptorPool);
+    VkDescriptorPool descriptorPool;
+    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
     debug("Descriptor pool created");
+
+    return descriptorPool;
 }
 
 VkDescriptorSet allocateDescriptorSet(VkDescriptorPool descriptorPool) {
@@ -83,21 +85,21 @@ VkDescriptorSet allocateDescriptorSet(VkDescriptorPool descriptorPool) {
     return descriptorSet;
 }
 
-void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, Buffer *buffer) {
+void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, Buffer *buffer, uint32_t offset, uint32_t range) {
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = buffer->buffer,
-        .offset = 0,
-        .range = physicalDeviceProperties.limits.maxUniformBufferRange
+        .offset = offset,
+        .range = range
     };
 
     VkWriteDescriptorSet descriptorWrite = {
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = NULL,
         .dstSet = descriptorSet,
-        .dstBinding = 1,
+        .dstBinding = binding,
         .dstArrayElement = 0,
         .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+        .descriptorType = type,
         .pImageInfo = NULL,
         .pBufferInfo = &bufferInfo,
         .pTexelBufferView = NULL
@@ -107,7 +109,7 @@ void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, Buffer *buffer) {
     debug("\tDescriptor created");
 }
 
-void makeSamplerDescriptorSet(VkDescriptorSet descriptorSet, VkSampler sampler, Image *image) {
+void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, VkSampler sampler, Image *image) {
     VkDescriptorImageInfo imageInfo = {
         .sampler = sampler,
         .imageView = image->view,
@@ -118,14 +120,13 @@ void makeSamplerDescriptorSet(VkDescriptorSet descriptorSet, VkSampler sampler, 
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = NULL,
         .dstSet = descriptorSet,
-        .dstBinding = 2,
+        .dstBinding = binding,
         .dstArrayElement = 0,
         .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        .descriptorType = type,
         .pImageInfo = &imageInfo,
         .pBufferInfo = NULL,
         .pTexelBufferView = NULL
-
     };
 
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
