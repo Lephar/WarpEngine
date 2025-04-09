@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+extern VkSampler sampler;
+
 extern VkDescriptorSetLayout descriptorSetLayout;
 
 extern VkDescriptorPool sceneDescriptorPool;
