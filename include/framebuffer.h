@@ -33,8 +33,6 @@ struct framebufferSet {
     VkFormat colorFormat;
 
     Framebuffer *framebuffers;
-
-    VkDeviceSize frameUniformBufferSize;
 } typedef FramebufferSet;
 
 extern const uint32_t framebufferCountLimit;

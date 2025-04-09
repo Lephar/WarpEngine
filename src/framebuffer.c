@@ -6,16 +6,17 @@
 #include "queue.h"
 #include "memory.h"
 #include "image.h"
+#include "descriptor.h"
 
 #include "numerics.h"
 #include "logger.h"
 
-const uint32_t framebufferCountLimit = 4u;
+const uint32_t framebufferCountLimit = 4;
 
 FramebufferSet oldFramebufferSet;
 FramebufferSet framebufferSet;
 
-void createFramebuffer(Framebuffer *framebuffer) {
+void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
     framebuffer->depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
     framebuffer->color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT);
     framebuffer->resolve      = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT,      framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
@@ -32,8 +33,8 @@ void createFramebuffer(Framebuffer *framebuffer) {
     transitionImageLayout(framebuffer->color,        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
     transitionImageLayout(framebuffer->resolve,      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-    framebuffer->sceneDescriptorSet     = allocateSceneDescriptorSet();
-    framebuffer->primitiveDescriptorSet = allocatePrimitiveDescriptorSet();
+    framebuffer->sceneDescriptorSet     =     getSceneDescriptorSet(index);
+    framebuffer->primitiveDescriptorSet = getPrimitiveDescriptorSet(index);
 
     framebuffer->renderCommandBuffer  = allocateSingleCommandBuffer(&graphicsQueue);
     framebuffer->presentCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
@@ -79,10 +80,6 @@ void createFramebufferSet() {
 
     framebufferSet.imageCount = 2;
 
-    framebufferSet.frameUniformBufferSize = align(physicalDeviceProperties.limits.maxUniformBufferRange / framebufferSet.imageCount,
-        physicalDeviceProperties.limits.minUniformBufferOffsetAlignment) - physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
-    assert(framebufferSet.frameUniformBufferSize > 0);
-
     framebufferSet.sampleCount = VK_SAMPLE_COUNT_4_BIT;
     assert(framebufferSet.sampleCount & physicalDeviceProperties.limits.framebufferDepthSampleCounts);
     assert(framebufferSet.sampleCount & physicalDeviceProperties.limits.framebufferColorSampleCounts);
@@ -93,7 +90,7 @@ void createFramebufferSet() {
     framebufferSet.framebuffers = malloc(framebufferSet.imageCount * sizeof(Framebuffer));
 
     for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.imageCount; framebufferIndex++) {
-        createFramebuffer(&framebufferSet.framebuffers[framebufferIndex]);
+        createFramebuffer(&framebufferSet.framebuffers[framebufferIndex], framebufferIndex);
         debug("Framebuffer %d created", framebufferIndex);
     }
 }
