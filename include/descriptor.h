@@ -2,6 +2,18 @@
 
 #include "pch.h"
 
+typedef struct buffer Buffer;
+typedef struct image  Image;
+
+struct sceneUniform {
+    mat4 anchor;
+    mat4 camera;
+} typedef SceneUniform;
+
+struct primitiveUniform {
+    mat4 transform;
+} typedef PrimitiveUniform;
+
 extern VkSampler sampler;
 
 extern VkDescriptorSetLayout descriptorSetLayout;
