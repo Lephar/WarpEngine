@@ -1,5 +1,6 @@
 #include "descriptor.h"
 
+#include "physicalDevice.h"
 #include "device.h"
 #include "buffer.h"
 #include "image.h"
@@ -12,6 +13,8 @@ VkDescriptorSetLayout descriptorSetLayout;
 VkDescriptorPool sceneDescriptorPool;
 VkDescriptorPool primitiveDescriptorPool;
 VkDescriptorPool materialDescriptorPool;
+
+VkDeviceSize frameUniformStride;
 
 void createSampler(uint32_t mipLevelLimit, VkSampler *outSampler) {
     VkSamplerCreateInfo samplerInfo = {
@@ -113,9 +116,9 @@ VkDescriptorSet allocateDescriptorSet(VkDescriptorPool descriptorPool) {
     return descriptorSet;
 }
 
-void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, Buffer *buffer, uint32_t offset, uint32_t range) {
+void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, VkBuffer buffer, uint32_t offset, uint32_t range) {
     VkDescriptorBufferInfo bufferInfo = {
-        .buffer = buffer->buffer,
+        .buffer = buffer,
         .offset = offset,
         .range = range
     };
