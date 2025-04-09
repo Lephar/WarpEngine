@@ -116,11 +116,11 @@ VkDescriptorSet allocateDescriptorSet(VkDescriptorPool descriptorPool) {
     return descriptorSet;
 }
 
-void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, VkBuffer buffer, uint32_t offset, uint32_t range) {
+void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range) {
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = buffer,
         .offset = offset,
-        .range = range
+        .range  = range
     };
 
     VkWriteDescriptorSet descriptorWrite = {
@@ -142,8 +142,8 @@ void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType typ
 
 void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, VkSampler sampler, Image *image) {
     VkDescriptorImageInfo imageInfo = {
-        .sampler = sampler,
-        .imageView = image->view,
+        .sampler     = sampler,
+        .imageView   = image->view,
         .imageLayout = image->layout
     };
 
@@ -164,15 +164,15 @@ void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type
     debug("\tDescriptor created");
 }
 
-VkDescriptorSet getSceneDescriptorSet(uint32_t frameIndex) {
+VkDescriptorSet getSceneDescriptorSet(uint32_t index) {
     VkDescriptorSet descriptorSet = allocateDescriptorSet(sceneDescriptorPool);
-    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, sharedBuffer.buffer, frameIndex * frameUniformStride, sizeof(SceneUniform));
+    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, sharedBuffer.buffer, index * frameUniformStride, sizeof(SceneUniform));
     return descriptorSet;
 }
 
-VkDescriptorSet getPrimitiveDescriptorSet(uint32_t frameIndex) {
+VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index) {
     VkDescriptorSet descriptorSet = allocateDescriptorSet(primitiveDescriptorPool);
-    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, sharedBuffer.buffer, frameIndex * frameUniformStride + sizeof(SceneUniform), physicalDeviceProperties.limits.maxUniformBufferRange);
+    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, sharedBuffer.buffer, index * frameUniformStride + sizeof(SceneUniform), physicalDeviceProperties.limits.maxUniformBufferRange);
     return descriptorSet;
 }
 
