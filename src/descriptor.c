@@ -163,3 +163,21 @@ void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
     debug("\tDescriptor created");
 }
+
+VkDescriptorSet getSceneDescriptorSet(uint32_t frameIndex) {
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(sceneDescriptorPool);
+    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, sharedBuffer.buffer, frameIndex * frameUniformStride, sizeof(SceneUniform));
+    return descriptorSet;
+}
+
+VkDescriptorSet getPrimitiveDescriptorSet(uint32_t frameIndex) {
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(primitiveDescriptorPool);
+    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, sharedBuffer.buffer, frameIndex * frameUniformStride + sizeof(SceneUniform), physicalDeviceProperties.limits.maxUniformBufferRange);
+    return descriptorSet;
+}
+
+VkDescriptorSet getMaterialDescriptorSet(Image *image) {
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(materialDescriptorPool);
+    makeImageDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2, sampler, image);
+    return descriptorSet;
+}

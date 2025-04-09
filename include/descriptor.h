@@ -23,4 +23,8 @@ extern VkDescriptorPool primitiveDescriptorPool;
 extern VkDescriptorPool materialDescriptorPool;
 
 void createDescriptorSetLayout();
-void createDescriptorPool(VkDescriptorType type, uint32_t count, VkDescriptorPool *outDescriptorPool);
+void createDescriptorPools();
+
+VkDescriptorSet getSceneDescriptorSet(uint32_t frameIndex);
+VkDescriptorSet getPrimitiveDescriptorSet(uint32_t frameIndex);
+VkDescriptorSet getMaterialDescriptorSet(Image *image);
