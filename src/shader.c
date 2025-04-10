@@ -1,7 +1,7 @@
 #include "shader.h"
 
 #include "device.h"
-#include "pipeline.h"
+#include "descriptor.h"
 
 #include "data.h"
 #include "file.h"
