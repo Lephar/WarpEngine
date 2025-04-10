@@ -6,7 +6,7 @@
 #include "buffer.h"
 #include "image.h"
 #include "pipeline.h"
-#include "content.h"
+#include "descriptor.h"
 
 #include "file.h"
 #include "logger.h"
@@ -110,45 +110,6 @@ Image *loadTexture(const char *path) {
     return texture;
 }
 
-VkDescriptorSet createMaterialDescriptorSet(Image *texture) {
-    VkDescriptorSet descriptorSet;
-
-    VkDescriptorSetAllocateInfo allocateInfo = {
-        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        .pNext = NULL,
-        .descriptorPool = materialDescriptorPool,
-        .descriptorSetCount = 1,
-        .pSetLayouts = &descriptorSetLayout
-    };
-
-    vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
-
-    VkDescriptorImageInfo imageInfo = {
-        .sampler = sampler,
-        .imageView = texture->view,
-        .imageLayout = texture->layout
-    };
-
-    VkWriteDescriptorSet descriptorWrite = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .pNext = NULL,
-        .dstSet = descriptorSet,
-        .dstBinding = 2,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-        .pImageInfo = &imageInfo,
-        .pBufferInfo = NULL,
-        .pTexelBufferView = NULL
-
-    };
-
-    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
-    debug("\tDescriptor created");
-
-    return descriptorSet;
-}
-
 void loadMaterial(Material *material, cgltf_material *materialData) {
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
@@ -158,7 +119,7 @@ void loadMaterial(Material *material, cgltf_material *materialData) {
     makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, textureFullPath);
 
     material->baseColor     = loadTexture(textureFullPath);
-    material->descriptorSet = createMaterialDescriptorSet(material->baseColor);
+    material->descriptorSet = getMaterialDescriptorSet(material->baseColor);
 }
 
 void destroyMaterial(Material *material) {
