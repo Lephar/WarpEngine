@@ -4,11 +4,13 @@
 #include "device.h"
 #include "buffer.h"
 #include "image.h"
+#include "material.h"
+
 #include "logger.h"
 
-VkSampler sampler;
-
 VkDescriptorSetLayout descriptorSetLayout;
+
+VkSampler sampler;
 
 VkDescriptorPool sceneDescriptorPool;
 VkDescriptorPool primitiveDescriptorPool;
@@ -16,7 +18,7 @@ VkDescriptorPool materialDescriptorPool;
 
 VkDeviceSize frameUniformStride;
 
-void createSampler(uint32_t mipLevelLimit, VkSampler *outSampler) {
+void createSampler() {
     VkSamplerCreateInfo samplerInfo = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
         .pNext = NULL,
@@ -33,12 +35,12 @@ void createSampler(uint32_t mipLevelLimit, VkSampler *outSampler) {
         .compareEnable = VK_FALSE,
         .compareOp = VK_COMPARE_OP_NEVER,
         .minLod = 0.0f,
-        .maxLod = mipLevelLimit,
+        .maxLod = floor(log2(textureSizeMaxDimensionLimit)) + 1,
         .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
         .unnormalizedCoordinates = VK_FALSE
     };
 
-    vkCreateSampler(device, &samplerInfo, NULL, outSampler);
+    vkCreateSampler(device, &samplerInfo, NULL, &sampler);
     debug("Texture sampler created");
 }
 

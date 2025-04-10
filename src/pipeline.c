@@ -29,18 +29,11 @@ void createPipeline() {
     createDescriptorSetLayout();
     createPipelineLayout();
 
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, &sceneDescriptorPool);
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, &primitiveDescriptorPool);
-    createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    &materialDescriptorPool);
+    createSampler();
 
-    const uint32_t mipLevelLimit = floor(log2(textureSizeMaxDimensionLimit)) + 1;
-    createSampler( mipLevelLimit, &sampler);
 }
 
 void destroyPipeline() {
-    vkDestroySampler(device, sampler, NULL);
-    debug("Texture sampler destroyed");
-
     vkDestroyDescriptorPool(device, materialDescriptorPool,  NULL);
     vkDestroyDescriptorPool(device, primitiveDescriptorPool, NULL);
     vkDestroyDescriptorPool(device, sceneDescriptorPool,     NULL);
@@ -51,4 +44,7 @@ void destroyPipeline() {
 
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, NULL);
     debug("Descriptor set layout destroyed");
+
+    vkDestroySampler(device, sampler, NULL);
+    debug("Texture sampler destroyed");
 }

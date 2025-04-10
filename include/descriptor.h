@@ -14,14 +14,15 @@ struct primitiveUniform {
     mat4 transform;
 } typedef PrimitiveUniform;
 
-extern VkSampler sampler;
-
 extern VkDescriptorSetLayout descriptorSetLayout;
+
+extern VkSampler sampler;
 
 extern VkDescriptorPool sceneDescriptorPool;
 extern VkDescriptorPool primitiveDescriptorPool;
 extern VkDescriptorPool materialDescriptorPool;
 
+void createSampler();
 void createDescriptorSetLayout();
 void createDescriptorPools();
 
