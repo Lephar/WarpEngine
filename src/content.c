@@ -1,5 +1,6 @@
 #include "content.h"
 
+#include "physicalDevice.h"
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
@@ -9,6 +10,7 @@
 
 #include "file.h"
 #include "logger.h"
+#include "numerics.h"
 
 uint32_t indexCount;
 uint32_t vertexCount;
@@ -69,7 +71,7 @@ void processAsset(cgltf_data *data) {
             continue;
         }
 
-        assert(materialCount < materialCountLimit);
+        assert(materialCount < primitiveCountLimit);
         Material *material = &materials[materialCount];
 
         loadMaterial(material, materialData);
@@ -108,6 +110,11 @@ void createContentBuffers() {
     vertexBufferSize  = 0;
     uniformBufferSize = 0;
 
+    sceneUniformAlignment     = align(sizeof(SceneUniform),     physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    primitiveUniformAlignment = align(sizeof(PrimitiveUniform), physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    dynamicUniformBufferRange = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), primitiveUniformAlignment);
+    framebufferUniformStride  = sceneUniformAlignment + dynamicUniformBufferRange;
+    primitiveCountLimit       = dynamicUniformBufferRange / primitiveUniformAlignment;
 
     const VkDeviceSize indexBufferSizeLimit   = deviceMemory.size / 2;
     const VkDeviceSize vertexBufferSizeLimit  = deviceMemory.size / 2;
@@ -124,7 +131,7 @@ void createContentBuffers() {
     materialCount  = 0;
     primitiveCount = 0;
 
-    materials  = malloc(materialCountLimit  * sizeof(Material ));
+    materials  = malloc(primitiveCountLimit * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
     debug("Content buffers created");

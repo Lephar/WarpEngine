@@ -4,7 +4,7 @@
 #include "device.h"
 #include "buffer.h"
 #include "image.h"
-#include "material.h"
+#include "content.h"
 
 #include "logger.h"
 
@@ -33,7 +33,7 @@ void createSampler() {
         .compareEnable = VK_FALSE,
         .compareOp = VK_COMPARE_OP_NEVER,
         .minLod = 0.0f,
-        .maxLod = floor(log2(textureSizeMaxDimensionLimit)) + 1,
+        .maxLod = floor(log2(physicalDeviceProperties.limits.maxImageDimension2D)) + 1,
         .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
         .unnormalizedCoordinates = VK_FALSE
     };
@@ -166,13 +166,13 @@ void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type
 
 VkDescriptorSet getSceneDescriptorSet(uint32_t index) {
     VkDescriptorSet descriptorSet = allocateDescriptorSet(sceneDescriptorPool);
-    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, sharedBuffer.buffer, index * frameUniformStride, sizeof(SceneUniform));
+    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, sharedBuffer.buffer, index * framebufferUniformStride, sceneUniformAlignment);
     return descriptorSet;
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index) {
     VkDescriptorSet descriptorSet = allocateDescriptorSet(primitiveDescriptorPool);
-    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, sharedBuffer.buffer, index * frameUniformStride + sizeof(SceneUniform), physicalDeviceProperties.limits.maxUniformBufferRange);
+    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, sharedBuffer.buffer, index * framebufferUniformStride + sceneUniformAlignment, dynamicUniformBufferRange);
     return descriptorSet;
 }
 

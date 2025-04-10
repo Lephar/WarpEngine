@@ -9,7 +9,6 @@
 
 #include "logger.h"
 
-const uint32_t primitiveCountLimit = 128;
 uint32_t primitiveCount;
 Primitive *primitives;
 

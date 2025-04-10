@@ -5,14 +5,13 @@
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
+#include "content.h"
 #include "pipeline.h"
 #include "descriptor.h"
 
 #include "file.h"
 #include "logger.h"
 
-const uint32_t textureSizeMaxDimensionLimit = 8192;
-const uint32_t materialCountLimit = 128;
 uint32_t materialCount;
 Material *materials;
 
@@ -66,7 +65,7 @@ Image *loadTexture(const char *path) {
     debug("\tDepth:  %u", depth);
     debug("\tMips:   %u", mips);
 
-    assert(width <= textureSizeMaxDimensionLimit && height <= textureSizeMaxDimensionLimit);
+    assert(width <= physicalDeviceProperties.limits.maxImageDimension2D && height <= physicalDeviceProperties.limits.maxImageDimension2D);
 
     Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
     bindImageMemory(texture, &deviceMemory);
@@ -124,5 +123,5 @@ void loadMaterial(Material *material, cgltf_material *materialData) {
 
 void destroyMaterial(Material *material) {
     destroyImageView(material->baseColor);
-    destroyImage    (material->baseColor);
+    destroyImage(material->baseColor);
 }

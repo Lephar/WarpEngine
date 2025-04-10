@@ -1,21 +1,13 @@
 #include "pipeline.h"
 
-#include "physicalDevice.h"
 #include "device.h"
-#include "material.h"
-#include "primitive.h"
-#include "framebuffer.h"
+#include "content.h"
 #include "descriptor.h"
+#include "framebuffer.h"
 
-#include "numerics.h"
 #include "logger.h"
 
 VkPipelineLayout pipelineLayout;
-
-VkDeviceSize sceneUniformAlignment;
-VkDeviceSize primitiveUniformAlignment;
-VkDeviceSize dynamicUniformBufferRange;
-VkDeviceSize framebufferUniformStride;
 
 void createPipelineLayout() {
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
@@ -33,11 +25,6 @@ void createPipelineLayout() {
 }
 
 void createPipeline() {
-    sceneUniformAlignment     = align(sizeof(SceneUniform),     physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    primitiveUniformAlignment = align(sizeof(PrimitiveUniform), physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    dynamicUniformBufferRange = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), primitiveUniformAlignment);
-    framebufferUniformStride  = sceneUniformAlignment + dynamicUniformBufferRange;
-
     createDescriptorSetLayout();
     createPipelineLayout();
 
@@ -45,7 +32,7 @@ void createPipeline() {
 
     sceneDescriptorPool     = createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit);
     primitiveDescriptorPool = createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit);
-    materialDescriptorPool  = createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit);
+    materialDescriptorPool  = createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit);
 }
 
 void destroyPipeline() {

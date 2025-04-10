@@ -12,7 +12,6 @@ struct primitive {
     VkDeviceSize uniformOffset;
 } typedef Primitive;
 
-extern const uint32_t primitiveCountLimit;
 extern uint32_t primitiveCount;
 extern Primitive *primitives;
 
