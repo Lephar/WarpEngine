@@ -19,8 +19,8 @@
 
 // END OF NOTICE
 
-uint64_t align(uint64_t value, uint64_t alignment) {
-    return (value + alignment - 1) / alignment * alignment;
+float radians(float degrees) {
+    return M_PI * degrees / 180.0f;
 }
 
 int32_t compareFloat(float first, float second) {
@@ -29,8 +29,12 @@ int32_t compareFloat(float first, float second) {
     return (difference > EPSILON) - (difference < -EPSILON);
 }
 
-float radians(float degrees) {
-    return M_PI * degrees / 180.0f;
+uint64_t align(uint64_t value, uint64_t alignment) {
+    return (value + alignment - 1) / alignment * alignment;
+}
+
+uint64_t alignBack(uint64_t value, uint64_t alignment) {
+    return value / alignment * alignment;
 }
 
 int8_t bmin(int8_t first, int8_t second) {
