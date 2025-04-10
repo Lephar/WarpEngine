@@ -24,7 +24,8 @@ extern VkDescriptorPool materialDescriptorPool;
 
 void createSampler();
 void createDescriptorSetLayout();
-void createDescriptorPools();
+
+VkDescriptorPool createDescriptorPool(VkDescriptorType type, uint32_t count);
 
 VkDescriptorSet getSceneDescriptorSet(uint32_t index);
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index);
