@@ -16,8 +16,6 @@ VkDescriptorPool sceneDescriptorPool;
 VkDescriptorPool primitiveDescriptorPool;
 VkDescriptorPool materialDescriptorPool;
 
-VkDeviceSize frameUniformStride;
-
 void createSampler() {
     VkSamplerCreateInfo samplerInfo = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
