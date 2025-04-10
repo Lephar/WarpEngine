@@ -9,6 +9,15 @@ struct vertex {
     vec2 texcoord;
 } typedef Vertex;
 
+struct sceneUniform {
+    mat4 anchor;
+    mat4 camera;
+} typedef SceneUniform;
+
+struct primitiveUniform {
+    mat4 transform;
+} typedef PrimitiveUniform;
+
 extern uint64_t indexCount;
 extern uint64_t vertexCount;
 
