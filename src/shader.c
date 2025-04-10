@@ -115,8 +115,8 @@ void createModules() {
     assert(shaderCompileOptions);
 
     shaderc_compile_options_set_source_language(shaderCompileOptions, shaderc_source_language_glsl);
-    shaderc_compile_options_set_target_env(shaderCompileOptions, shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_4);
-    shaderc_compile_options_set_target_spirv(shaderCompileOptions, shaderc_spirv_version_1_6);
+    shaderc_compile_options_set_target_env(     shaderCompileOptions, shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_4);
+    shaderc_compile_options_set_target_spirv(   shaderCompileOptions, shaderc_spirv_version_1_6);
 #if DEBUG
     shaderc_compile_options_set_generate_debug_info(shaderCompileOptions);
 #else
@@ -125,11 +125,30 @@ void createModules() {
 
     debug("Shader compiler created and compile options set");
 
-    skyboxShaderModule   = makeShaderModule("skybox.vert",       false,  shaderc_vertex_shader);
-    vertexShaderModule   = makeShaderModule("vertex.vert",       false,  shaderc_vertex_shader);
-    fragmentShaderModule = makeShaderModule("fragment.frag.spv", true, shaderc_fragment_shader);
+    skyboxShaderModule   = makeShaderModule("skybox.vert",       false, shaderc_vertex_shader);
+    vertexShaderModule   = makeShaderModule("vertex.vert",       false, shaderc_vertex_shader);
+    fragmentShaderModule = makeShaderModule("fragment.frag.spv", true,  shaderc_fragment_shader);
 
     debug("Shader modules created");
+}
+
+void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertexShader, ShaderModule *fragmentShader) {
+    assert(vertexShader->stage == VK_SHADER_STAGE_VERTEX_BIT && fragmentShader->stage == VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    VkShaderStageFlags stages[] = {
+        VK_SHADER_STAGE_VERTEX_BIT,
+        VK_SHADER_STAGE_FRAGMENT_BIT
+    };
+
+    VkShaderEXT modules[] = {
+        vertexShader->module,
+        fragmentShader->module
+    };
+
+    uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
+
+    PFN_vkCmdBindShadersEXT cmdBindShaders = loadDeviceFunction("vkCmdBindShadersEXT");
+    cmdBindShaders(commandBuffer, stageCount, stages, modules);
 }
 
 void destroyModules() {
