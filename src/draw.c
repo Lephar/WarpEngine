@@ -25,210 +25,27 @@ void render() {
     uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
-    VkCommandBufferBeginInfo beginInfo = {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .pNext = NULL,
-        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-        .pInheritanceInfo = NULL
-    };
+    waitFramebuffer(framebuffer);
 
-    VkRenderingAttachmentInfo depthStencilAttachmentInfo = {
-        .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-        .pNext = NULL,
-        .imageView = framebuffer->depthStencil->view,
-        .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-        .resolveMode = VK_RESOLVE_MODE_NONE,
-        .resolveImageView = VK_NULL_HANDLE,
-        .resolveImageLayout = 0,
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        .clearValue = {
-            .depthStencil = {
-                .depth = 1.0f,
-                .stencil = 0
-            }
-        }
-    };
+    beginFramebuffer(framebuffer);
+    bindFramebuffer(framebuffer);
 
-    VkRenderingAttachmentInfo colorAttachmentInfo = {
-        .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-        .pNext = NULL,
-        .imageView = framebuffer->color->view,
-        .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        .resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT,
-        .resolveImageView = framebuffer->resolve->view,
-        .resolveImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-        .clearValue = {
-            .color = {
-                .float32 = {
-                    0.0f,
-                    0.0f,
-                    0.0f,
-                    0.0f
-                },
-            }
-        }
-    };
+    bindContentBuffers(framebuffer->renderCommandBuffer);
+    bindPipeline(framebuffer->renderCommandBuffer);
 
-    VkRenderingInfo renderingInfo = {
-        .sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
-        .pNext = NULL,
-        .flags = 0,
-        .renderArea = {
-            .offset = {
-                .x = 0,
-                .y = 0,
-            },
-            .extent = extent
-        },
-        .layerCount = 1,
-        .viewMask = 0,
-        .colorAttachmentCount = 1,
-        .pColorAttachments = &colorAttachmentInfo,
-        .pDepthAttachment = &depthStencilAttachmentInfo,
-        .pStencilAttachment = &depthStencilAttachmentInfo
-    };
-
-    VkSampleMask sampleMask = 0xFF;
-
-    VkBool32 colorBlend = VK_FALSE;
-
-    VkColorComponentFlags colorWriteMask =
-        VK_COLOR_COMPONENT_A_BIT |
-        VK_COLOR_COMPONENT_R_BIT |
-        VK_COLOR_COMPONENT_G_BIT |
-        VK_COLOR_COMPONENT_B_BIT ;
-
-    VkViewport viewport = {
-        .x = 0.0f,
-        .y = (float) extent.height,
-        .width = (float) extent.width,
-        .height = - (float) extent.height,
-        .minDepth = 0.0f,
-        .maxDepth = 1.0f
-    };
-
-    VkRect2D scissor = {
-        .offset = {
-            .x = 0,
-            .y = 0
-        },
-        .extent = extent
-    };
-
-    VkVertexInputBindingDescription2EXT vertexBinding = {
-        .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
-        .pNext = NULL,
-        .binding = 0,
-        .stride = sizeof(Vertex),
-        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
-        .divisor = 1
-    };
-
-    VkVertexInputAttributeDescription2EXT vertexAttributes[] = {
-        {
-            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = NULL,
-            .location = 0,
-            .binding = 0,
-            .format = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset = 0
-        }, {
-            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = NULL,
-            .location = 1,
-            .binding = 0,
-            .format = VK_FORMAT_R32G32_SFLOAT,
-            .offset = sizeof(vec3)
-        }
-    };
-
-    uint32_t vertexAttributeCount = sizeof(vertexAttributes) / sizeof(VkVertexInputAttributeDescription2EXT);
-
-    VkShaderStageFlags stages[] = {
-          vertexShaderModule.stage,
-        fragmentShaderModule.stage
-    };
-
-    VkShaderEXT skyboxShaders[] = {
-          skyboxShaderModule.module,
-        fragmentShaderModule.module
-    };
-
-    VkShaderEXT pipelineShaders[] = {
-          vertexShaderModule.module,
-        fragmentShaderModule.module
-    };
-
-    uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
-
-    vkWaitForFences(device, 1, &framebuffer->drawFence, VK_TRUE, UINT64_MAX);
-    vkResetFences(device, 1, &framebuffer->drawFence);
-
-    vkBeginCommandBuffer(framebuffer->renderCommandBuffer, &beginInfo);
-    vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
-
-    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
-
-    vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-
-    vkCmdSetCullMode(framebuffer->renderCommandBuffer, VK_CULL_MODE_BACK_BIT);
-    vkCmdSetFrontFace(framebuffer->renderCommandBuffer, VK_FRONT_FACE_COUNTER_CLOCKWISE);
-
-    vkCmdSetDepthTestEnable(framebuffer->renderCommandBuffer, VK_TRUE);
-    vkCmdSetDepthWriteEnable(framebuffer->renderCommandBuffer, VK_TRUE);
-    vkCmdSetDepthBiasEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-    vkCmdSetDepthCompareOp(framebuffer->renderCommandBuffer, VK_COMPARE_OP_LESS);
-
-    vkCmdSetStencilTestEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-
-    vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-    PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadDeviceFunction("vkCmdSetPolygonModeEXT");
-    cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
-    //cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_LINE);
-    //vkCmdSetLineWidth(framebuffer->renderCommandBuffer, 1.0f);
-
-    PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadDeviceFunction("vkCmdSetRasterizationSamplesEXT");
-    cmdSetRasterizationSamples(framebuffer->renderCommandBuffer, framebufferSet.sampleCount);
-    PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadDeviceFunction("vkCmdSetSampleMaskEXT");
-    cmdSetSampleMask(framebuffer->renderCommandBuffer, framebufferSet.sampleCount, &sampleMask);
-
-    PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadDeviceFunction("vkCmdSetAlphaToOneEnableEXT");
-    cmdSetAlphaToOneEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-    PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadDeviceFunction("vkCmdSetAlphaToCoverageEnableEXT");
-    cmdSetAlphaToCoverageEnable(framebuffer->renderCommandBuffer, VK_FALSE);
-
-    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
-    cmdSetColorBlendEnable(framebuffer->renderCommandBuffer, 0, 1, &colorBlend);
-    PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadDeviceFunction("vkCmdSetColorWriteMaskEXT");
-    cmdSetColorWriteMask(framebuffer->renderCommandBuffer, 0, 1, &colorWriteMask);
-
-    vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
-    vkCmdSetScissorWithCount(framebuffer->renderCommandBuffer, 1, &scissor);
-
-    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
-    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
-
-    PFN_vkCmdBindShadersEXT cmdBindShaders = loadDeviceFunction("vkCmdBindShadersEXT");
-
-    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, skyboxShaders);
+    bindShaders(framebuffer->renderCommandBuffer, &skyboxShaderModule, &fragmentShaderModule);
 
     vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[0].material->descriptorSet, 0, NULL);
     vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[0].indexCount, 1, primitives[0].indexBegin, primitives[0].vertexOffset, 0);
 
-    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, pipelineShaders);
+    bindShaders(framebuffer->renderCommandBuffer, &vertexShaderModule, &fragmentShaderModule);
 
     for(uint32_t primitiveIndex = 1; primitiveIndex < primitiveCount; primitiveIndex++) {
         vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[primitiveIndex].material->descriptorSet, 0, NULL);
         vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[primitiveIndex].indexCount, 1, primitives[primitiveIndex].indexBegin, primitives[primitiveIndex].vertexOffset, 0);
     }
 
-    vkCmdEndRendering(framebuffer->renderCommandBuffer);
-    vkEndCommandBuffer(framebuffer->renderCommandBuffer);
+   endFramebuffer(framebuffer);
 
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 

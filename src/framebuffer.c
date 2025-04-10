@@ -95,6 +95,109 @@ void createFramebufferSet() {
     }
 }
 
+void waitFramebuffer(Framebuffer *framebuffer) {
+    vkWaitForFences(device, 1, &framebuffer->drawFence, VK_TRUE, UINT64_MAX);
+    vkResetFences(  device, 1, &framebuffer->drawFence);
+}
+
+void beginFramebuffer(Framebuffer *framebuffer) {
+    VkCommandBufferBeginInfo beginInfo = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        .pNext = NULL,
+        .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+        .pInheritanceInfo = NULL
+    };
+
+    VkRenderingAttachmentInfo depthStencilAttachmentInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+        .pNext = NULL,
+        .imageView = framebuffer->depthStencil->view,
+        .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+        .resolveMode = VK_RESOLVE_MODE_NONE,
+        .resolveImageView = VK_NULL_HANDLE,
+        .resolveImageLayout = 0,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .clearValue = {
+            .depthStencil = {
+                .depth = 1.0f,
+                .stencil = 0
+            }
+        }
+    };
+
+    VkRenderingAttachmentInfo colorAttachmentInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+        .pNext = NULL,
+        .imageView = framebuffer->color->view,
+        .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        .resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT,
+        .resolveImageView = framebuffer->resolve->view,
+        .resolveImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .clearValue = {
+            .color = {
+                .float32 = {
+                    0.0f,
+                    0.0f,
+                    0.0f,
+                    0.0f
+                },
+            }
+        }
+    };
+
+    VkRenderingInfo renderingInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .renderArea = {
+            .offset = {
+                .x = 0,
+                .y = 0,
+            },
+            .extent = extent
+        },
+        .layerCount = 1,
+        .viewMask = 0,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentInfo,
+        .pDepthAttachment = &depthStencilAttachmentInfo,
+        .pStencilAttachment = &depthStencilAttachmentInfo
+    };
+
+    vkBeginCommandBuffer(framebuffer->renderCommandBuffer, &beginInfo);
+    vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
+}
+
+void bindFramebuffer(Framebuffer *framebuffer) {
+    VkViewport viewport = {
+        .x = 0.0f,
+        .y = (float) extent.height,
+        .width = (float) extent.width,
+        .height = - (float) extent.height,
+        .minDepth = 0.0f,
+        .maxDepth = 1.0f
+    };
+
+    VkRect2D scissor = {
+        .offset = {
+            .x = 0,
+            .y = 0
+        },
+        .extent = extent
+    };
+
+    vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
+    vkCmdSetScissorWithCount( framebuffer->renderCommandBuffer, 1, &scissor);
+}
+
+void endFramebuffer(Framebuffer *framebuffer) {
+    vkCmdEndRendering( framebuffer->renderCommandBuffer);
+    vkEndCommandBuffer(framebuffer->renderCommandBuffer);
+}
+
 void destroyFramebuffer(Framebuffer *framebuffer) {
     vkDestroyFence(device, framebuffer->drawFence, NULL);
     vkDestroyFence(device, framebuffer->blitFence, NULL);
