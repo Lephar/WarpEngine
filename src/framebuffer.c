@@ -119,6 +119,9 @@ void destroyFramebufferSet() {
         debug("Framebuffer %d destroyed", framebufferIndex);
     }
 
+    vkResetDescriptorPool(device, primitiveDescriptorPool, 0);
+    vkResetDescriptorPool(device, sceneDescriptorPool,     0);
+
     free(framebufferSet.framebuffers);
 
     deviceMemory.offset = deviceMemory.reusableMemoryOffset;
