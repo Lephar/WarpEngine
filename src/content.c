@@ -1,6 +1,7 @@
 #include "content.h"
 
 #include "physicalDevice.h"
+#include "device.h"
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
@@ -172,9 +173,7 @@ void loadContent() {
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
 
     debug("Index and vertex data copied into device memory");
-}
 
-void destroyContentBuffers() {
     free(uniformBuffer);
     free(vertexBuffer);
     free(indexBuffer);
@@ -182,6 +181,43 @@ void destroyContentBuffers() {
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     debug("Shared memory cleared and set for uniform buffer usage");
+}
+
+void bindContentBuffers(VkCommandBuffer commandBuffer) {
+    VkVertexInputBindingDescription2EXT vertexBinding = {
+        .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
+        .pNext = NULL,
+        .binding = 0,
+        .stride = sizeof(Vertex),
+        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+        .divisor = 1
+    };
+
+    VkVertexInputAttributeDescription2EXT vertexAttributes[] = {
+        {
+            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+            .pNext = NULL,
+            .location = 0,
+            .binding = 0,
+            .format = VK_FORMAT_R32G32B32_SFLOAT,
+            .offset = 0
+        }, {
+            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+            .pNext = NULL,
+            .location = 1,
+            .binding = 0,
+            .format = VK_FORMAT_R32G32_SFLOAT,
+            .offset = sizeof(vec3)
+        }
+    };
+
+    uint32_t vertexAttributeCount = sizeof(vertexAttributes) / sizeof(VkVertexInputAttributeDescription2EXT);
+
+    vkCmdBindIndexBuffer(commandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+    vkCmdBindVertexBuffers(commandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
+
+    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
+    cmdSetVertexInput(commandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
 }
 
 void freeContent() {

@@ -38,5 +38,5 @@ extern void   *uniformBuffer;
 
 void createContentBuffers();
 void loadContent();
-void destroyContentBuffers();
+void bindContentBuffers(VkCommandBuffer commandBuffer);
 void freeContent();
