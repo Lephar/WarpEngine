@@ -10,8 +10,6 @@ struct material {
     VkDescriptorSet descriptorSet;
 } typedef Material;
 
-extern const uint32_t textureSizeMaxDimensionLimit;
-extern const uint32_t materialCountLimit;
 extern uint32_t materialCount;
 extern Material *materials;
 

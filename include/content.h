@@ -18,12 +18,19 @@ struct primitiveUniform {
     mat4 transform;
 } typedef PrimitiveUniform;
 
-extern uint64_t indexCount;
-extern uint64_t vertexCount;
+extern uint32_t indexCount;
+extern uint32_t vertexCount;
 
-extern uint64_t indexBufferSize;
-extern uint64_t vertexBufferSize;
-extern uint64_t uniformBufferSize;
+extern VkDeviceSize indexBufferSize;
+extern VkDeviceSize vertexBufferSize;
+extern VkDeviceSize uniformBufferSize;
+
+extern VkDeviceSize sceneUniformAlignment;
+extern VkDeviceSize primitiveUniformAlignment;
+extern VkDeviceSize dynamicUniformBufferRange;
+extern VkDeviceSize framebufferUniformStride;
+
+extern uint32_t primitiveCountLimit;
 
 extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;

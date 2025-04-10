@@ -10,12 +10,19 @@
 #include "file.h"
 #include "logger.h"
 
-uint64_t indexCount;
-uint64_t vertexCount;
+uint32_t indexCount;
+uint32_t vertexCount;
 
-uint64_t indexBufferSize;
-uint64_t vertexBufferSize;
-uint64_t uniformBufferSize;
+VkDeviceSize indexBufferSize;
+VkDeviceSize vertexBufferSize;
+VkDeviceSize uniformBufferSize;
+
+VkDeviceSize sceneUniformAlignment;
+VkDeviceSize primitiveUniformAlignment;
+VkDeviceSize dynamicUniformBufferRange;
+VkDeviceSize framebufferUniformStride;
+
+uint32_t primitiveCountLimit;
 
 Index  *indexBuffer;
 Vertex *vertexBuffer;
@@ -101,9 +108,10 @@ void createContentBuffers() {
     vertexBufferSize  = 0;
     uniformBufferSize = 0;
 
-    const uint64_t indexBufferSizeLimit   = deviceMemory.size / 2;
-    const uint64_t vertexBufferSizeLimit  = deviceMemory.size / 2;
-    const uint64_t uniformBufferSizeLimit = sharedMemory.size;
+
+    const VkDeviceSize indexBufferSizeLimit   = deviceMemory.size / 2;
+    const VkDeviceSize vertexBufferSizeLimit  = deviceMemory.size / 2;
+    const VkDeviceSize uniformBufferSizeLimit = sharedMemory.size;
 
     indexBuffer   = malloc(indexBufferSizeLimit);
     vertexBuffer  = malloc(vertexBufferSizeLimit);
