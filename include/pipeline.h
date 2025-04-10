@@ -5,4 +5,5 @@
 extern VkPipelineLayout pipelineLayout;
 
 void createPipeline();
+void bindPipeline(VkCommandBuffer commandBuffer);
 void destroyPipeline();
