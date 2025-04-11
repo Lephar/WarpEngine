@@ -200,14 +200,14 @@ void bindContentBuffers(VkCommandBuffer commandBuffer) {
             .location = 0,
             .binding = 0,
             .format = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset = 0
+            .offset = offsetof(Vertex, position)
         }, {
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
             .pNext = NULL,
             .location = 1,
             .binding = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
-            .offset = sizeof(vec3)
+            .offset = offsetof(Vertex, texcoord)
         }
     };
 
