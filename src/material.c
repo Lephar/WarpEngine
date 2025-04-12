@@ -121,6 +121,11 @@ void loadMaterial(Material *material, cgltf_material *materialData) {
     material->descriptorSet = getMaterialDescriptorSet(material->baseColor);
 }
 
+// NOTICE: This doesn't account for shader binding, use bindShader() beforehand
+void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &material->descriptorSet, 0, NULL);
+}
+
 void destroyMaterial(Material *material) {
     destroyImageView(material->baseColor);
     destroyImage(material->baseColor);

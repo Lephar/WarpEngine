@@ -15,4 +15,5 @@ extern Material *materials;
 
 uint32_t findMaterial(cgltf_material *materialData);
 void loadMaterial(Material *material, cgltf_material *materialData);
+void bindMaterial(VkCommandBuffer commandBuffer, Material *material);
 void destroyMaterial(Material *material);
