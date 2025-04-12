@@ -6,10 +6,10 @@ typedef struct material Material;
 
 struct primitive {
     Material *material;
-    VkDeviceSize indexBegin;
-    VkDeviceSize indexCount;
-    VkDeviceSize vertexOffset;
-    VkDeviceSize uniformOffset;
+    uint32_t indexBegin;
+    uint32_t indexCount;
+    int32_t  vertexOffset;
+    uint32_t uniformOffset;
 } typedef Primitive;
 
 extern uint32_t primitiveCount;
