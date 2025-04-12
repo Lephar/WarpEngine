@@ -1,6 +1,5 @@
 #include "content.h"
 
-#include "physicalDevice.h"
 #include "device.h"
 #include "memory.h"
 #include "buffer.h"
@@ -11,7 +10,6 @@
 
 #include "file.h"
 #include "logger.h"
-#include "numerics.h"
 
 uint32_t indexCount;
 uint32_t vertexCount;
@@ -110,12 +108,6 @@ void createContentBuffers() {
     indexBufferSize   = 0;
     vertexBufferSize  = 0;
     uniformBufferSize = 0;
-
-    sceneUniformAlignment     = align(sizeof(SceneUniform),     physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    primitiveUniformAlignment = align(sizeof(PrimitiveUniform), physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    dynamicUniformBufferRange = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), primitiveUniformAlignment);
-    framebufferUniformStride  = sceneUniformAlignment + dynamicUniformBufferRange;
-    primitiveCountLimit       = dynamicUniformBufferRange / primitiveUniformAlignment;
 
     const VkDeviceSize indexBufferSizeLimit   = deviceMemory.size / 2;
     const VkDeviceSize vertexBufferSizeLimit  = deviceMemory.size / 2;

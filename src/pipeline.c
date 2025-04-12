@@ -1,11 +1,13 @@
 #include "pipeline.h"
 
+#include "physicalDevice.h"
 #include "device.h"
 #include "content.h"
 #include "descriptor.h"
 #include "framebuffer.h"
 
 #include "logger.h"
+#include "numerics.h"
 
 VkPipelineLayout pipelineLayout;
 
@@ -25,6 +27,12 @@ void createPipelineLayout() {
 }
 
 void createPipeline() {
+    sceneUniformAlignment     = align(sizeof(SceneUniform),     physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    primitiveUniformAlignment = align(sizeof(PrimitiveUniform), physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    dynamicUniformBufferRange = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), primitiveUniformAlignment);
+    framebufferUniformStride  = sceneUniformAlignment + dynamicUniformBufferRange;
+    primitiveCountLimit       = dynamicUniformBufferRange / primitiveUniformAlignment;
+
     createDescriptorSetLayout();
     createPipelineLayout();
 
