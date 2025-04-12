@@ -16,3 +16,4 @@ extern uint32_t primitiveCount;
 extern Primitive *primitives;
 
 void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 transform);
+void drawPrimitive(VkCommandBuffer commandBuffer, VkDescriptorSet descriptorSet, Primitive *primitive);
