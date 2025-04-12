@@ -76,3 +76,7 @@ void loadSkybox(cgltf_data *data) {
 
     loadPrimitive(&skybox, primitiveData, transform);
 }
+
+void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &sceneDescriptorSet, 0, NULL);
+}
