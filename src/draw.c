@@ -11,6 +11,7 @@
 #include "content.h"
 #include "shader.h"
 #include "material.h"
+#include "meta.h"
 #include "primitive.h"
 
 #include "logger.h"
@@ -35,17 +36,28 @@ void render() {
 
     bindShaders(framebuffer->renderCommandBuffer, &skyboxShaderModule, &fragmentShaderModule);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[0].material->descriptorSet, 0, NULL);
-    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[0].indexCount, 1, primitives[0].indexBegin, primitives[0].vertexOffset, 0);
+    bindScene(framebuffer->renderCommandBuffer, framebuffer->sceneDescriptorSet);
+
+    bindMaterial(framebuffer->renderCommandBuffer, skybox->material);
+    drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, &skybox);
 
     bindShaders(framebuffer->renderCommandBuffer, &vertexShaderModule, &fragmentShaderModule);
 
-    for(uint32_t primitiveIndex = 1; primitiveIndex < primitiveCount; primitiveIndex++) {
-        vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &primitives[primitiveIndex].material->descriptorSet, 0, NULL);
-        vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitives[primitiveIndex].indexCount, 1, primitives[primitiveIndex].indexBegin, primitives[primitiveIndex].vertexOffset, 0);
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        Material *material = &materials[materialIndex];
+
+        bindMaterial(framebuffer->renderCommandBuffer, material);
+
+        for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
+            Primitive *primitive = &primitives[primitiveIndex];
+
+            if(primitive->material == material) {
+                drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, primitive);
+            }
+        }
     }
 
-   endFramebuffer(framebuffer);
+    endFramebuffer(framebuffer);
 
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
