@@ -49,9 +49,9 @@ void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDe
     VkDescriptorSetLayoutBinding layoutBinding = {
         .binding = binding,
         .descriptorType = type,
-            .descriptorCount = 1,
+        .descriptorCount = 1,
         .stageFlags = stage,
-            .pImmutableSamplers = NULL
+        .pImmutableSamplers = NULL
     };
 
     VkDescriptorSetLayoutCreateInfo layoutInfo = {
@@ -83,15 +83,15 @@ void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDe
     debug("Descriptor pool created");
 }
 
-VkDescriptorSet allocateDescriptorSet(VkDescriptorPool descriptorPool) {
+VkDescriptorSet allocateDescriptorSet(DescriptorPool *descriptorPool) {
     VkDescriptorSet descriptorSet;
 
     VkDescriptorSetAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         .pNext = NULL,
-        .descriptorPool = descriptorPool,
+        .descriptorPool = descriptorPool->pool,
         .descriptorSetCount = 1,
-        .pSetLayouts = &descriptorSetLayout
+        .pSetLayouts = &descriptorPool->layout
     };
 
     vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
@@ -147,19 +147,19 @@ void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type
 }
 
 VkDescriptorSet getSceneDescriptorSet(uint32_t index) {
-    VkDescriptorSet descriptorSet = allocateDescriptorSet(sceneDescriptorPool);
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(&sceneDescriptorPool);
     makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, sharedBuffer.buffer, index * framebufferUniformStride, sceneUniformAlignment);
     return descriptorSet;
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index) {
-    VkDescriptorSet descriptorSet = allocateDescriptorSet(primitiveDescriptorPool);
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(&primitiveDescriptorPool);
     makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, sharedBuffer.buffer, index * framebufferUniformStride + sceneUniformAlignment, dynamicUniformBufferRange);
     return descriptorSet;
 }
 
 VkDescriptorSet getMaterialDescriptorSet(Image *image) {
-    VkDescriptorSet descriptorSet = allocateDescriptorSet(materialDescriptorPool);
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(&materialDescriptorPool);
     makeImageDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2, sampler, image);
     return descriptorSet;
 }
