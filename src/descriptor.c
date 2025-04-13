@@ -8,13 +8,11 @@
 
 #include "logger.h"
 
-VkDescriptorSetLayout descriptorSetLayout;
-
 VkSampler sampler;
 
-VkDescriptorPool sceneDescriptorPool;
-VkDescriptorPool primitiveDescriptorPool;
-VkDescriptorPool materialDescriptorPool;
+DescriptorPool sceneDescriptorPool;
+DescriptorPool primitiveDescriptorPool;
+DescriptorPool materialDescriptorPool;
 
 void createSampler() {
     VkSamplerCreateInfo samplerInfo = {
@@ -42,44 +40,31 @@ void createSampler() {
     debug("Texture sampler created");
 }
 
-void createDescriptorSetLayout() {
-    VkDescriptorSetLayoutBinding layoutBindings[] = {
-        {
-            .binding = 0,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
+    descriptorPool->binding = binding;
+    descriptorPool->type    = type;
+    descriptorPool->count   = count;
+    descriptorPool->stage   = stage;
+
+    VkDescriptorSetLayoutBinding layoutBinding = {
+        .binding = binding,
+        .descriptorType = type,
             .descriptorCount = 1,
-            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+        .stageFlags = stage,
             .pImmutableSamplers = NULL
-        },
-        {
-            .binding = 1,
-            .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-            .descriptorCount = 1,
-            .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-            .pImmutableSamplers = NULL
-        },
-        {
-            .binding = 2,
-            .descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = 1,
-            .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .pImmutableSamplers = NULL
-        }
     };
 
     VkDescriptorSetLayoutCreateInfo layoutInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .bindingCount = sizeof(layoutBindings) / sizeof(VkDescriptorSetLayoutBinding),
-        .pBindings = layoutBindings
+        .bindingCount = 1,
+        .pBindings = &layoutBinding
     };
 
-    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorSetLayout);
+    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
     debug("Descriptor set layout created");
-}
 
-VkDescriptorPool createDescriptorPool(VkDescriptorType type, uint32_t count) {
     VkDescriptorPoolSize poolSize = {
         .type = type,
         .descriptorCount = 1
@@ -94,11 +79,8 @@ VkDescriptorPool createDescriptorPool(VkDescriptorType type, uint32_t count) {
         .pPoolSizes = &poolSize
     };
 
-    VkDescriptorPool descriptorPool;
-    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool);
+    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
     debug("Descriptor pool created");
-
-    return descriptorPool;
 }
 
 VkDescriptorSet allocateDescriptorSet(VkDescriptorPool descriptorPool) {

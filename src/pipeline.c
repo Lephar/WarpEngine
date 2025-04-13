@@ -12,12 +12,18 @@
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
+    VkDescriptorSetLayout descriptorSetLayouts[] = {
+        sceneDescriptorPool.layout,
+        primitiveDescriptorPool.layout,
+        materialDescriptorPool.layout
+    };
+
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .setLayoutCount = 1,
-        .pSetLayouts = &descriptorSetLayout,
+        .setLayoutCount = sizeof(descriptorSetLayouts) / sizeof(VkDescriptorSetLayout),
+        .pSetLayouts = descriptorSetLayouts,
         .pushConstantRangeCount = 0,
         .pPushConstantRanges = NULL
     };
@@ -33,14 +39,13 @@ void createPipeline() {
     framebufferUniformStride  = sceneUniformAlignment + dynamicUniformBufferRange;
     primitiveCountLimit       = dynamicUniformBufferRange / primitiveUniformAlignment;
 
-    createDescriptorSetLayout();
-    createPipelineLayout();
-
     createSampler();
 
-    sceneDescriptorPool     = createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit);
-    primitiveDescriptorPool = createDescriptorPool(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit);
-    materialDescriptorPool  = createDescriptorPool(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit);
+    sceneDescriptorPool     = createDescriptorPool(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    primitiveDescriptorPool = createDescriptorPool(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    materialDescriptorPool  = createDescriptorPool(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit,   VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    createPipelineLayout();
 }
 
 void bindPipeline(VkCommandBuffer commandBuffer) {
