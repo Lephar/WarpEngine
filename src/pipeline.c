@@ -95,16 +95,13 @@ void bindPipeline(VkCommandBuffer commandBuffer) {
 }
 
 void destroyPipeline() {
-    vkDestroyDescriptorPool(device, materialDescriptorPool,  NULL);
-    vkDestroyDescriptorPool(device, primitiveDescriptorPool, NULL);
-    vkDestroyDescriptorPool(device, sceneDescriptorPool,     NULL);
+    destroyDescriptorPool(materialDescriptorPool);
+    destroyDescriptorPool(primitiveDescriptorPool);
+    destroyDescriptorPool(sceneDescriptorPool);
     debug("Descriptor pools destroyed");
 
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);
     debug("Pipeline layout destroyed");
-
-    vkDestroyDescriptorSetLayout(device, descriptorSetLayout, NULL);
-    debug("Descriptor set layout destroyed");
 
     vkDestroySampler(device, sampler, NULL);
     debug("Texture sampler destroyed");
