@@ -69,6 +69,7 @@ void loadSkybox(cgltf_data *data) {
 
     if( findMaterial(materialData) >= materialCount) {
         loadMaterial(material, materialData);
+        materialCount++;
     }
 
     mat4 transform;
