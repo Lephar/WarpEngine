@@ -33,7 +33,6 @@ void initialize(int argc, char *argv[]) {
     createBuffers();
     createContentBuffers();
     loadContent();
-    destroyContentBuffers();
     createSwapchain();
     createFramebufferSet();
 
