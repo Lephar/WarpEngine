@@ -38,8 +38,8 @@ void render() {
 
     bindScene(framebuffer->renderCommandBuffer, framebuffer->sceneDescriptorSet);
 
-    bindMaterial(framebuffer->renderCommandBuffer, skybox->material);
-    drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, &skybox);
+    //bindMaterial(framebuffer->renderCommandBuffer, skybox->material);
+    //drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, &skybox);
 
     bindShaders(framebuffer->renderCommandBuffer, &vertexShaderModule, &fragmentShaderModule);
 

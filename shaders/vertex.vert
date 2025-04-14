@@ -2,17 +2,17 @@
 
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(binding = 0) uniform Transform {
-    mat4 skyboxView;
-    mat4 view;
-    mat4 proj;
-    mat4 skyboxCamera;
+layout(set = 0, binding = 0) uniform Scene {
+    mat4 anchor;
     mat4 camera;
-    vec3 ambientLight;
 };
 
-layout(location = 0) in  vec3  inputPosition;
-layout(location = 1) in  vec2  inputTexcoord;
+layout(set = 1, binding = 0) uniform Primitive {
+    mat4 model;
+};
+
+layout(location = 0) in  vec3 inputPosition;
+layout(location = 1) in  vec2 inputTexcoord;
 
 layout(location = 0) out vec3 outputAmbientLight;
 layout(location = 1) out vec3 outputPosition;
@@ -20,7 +20,7 @@ layout(location = 2) out vec2 outputTexcoord;
 
 void main()
 {
-    outputAmbientLight = ambientLight;
+    outputAmbientLight = vec3(1.0f, 1.0f, 1.0f);
     outputPosition     = inputPosition;
     outputTexcoord     = inputTexcoord;
 

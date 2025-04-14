@@ -63,6 +63,12 @@ ShaderModule createShaderModule(ShaderCode shaderCode) {
         shaderModule.stage     =  VK_SHADER_STAGE_FRAGMENT_BIT;
     } // TODO: Add other shader types
 
+    VkDescriptorSetLayout layouts[] = {
+        sceneDescriptorPool.layout,
+        primitiveDescriptorPool.layout,
+        materialDescriptorPool.layout
+    };
+
     VkShaderCreateInfoEXT shaderCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,
         .pNext = NULL,
@@ -73,8 +79,8 @@ ShaderModule createShaderModule(ShaderCode shaderCode) {
         .codeSize = shaderCode.data->size,
         .pCode = shaderCode.data->content,
         .pName = "main",
-        .setLayoutCount = 1,
-        .pSetLayouts = &descriptorSetLayout,
+        .setLayoutCount = sizeof(layouts) / sizeof(VkDescriptorSetLayout),
+        .pSetLayouts = layouts,
         .pushConstantRangeCount = 0,
         .pPushConstantRanges = NULL,
         .pSpecializationInfo = NULL
