@@ -35,8 +35,6 @@ void initialize(int argc, char *argv[]) {
     loadContent();
     createSwapchain();
     createFramebufferSet();
-
-    vkDeviceWaitIdle(device);
 }
 
 void recreateSwapchain() {
@@ -52,7 +50,7 @@ void recreateSwapchain() {
 
     vkDeviceWaitIdle(device);
 
-    status.resize = SDL_FALSE;
+    resizeEvent = SDL_FALSE;
 }
 
 void loop() {
@@ -62,9 +60,9 @@ void loop() {
     while(1) {
         pollEvents();
 
-        if(status.quit) {
+        if(quitEvent) {
             break;
-        } else if(status.resize) {
+        } else if(resizeEvent) {
             recreateSwapchain();
         }
 

@@ -2,15 +2,17 @@
 
 #include "pch.h"
 
-struct status {
-    SDL_bool resize;
-    SDL_bool quit;
-} typedef Status;
-
 extern SDL_Window *window;
 extern VkExtent2D extent;
+
 extern uint32_t frameIndex;
-extern Status status;
+extern float timeDelta; // In microseconds
+
+extern vec2 mouseDelta;
+extern vec3 movementInput;
+
+extern SDL_bool resizeEvent;
+extern SDL_bool quitEvent;
 
 void *loadSystemFunction(const char *name);
 SDL_bool getWindowExtensions(uint32_t *extensionCount, const char **extensionNames);

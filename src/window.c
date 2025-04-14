@@ -13,7 +13,14 @@ VkExtent2D extent;
 uint32_t frameIndex;
 uint32_t frameIndexCheckpoint;
 
-Status status;
+struct timespec timeCurrent;
+float timeDelta; // In microseconds
+
+vec2 mouseDelta;
+vec3 movementInput;
+
+SDL_bool resizeEvent;
+SDL_bool quitEvent;
 
 #if DEBUG
 SDL_TimerID timer;
@@ -69,15 +76,20 @@ SDL_bool getWindowExtensions(uint32_t *extensionCount, const char **extensionNam
 }
 
 void initializeMainLoop() {
-    SDL_ShowCursor(SDL_DISABLE);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-    SDL_SetWindowResizable(window, SDL_TRUE);
-
 #if DEBUG
     timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
 #endif
 
-    initializeControls();
+    SDL_ShowCursor(SDL_DISABLE);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_SetWindowResizable(window, SDL_TRUE);
+
+    int32_t discard;
+    SDL_GetRelativeMouseState(&discard, &discard);
+    glmc_vec2_zero(mouseDelta);
+
+    clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
+
     generatePerspective();
 
     debug("Main loop initialized");
@@ -90,17 +102,36 @@ void pollEvents() {
 
     while(SDL_PollEvent(&event)) {
         if(event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
-            status.quit = SDL_TRUE;
+            quitEvent = SDL_TRUE;
             return;
         } else if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
             debug("Recreating swapchain");
             SDL_Vulkan_GetDrawableSize(window, (int32_t *) &extent.width, (int32_t *) &extent.height);
             generatePerspective();
-            status.resize = SDL_TRUE;
+            resizeEvent = SDL_TRUE;
         }
     }
 
-    processEvents();
+    struct timespec timePrevious = timeCurrent;
+    clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
+    timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
+
+    int32_t mouseX;
+    int32_t mouseY;
+    SDL_GetRelativeMouseState(&mouseX, &mouseY);
+    SDL_WarpMouseInWindow(window, extent.width / 2, extent.height / 2);
+
+    mouseDelta[0] = -2.0f * mouseX / extent.width;
+    mouseDelta[1] = -2.0f * mouseY / extent.height;
+
+    int keyCount = 0;
+    const uint8_t *states = SDL_GetKeyboardState(&keyCount);
+
+    movementInput[0] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
+    movementInput[1] = states[SDL_SCANCODE_D] - states[SDL_SCANCODE_A];
+    movementInput[2] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
+
+    glmc_vec3_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
 }
 
 void finalizeMainLoop() {
