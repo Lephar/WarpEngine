@@ -63,11 +63,13 @@ void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDe
     };
 
     vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
-    debug("Descriptor set layout created");
+    debug("Descriptor set layout created:");
+    debug("\tBinding: %d", descriptorPool->binding);
+    debug("\tType:    %d", descriptorPool->type);
 
     VkDescriptorPoolSize poolSize = {
         .type = type,
-        .descriptorCount = 1
+        .descriptorCount = count
     };
 
     VkDescriptorPoolCreateInfo poolInfo = {
@@ -80,9 +82,11 @@ void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDe
     };
 
     vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
-    debug("Descriptor pool created");
+    debug("Descriptor pool created:");
+    debug("\tSet count: %d", descriptorPool->count);
 }
 
+// TODO: Count the allocated sets
 VkDescriptorSet allocateDescriptorSet(DescriptorPool *descriptorPool) {
     VkDescriptorSet descriptorSet;
 
@@ -98,7 +102,9 @@ VkDescriptorSet allocateDescriptorSet(DescriptorPool *descriptorPool) {
     return descriptorSet;
 }
 
-void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range) {
+VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range) {
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
+
     VkDescriptorBufferInfo bufferInfo = {
         .buffer = buffer,
         .offset = offset,
@@ -109,20 +115,26 @@ void makeBufferDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType typ
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = NULL,
         .dstSet = descriptorSet,
-        .dstBinding = binding,
+        .dstBinding = descriptorPool->binding,
         .dstArrayElement = 0,
         .descriptorCount = 1,
-        .descriptorType = type,
+        .descriptorType = descriptorPool->type,
         .pImageInfo = NULL,
         .pBufferInfo = &bufferInfo,
         .pTexelBufferView = NULL
     };
 
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
-    debug("\tDescriptor created");
+    debug("\tDescriptor set acquired:");
+    debug("\t\tType:    %d", descriptorPool->type);
+    debug("\t\tBinding: %d", descriptorPool->binding);
+
+    return descriptorSet;
 }
 
-void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type, uint32_t binding, VkSampler sampler, Image *image) {
+VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampler sampler, Image *image) {
+    VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
+
     VkDescriptorImageInfo imageInfo = {
         .sampler     = sampler,
         .imageView   = image->view,
@@ -133,35 +145,34 @@ void makeImageDescriptorSet(VkDescriptorSet descriptorSet, VkDescriptorType type
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = NULL,
         .dstSet = descriptorSet,
-        .dstBinding = binding,
+        .dstBinding = descriptorPool->binding,
         .dstArrayElement = 0,
         .descriptorCount = 1,
-        .descriptorType = type,
+        .descriptorType = descriptorPool->type,
         .pImageInfo = &imageInfo,
         .pBufferInfo = NULL,
         .pTexelBufferView = NULL
     };
 
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
-    debug("\tDescriptor created");
+    debug("\tDescriptor set acquired:");
+    debug("\t\tType:    %d", descriptorPool->type);
+    debug("\t\tBinding: %d", descriptorPool->binding);
+
+    return descriptorSet;
 }
 
 VkDescriptorSet getSceneDescriptorSet(uint32_t index) {
-    VkDescriptorSet descriptorSet = allocateDescriptorSet(&sceneDescriptorPool);
-    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, sharedBuffer.buffer, index * framebufferUniformStride, sceneUniformAlignment);
-    return descriptorSet;
+    return createBufferDescriptorSet(&sceneDescriptorPool, sharedBuffer.buffer, index * framebufferUniformStride, sceneUniformAlignment);
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index) {
-    VkDescriptorSet descriptorSet = allocateDescriptorSet(&primitiveDescriptorPool);
-    makeBufferDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, sharedBuffer.buffer, index * framebufferUniformStride + sceneUniformAlignment, dynamicUniformBufferRange);
-    return descriptorSet;
+    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, index * framebufferUniformStride + sceneUniformAlignment, dynamicUniformBufferRange);
 }
 
 VkDescriptorSet getMaterialDescriptorSet(Image *image) {
-    VkDescriptorSet descriptorSet = allocateDescriptorSet(&materialDescriptorPool);
-    makeImageDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2, sampler, image);
-    return descriptorSet;
+    return createImageDescriptorSet(&materialDescriptorPool, sampler, image);
+}
 
 void resetDescriptorPool(DescriptorPool *descriptorPool) {
     vkResetDescriptorPool(device, descriptorPool->pool, 0);

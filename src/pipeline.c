@@ -41,9 +41,9 @@ void createPipeline() {
 
     createSampler();
 
-    sceneDescriptorPool     = createDescriptorPool(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
-    primitiveDescriptorPool = createDescriptorPool(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
-    materialDescriptorPool  = createDescriptorPool(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit,   VK_SHADER_STAGE_FRAGMENT_BIT);
+    createDescriptorPool(&sceneDescriptorPool,     0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    createDescriptorPool(&primitiveDescriptorPool, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    createDescriptorPool(&materialDescriptorPool,  0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit,   VK_SHADER_STAGE_FRAGMENT_BIT);
 
     createPipelineLayout();
 }
@@ -100,9 +100,9 @@ void destroyPipeline() {
     destroyDescriptorPool(&sceneDescriptorPool);
     debug("Descriptor pools destroyed");
 
-    vkDestroyPipelineLayout(device, pipelineLayout, NULL);
-    debug("Pipeline layout destroyed");
-
     vkDestroySampler(device, sampler, NULL);
     debug("Texture sampler destroyed");
+
+    vkDestroyPipelineLayout(device, pipelineLayout, NULL);
+    debug("Pipeline layout destroyed");
 }
