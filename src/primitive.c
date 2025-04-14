@@ -13,14 +13,14 @@ uint32_t primitiveCount;
 Primitive *primitives;
 
 void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 transform) {
-    debug("\t\t\tPrimitive Index: %d", primitiveCount);
-    debug("\t\t\tPrimitive Type:  %d", primitiveData->type);
+    debug("Primitive Index: %d", primitiveCount);
+    debug("\tType: %d", primitiveData->type);
 
     uint32_t materialIndex = findMaterial(primitiveData->material);
     assert(materialIndex < materialCount);
 
     primitive->material = &materials[materialIndex];
-    debug("\t\t\t\tMaterial matched: %s", primitiveData->material->name);
+    debug("\tMaterial matched: %s", primitiveData->material->name);
 
     cgltf_accessor    *accessor = primitiveData->indices;
     cgltf_buffer_view *view     = accessor->buffer_view;
@@ -28,11 +28,12 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
 
     void *data = buffer->data + view->offset;
 
-    primitive->indexBegin   = indexCount;
-    primitive->indexCount   = accessor->count;
-    primitive->vertexOffset = vertexCount;
+    primitive->indexBegin    = indexCount;
+    primitive->indexCount    = accessor->count;
+    primitive->vertexOffset  = vertexCount;
+    primitive->uniformOffset = uniformBufferSize;
 
-    debug("\t\t\t\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
+    debug("\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
     if(accessor->component_type == cgltf_component_type_r_16 || accessor->component_type == cgltf_component_type_r_16u) {
         for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
@@ -59,7 +60,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
 
         assert(primitiveVertexCount == attributeAccessor->count);
 
-        debug("\t\t\t\tAttribute %s: %lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
+        debug("\tAttribute %s: %lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
 
         // TODO: Check component data types too
         if(attribute->type == cgltf_attribute_type_position) {
@@ -84,15 +85,17 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
         } // TODO: Load normal and tangent too
     }
 
-    debug("\t\t\t\tIndex begin:   %lu", primitive->indexBegin);
-    debug("\t\t\t\tIndex count:   %lu", primitive->indexCount);
-    debug("\t\t\t\tVertex offset: %lu", primitive->vertexOffset);
+    debug("\tIndex begin:    %lu", primitive->indexBegin);
+    debug("\tIndex count:    %lu", primitive->indexCount);
+    debug("\tVertex offset:  %lu", primitive->vertexOffset);
+    debug("\tUniform offset: %lu", primitive->uniformOffset);
 
     indexCount  += accessor->count;
     vertexCount += primitiveVertexCount;
 
-    indexBufferSize  += accessor->count      * sizeof(Index);
-    vertexBufferSize += primitiveVertexCount * sizeof(Vertex);
+    indexBufferSize   += accessor->count      * sizeof(Index);
+    vertexBufferSize  += primitiveVertexCount * sizeof(Vertex);
+    uniformBufferSize += primitiveUniformAlignment;
 }
 
 // NOTICE: This doesn't account for material binding, use bindMaterial() beforehand
