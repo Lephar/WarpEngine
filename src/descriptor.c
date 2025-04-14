@@ -162,4 +162,12 @@ VkDescriptorSet getMaterialDescriptorSet(Image *image) {
     VkDescriptorSet descriptorSet = allocateDescriptorSet(&materialDescriptorPool);
     makeImageDescriptorSet(descriptorSet, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2, sampler, image);
     return descriptorSet;
+
+void resetDescriptorPool(DescriptorPool *descriptorPool) {
+    vkResetDescriptorPool(device, descriptorPool->pool, 0);
+}
+
+void destroyDescriptorPool(DescriptorPool *descriptorPool) {
+    vkDestroyDescriptorPool(device, descriptorPool->pool, NULL);
+    vkDestroyDescriptorSetLayout(device, descriptorPool->layout, NULL);
 }

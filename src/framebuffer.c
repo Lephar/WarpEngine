@@ -222,8 +222,8 @@ void destroyFramebufferSet() {
         debug("Framebuffer %d destroyed", framebufferIndex);
     }
 
-    vkResetDescriptorPool(device, primitiveDescriptorPool, 0);
-    vkResetDescriptorPool(device, sceneDescriptorPool,     0);
+    resetDescriptorPool(&primitiveDescriptorPool);
+    resetDescriptorPool(&sceneDescriptorPool);
 
     free(framebufferSet.framebuffers);
 

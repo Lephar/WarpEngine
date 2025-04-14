@@ -95,9 +95,9 @@ void bindPipeline(VkCommandBuffer commandBuffer) {
 }
 
 void destroyPipeline() {
-    destroyDescriptorPool(materialDescriptorPool);
-    destroyDescriptorPool(primitiveDescriptorPool);
-    destroyDescriptorPool(sceneDescriptorPool);
+    destroyDescriptorPool(&materialDescriptorPool);
+    destroyDescriptorPool(&primitiveDescriptorPool);
+    destroyDescriptorPool(&sceneDescriptorPool);
     debug("Descriptor pools destroyed");
 
     vkDestroyPipelineLayout(device, pipelineLayout, NULL);

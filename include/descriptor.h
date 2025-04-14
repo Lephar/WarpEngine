@@ -26,3 +26,6 @@ void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDe
 VkDescriptorSet getSceneDescriptorSet(uint32_t index);
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index);
 VkDescriptorSet getMaterialDescriptorSet(Image *image);
+
+void resetDescriptorPool(DescriptorPool *descriptorPool);
+void destroyDescriptorPool(DescriptorPool *descriptorPool);
