@@ -123,11 +123,13 @@ void pollEvents() {
     int keyCount = 0;
     const uint8_t *states = SDL_GetKeyboardState(&keyCount);
 
-    movementInput[0] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
-    movementInput[1] = states[SDL_SCANCODE_D] - states[SDL_SCANCODE_A];
+    movementInput[0] = states[SDL_SCANCODE_D] - states[SDL_SCANCODE_A];
+    movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
     movementInput[2] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
 
-    glmc_vec3_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
+    if(compareFloat(glmc_vec3_norm2(movementInput), 0.0f)) {
+        glmc_vec3_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
+    }
 }
 
 void finalizeMainLoop() {
