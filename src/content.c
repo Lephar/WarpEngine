@@ -142,22 +142,20 @@ void loadContent() {
         0.0f,
         8.0f
     };
-    vec3 forward  = {
+
+    vec3 direction  = {
         0.0f,
         1.0f,
-        0.0f
-    };
-    vec3 right    = {
-        1.0f,
-        0.0f,
         0.0f
     };
 
-    loadPlayer(position, forward, right);
+    float speed = 10.0f;
+
+    loadPlayer(position, direction, speed);
 
     float fieldOfView = M_PI_4;
-    float nearPlane   =   1.0f;
-    float farPlane    = 100.0f;
+    float nearPlane   = 1.0f;
+    float farPlane    = 1000.0f;
 
     loadCamera(fieldOfView, nearPlane, farPlane);
 
@@ -190,6 +188,13 @@ void loadContent() {
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     debug("Shared memory cleared and set for uniform buffer usage");
+}
+
+void updateUniforms(uint32_t framebufferIndex) {
+    updatePlayer();
+    updateCamera();
+
+    memcpy(mappedSharedMemory + framebufferIndex * framebufferUniformStride, uniformBuffer, framebufferUniformStride);
 }
 
 void bindContentBuffers(VkCommandBuffer commandBuffer) {

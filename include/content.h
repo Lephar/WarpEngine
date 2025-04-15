@@ -42,5 +42,6 @@ extern PrimitiveUniform *primitiveUniforms;
 
 void createContentBuffers();
 void loadContent();
+void updateUniforms(uint32_t framebufferIndex);
 void bindContentBuffers(VkCommandBuffer commandBuffer);
 void freeContent();
