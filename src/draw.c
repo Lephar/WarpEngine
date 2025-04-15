@@ -33,15 +33,8 @@ void render() {
 
     bindContentBuffers(framebuffer->renderCommandBuffer);
     bindPipeline(framebuffer->renderCommandBuffer);
-
-    bindShaders(framebuffer->renderCommandBuffer, &skyboxShaderModule, &fragmentShaderModule);
-
-    bindScene(framebuffer->renderCommandBuffer, framebuffer->sceneDescriptorSet);
-
-    //bindMaterial(framebuffer->renderCommandBuffer, skybox->material);
-    //drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, &skybox);
-
     bindShaders(framebuffer->renderCommandBuffer, &vertexShaderModule, &fragmentShaderModule);
+    bindScene(framebuffer->renderCommandBuffer, framebuffer->sceneDescriptorSet);
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         Material *material = &materials[materialIndex];

@@ -15,8 +15,7 @@ struct shaderModule {
     VkShaderEXT module;
 } typedef ShaderModule;
 
-extern ShaderModule   skyboxShaderModule;
-extern ShaderModule   vertexShaderModule;
+extern ShaderModule vertexShaderModule;
 extern ShaderModule fragmentShaderModule;
 
 void createModules();

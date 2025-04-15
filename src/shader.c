@@ -10,8 +10,7 @@
 shaderc_compiler_t        shaderCompiler;
 shaderc_compile_options_t shaderCompileOptions;
 
-ShaderModule   skyboxShaderModule;
-ShaderModule   vertexShaderModule;
+ShaderModule vertexShaderModule;
 ShaderModule fragmentShaderModule;
 
 ShaderCode loadShaderCode(const char *path, bool binary, shaderc_shader_kind stage) {
@@ -32,7 +31,7 @@ void compileShaderCode(ShaderCode *shaderCode) {
     assert(!shaderCode->data->binary);
 
     shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data->content, shaderCode->data->size - 1, shaderCode->stage, "shader", "main", shaderCompileOptions);
-    shaderc_compilation_status status = shaderc_result_get_compilation_status(result);
+    shaderc_compilation_status   status = shaderc_result_get_compilation_status(result);
 
     if(status != shaderc_compilation_status_success) {
         debug("%s", shaderc_result_get_error_message(result));
@@ -131,15 +130,14 @@ void createModules() {
 
     debug("Shader compiler created and compile options set");
 
-    skyboxShaderModule   = makeShaderModule("skybox.vert",       false, shaderc_vertex_shader);
     vertexShaderModule   = makeShaderModule("vertex.vert",       false, shaderc_vertex_shader);
     fragmentShaderModule = makeShaderModule("fragment.frag.spv", true,  shaderc_fragment_shader);
 
     debug("Shader modules created");
 }
 
-void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertexShader, ShaderModule *fragmentShader) {
-    assert(vertexShader->stage == VK_SHADER_STAGE_VERTEX_BIT && fragmentShader->stage == VK_SHADER_STAGE_FRAGMENT_BIT);
+void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertex, ShaderModule *fragment) {
+    assert(vertex->stage == VK_SHADER_STAGE_VERTEX_BIT && fragment->stage == VK_SHADER_STAGE_FRAGMENT_BIT);
 
     VkShaderStageFlags stages[] = {
         VK_SHADER_STAGE_VERTEX_BIT,
@@ -147,8 +145,8 @@ void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertexShader, Shad
     };
 
     VkShaderEXT modules[] = {
-        vertexShader->module,
-        fragmentShader->module
+        vertex->module,
+        fragment->module
     };
 
     uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
@@ -163,7 +161,6 @@ void destroyModules() {
 
     debug("Shader compiler and shader compile options released");
 
-    destroyShaderModule(&skyboxShaderModule);
     destroyShaderModule(&vertexShaderModule);
     destroyShaderModule(&fragmentShaderModule);
 

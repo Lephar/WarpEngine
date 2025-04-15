@@ -3,8 +3,9 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(set = 0, binding = 0) uniform Scene {
-    mat4 anchor;
-    mat4 camera;
+    mat4 view;
+    mat4 projection;
+    mat4 viewProjection;
 };
 
 layout(set = 1, binding = 0) uniform Primitive {
@@ -24,5 +25,5 @@ void main()
     outputPosition     = inputPosition;
     outputTexcoord     = inputTexcoord;
 
-    gl_Position = camera * vec4(outputPosition, 1.0f);
+    gl_Position = viewProjection * vec4(outputPosition, 1.0f);
 }
