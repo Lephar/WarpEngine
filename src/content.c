@@ -166,7 +166,7 @@ void loadContent() {
     cgltf_data *data;
 
     data = loadAsset("Skybox.gltf");
-    loadSkybox(data);
+    processAsset(data);
     freeAsset(data);
 
     data = loadAsset("Terrain.gltf");

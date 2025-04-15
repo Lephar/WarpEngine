@@ -10,12 +10,13 @@ struct vertex {
 } typedef Vertex;
 
 struct sceneUniform {
-    mat4 anchor;
-    mat4 camera;
+    mat4 view;
+    mat4 projection;
+    mat4 viewProjection;
 } typedef SceneUniform;
 
 struct primitiveUniform {
-    mat4 transform;
+    mat4 model;
 } typedef PrimitiveUniform;
 
 extern uint32_t indexCount;

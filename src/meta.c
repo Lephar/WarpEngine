@@ -12,7 +12,21 @@ vec3 worldUp;
 
 Player player;
 Camera camera;
-Primitive skybox;
+
+void updateView() {
+    vec3 target;
+    glmc_vec3_add(player.position, player.forward, target);
+    glmc_lookat_rh_zo(player.position, target, worldUp, sceneUniform->view);
+}
+
+void updateProjection() {
+    float aspectRatio = ((float) extent.width) / ((float) extent.height);
+    glmc_perspective_rh_zo(camera.fieldOfView, aspectRatio, camera.nearPlane, camera.farPlane, sceneUniform->projection);
+}
+
+void generateViewProjection() {
+    glmc_mat4_mul(sceneUniform->projection, sceneUniform->view, sceneUniform->viewProjection);
+}
 
 void loadPlayer(vec3 position, vec3 forward, vec3 right) {
     glm_vec3_copy(position, player.position);
@@ -20,50 +34,14 @@ void loadPlayer(vec3 position, vec3 forward, vec3 right) {
     glm_vec3_copy(right,    player.right);
 }
 
-void persective() {
-    float aspectRatio = ((float) extent.width) / ((float) extent.height);
-    glmc_perspective_rh_zo(camera.fieldOfView, aspectRatio, camera.nearPlane, camera.farPlane, uniformBuffer + camera.projOffset);
-}
-
-void lookAt() {
-    vec3 target;
-    glmc_vec3_add(player.position, player.forward, target);
-    glmc_lookat_rh_zo(player.position, target, worldUp, uniformBuffer + camera.viewOffset);
-}
-
-void combine() {
-    glmc_mat4_mul(uniformBuffer + camera.projOffset, uniformBuffer + camera.viewOffset, uniformBuffer + camera.combOffset);
-}
-
 void loadCamera(float fieldOfView, float nearPlane, float farPlane) {
     camera.fieldOfView = fieldOfView;
     camera.nearPlane   = nearPlane;
     camera.farPlane    = farPlane;
 
-    persective();
-    lookAt    ();
-    combine   ();
-}
-
-void loadSkybox(cgltf_data *data) {
-    cgltf_scene *sceneData = data->scene;
-    cgltf_node  *nodeData  = sceneData->nodes[0];
-    cgltf_mesh  *meshData  = nodeData->mesh;
-
-    cgltf_primitive *primitiveData = &meshData->primitives[0];
-    cgltf_material  *materialData  = primitiveData->material;
-
-    Material *material = &materials[materialCount];
-
-    if( findMaterial(materialData) >= materialCount) {
-        loadMaterial(material, materialData);
-        materialCount++;
-    }
-
-    mat4 transform;
-    cgltf_node_transform_world(nodeData, (cgltf_float *) transform);
-
-    loadPrimitive(&skybox, primitiveData, transform);
+    updateView();
+    updateProjection();
+    generateViewProjection();
 }
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {
