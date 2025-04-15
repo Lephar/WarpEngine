@@ -5,7 +5,6 @@
 typedef struct image Image;
 
 struct descriptorPool {
-    uint32_t binding;
     VkDescriptorType type;
     uint32_t count;
     VkShaderStageFlags stage;
@@ -21,7 +20,7 @@ extern DescriptorPool materialDescriptorPool;
 
 void createSampler();
 
-void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage);
+void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage);
 
 VkDescriptorSet getSceneDescriptorSet(uint32_t index);
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index);

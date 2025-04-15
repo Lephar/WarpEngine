@@ -40,14 +40,13 @@ void createSampler() {
     debug("Texture sampler created");
 }
 
-void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
-    descriptorPool->binding = binding;
+void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
     descriptorPool->type    = type;
     descriptorPool->count   = count;
     descriptorPool->stage   = stage;
 
     VkDescriptorSetLayoutBinding layoutBinding = {
-        .binding = binding,
+        .binding = 0,
         .descriptorType = type,
         .descriptorCount = 1,
         .stageFlags = stage,
@@ -63,9 +62,7 @@ void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDe
     };
 
     vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
-    debug("Descriptor set layout created:");
-    debug("\tBinding: %d", descriptorPool->binding);
-    debug("\tType:    %d", descriptorPool->type);
+    debug("%s descriptor set layout created", descriptorPool->type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER ? "Sampler" : "Buffer");
 
     VkDescriptorPoolSize poolSize = {
         .type = type,
@@ -82,8 +79,7 @@ void createDescriptorPool(DescriptorPool *descriptorPool, uint32_t binding, VkDe
     };
 
     vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
-    debug("Descriptor pool created:");
-    debug("\tSet count: %d", descriptorPool->count);
+    debug("Descriptor pool with %u sets created", descriptorPool->count);
 }
 
 // TODO: Count the allocated sets
@@ -115,7 +111,7 @@ VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuff
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = NULL,
         .dstSet = descriptorSet,
-        .dstBinding = descriptorPool->binding,
+        .dstBinding = 0,
         .dstArrayElement = 0,
         .descriptorCount = 1,
         .descriptorType = descriptorPool->type,
@@ -125,9 +121,7 @@ VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuff
     };
 
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
-    debug("\tDescriptor set acquired:");
-    debug("\t\tType:    %d", descriptorPool->type);
-    debug("\t\tBinding: %d", descriptorPool->binding);
+    debug("\tBuffer%sdescriptor set acquired", descriptorPool->type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC ? " dynamic " : " ");
 
     return descriptorSet;
 }
@@ -145,7 +139,7 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
         .pNext = NULL,
         .dstSet = descriptorSet,
-        .dstBinding = descriptorPool->binding,
+        .dstBinding = 0,
         .dstArrayElement = 0,
         .descriptorCount = 1,
         .descriptorType = descriptorPool->type,
@@ -155,9 +149,7 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
     };
 
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
-    debug("\tDescriptor set acquired:");
-    debug("\t\tType:    %d", descriptorPool->type);
-    debug("\t\tBinding: %d", descriptorPool->binding);
+    debug("\tMaterial descriptor set acquired");
 
     return descriptorSet;
 }
