@@ -1,7 +1,6 @@
 #include "window.h"
 
 #include "config.h"
-#include "control.h"
 #include "numerics.h"
 #include "logger.h"
 
@@ -90,8 +89,6 @@ void initializeMainLoop() {
 
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
 
-    generatePerspective();
-
     debug("Main loop initialized");
 }
 
@@ -107,7 +104,6 @@ void pollEvents() {
         } else if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
             debug("Recreating swapchain");
             SDL_Vulkan_GetDrawableSize(window, (int32_t *) &extent.width, (int32_t *) &extent.height);
-            generatePerspective();
             resizeEvent = SDL_TRUE;
         }
     }
