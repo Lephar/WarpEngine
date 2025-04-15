@@ -36,6 +36,9 @@ extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 extern void   *uniformBuffer;
 
+extern SceneUniform     *sceneUniform;
+extern PrimitiveUniform *primitiveUniforms;
+
 void createContentBuffers();
 void loadContent();
 void bindContentBuffers(VkCommandBuffer commandBuffer);

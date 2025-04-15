@@ -1,9 +1,6 @@
 #include "meta.h"
 
 #include "window.h"
-#include "physicalDevice.h"
-#include "device.h"
-#include "buffer.h"
 #include "pipeline.h"
 #include "content.h"
 #include "material.h"
@@ -42,15 +39,6 @@ void loadCamera(float fieldOfView, float nearPlane, float farPlane) {
     camera.fieldOfView = fieldOfView;
     camera.nearPlane   = nearPlane;
     camera.farPlane    = farPlane;
-
-    camera.viewOffset  = uniformBufferSize;
-    uniformBufferSize += sizeof(mat4);
-
-    camera.projOffset  = uniformBufferSize;
-    uniformBufferSize += sizeof(mat4);
-
-    camera.combOffset  = uniformBufferSize;
-    uniformBufferSize += sizeof(mat4);
 
     persective();
     lookAt    ();

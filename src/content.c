@@ -29,6 +29,9 @@ Index  *indexBuffer;
 Vertex *vertexBuffer;
 void   *uniformBuffer;
 
+SceneUniform     *sceneUniform;
+PrimitiveUniform *primitiveUniforms;
+
 cgltf_data *loadAsset(const char *name) {
     char fullPath[PATH_MAX];
     makeFullPath("data", name, fullPath);
@@ -109,17 +112,20 @@ void createContentBuffers() {
     vertexBufferSize  = 0;
     uniformBufferSize = 0;
 
-    const VkDeviceSize indexBufferSizeLimit   = deviceMemory.size / 2;
-    const VkDeviceSize vertexBufferSizeLimit  = deviceMemory.size / 2;
-    const VkDeviceSize uniformBufferSizeLimit = sharedMemory.size;
+    const VkDeviceSize indexBufferSizeLimit   =     deviceBuffer.size / 4;
+    const VkDeviceSize vertexBufferSizeLimit  = 3 * deviceBuffer.size / 4;
+    const VkDeviceSize uniformBufferSizeLimit = framebufferUniformStride;
 
     indexBuffer   = malloc(indexBufferSizeLimit);
     vertexBuffer  = malloc(vertexBufferSizeLimit);
-    uniformBuffer = malloc(uniformBufferSizeLimit);
+    uniformBuffer = calloc(uniformBufferSizeLimit, 1);
 
     assert(indexBuffer);
     assert(vertexBuffer);
     assert(uniformBuffer);
+
+    sceneUniform      = uniformBuffer;
+    primitiveUniforms = uniformBuffer + sceneUniformAlignment;
 
     materialCount  = 0;
     primitiveCount = 0;
@@ -131,9 +137,21 @@ void createContentBuffers() {
 }
 
 void loadContent() {
-    vec3 position = {0.0f, 0.0f, 8.0f};
-    vec3 forward  = {0.0f, 1.0f, 0.0f};
-    vec3 right    = {1.0f, 0.0f, 0.0f};
+    vec3 position = {
+        0.0f,
+        0.0f,
+        8.0f
+    };
+    vec3 forward  = {
+        0.0f,
+        1.0f,
+        0.0f
+    };
+    vec3 right    = {
+        1.0f,
+        0.0f,
+        0.0f
+    };
 
     loadPlayer(position, forward, right);
 
@@ -166,7 +184,6 @@ void loadContent() {
 
     debug("Index and vertex data copied into device memory");
 
-    free(uniformBuffer);
     free(vertexBuffer);
     free(indexBuffer);
 
@@ -220,4 +237,6 @@ void freeContent() {
     }
 
     free(materials);
+
+    free(uniformBuffer);
 }
