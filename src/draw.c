@@ -19,12 +19,16 @@
 void initializeDraw() {
     vkDeviceWaitIdle(device);
 
+    updateProjection();
+
     debug("Draw loop started");
 }
 
 void render() {
     uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
+
+    updateUniforms(framebufferIndex);
 
     waitFramebuffer(framebuffer);
 

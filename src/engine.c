@@ -48,7 +48,7 @@ void recreateSwapchain() {
     createSwapchain();
     createFramebufferSet();
 
-    vkDeviceWaitIdle(device);
+    initializeDraw();
 
     resizeEvent = SDL_FALSE;
 }
