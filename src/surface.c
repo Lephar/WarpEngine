@@ -148,7 +148,7 @@ void generateSurfaceCapabilities() {
 }
 
 void createSurface() {
-    SDL_bool result = SDL_Vulkan_CreateSurface(window, instance, &surface);
+    bool result = SDL_Vulkan_CreateSurface(window, instance, NULL, &surface);
     assert(result);
 
     debug("Surface created");
@@ -174,7 +174,6 @@ void createSurface() {
 }
 
 void destroySurface() {
-    vkDestroySurfaceKHR(instance, surface, NULL);
-
+    SDL_Vulkan_DestroySurface(instance, surface, NULL);
     debug("Surface destroyed");
 }
