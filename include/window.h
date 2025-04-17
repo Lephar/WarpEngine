@@ -11,11 +11,11 @@ extern float timeDelta; // In microseconds
 extern vec2 mouseDelta;
 extern vec3 movementInput;
 
-extern SDL_bool resizeEvent;
-extern SDL_bool quitEvent;
+extern bool resizeEvent;
+extern bool quitEvent;
 
 void *loadSystemFunction(const char *name);
-SDL_bool getWindowExtensions(uint32_t *extensionCount, const char **extensionNames);
+char const *const *getWindowExtensions(uint32_t *extensionCount);
 void pollEvents();
 
 void initializeSystem();

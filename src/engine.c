@@ -50,7 +50,7 @@ void recreateSwapchain() {
 
     initializeDraw();
 
-    resizeEvent = SDL_FALSE;
+    resizeEvent = false;
 }
 
 void loop() {
