@@ -6,7 +6,7 @@
 #include "logger.h"
 
 VkInstance instance;
-PFN_vkGetInstanceProcAddr instanceLoader;
+PFN_vkGetInstanceProcAddr instanceFunctionLoader;
 #if DEBUG
 VkDebugUtilsMessengerEXT messenger;
 
@@ -22,7 +22,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBi
 #endif
 
 void *loadInstanceFunction(const char *name) {
-    void  *instanceFunction = instanceLoader(instance, name);
+    void  *instanceFunction = instanceFunctionLoader(instance, name);
     assert(instanceFunction);
     return instanceFunction;
 }
@@ -165,8 +165,8 @@ void createInstance() {
     vkCreateInstance(&instanceInfo, NULL, &instance);
     debug("Instance created");
 
-    PFN_vkGetInstanceProcAddr intermediateInstanceLoader = loadSystemFunction("vkGetInstanceProcAddr");
-    instanceLoader = (PFN_vkGetInstanceProcAddr) intermediateInstanceLoader(instance, "vkGetInstanceProcAddr");
+    PFN_vkGetInstanceProcAddr intermediateInstanceFunctionLoader = loadSystemFunction("vkGetInstanceProcAddr");
+    instanceFunctionLoader = (PFN_vkGetInstanceProcAddr) intermediateInstanceFunctionLoader(instance, "vkGetInstanceProcAddr");
     debug("Instance function loader initialized");
 
 #if DEBUG

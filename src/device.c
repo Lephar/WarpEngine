@@ -7,10 +7,10 @@
 #include "logger.h"
 
 VkDevice device;
-PFN_vkGetDeviceProcAddr deviceLoader;
+PFN_vkGetDeviceProcAddr deviceFunctionLoader;
 
 void *loadDeviceFunction(const char *name) {
-    void  *deviceFunction = deviceLoader(device, name);
+    void  *deviceFunction = deviceFunctionLoader(device, name);
     assert(deviceFunction);
     return deviceFunction;
 }
@@ -126,8 +126,8 @@ void createDevice() {
     vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
     debug("Device created");
 
-    PFN_vkGetDeviceProcAddr intermediateDeviceLoader = loadInstanceFunction("vkGetDeviceProcAddr");
-    deviceLoader = (PFN_vkGetDeviceProcAddr) intermediateDeviceLoader(device, "vkGetDeviceProcAddr");
+    PFN_vkGetDeviceProcAddr intermediateDeviceFunctionLoader = loadInstanceFunction("vkGetDeviceProcAddr");
+    deviceFunctionLoader = (PFN_vkGetDeviceProcAddr) intermediateDeviceFunctionLoader(device, "vkGetDeviceProcAddr");
     debug("Device function loader initialized");
 
     free(queuePriorities);

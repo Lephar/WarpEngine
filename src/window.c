@@ -4,7 +4,7 @@
 #include "numerics.h"
 #include "logger.h"
 
-PFN_vkGetInstanceProcAddr systemLoader;
+PFN_vkGetInstanceProcAddr systemFunctionLoader;
 
 SDL_Window *window;
 VkExtent2D extent;
@@ -46,7 +46,8 @@ void initializeSystem() {
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Vulkan_LoadLibrary(NULL);
-    systemLoader = (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
+
+    systemFunctionLoader = (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
 
     debug("System initialized:");
     debug("\tVideo Driver: %s", SDL_GetCurrentVideoDriver());
@@ -54,7 +55,7 @@ void initializeSystem() {
 }
 
 void *loadSystemFunction(const char *name) {
-    void  *systemFunction = systemLoader(NULL, name);
+    void  *systemFunction = systemFunctionLoader(NULL, name);
     assert(systemFunction);
     return systemFunction;
 }
