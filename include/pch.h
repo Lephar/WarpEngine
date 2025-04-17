@@ -21,8 +21,6 @@
 #include <sys/mman.h>
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_log.h>
-#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_vulkan.h>
 #include <vulkan/vulkan.h>
 #include <shaderc/shaderc.h>
