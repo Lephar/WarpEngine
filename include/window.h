@@ -2,6 +2,9 @@
 
 #include "pch.h"
 
+extern uint32_t systemExtensionCount;
+extern char const *const *systemExtensions;
+
 extern SDL_Window *window;
 extern VkExtent2D extent;
 
@@ -15,7 +18,6 @@ extern bool resizeEvent;
 extern bool quitEvent;
 
 void *loadSystemFunction(const char *name);
-char const *const *getWindowExtensions(uint32_t *extensionCount);
 void pollEvents();
 
 void initializeSystem();

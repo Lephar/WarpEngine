@@ -51,14 +51,11 @@ void createInstance() {
 
     const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
 
-    uint32_t windowExtensionCount = 0;
-    getWindowExtensions(&windowExtensionCount, NULL);
-
-    const uint32_t extensionCount = baseExtensionCount + windowExtensionCount;
+    const uint32_t extensionCount = systemExtensionCount + baseExtensionCount;
     const char **extensions = malloc(extensionCount * sizeof(const char *));
 
-    memcpy(extensions, baseExtensions, baseExtensionCount * sizeof(const char *));
-    getWindowExtensions(&windowExtensionCount, extensions + baseExtensionCount);
+    memcpy(extensions,                      baseExtensions,   baseExtensionCount   * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount, systemExtensions, systemExtensionCount * sizeof(const char *));
 
     void *instanceNext = NULL;
 

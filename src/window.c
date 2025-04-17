@@ -6,6 +6,9 @@
 
 PFN_vkGetInstanceProcAddr systemFunctionLoader;
 
+uint32_t systemExtensionCount;
+char const *const *systemExtensions;
+
 SDL_Window *window;
 VkExtent2D extent;
 
@@ -42,16 +45,15 @@ uint32_t timerCallback(void *userData, uint32_t id, uint32_t interval) {
 
 void initializeSystem() {
     // TODO: Ubuntu has issues with Wayland and RenderDoc doesn't support it yet, wait for update
-    SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "x11,wayland,windows");
+    //SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Vulkan_LoadLibrary(NULL);
 
     systemFunctionLoader = (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
+    systemExtensions = SDL_Vulkan_GetInstanceExtensions(&systemExtensionCount);
 
-    debug("System initialized:");
-    debug("\tVideo Driver: %s", SDL_GetCurrentVideoDriver());
-    debug("\tAudio Driver: %s", SDL_GetCurrentAudioDriver());
+    debug("System initialized with %s driver", SDL_GetCurrentVideoDriver());
 }
 
 void *loadSystemFunction(const char *name) {
@@ -68,10 +70,6 @@ void createWindow() {
     debug("Window created:");
     debug("\tWidth:  %u", extent.width );
     debug("\tHeight: %u", extent.height);
-}
-
-char const *const *getWindowExtensions(uint32_t *extensionCount) {
-    return SDL_Vulkan_GetInstanceExtensions(extensionCount);
 }
 
 void initializeMainLoop() {
