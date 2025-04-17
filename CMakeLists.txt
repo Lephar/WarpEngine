@@ -5,7 +5,7 @@ project(warp)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 
-find_package(SDL2 REQUIRED)
+find_package(SDL3 REQUIRED)
 find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE EXTERNAL external/*.h)
@@ -62,7 +62,7 @@ endforeach(SOURCE_MODEL)
 
 add_executable(${PROJECT_NAME} ${EXTERNAL} ${HEADERS} ${SOURCES} ${SHADERS} ${CODES} ${MODULES} ${SOURCE_ASSETS} ${TARGET_ASSETS} ${CONFIG_TEMPLATE} ${CONFIG_FILE})
 target_compile_options(${PROJECT_NAME} PUBLIC ${SOURCE_COMPILE_OPTIONS})
-target_include_directories(${PROJECT_NAME} PUBLIC include external/include ${SDL2_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC include external/include SDL3::Headers ${Vulkan_INCLUDE_DIRS})
 target_precompile_headers(${PROJECT_NAME} PUBLIC include/pch.h)
 target_link_directories(${PROJECT_NAME} PUBLIC external/lib)
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${Vulkan_LIBRARIES} cglm ktx shaderc_shared m)
+target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES} SDL3::SDL3 cglm ktx shaderc_shared m)
