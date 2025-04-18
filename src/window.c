@@ -19,7 +19,8 @@ struct timespec timeCurrent;
 float timeDelta; // In microseconds
 
 vec2 mouseDelta;
-vec3 movementInput;
+vec2 mainMovementInput;
+vec3 freeMovementInput;
 
 bool resizeEvent;
 bool quitEvent;
@@ -121,12 +122,15 @@ void pollEvents() {
     int keyCount = 0;
     const bool *states = SDL_GetKeyboardState(&keyCount);
 
-    movementInput[0] = states[SDL_SCANCODE_D] - states[SDL_SCANCODE_A];
-    movementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
-    movementInput[2] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
+    freeMovementInput[0] = states[SDL_SCANCODE_D] - states[SDL_SCANCODE_A];
+    freeMovementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
+    freeMovementInput[2] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
 
-    if(compareFloat(glmc_vec3_norm2(movementInput), 0.0f)) {
-        glmc_vec3_scale_as(movementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), movementInput);
+    mainMovementInput[0] = states[SDL_SCANCODE_RIGHT] - states[SDL_SCANCODE_LEFT];
+    mainMovementInput[1] = states[SDL_SCANCODE_UP]    - states[SDL_SCANCODE_DOWN];
+
+    if(compareFloat(glmc_vec3_norm2(freeMovementInput), 0.0f)) {
+        glmc_vec3_scale_as(freeMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), freeMovementInput);
     }
 }
 

@@ -67,7 +67,7 @@ void updatePlayer() {
 
     glmc_vec3_normalize(direction);
 
-    glmc_vec3_scale(movementInput, speed, movement);
+    glmc_vec3_scale(freeMovementInput, speed, movement);
 
     glmc_vec3_muladds(right,     movement[0], position);
     glmc_vec3_muladds(direction, movement[1], position);

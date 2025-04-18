@@ -12,7 +12,8 @@ extern uint32_t frameIndex;
 extern float timeDelta; // In microseconds
 
 extern vec2 mouseDelta;
-extern vec3 movementInput;
+extern vec2 mainMovementInput;
+extern vec3 freeMovementInput;
 
 extern bool resizeEvent;
 extern bool quitEvent;
