@@ -2,6 +2,10 @@
 
 #include "pch.h"
 
+typedef struct primitive Primitive;
+
+extern Primitive *skybox;
+
 void updateView();
 void updateProjection();
 void generateViewProjection();
@@ -12,3 +16,4 @@ void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet
 
 void updatePlayer();
 void updateCamera();
+void updateSkybox();

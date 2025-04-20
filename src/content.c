@@ -175,6 +175,8 @@ void loadContent() {
     processAsset(data);
     freeAsset(data);
 
+    skybox = &primitives[0];
+
     debug("Assets successfully loaded");
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
@@ -193,6 +195,7 @@ void loadContent() {
 void updateUniforms(uint32_t framebufferIndex) {
     updatePlayer();
     updateCamera();
+    updateSkybox();
 
     memcpy(mappedSharedMemory + framebufferIndex * framebufferUniformStride, uniformBuffer, framebufferUniformStride);
 }

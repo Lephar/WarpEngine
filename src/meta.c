@@ -20,6 +20,8 @@ float fieldOfView;
 float nearPlane;
 float farPlane;
 
+Primitive *skybox;
+
 void updateView() {
     vec3 target;
 
@@ -77,6 +79,10 @@ void updatePlayer() {
 void updateCamera() {
     updateView();
     generateViewProjection();
+}
+
+void updateSkybox() {
+    glmc_translate_make(uniformBuffer + skybox->uniformOffset, position);
 }
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {
