@@ -67,14 +67,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
             vec3 *positions = attributeData;
 
             for(cgltf_size positionIndex = 0; positionIndex < attributeAccessor->count; positionIndex++) {
-                vec3 *position = &vertexBuffer[vertexCount + positionIndex].position;
-
-                glmc_mat4_mulv3(transform, positions[positionIndex], 1.0f, *position);
-
-                /*// NOTICE: Use this if glTF model is exported with +Y up
-                float scalar   = (*position)[1];
-                (*position)[1] = (*position)[2];
-                (*position)[2] = scalar;*/
+                memcpy(vertexBuffer[vertexCount + positionIndex].position, positions[positionIndex], sizeof(vec3));
             }
         } else if(attribute->type == cgltf_attribute_type_texcoord) {
             vec2 *texcoords = attributeData;
@@ -84,6 +77,8 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
             }
         } // TODO: Load normal and tangent too
     }
+
+    memcpy(uniformBuffer + primitive->uniformOffset, transform, sizeof(mat4));
 
     debug("\tIndex begin:    %lu", primitive->indexBegin);
     debug("\tIndex count:    %lu", primitive->indexCount);

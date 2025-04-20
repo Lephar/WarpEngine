@@ -25,5 +25,5 @@ void main()
     outputPosition     = inputPosition;
     outputTexcoord     = inputTexcoord;
 
-    gl_Position = viewProjection * vec4(outputPosition, 1.0f);
+    gl_Position = viewProjection * model * vec4(outputPosition, 1.0f);
 }
