@@ -95,6 +95,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
 
 // NOTICE: This doesn't account for material binding, use bindMaterial() beforehand
 void drawPrimitive(VkCommandBuffer commandBuffer, VkDescriptorSet primitiveDescriptorSet, Primitive *primitive) {
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &primitiveDescriptorSet, 1, &primitive->uniformOffset);
+    uint32_t primitiveDescriptorOffset = primitive->uniformOffset - sceneUniformAlignment;
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &primitiveDescriptorSet, 1, &primitiveDescriptorOffset);
     vkCmdDrawIndexed(commandBuffer, primitive->indexCount, 1, primitive->indexBegin, primitive->vertexOffset, 0);
 }

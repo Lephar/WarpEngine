@@ -110,7 +110,7 @@ void createContentBuffers() {
 
     indexBufferSize   = 0;
     vertexBufferSize  = 0;
-    uniformBufferSize = 0;
+    uniformBufferSize = sceneUniformAlignment;
 
     const VkDeviceSize indexBufferSizeLimit   =     deviceBuffer.size / 4;
     const VkDeviceSize vertexBufferSizeLimit  = 3 * deviceBuffer.size / 4;
