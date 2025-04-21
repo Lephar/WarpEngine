@@ -29,8 +29,7 @@ Index  *indexBuffer;
 Vertex *vertexBuffer;
 void   *uniformBuffer;
 
-SceneUniform     *sceneUniform;
-PrimitiveUniform *primitiveUniforms;
+SceneUniform *sceneUniform;
 
 cgltf_data *loadAsset(const char *name) {
     char fullPath[PATH_MAX];
@@ -105,13 +104,6 @@ void freeAsset(cgltf_data *data) {
 }
 
 void createContentBuffers() {
-    indexCount  = 0;
-    vertexCount = 0;
-
-    indexBufferSize   = 0;
-    vertexBufferSize  = 0;
-    uniformBufferSize = sceneUniformAlignment;
-
     const VkDeviceSize indexBufferSizeLimit   =     deviceBuffer.size / 4;
     const VkDeviceSize vertexBufferSizeLimit  = 3 * deviceBuffer.size / 4;
     const VkDeviceSize uniformBufferSizeLimit = framebufferUniformStride;
@@ -120,18 +112,20 @@ void createContentBuffers() {
     vertexBuffer  = malloc(vertexBufferSizeLimit);
     uniformBuffer = calloc(uniformBufferSizeLimit, 1);
 
-    assert(indexBuffer);
-    assert(vertexBuffer);
-    assert(uniformBuffer);
+    materials  = malloc(primitiveCountLimit * sizeof(Material));
+    primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
-    sceneUniform      = uniformBuffer;
-    primitiveUniforms = uniformBuffer + sceneUniformAlignment;
+    indexCount  = 0;
+    vertexCount = 0;
+
+    indexBufferSize   = 0;
+    vertexBufferSize  = 0;
+    uniformBufferSize = sceneUniformAlignment;
+
+    sceneUniform = uniformBuffer;
 
     materialCount  = 0;
     primitiveCount = 0;
-
-    materials  = malloc(primitiveCountLimit * sizeof(Material));
-    primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
     debug("Content buffers created");
 }

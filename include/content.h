@@ -37,8 +37,7 @@ extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 extern void   *uniformBuffer;
 
-extern SceneUniform     *sceneUniform;
-extern PrimitiveUniform *primitiveUniforms;
+extern SceneUniform *sceneUniform;
 
 void createContentBuffers();
 void loadContent();

@@ -78,7 +78,8 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
         } // TODO: Load normal and tangent too
     }
 
-    memcpy(uniformBuffer + primitive->uniformOffset, transform, sizeof(mat4));
+    PrimitiveUniform *primitiveUniform = uniformBuffer + primitive->uniformOffset;
+    memcpy(primitiveUniform, transform, sizeof(primitiveUniform->model));
 
     debug("\tIndex begin:    %lu", primitive->indexBegin);
     debug("\tIndex count:    %lu", primitive->indexCount);
