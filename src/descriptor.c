@@ -41,6 +41,8 @@ void createSampler() {
 }
 
 void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
+    debug("%s descriptor pool:", descriptorPool->type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER ? "Sampler" : "Buffer");
+
     descriptorPool->type    = type;
     descriptorPool->count   = count;
     descriptorPool->stage   = stage;
@@ -62,7 +64,7 @@ void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type,
     };
 
     vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
-    debug("%s descriptor set layout created", descriptorPool->type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER ? "Sampler" : "Buffer");
+    debug("\tDescriptor set layout created");
 
     VkDescriptorPoolSize poolSize = {
         .type = type,
@@ -79,7 +81,7 @@ void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type,
     };
 
     vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
-    debug("Descriptor pool with %u sets created", descriptorPool->count);
+    debug("\tDescriptor pool created with %u sets", descriptorPool->count);
 }
 
 // TODO: Count the allocated sets

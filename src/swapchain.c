@@ -42,19 +42,18 @@ void createSwapchain() {
     };
 
     vkCreateSwapchainKHR(device, &swapchainInfo, NULL, &swapchain.swapchain);
-    debug("Swapchain created");
 
     vkGetSwapchainImagesKHR(device, swapchain.swapchain, &swapchain.imageCount, NULL);
     VkImage *handles = malloc(swapchain.imageCount * sizeof(VkImage));
     swapchain.images = malloc(swapchain.imageCount * sizeof(Image  ));
 
     vkGetSwapchainImagesKHR(device, swapchain.swapchain, &swapchain.imageCount, handles);
-    debug("Retrieved %u swapchain images", swapchain.imageCount);
+    debug("Swapchain created with %d images:", swapchain.imageCount);
 
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
         wrapImage(&swapchain.images[imageIndex], handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
         transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-        debug("Wrapped and transitioned swapchain image %u", imageIndex);
+        debug("\tWrapped and transitioned image %u", imageIndex);
     }
 
     free(handles);

@@ -90,8 +90,9 @@ void createFramebufferSet() {
     framebufferSet.framebuffers = malloc(framebufferSet.imageCount * sizeof(Framebuffer));
 
     for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.imageCount; framebufferIndex++) {
+        debug("Framebuffer %d:", framebufferIndex);
         createFramebuffer(&framebufferSet.framebuffers[framebufferIndex], framebufferIndex);
-        debug("Framebuffer %d created", framebufferIndex);
+        debug("\tSuccessfully created", framebufferIndex);
     }
 }
 
