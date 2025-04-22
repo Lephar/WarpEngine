@@ -38,18 +38,23 @@ void generateViewProjection() {
     glmc_mat4_mul(sceneUniform->projection, sceneUniform->view, sceneUniform->viewProjection);
 }
 
-void loadPlayer(vec3 playerPosition, vec3 playerDirection, float playerSpeed) {
+void initializeScene() {
     worldUp[0] = 0.0f;
     worldUp[1] = 0.0f;
     worldUp[2] = 1.0f;
 
+    skybox = &primitives[0];
+    actor  = &primitives[primitiveCount - 1];
+}
+
+void initializePlayer(vec3 playerPosition, vec3 playerDirection, float playerSpeed) {
     glmc_vec3_copy(playerPosition,  position);
     glmc_vec3_copy(playerDirection, direction);
 
     speed = playerSpeed;
 }
 
-void loadCamera(float cameraFieldOfView, float cameraNearPlane, float cameraFarPlane) {
+void initializeCamera(float cameraFieldOfView, float cameraNearPlane, float cameraFarPlane) {
     fieldOfView = cameraFieldOfView;
     nearPlane   = cameraNearPlane;
     farPlane    = cameraFarPlane;

@@ -131,30 +131,6 @@ void createContentBuffers() {
 }
 
 void loadContent() {
-    vec3 position = {
-        0.0f,
-        0.0f,
-        8.0f
-    };
-
-    vec3 direction  = {
-        0.0f,
-        1.0f,
-        0.0f
-    };
-
-    float speed = 10.0f;
-
-    loadPlayer(position, direction, speed);
-
-    float fieldOfView = M_PI_4;
-    float nearPlane   = 1.0f;
-    float farPlane    = 1000.0f;
-
-    loadCamera(fieldOfView, nearPlane, farPlane);
-
-    debug("Meta materials successfully loaded");
-
     cgltf_data *data;
 
     data = loadAsset("Skybox.gltf");
@@ -169,9 +145,25 @@ void loadContent() {
     processAsset(data);
     freeAsset(data);
 
-    skybox = &primitives[0];
-
     debug("Assets successfully loaded");
+
+    initializeScene();
+
+    initializePlayer((vec3) {
+        0.0f,
+        0.0f,
+        8.0f
+    },
+    (vec3) {
+        0.0f,
+        1.0f,
+        0.0f
+    },
+    10.0f);
+
+    initializeCamera(M_PI_4, 1.0f, 1000.0f);
+
+    debug("Meta materials successfully set");
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
