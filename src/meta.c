@@ -21,6 +21,7 @@ float nearPlane;
 float farPlane;
 
 Primitive *skybox;
+Primitive *actor;
 
 void updateView() {
     vec3 target;
