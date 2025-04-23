@@ -10,10 +10,15 @@
 
 vec3 worldUp;
 
-vec3 position;
-vec3 direction;
+vec3 playerPosition;
+vec3 playerDirection;
 
-float speed;
+float playerSpeed;
+
+vec3 actorPosition;
+vec3 actorDirection;
+
+float actorSpeed;
 
 float fieldOfView;
 
@@ -26,8 +31,8 @@ Primitive *actor;
 void updateView() {
     vec3 target;
 
-    glmc_vec3_add(position, direction, target);
-    glmc_lookat_rh_zo(position, target, worldUp, sceneUniform->view);
+    glmc_vec3_add(playerPosition, playerDirection, target);
+    glmc_lookat_rh_zo(playerPosition, target, worldUp, sceneUniform->view);
 }
 
 void updateProjection() {
@@ -48,11 +53,11 @@ void initializeScene() {
     actor  = &primitives[primitiveCount - 1];
 }
 
-void initializePlayer(vec3 playerPosition, vec3 playerDirection, float playerSpeed) {
-    glmc_vec3_copy(playerPosition,  position);
-    glmc_vec3_copy(playerDirection, direction);
+void initializePlayer(vec3 position, vec3 direction, float speed) {
+    glmc_vec3_copy(position,  playerPosition);
+    glmc_vec3_copy(direction, playerDirection);
 
-    speed = playerSpeed;
+    playerSpeed = speed;
 }
 
 void initializeCamera(float cameraFieldOfView, float cameraNearPlane, float cameraFarPlane) {
@@ -61,25 +66,32 @@ void initializeCamera(float cameraFieldOfView, float cameraNearPlane, float came
     farPlane    = cameraFarPlane;
 }
 
+void initializeActor(vec3 position, vec3 direction, float speed) {
+    glmc_vec3_copy(position,  actorPosition);
+    glmc_vec3_copy(direction, actorDirection);
+
+    actorSpeed = speed;
+}
+
 void updatePlayer() {
     vec3 right;
     vec3 up;
     vec3 movement;
 
-    glmc_vec3_rotate(direction, mouseDelta[0], worldUp);
-    glmc_vec3_crossn(direction, worldUp, right);
+    glmc_vec3_rotate(playerDirection, mouseDelta[0], worldUp);
+    glmc_vec3_crossn(playerDirection, worldUp, right);
 
     // TODO: Limit vertical rotation on global up and down
-    glmc_vec3_rotate(direction, mouseDelta[1], right);
-    glmc_vec3_crossn(right, direction, up);
+    glmc_vec3_rotate(playerDirection, mouseDelta[1], right);
+    glmc_vec3_crossn(right, playerDirection, up);
 
-    glmc_vec3_normalize(direction);
+    glmc_vec3_normalize(playerDirection);
 
-    glmc_vec3_scale(freeMovementInput, speed, movement);
+    glmc_vec3_scale(freeMovementInput, playerSpeed, movement);
 
-    glmc_vec3_muladds(right,     movement[0], position);
-    glmc_vec3_muladds(direction, movement[1], position);
-    glmc_vec3_muladds(up,        movement[2], position);
+    glmc_vec3_muladds(right,     movement[0], playerPosition);
+    glmc_vec3_muladds(playerDirection, movement[1], playerPosition);
+    glmc_vec3_muladds(up,        movement[2], playerPosition);
 }
 
 void updateCamera() {
@@ -88,7 +100,7 @@ void updateCamera() {
 }
 
 void updateSkybox() {
-    glmc_translate_make(uniformBuffer + skybox->uniformOffset, position);
+    glmc_translate_make(uniformBuffer + skybox->uniformOffset, playerPosition);
 }
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {
