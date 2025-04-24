@@ -20,10 +20,10 @@ vec3 actorDirection;
 
 float actorSpeed;
 
-float fieldOfView;
+float cameraFieldOfView;
 
-float nearPlane;
-float farPlane;
+float cameraNearPlane;
+float cameraFarPlane;
 
 Primitive *skybox;
 Primitive *actor;
@@ -37,7 +37,7 @@ void updateView() {
 
 void updateProjection() {
     float aspectRatio = ((float) extent.width) / ((float) extent.height);
-    glmc_perspective_rh_zo(fieldOfView, aspectRatio, nearPlane, farPlane, sceneUniform->projection);
+    glmc_perspective_rh_zo(cameraFieldOfView, aspectRatio, cameraNearPlane, cameraFarPlane, sceneUniform->projection);
 }
 
 void generateViewProjection() {
@@ -60,17 +60,17 @@ void initializePlayer(vec3 position, vec3 direction, float speed) {
     playerSpeed = speed;
 }
 
-void initializeCamera(float cameraFieldOfView, float cameraNearPlane, float cameraFarPlane) {
-    fieldOfView = cameraFieldOfView;
-    nearPlane   = cameraNearPlane;
-    farPlane    = cameraFarPlane;
-}
-
 void initializeActor(vec3 position, vec3 direction, float speed) {
     glmc_vec3_copy(position,  actorPosition);
     glmc_vec3_copy(direction, actorDirection);
 
     actorSpeed = speed;
+}
+
+void initializeCamera(float fieldOfView, float nearPlane, float farPlane) {
+    cameraFieldOfView = fieldOfView;
+    cameraNearPlane   = nearPlane;
+    cameraFarPlane    = farPlane;
 }
 
 void updatePlayer() {
@@ -89,9 +89,20 @@ void updatePlayer() {
 
     glmc_vec3_scale(freeMovementInput, playerSpeed, movement);
 
-    glmc_vec3_muladds(right,     movement[0], playerPosition);
+    glmc_vec3_muladds(right,           movement[0], playerPosition);
     glmc_vec3_muladds(playerDirection, movement[1], playerPosition);
-    glmc_vec3_muladds(up,        movement[2], playerPosition);
+    glmc_vec3_muladds(up,              movement[2], playerPosition);
+}
+
+void updateActor() {
+    vec3 right;
+    vec2 movement;
+
+    glmc_vec3_crossn(actorDirection, worldUp, right);
+    glmc_vec2_scale(mainMovementInput, actorSpeed, movement);
+
+    glmc_vec3_muladds(right,          movement[0], actorPosition);
+    glmc_vec3_muladds(actorDirection, movement[1], actorPosition);
 }
 
 void updateCamera() {

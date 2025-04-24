@@ -12,12 +12,13 @@ void updateProjection();
 void generateViewProjection();
 
 void initializeScene();
-void initializePlayer(vec3 playerPosition, vec3 playerDirection, float playerSpeed);
+void initializePlayer(vec3 position, vec3 direction, float speed);
+void initializeActor(vec3 position, vec3 direction, float speed);
 void initializeCamera(float cameraFieldOfView, float cameraNearPlane, float cameraFarPlane);
-void initializeActor(vec3 actorPosition, vec3 actorDirection, float actorSpeed);
 
-void updatePlayer();
-void updateCamera();
 void updateSkybox();
+void updatePlayer();
+void updateActor();
+void updateCamera();
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet);

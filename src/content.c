@@ -164,7 +164,7 @@ void loadContent() {
     initializeCamera(M_PI_4, 1.0f, 1000.0f);
 
     initializeActor((vec3) {
-        0.0f,
+        8.0f,
         8.0f,
         8.0f
     },
@@ -191,9 +191,10 @@ void loadContent() {
 }
 
 void updateUniforms(uint32_t framebufferIndex) {
-    updatePlayer();
-    updateCamera();
     updateSkybox();
+    updatePlayer();
+    updateActor();
+    updateCamera();
 
     memcpy(mappedSharedMemory + framebufferIndex * framebufferUniformStride, uniformBuffer, framebufferUniformStride);
 }
