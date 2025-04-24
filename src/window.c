@@ -132,6 +132,10 @@ void pollEvents() {
     if(compareFloat(glmc_vec3_norm2(freeMovementInput), 0.0f)) {
         glmc_vec3_scale_as(freeMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), freeMovementInput);
     }
+
+    if(compareFloat(glmc_vec2_norm2(mainMovementInput), 0.0f)) {
+        glmc_vec2_scale_as(mainMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), mainMovementInput);
+    }
 }
 
 void finalizeMainLoop() {

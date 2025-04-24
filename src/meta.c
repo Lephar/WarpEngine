@@ -73,6 +73,11 @@ void initializeCamera(float fieldOfView, float nearPlane, float farPlane) {
     cameraFarPlane    = farPlane;
 }
 
+void updateSkybox() {
+    PrimitiveUniform *skyboxUniform = uniformBuffer + skybox->uniformOffset;
+    glmc_translate_make(skyboxUniform->model, playerPosition);
+}
+
 void updatePlayer() {
     vec3 right;
     vec3 up;
@@ -103,15 +108,14 @@ void updateActor() {
 
     glmc_vec3_muladds(right,          movement[0], actorPosition);
     glmc_vec3_muladds(actorDirection, movement[1], actorPosition);
+
+    PrimitiveUniform *actorUniform = uniformBuffer + actor->uniformOffset;
+    glmc_translate_make(actorUniform->model, actorPosition);
 }
 
 void updateCamera() {
     updateView();
     generateViewProjection();
-}
-
-void updateSkybox() {
-    glmc_translate_make(uniformBuffer + skybox->uniformOffset, playerPosition);
 }
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {

@@ -79,7 +79,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
     }
 
     PrimitiveUniform *primitiveUniform = uniformBuffer + primitive->uniformOffset;
-    memcpy(primitiveUniform, transform, sizeof(primitiveUniform->model));
+    memcpy(primitiveUniform->model, transform, sizeof(primitiveUniform->model));
 
     debug("\tIndex begin:    %lu", primitive->indexBegin);
     debug("\tIndex count:    %lu", primitive->indexCount);
