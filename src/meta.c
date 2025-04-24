@@ -57,12 +57,16 @@ void initializePlayer(vec3 position, vec3 direction, float speed) {
     glmc_vec3_copy(position,  playerPosition);
     glmc_vec3_copy(direction, playerDirection);
 
+    glmc_vec3_normalize(playerDirection);
+
     playerSpeed = speed;
 }
 
 void initializeActor(vec3 position, vec3 direction, float speed) {
     glmc_vec3_copy(position,  actorPosition);
     glmc_vec3_copy(direction, actorDirection);
+
+    glmc_vec3_normalize(actorDirection);
 
     actorSpeed = speed;
 }
