@@ -14,9 +14,18 @@ vec4 depth(float distanceFalloff) {
 }
 
 vec4 fog(vec4 color, float distanceFalloff, float heightFalloff) {
-    vec4 fogDensity = depth(distanceFalloff);
+    const float drawDistance = 1000.0f;
+
+    float normalizedHeight = (drawDistance - min(inputPosition.z, drawDistance)) / drawDistance;
+
+    vec4 depthValue = depth(distanceFalloff);
+    vec4 heightValue = vec4(pow(normalizedHeight, heightFalloff));
+
+    vec4 fogDensity = depthValue * heightValue;
+
     return color * (vec4(1.0f) - fogDensity) + fogDensity;
 }
+
 
 vec4 grayscale(vec4 color) {
     float average = (color.r + color.g + color.b) / 3.0f;
