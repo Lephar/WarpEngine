@@ -166,7 +166,7 @@ void loadContent() {
     initializeActor((vec3) {
         8.0f,
         8.0f,
-        8.0f
+        -8.0f
     },
     (vec3) {
         1.0f,

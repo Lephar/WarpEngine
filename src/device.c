@@ -60,7 +60,7 @@ void createDevice() {
         .fillModeNonSolid = VK_TRUE,
         .wideLines = VK_TRUE,
         .largePoints = VK_TRUE,
-        .samplerAnisotropy = VK_TRUE,
+        .samplerAnisotropy = VK_TRUE
     };
 
     VkPhysicalDeviceVulkan11Features version11Features = {

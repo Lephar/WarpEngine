@@ -26,7 +26,6 @@ vec4 fog(vec4 color, float distanceFalloff, float heightFalloff) {
     return color * (vec4(1.0f) - fogDensity) + fogDensity;
 }
 
-
 vec4 grayscale(vec4 color) {
     float average = (color.r + color.g + color.b) / 3.0f;
     return vec4(average);
@@ -36,7 +35,8 @@ void main() {
     float distanceFalloff = 32.0f;
     float heightFalloff = 8.0f;
 
-    vec4 color = fog(grayscale(texture(textureSampler, inputTexcoord)), distanceFalloff, heightFalloff);
+    vec4 color = texture(textureSampler, inputTexcoord);
 
-    outputColor = color;
+  //outputColor = depth(distanceFalloff);
+    outputColor = fog(grayscale(color), distanceFalloff, heightFalloff);
 }
