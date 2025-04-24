@@ -9,8 +9,25 @@ layout(location = 1) in vec2 inputTexcoord;
 
 layout(location = 0) out vec4 outputColor;
 
-void main()
-{
-  //outputColor = vec4(inputAmbientLight, 1.0f) * texture(textureSampler, inputTexcoord);
-    outputColor = vec4(inputAmbientLight, 1.0f) * texture(textureSampler, inputTexcoord) * (1.0f - pow(gl_FragCoord.z, 128.0f)) + pow(gl_FragCoord.z, 128.0f);
+vec4 depth(float distanceFalloff) {
+    return vec4(pow(gl_FragCoord.z, distanceFalloff));
+}
+
+vec4 fog(vec4 color, float distanceFalloff, float heightFalloff) {
+    vec4 fogDensity = depth(distanceFalloff);
+    return color * (vec4(1.0f) - fogDensity) + fogDensity;
+}
+
+vec4 grayscale(vec4 color) {
+    float average = (color.r + color.g + color.b) / 3.0f;
+    return vec4(average);
+}
+
+void main() {
+    float distanceFalloff = 32.0f;
+    float heightFalloff = 8.0f;
+
+    vec4 color = fog(grayscale(texture(textureSampler, inputTexcoord)), distanceFalloff, heightFalloff);
+
+    outputColor = color;
 }
