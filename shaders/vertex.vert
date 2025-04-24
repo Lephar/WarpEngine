@@ -15,15 +15,13 @@ layout(set = 1, binding = 0) uniform Primitive {
 layout(location = 0) in  vec3 inputPosition;
 layout(location = 1) in  vec2 inputTexcoord;
 
-layout(location = 0) out vec3 outputAmbientLight;
-layout(location = 1) out vec3 outputPosition;
-layout(location = 2) out vec2 outputTexcoord;
+layout(location = 0) out vec3 outputPosition;
+layout(location = 1) out vec2 outputTexcoord;
 
 void main()
 {
-    outputAmbientLight = vec3(1.0f, 1.0f, 1.0f);
-    outputPosition     = inputPosition;
-    outputTexcoord     = inputTexcoord;
+    outputPosition = inputPosition;
+    outputTexcoord = inputTexcoord;
 
     gl_Position = viewProjection * model * vec4(outputPosition, 1.0f);
 }
