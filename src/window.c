@@ -19,7 +19,7 @@ struct timespec timeCurrent;
 float timeDelta; // In microseconds
 
 vec2 mouseDelta;
-vec2 mainMovementInput;
+vec3 mainMovementInput;
 vec3 freeMovementInput;
 
 bool resizeEvent;
@@ -126,15 +126,16 @@ void pollEvents() {
     freeMovementInput[1] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
     freeMovementInput[2] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
 
-    mainMovementInput[0] = states[SDL_SCANCODE_RIGHT] - states[SDL_SCANCODE_LEFT];
-    mainMovementInput[1] = states[SDL_SCANCODE_UP]    - states[SDL_SCANCODE_DOWN];
+    mainMovementInput[0] = states[SDL_SCANCODE_RIGHT]   - states[SDL_SCANCODE_LEFT];
+    mainMovementInput[1] = states[SDL_SCANCODE_UP]      - states[SDL_SCANCODE_DOWN];
+    mainMovementInput[2] = states[SDL_SCANCODE_KP_PLUS] - states[SDL_SCANCODE_KP_MINUS];
 
     if(compareFloat(glmc_vec3_norm2(freeMovementInput), 0.0f)) {
         glmc_vec3_scale_as(freeMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), freeMovementInput);
     }
 
-    if(compareFloat(glmc_vec2_norm2(mainMovementInput), 0.0f)) {
-        glmc_vec2_scale_as(mainMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), mainMovementInput);
+    if(compareFloat(glmc_vec3_norm2(mainMovementInput), 0.0f)) {
+        glmc_vec3_scale_as(mainMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), mainMovementInput);
     }
 }
 

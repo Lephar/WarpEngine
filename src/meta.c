@@ -101,13 +101,14 @@ void updatePlayer() {
 
 void updateActor() {
     vec3 right;
-    vec2 movement;
+    vec3 movement;
 
     glmc_vec3_crossn(actorDirection, worldUp, right);
-    glmc_vec2_scale(mainMovementInput, actorSpeed, movement);
+    glmc_vec3_scale(mainMovementInput, actorSpeed, movement);
 
     glmc_vec3_muladds(right,          movement[0], actorPosition);
     glmc_vec3_muladds(actorDirection, movement[1], actorPosition);
+    glmc_vec3_muladds(worldUp,        movement[2], actorPosition);
 
     PrimitiveUniform *actorUniform = uniformBuffer + actor->uniformOffset;
     glmc_translate_make(actorUniform->model, actorPosition);
