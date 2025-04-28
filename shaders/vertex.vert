@@ -23,5 +23,6 @@ void main()
     outputPosition = inputPosition;
     outputTexcoord = inputTexcoord;
 
+    gl_PointSize = 1.0f;
     gl_Position = viewProjection * model * vec4(outputPosition, 1.0f);
 }

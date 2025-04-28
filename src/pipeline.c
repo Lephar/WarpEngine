@@ -77,6 +77,7 @@ void bindPipeline(VkCommandBuffer commandBuffer) {
     cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_FILL);
     //cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_LINE);
     //vkCmdSetLineWidth(commandBuffer, 1.0f);
+    //cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_POINT);
 
     PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadDeviceFunction("vkCmdSetRasterizationSamplesEXT");
     cmdSetRasterizationSamples(commandBuffer, framebufferSet.sampleCount);
