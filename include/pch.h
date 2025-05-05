@@ -10,6 +10,7 @@
 #include <math.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdbit.h>
