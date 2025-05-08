@@ -2,6 +2,6 @@
 
 #include "pch.h"
 
-void initEngine(int argc, char *argv[]);
+void initEngine();
 void loopEngine();
 void quitEngine();

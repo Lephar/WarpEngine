@@ -16,9 +16,7 @@
 #include "shader.h"
 #include "draw.h"
 
-void initEngine(int argc, char *argv[]) {
-    configure(argc, argv);
-
+void initEngine() {
     initializeSystem();
     createWindow();
     createInstance();

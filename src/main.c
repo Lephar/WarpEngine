@@ -1,8 +1,10 @@
 #include "main.h"
 
 int main(int argc, char *argv[]) {
+    configure(argc, argv);
+
     initNetwork();
-    initEngine(argc, argv);
+    initEngine();
 
     loopNetwork();
     loopEngine();
