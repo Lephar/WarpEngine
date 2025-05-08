@@ -4,13 +4,13 @@ int main(int argc, char *argv[]) {
     configure(argc, argv);
 
     initNetwork();
-    initEngine();
+    //initEngine();
 
     loopNetwork();
-    loopEngine();
+    //loopEngine();
 
     quitNetwork();
-    quitEngine();
+    //quitEngine();
 
     return EXIT_SUCCESS;
 }
