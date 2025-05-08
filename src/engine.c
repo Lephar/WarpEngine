@@ -16,7 +16,7 @@
 #include "shader.h"
 #include "draw.h"
 
-void initialize(int argc, char *argv[]) {
+void initEngine(int argc, char *argv[]) {
     configure(argc, argv);
 
     initializeSystem();
@@ -53,7 +53,7 @@ void recreateSwapchain() {
     resizeEvent = false;
 }
 
-void loop() {
+void loopEngine() {
     initializeMainLoop();
     initializeDraw();
 
@@ -73,7 +73,7 @@ void loop() {
     finalizeMainLoop();
 }
 
-void quit() {
+void quitEngine() {
     vkDeviceWaitIdle(device);
 
     destroyFramebufferSet();
