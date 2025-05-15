@@ -1,7 +1,9 @@
 .cache/
 .vscode/
+.idea/
 
 build/
+cmake-build*/
 
 data/Terrain*
 
