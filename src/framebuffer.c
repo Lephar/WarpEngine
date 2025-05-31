@@ -8,7 +8,6 @@
 #include "image.h"
 #include "descriptor.h"
 
-#include "numerics.h"
 #include "logger.h"
 
 const uint32_t framebufferCountLimit = 4;
@@ -92,7 +91,7 @@ void createFramebufferSet() {
     for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.imageCount; framebufferIndex++) {
         debug("Framebuffer %d:", framebufferIndex);
         createFramebuffer(&framebufferSet.framebuffers[framebufferIndex], framebufferIndex);
-        debug("\tSuccessfully created", framebufferIndex);
+        debug("\tSuccessfully created");
     }
 }
 
