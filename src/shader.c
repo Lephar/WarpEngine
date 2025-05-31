@@ -139,7 +139,7 @@ void createModules() {
 void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertex, ShaderModule *fragment) {
     assert(vertex->stage == VK_SHADER_STAGE_VERTEX_BIT && fragment->stage == VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    VkShaderStageFlags stages[] = {
+    VkShaderStageFlagBits stages[] = {
         VK_SHADER_STAGE_VERTEX_BIT,
         VK_SHADER_STAGE_FRAGMENT_BIT
     };

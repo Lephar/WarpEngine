@@ -27,7 +27,7 @@ struct framebuffer {
 struct framebufferSet {
     uint32_t imageCount;
 
-    VkSampleCountFlags sampleCount;
+    VkSampleCountFlagBits sampleCount;
 
     VkFormat depthStencilFormat;
     VkFormat colorFormat;
