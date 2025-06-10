@@ -3,7 +3,6 @@
 #include "window.h"
 #include "device.h"
 #include "queue.h"
-#include "buffer.h"
 #include "image.h"
 #include "swapchain.h"
 #include "framebuffer.h"
@@ -28,9 +27,9 @@ void render() {
     uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
-    updateUniforms(framebufferIndex);
-
     waitFramebuffer(framebuffer);
+
+    updateUniforms(framebufferIndex);
 
     beginFramebuffer(framebuffer);
     bindFramebuffer(framebuffer);
