@@ -31,7 +31,7 @@ void render() {
 
     updateUniforms(framebufferIndex);
 
-    beginFramebuffer(framebuffer);
+    beginFramebuffer(&framebufferSet, framebuffer);
     bindFramebuffer(framebuffer);
 
     bindContentBuffers(framebuffer->renderCommandBuffer);

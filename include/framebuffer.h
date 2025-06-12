@@ -5,8 +5,6 @@
 typedef struct image Image;
 
 struct framebuffer {
-    Image *depthStencil;
-    Image *color;
     Image *resolve;
 
     VkDescriptorSet sceneDescriptorSet;
@@ -32,6 +30,9 @@ struct framebufferSet {
     VkFormat depthStencilFormat;
     VkFormat colorFormat;
 
+    Image *depthStencil;
+    Image *color;
+
     Framebuffer *framebuffers;
 } typedef FramebufferSet;
 
@@ -42,7 +43,7 @@ extern FramebufferSet framebufferSet;
 
 void createFramebufferSet();
 void waitFramebuffer(Framebuffer *framebuffer);
-void beginFramebuffer(Framebuffer *framebuffer);
+void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer);
 void bindFramebuffer(Framebuffer *framebuffer);
 void endFramebuffer(Framebuffer *framebuffer);
 void destroyFramebufferSet();

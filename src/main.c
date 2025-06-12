@@ -3,14 +3,14 @@
 int main(int argc, char *argv[]) {
     configure(argc, argv);
 
-    initNetwork();
-    //initEngine();
+    //initNetwork();
+    initEngine();
 
-    loopNetwork();
-    //loopEngine();
+    //loopNetwork();
+    loopEngine();
 
-    quitNetwork();
-    //quitEngine();
+    //quitNetwork();
+    quitEngine();
 
     return EXIT_SUCCESS;
 }
