@@ -45,8 +45,8 @@ uint32_t timerCallback(void *userData, uint32_t id, uint32_t interval) {
 #endif
 
 void initializeSystem() {
-    // TODO: Ubuntu has issues with Wayland and RenderDoc doesn't support it yet, wait for update
-    //SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
+    // NOTICE: RenderDoc doesn't support Wayland yet
+    SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_Vulkan_LoadLibrary(NULL);
