@@ -3,10 +3,7 @@
 #include "window.h"
 #include "pipeline.h"
 #include "content.h"
-#include "material.h"
 #include "primitive.h"
-
-#include "logger.h"
 
 vec3 worldUp;
 

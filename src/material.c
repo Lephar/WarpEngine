@@ -1,11 +1,9 @@
 #include "material.h"
 
-#include "device.h"
 #include "physicalDevice.h"
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
-#include "content.h"
 #include "pipeline.h"
 #include "descriptor.h"
 

@@ -2,7 +2,6 @@
 
 #include "window.h"
 
-#include "file.h"
 #include "logger.h"
 
 char rootPath[PATH_MAX];

@@ -1,8 +1,5 @@
 #include "primitive.h"
 
-#include "physicalDevice.h"
-#include "device.h"
-#include "buffer.h"
 #include "pipeline.h"
 #include "content.h"
 #include "material.h"
