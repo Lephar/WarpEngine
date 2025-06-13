@@ -30,6 +30,7 @@ struct framebufferSet {
 
     VkFormat depthStencilFormat;
     VkFormat colorFormat;
+    VkFormat saveFormat;
 
     Image *depthStencil;
     Image *color;
