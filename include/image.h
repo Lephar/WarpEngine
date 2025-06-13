@@ -12,6 +12,7 @@ struct image {
     VkFormat format;
     VkImageUsageFlags usage;
     VkImageAspectFlags aspect;
+    VkImageTiling tiling;
     VkImageLayout layout;
     VkImage image;
     VkImageView view;
@@ -20,8 +21,8 @@ struct image {
     Memory *memory;
 } typedef Image;
 
-void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect);
-Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect);
+void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling);
+Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling);
 void bindImageMemory(Image *image, Memory *memory);
 void createImageView(Image *image);
 void generateMipmaps(Image *image);

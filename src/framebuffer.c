@@ -16,7 +16,8 @@ FramebufferSet oldFramebufferSet;
 FramebufferSet framebufferSet;
 
 void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
-    framebuffer->resolve = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+    framebuffer->resolve = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+
     bindImageMemory(framebuffer->resolve, &deviceMemory);
     createImageView(framebuffer->resolve);
     transitionImageLayout(framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
@@ -75,8 +76,8 @@ void createFramebufferSet() {
     framebufferSet.depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT;
     framebufferSet.colorFormat = VK_FORMAT_B8G8R8A8_SRGB;
 
-    framebufferSet.depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
-    framebufferSet.color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT);
+    framebufferSet.depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_TILING_OPTIMAL);
+    framebufferSet.color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT,                               VK_IMAGE_TILING_OPTIMAL);
 
     bindImageMemory(framebufferSet.depthStencil, &deviceMemory);
     bindImageMemory(framebufferSet.color,        &deviceMemory);

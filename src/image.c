@@ -7,7 +7,7 @@
 
 #include "numerics.h"
 
-void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
+void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling) {
     image->extent.width = width;
     image->extent.height = height;
     image->extent.depth = 1;
@@ -16,13 +16,14 @@ void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, ui
     image->format = format;
     image->usage = usage;
     image->aspect = aspect;
+    image->tiling = tiling;
     image->layout = VK_IMAGE_LAYOUT_UNDEFINED;
     image->image = handle;
 
     vkGetImageMemoryRequirements(device, image->image, &image->memoryRequirements);
 }
 
-Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect) {
+Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling) {
     uint32_t queueFamilyIndices[distinctQueueFamilyCount];
 
     for(uint32_t queueIndex = 0; queueIndex < distinctQueueFamilyCount; queueIndex++) {
@@ -43,7 +44,7 @@ Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCount
         .mipLevels = mips,
         .arrayLayers = 1,
         .samples = samples,
-        .tiling = VK_IMAGE_TILING_OPTIMAL,
+        .tiling = tiling,
         .usage = usage,
         .sharingMode = VK_SHARING_MODE_CONCURRENT,
         .queueFamilyIndexCount = distinctQueueFamilyCount,
@@ -55,7 +56,7 @@ Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCount
     vkCreateImage(device, &imageInfo, NULL, &handle);
 
     Image *image = malloc(sizeof(Image));
-    wrapImage(image, handle, width, height, mips, samples, format, usage, aspect);
+    wrapImage(image, handle, width, height, mips, samples, format, usage, aspect, tiling);
     return image;
 }
 
