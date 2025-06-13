@@ -155,7 +155,7 @@ void present() {
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, swapchainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, swapchainImage->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region, VK_FILTER_NEAREST);
+    vkCmdBlitImage(framebuffer->presentCommandBuffer, framebuffer->resolve->image, framebuffer->resolve->layout, swapchainImage->image, swapchainImage->layout, 1, &region, VK_FILTER_NEAREST);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, swapchainImage, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
     vkEndCommandBuffer(framebuffer->presentCommandBuffer);
