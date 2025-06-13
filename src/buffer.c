@@ -43,7 +43,7 @@ void createBuffers() {
     bindBufferMemory(&deviceBuffer, &deviceMemory);
     debug("Device local buffer created: %ld bytes", deviceBuffer.size);
 
-    createBuffer(&sharedBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, sharedMemory.size);
+    createBuffer(&sharedBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 3 * sharedMemory.size / 4);
     bindBufferMemory(&sharedBuffer, &sharedMemory);
     debug("Host visible buffer created: %ld bytes", sharedBuffer.size);
 }

@@ -6,6 +6,7 @@ typedef struct image Image;
 
 struct framebuffer {
     Image *resolve;
+    Image *blit;
 
     VkDescriptorSet sceneDescriptorSet;
     VkDescriptorSet primitiveDescriptorSet;

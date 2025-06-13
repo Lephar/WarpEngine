@@ -17,10 +17,16 @@ FramebufferSet framebufferSet;
 
 void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
     framebuffer->resolve = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+    framebuffer->blit    = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_TRANSFER_SRC_BIT     | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_NONE,      VK_IMAGE_TILING_LINEAR);
 
     bindImageMemory(framebuffer->resolve, &deviceMemory);
+    bindImageMemory(framebuffer->blit,    &sharedMemory);
+
     createImageView(framebuffer->resolve);
+    //createImageView(framebuffer->blit);
+
     transitionImageLayout(framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    transitionImageLayout(framebuffer->blit,    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
     framebuffer->sceneDescriptorSet     =     getSceneDescriptorSet(index);
     framebuffer->primitiveDescriptorSet = getPrimitiveDescriptorSet(index);
@@ -210,7 +216,8 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
     vkDestroySemaphore(device, framebuffer->blitSemaphorePresent, NULL);
 
     destroyImageView(framebuffer->resolve);
-    destroyImage(framebuffer->resolve);
+    destroyImage(    framebuffer->resolve);
+    destroyImage(    framebuffer->blit);
 }
 
 void destroyFramebufferSet() {
