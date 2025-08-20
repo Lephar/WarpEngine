@@ -35,6 +35,7 @@
 #include <vulkan/vulkan.h>
 #include <shaderc/shaderc.h>
 
+#include "stb/stb_image.h"
 #include "ktx/ktx.h"
 #include "cgltf/cgltf.h"
 #include "cglm/call.h"
