@@ -37,6 +37,7 @@ void main() {
 
     vec4 color = texture(textureSampler, inputTexcoord);
 
+    outputColor = color;
   //outputColor = depth(distanceFalloff);
-    outputColor = fog(grayscale(color), distanceFalloff, heightFalloff);
+  //outputColor = fog(grayscale(color), distanceFalloff, heightFalloff);
 }
