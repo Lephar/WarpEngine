@@ -14,7 +14,11 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
     debug("\tType: %d", primitiveData->type);
 
     uint32_t materialIndex = findMaterial(primitiveData->material);
-    assert(materialIndex < materialCount);
+
+    if(materialIndex >= materialCount) {
+        debug("\tNo material found for the primitive, skipping...");
+        return;
+    }
 
     primitive->material = &materials[materialIndex];
     debug("\tMaterial matched: %s", primitiveData->material->name);
@@ -89,6 +93,8 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
     indexBufferSize   += accessor->count      * sizeof(Index);
     vertexBufferSize  += primitiveVertexCount * sizeof(Vertex);
     uniformBufferSize += primitiveUniformAlignment;
+
+    primitiveCount++;
 }
 
 // NOTICE: This doesn't account for material binding, use bindMaterial() beforehand

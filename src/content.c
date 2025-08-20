@@ -72,7 +72,6 @@ void loadAsset(const char *subdirectory, const char *filename) {
         Material *material = &materials[materialCount];
 
         loadMaterial(subdirectory, material, materialData);
-        materialCount++;
     }
 
     for(cgltf_size nodeIndex = 0; nodeIndex < data->nodes_count; nodeIndex++) {
@@ -89,7 +88,6 @@ void loadAsset(const char *subdirectory, const char *filename) {
                 Primitive *primitiveReference = &primitives[primitiveCount];
 
                 loadPrimitive(primitiveReference, &meshData->primitives[primitiveIndex], transform);
-                primitiveCount++;
             }
         }
     }

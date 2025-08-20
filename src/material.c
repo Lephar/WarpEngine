@@ -24,6 +24,50 @@ uint32_t findMaterial(cgltf_material *materialData) {
     return UINT32_MAX;
 }
 
+Image *loadTextureRaw(const char *path) {
+    debug("\tImage Path: %s", path);
+
+    int32_t width  = 0;
+    int32_t height = 0;
+    int32_t depth  = 0;
+
+    stbi_uc *data = stbi_load(path, &width, &height, &depth, STBI_rgb_alpha);
+    size_t   size = width * height * STBI_rgb_alpha;
+    debug("\tLoaded Texture Size:     %lu", size);
+
+    int32_t mips = floor(log2(imax(width, height))) + 1;
+
+    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+    debug("\tMemory Requirement Size: %lu", texture->memoryRequirements.size);
+    debug("\tMemory Offset:           %lu", deviceMemory.offset);
+    debug("\tWidth:  %u", width);
+    debug("\tHeight: %u", height);
+    debug("\tDepth:  %u", depth);
+    debug("\tMips:   %u", mips);
+    debug("\tImage created");
+
+    bindImageMemory(texture, &deviceMemory);
+    transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    if(size <= sharedBuffer.size) {
+        memcpy(mappedSharedMemory, data, size);
+        copyBufferToImage(&sharedBuffer, 0, texture, 0);
+    } else if (size <= deviceBuffer.size) {
+        stagingBufferCopy(data, 0, 0, size);
+        copyBufferToImage(&deviceBuffer, 0, texture, 0);
+    } else {
+        debug("\tCan't copy image data, increase shared or device local buffer size!");
+        assert(size <= sharedBuffer.size || size <= deviceBuffer.size);
+    }
+
+    debug("\tImage data copied");
+
+    generateMipmaps(texture);
+    createImageView(texture);
+
+    return texture;
+}
+
 Image *loadTexture(const char *path) {
     debug("\tImage Path: %s", path);
 
@@ -68,7 +112,6 @@ Image *loadTexture(const char *path) {
 
     Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     bindImageMemory(texture, &deviceMemory);
-    createImageView(texture);
 
     debug("\tImage created");
 
@@ -102,6 +145,7 @@ Image *loadTexture(const char *path) {
     debug("\tImage data copied");
 
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    createImageView(texture);
 
     ktxTexture2_Destroy(textureObject);
 
@@ -112,13 +156,23 @@ Image *loadTexture(const char *path) {
 void loadMaterial(const char *subdirectory, Material *material, cgltf_material *materialData) {
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
-    assert(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu);
 
-    char textureFullPath[PATH_MAX];
-    makeFullPath("data", materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, textureFullPath);
+    if(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture) {
+        char textureFullPath[PATH_MAX];
 
-    material->baseColor     = loadTexture(textureFullPath);
-    material->descriptorSet = getMaterialDescriptorSet(material->baseColor);
+        if(materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu) {
+            makeFullPath(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, textureFullPath);
+            material->baseColor = loadTexture(textureFullPath);
+        } else {
+            makeFullPath(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri,        textureFullPath);
+            material->baseColor = loadTextureRaw(textureFullPath);
+        }
+
+        material->descriptorSet = getMaterialDescriptorSet(material->baseColor);
+        materialCount++;
+    } else {
+        debug("\tUnsupported material layout, skipping...");
+    }
 }
 
 // NOTICE: This doesn't account for shader binding, use bindShader() beforehand

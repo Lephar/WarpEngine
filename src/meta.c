@@ -46,8 +46,8 @@ void initializeScene() {
     worldUp[1] = 0.0f;
     worldUp[2] = 1.0f;
 
-    skybox = &primitives[0];
-    actor  = &primitives[primitiveCount - 1];
+    //skybox = &primitives[0];
+    //actor  = &primitives[primitiveCount - 1];
 }
 
 void initializePlayer(vec3 position, vec3 direction, float speed) {
