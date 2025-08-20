@@ -94,7 +94,6 @@ void createImageView(Image *image) {
     vkCreateImageView(device, &imageViewInfo, NULL, &image->view);
 }
 
-// TODO: Investigate texture seams
 void generateMipmaps(Image *image) {
     VkCommandBuffer commandBuffer = beginSingleGraphicsCommand();
 

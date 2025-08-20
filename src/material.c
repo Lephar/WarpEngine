@@ -9,6 +9,7 @@
 
 #include "file.h"
 #include "logger.h"
+#include "numerics.h"
 
 uint32_t materialCount;
 Material *materials;
@@ -107,7 +108,8 @@ Image *loadTexture(const char *path) {
     return texture;
 }
 
-void loadMaterial(Material *material, cgltf_material *materialData) {
+// TODO: Investigate texture seams
+void loadMaterial(const char *subdirectory, Material *material, cgltf_material *materialData) {
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
     assert(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu);
