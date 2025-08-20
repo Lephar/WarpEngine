@@ -13,13 +13,13 @@ shaderc_compile_options_t shaderCompileOptions;
 ShaderModule vertexShaderModule;
 ShaderModule fragmentShaderModule;
 
-ShaderCode loadShaderCode(const char *path, bool binary, shaderc_shader_kind stage) {
+ShaderCode loadShaderCode(const char *subdirectory, const char *filename, bool binary, shaderc_shader_kind stage) {
     char fullPath[PATH_MAX];
-    makeFullPath("shaders", path, fullPath);
+    makeFullPath(subdirectory, filename, fullPath);
 
     ShaderCode shaderCode = {
         .stage = stage,
-        .data = readFile(binary, fullPath)
+        .data  = readFile(binary, fullPath)
     };
 
     debug("\tFile loading successful");
@@ -97,10 +97,10 @@ void destroyShaderModule(ShaderModule *shaderModule) {
     destroyShader(device, shaderModule->module, NULL);
 }
 
-ShaderModule makeShaderModule(const char *file, bool binary, shaderc_shader_kind stage) {
-    debug("Loading and creating shader module %s", file);
+ShaderModule makeShaderModule(const char *subdirectory, const char *filename, bool binary, shaderc_shader_kind stage) {
+    debug("Loading and creating shader module %s", filename);
 
-    ShaderCode shaderCode = loadShaderCode(file, binary, stage);
+    ShaderCode shaderCode = loadShaderCode(subdirectory, filename, binary, stage);
 
     if(!binary) {
         compileShaderCode(&shaderCode);
@@ -130,8 +130,8 @@ void createModules() {
 
     debug("Shader compiler created and compile options set");
 
-    vertexShaderModule   = makeShaderModule("vertex.vert",       false, shaderc_vertex_shader);
-    fragmentShaderModule = makeShaderModule("fragment.frag.spv", true,  shaderc_fragment_shader);
+    vertexShaderModule   = makeShaderModule("data/shaders", "vertex.vert",   false, shaderc_vertex_shader);
+    fragmentShaderModule = makeShaderModule("data/shaders", "fragment.frag", false, shaderc_fragment_shader);
 
     debug("Shader modules created");
 }
