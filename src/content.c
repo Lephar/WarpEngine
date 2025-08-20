@@ -31,9 +31,9 @@ void   *uniformBuffer;
 
 SceneUniform *sceneUniform;
 
-cgltf_data *loadAsset(const char *name) {
+void loadAsset(const char *subdirectory, const char *filename) {
     char fullPath[PATH_MAX];
-    makeFullPath("data", name, fullPath);
+    makeFullPath(subdirectory, filename, fullPath);
 
     cgltf_data *data = NULL;
     cgltf_options assetOptions = {};
@@ -42,21 +42,21 @@ cgltf_data *loadAsset(const char *name) {
     result = cgltf_parse_file(&assetOptions, fullPath, &data);
 
     if(result != cgltf_result_success) {
-        debug("Failed to read %s: %d", name, result);
+        debug("Failed to read %s: %d", filename, result);
         assert(result == cgltf_result_success);
     }
 
     result = cgltf_validate(data);
 
     if(result != cgltf_result_success) {
-        debug("Failed to validate %s: %d", name, result);
+        debug("Failed to validate %s: %d", filename, result);
         assert(result == cgltf_result_success);
     }
 
     result = cgltf_load_buffers(&assetOptions, data, fullPath);
 
     if(result != cgltf_result_success) {
-        debug("Failed to load buffers %s: %d", name, result);
+        debug("Failed to load buffers %s: %d", filename, result);
         cgltf_free(data);
         assert(result == cgltf_result_success);
     }
@@ -71,7 +71,7 @@ cgltf_data *loadAsset(const char *name) {
         assert(materialCount < primitiveCountLimit);
         Material *material = &materials[materialCount];
 
-        loadMaterial(material, materialData);
+        loadMaterial(subdirectory, material, materialData);
         materialCount++;
     }
 
@@ -129,7 +129,8 @@ void loadContent() {
     //loadAsset("Terrain.gltf");
     //loadAsset("Suzanne.gltf");
 
-    
+    loadAsset("data/assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
+
     debug("Assets successfully loaded");
 
     initializeScene();
@@ -176,9 +177,9 @@ void loadContent() {
 }
 
 void updateUniforms(uint32_t framebufferIndex) {
-    updateSkybox();
+    //updateSkybox();
     updatePlayer();
-    updateActor();
+    //updateActor();
     updateCamera();
 
     memcpy(mappedSharedMemory + framebufferIndex * framebufferUniformStride, uniformBuffer, framebufferUniformStride);
