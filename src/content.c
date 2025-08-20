@@ -61,10 +61,6 @@ cgltf_data *loadAsset(const char *name) {
         assert(result == cgltf_result_success);
     }
 
-    return data;
-}
-
-void processAsset(cgltf_data *data) {
     for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
         cgltf_material *materialData = &data->materials[materialIndex];
 
@@ -97,9 +93,7 @@ void processAsset(cgltf_data *data) {
             }
         }
     }
-}
 
-void freeAsset(cgltf_data *data) {
     cgltf_free(data);
 }
 
@@ -131,20 +125,11 @@ void createContentBuffers() {
 }
 
 void loadContent() {
-    cgltf_data *data;
+    //loadAsset("Skybox.gltf");
+    //loadAsset("Terrain.gltf");
+    //loadAsset("Suzanne.gltf");
 
-    data = loadAsset("Skybox.gltf");
-    processAsset(data);
-    freeAsset(data);
-
-    data = loadAsset("Terrain.gltf");
-    processAsset(data);
-    freeAsset(data);
-
-    data = loadAsset("Suzanne.gltf");
-    processAsset(data);
-    freeAsset(data);
-
+    
     debug("Assets successfully loaded");
 
     initializeScene();
