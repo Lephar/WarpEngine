@@ -2,7 +2,7 @@
 
 #include "window.h"
 
-#include "config.h"
+#include "file.h"
 #include "logger.h"
 
 VkInstance instance;

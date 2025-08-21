@@ -1,7 +1,7 @@
 #include "file.h"
 
-#include "config.h"
-
+char rootPath[PATH_MAX];
+char executableName[PATH_MAX];
 const char *dataDirectory = "data";
 
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]) {
@@ -29,26 +29,6 @@ size_t loadTextFile(const char *subdirectory, const char *filename, char **outDa
     assert(length == size);
 
     (*outData)[size] = '\0';
-    fclose(file);
-
-    return size;
-}
-
-size_t loadBinaryFile(const char *subdirectory, const char *filename, void **outData) {
-    char fullPath[PATH_MAX];
-    makeFullPath(subdirectory, filename, fullPath);
-
-    FILE *file = fopen(fullPath, "rb");
-    fseek(file, 0, SEEK_END);
-    size_t size = ftell(file);
-    rewind(file);
-
-    if(*outData == NULL) {
-        *outData = malloc(size);
-    }
-
-    size_t length = fread(*outData, size, 1, file);
-    assert(length == size);
     fclose(file);
 
     return size;

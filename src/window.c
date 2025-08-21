@@ -1,6 +1,6 @@
 #include "window.h"
 
-#include "config.h"
+#include "file.h"
 #include "numerics.h"
 #include "logger.h"
 

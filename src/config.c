@@ -5,9 +5,6 @@
 #include "file.h"
 #include "logger.h"
 
-char rootPath[PATH_MAX];
-char executableName[PATH_MAX];
-
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);
     for(int32_t argn = 0; argn < argc; argn++) {
@@ -41,11 +38,9 @@ void configure(int argc, char *argv[]) {
     char config[PATH_MAX];
 
     if(argc < 2) {
-        makeFullPath(NULL,    "config.txt", config);
-    } else if (argc < 3) {
-        makeFullPath(NULL,    argv[1],      config);
+        makeFullPath(NULL, "config.txt", config);
     } else {
-        makeFullPath(argv[1], argv[2],      config);
+        makeFullPath(NULL, argv[1],      config);
     }
 
     debug("Config: %s", config);
