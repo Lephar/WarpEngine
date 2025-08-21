@@ -36,7 +36,7 @@ void render() {
 
     bindContentBuffers(framebuffer->renderCommandBuffer);
     bindPipeline(framebuffer->renderCommandBuffer);
-    bindShaders(framebuffer->renderCommandBuffer, &vertexShaderModule, &fragmentShaderModule);
+    bindShaders(framebuffer->renderCommandBuffer, vertexShaderModule, fragmentShaderModule);
     bindScene(framebuffer->renderCommandBuffer, framebuffer->sceneDescriptorSet);
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
