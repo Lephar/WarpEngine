@@ -84,7 +84,7 @@ void allocateMemories() {
     debug("Device local memory:");
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
-    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 4L << 30);
+    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 3L << 30);
     destroyBuffer(&temporaryBuffer);
     destroyImage(temporaryImage);
 
