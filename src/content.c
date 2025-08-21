@@ -123,11 +123,7 @@ void createContentBuffers() {
 }
 
 void loadContent() {
-    //loadAsset("Skybox.gltf");
-    //loadAsset("Terrain.gltf");
-    //loadAsset("Suzanne.gltf");
-
-    loadAsset("data/assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
+    loadAsset("assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
 
     debug("Assets successfully loaded");
 

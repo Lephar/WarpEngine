@@ -130,8 +130,8 @@ void createModules() {
 
     debug("Shader compiler created and compile options set");
 
-    vertexShaderModule   = makeShaderModule("data/shaders", "vertex.vert",   false, shaderc_vertex_shader);
-    fragmentShaderModule = makeShaderModule("data/shaders", "fragment.frag", false, shaderc_fragment_shader);
+    vertexShaderModule   = makeShaderModule("shaders", "vertex.vert",   false, shaderc_vertex_shader);
+    fragmentShaderModule = makeShaderModule("shaders", "fragment.frag", false, shaderc_fragment_shader);
 
     debug("Shader modules created");
 }

@@ -2,6 +2,7 @@
 
 #include "window.h"
 
+#include "file.h"
 #include "logger.h"
 
 char rootPath[PATH_MAX];
@@ -40,11 +41,11 @@ void configure(int argc, char *argv[]) {
     char config[PATH_MAX];
 
     if(argc < 2) {
-        length = snprintf(config, PATH_MAX, "%s/data/config.txt", rootPath);
-        assert(length < PATH_MAX);
+        makeFullPath(NULL,    "config.txt", config);
+    } else if (argc < 3) {
+        makeFullPath(NULL,    argv[1],      config);
     } else {
-        length = snprintf(config, PATH_MAX, "%s/%s", rootPath, argv[1]);
-        assert(length < PATH_MAX);
+        makeFullPath(argv[1], argv[2],      config);
     }
 
     debug("Config: %s", config);
