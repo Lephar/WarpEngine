@@ -11,6 +11,9 @@
 #include "logger.h"
 #include "numerics.h"
 
+Image *defaultBlackTexture = NULL;
+Image *defaultWhiteTexture = NULL;
+
 uint32_t materialCount;
 Material *materials;
 

@@ -15,6 +15,9 @@ struct material {
     VkDescriptorSet descriptorSet;
 } typedef Material;
 
+extern Image *defaultBlackTexture;
+extern Image *defaultWhiteTexture;
+
 extern uint32_t materialCount;
 extern Material *materials;
 
