@@ -5,9 +5,4 @@
 build/
 cmake-build*/
 
-data/Terrain*
-
-data/*.xcf
-
-data/*.blend
-data/*.blend1
+data/*
