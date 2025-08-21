@@ -7,6 +7,11 @@ typedef struct image Image;
 struct material {
     char name[UINT8_MAX];
     Image *baseColor;
+    Image *metallic;
+    Image *roughness;
+    Image *normal;
+    Image *occlusion;
+    Image *emissive;
     VkDescriptorSet descriptorSet;
 } typedef Material;
 
