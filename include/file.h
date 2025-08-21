@@ -10,5 +10,5 @@ typedef struct data Data;
 
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]);
 
-// WARN: Free the output data!
-Data *readFile(bool binary, const char *path);
+Data *loadTextFile(const char *subdirectory, const char *filename);
+Data *loadBinaryFile(const char *subdirectory, const char *filename);

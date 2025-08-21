@@ -11,7 +11,7 @@ void makeFullPath(const char *subdirectory, const char *filename, char outFullPa
     }
 }
 
-Data *readFile(bool binary, const char *path) {
+Data *readFile(const char *path, bool binary) {
     FILE *file = fopen(path, binary ? "rb" : "r");
     fseek(file, 0, SEEK_END);
     size_t size = ftell(file) + !binary;
@@ -28,4 +28,18 @@ Data *readFile(bool binary, const char *path) {
     }
 
     return data;
+}
+
+Data *loadTextFile(const char *subdirectory, const char *filename) {
+    char fullPath[PATH_MAX];
+    makeFullPath(subdirectory, filename, fullPath);
+
+    return readFile(fullPath, false);
+}
+
+Data *loadBinaryFile(const char *subdirectory, const char *filename) {
+    char fullPath[PATH_MAX];
+    makeFullPath(subdirectory, filename, fullPath);
+
+    return readFile(fullPath, true);
 }
