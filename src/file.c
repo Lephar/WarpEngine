@@ -1,45 +1,55 @@
 #include "file.h"
 
 #include "config.h"
-#include "data.h"
+
+const char *dataDirectory = "data";
 
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]) {
     if(subdirectory == NULL || strncmp(subdirectory, "", PATH_MAX) == 0) {
-        snprintf(outFullPath, PATH_MAX, "%s/%s", rootPath, filename);
+        snprintf(outFullPath, PATH_MAX, "%s/%s/%s",    rootPath, dataDirectory, filename);
     } else {
-        snprintf(outFullPath, PATH_MAX, "%s/%s/%s", rootPath, subdirectory, filename);
+        snprintf(outFullPath, PATH_MAX, "%s/%s/%s/%s", rootPath, dataDirectory, subdirectory, filename);
     }
 }
 
-Data *readFile(const char *path, bool binary) {
-    FILE *file = fopen(path, binary ? "rb" : "r");
+size_t loadTextFile(const char *subdirectory, const char *filename, char **outData) {
+    char fullPath[PATH_MAX];
+    makeFullPath(subdirectory, filename, fullPath);
+
+    FILE *file = fopen(fullPath, "r");
     fseek(file, 0, SEEK_END);
-    size_t size = ftell(file) + !binary;
+    size_t size = ftell(file);
     rewind(file);
 
-    Data *data = allocateData(binary, size);
-
-    size_t length = fread(data->content, 1, data->size, file);
-    assert(length + !binary == data->size);
-    fclose(file);
-
-    if(!binary) {
-        ((char *) data->content)[data->size - 1] = '\0';
+    if(*outData == NULL) {
+        *outData = malloc(size + 1);
     }
 
-    return data;
+    size_t length = fread(*outData, 1, size, file);
+    assert(length == size);
+
+    (*outData)[size] = '\0';
+    fclose(file);
+
+    return size;
 }
 
-Data *loadTextFile(const char *subdirectory, const char *filename) {
+size_t loadBinaryFile(const char *subdirectory, const char *filename, void **outData) {
     char fullPath[PATH_MAX];
     makeFullPath(subdirectory, filename, fullPath);
 
-    return readFile(fullPath, false);
-}
+    FILE *file = fopen(fullPath, "rb");
+    fseek(file, 0, SEEK_END);
+    size_t size = ftell(file);
+    rewind(file);
 
-Data *loadBinaryFile(const char *subdirectory, const char *filename) {
-    char fullPath[PATH_MAX];
-    makeFullPath(subdirectory, filename, fullPath);
+    if(*outData == NULL) {
+        *outData = malloc(size);
+    }
 
-    return readFile(fullPath, true);
+    size_t length = fread(*outData, size, 1, file);
+    assert(length == size);
+    fclose(file);
+
+    return size;
 }

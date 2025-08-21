@@ -6,9 +6,7 @@
 #define PATH_MAX 4096
 #endif
 
-typedef struct data Data;
-
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]);
 
-Data *loadTextFile(const char *subdirectory, const char *filename);
-Data *loadBinaryFile(const char *subdirectory, const char *filename);
+size_t loadTextFile(const char *subdirectory, const char *filename, char **outData);
+size_t loadBinaryFile(const char *subdirectory, const char *filename, void **outData);
