@@ -178,7 +178,7 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
             material->baseColor = loadTextureRaw(textureFullPath);
         }
     } else {
-        makeFullPath("assets/default", "white.png", textureFullPath);
+        makeFullPath("assets/default/textures", "white.png", textureFullPath);
         material->baseColor = loadTextureRaw(textureFullPath);
     }
 
