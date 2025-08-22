@@ -167,9 +167,9 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     material->occlusion = NULL;
     material->emissive  = NULL;
 
-    if(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture) {
-        char textureFullPath[PATH_MAX];
+    char textureFullPath[PATH_MAX];
 
+    if(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture) {
         if(materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu) {
             makeFullPath(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, textureFullPath);
             material->baseColor = loadTexture(textureFullPath);
@@ -177,12 +177,13 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
             makeFullPath(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri,        textureFullPath);
             material->baseColor = loadTextureRaw(textureFullPath);
         }
-
-        material->descriptorSet = getMaterialDescriptorSet(material->baseColor);
-        materialCount++;
     } else {
-        debug("\tUnsupported material layout, skipping...");
+        makeFullPath("assets/default", "white.png", textureFullPath);
+        material->baseColor = loadTextureRaw(textureFullPath);
     }
+
+    material->descriptorSet = getMaterialDescriptorSet(material->baseColor);
+    materialCount++;
 }
 
 // NOTICE: This doesn't account for shader binding, use bindShader() beforehand
