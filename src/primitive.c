@@ -27,7 +27,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
     cgltf_buffer_view *view     = accessor->buffer_view;
     cgltf_buffer      *buffer   = view->buffer;
 
-    void *data = buffer->data + view->offset;
+    void *data = buffer->data + view->offset + accessor->offset;
 
     primitive->indexBegin    = indexCount;
     primitive->indexCount    = accessor->count;
@@ -53,7 +53,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
         cgltf_buffer_view *attributeView     = attributeAccessor->buffer_view;
         cgltf_buffer      *attributeBuffer   = attributeView->buffer;
 
-        void              *attributeData     = attributeBuffer->data + attributeView->offset;
+        void              *attributeData     = attributeBuffer->data + attributeView->offset + attributeAccessor->offset;
 
         if(primitiveVertexCount == 0) {
             primitiveVertexCount = attributeAccessor->count;
