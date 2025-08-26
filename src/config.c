@@ -5,11 +5,17 @@
 #include "file.h"
 #include "logger.h"
 
+uint32_t threadCount = 0;
+
 void configure(int argc, char *argv[]) {
     debug("argc: %d", argc);
     for(int32_t argn = 0; argn < argc; argn++) {
         debug("\targv[%d]: %s", argn, argv[argn]);
     }
+
+    threadCount = get_nprocs();
+    assert(threadCount);
+    debug("Threads: %u", threadCount);
 
     char *separator = strrchr(argv[0], '/');
 
@@ -32,8 +38,8 @@ void configure(int argc, char *argv[]) {
         assert(length < PATH_MAX);
     }
 
-    debug("Path:   %s", rootPath);
-    debug("Name:   %s", executableName);
+    debug("Path:    %s", rootPath);
+    debug("Name:    %s", executableName);
 
     char config[PATH_MAX];
 
@@ -43,7 +49,7 @@ void configure(int argc, char *argv[]) {
         makeFullPath(NULL, argv[1],      config);
     }
 
-    debug("Config: %s", config);
+    debug("Config:  %s", config);
 
     FILE *file = fopen(config, "r");
     assert(file != NULL);
@@ -53,8 +59,8 @@ void configure(int argc, char *argv[]) {
     assert(strncasecmp(discard, "Window:", PATH_MAX) == 0);
 
     fscanf(file, "%u%u", &extent.width, &extent.height);
-    debug("Width:  %u", extent.width );
-    debug("Height: %u", extent.height);
+    debug("Width:   %u", extent.width );
+    debug("Height:  %u", extent.height);
 
     fclose(file);
 }

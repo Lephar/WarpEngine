@@ -29,6 +29,7 @@
 #include <sys/socket.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+#include <sys/sysinfo.h>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
