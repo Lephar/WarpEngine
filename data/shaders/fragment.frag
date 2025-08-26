@@ -11,12 +11,12 @@ layout(location = 0) out vec4 outputColor;
 
 vec4 position() {
     float distanceRange = 16.0f;
-    return (inputPosition + distanceRange / 2.0f) / distanceRange;
+    return vec4((vec3(inputPosition) + distanceRange / 2.0f) / distanceRange, 1.0f);
 }
 
 vec4 depth() {
     float distanceFalloff = 32.0f;
-    return vec4(pow(gl_FragCoord.z, distanceFalloff));
+    return vec4(vec3(pow(gl_FragCoord.z, distanceFalloff)), 1.0f);
 }
 
 vec4 color() {
@@ -28,11 +28,11 @@ vec4 fog() {
     float normalizedHeight = (drawDistance - min(inputPosition.z, drawDistance)) / drawDistance;
 
     float heightFalloff = 8.0f;
-    vec4 heightValue = vec4(pow(normalizedHeight, heightFalloff));
+    vec3 heightValue = vec3(pow(normalizedHeight, heightFalloff));
 
-    vec4 fogDensity = depth() * heightValue;
+    vec3 fogDensity = vec3(depth()) * heightValue;
 
-    return color() * (vec4(1.0f) - fogDensity) + fogDensity;
+    return vec4(vec3(color()) * (vec3(1.0f) - fogDensity) + fogDensity, 1.0f);
 }
 
 vec4 grayscale(vec4 color) {
