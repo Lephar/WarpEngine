@@ -42,13 +42,31 @@ void render() {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         Material *material = &materials[materialIndex];
 
-        bindMaterial(framebuffer->renderCommandBuffer, material);
+        if(!material->transparent) {
+            bindMaterial(framebuffer->renderCommandBuffer, material);
 
-        for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
-            Primitive *primitive = &primitives[primitiveIndex];
+            for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
+                Primitive *primitive = &primitives[primitiveIndex];
 
-            if(primitive->material == material) {
-                drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, primitive);
+                if(primitive->material == material) {
+                    drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, primitive);
+                }
+            }
+        }
+    }
+
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        Material *material = &materials[materialIndex];
+
+        if(material->transparent) {
+            bindMaterial(framebuffer->renderCommandBuffer, material);
+
+            for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
+                Primitive *primitive = &primitives[primitiveIndex];
+
+                if(primitive->material == material) {
+                    drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, primitive);
+                }
             }
         }
     }

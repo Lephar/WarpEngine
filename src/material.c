@@ -160,14 +160,17 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
 
-    material->baseColor = NULL;
-    material->metallic  = NULL;
-    material->roughness = NULL;
-    material->normal    = NULL;
-    material->occlusion = NULL;
-    material->emissive  = NULL;
+    material->baseColor         = NULL;
+    material->metallicRoughness = NULL;
+    material->normal            = NULL;
 
     char textureFullPath[PATH_MAX];
+
+    if(materialData->alpha_mode == cgltf_alpha_mode_blend) {
+        material->transparent = true;
+    } else {
+        material->transparent = false;
+    }
 
     if(materialData->has_pbr_metallic_roughness && materialData->pbr_metallic_roughness.base_color_texture.texture) {
         if(materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu) {
