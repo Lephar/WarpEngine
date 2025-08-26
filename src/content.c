@@ -131,30 +131,30 @@ void loadContent() {
 
     initializePlayer((vec3) {
         0.0f,
-        0.0f,
-        8.0f
+        2.0f,
+        0.0f
     },
     (vec3) {
         1.0f,
-        1.0f,
+        0.0f,
         0.0f
     },
     10.0f);
 
     initializeCamera(M_PI_4, 1.0f, 1000.0f);
-
+    /*
     initializeActor((vec3) {
-        8.0f,
-        8.0f,
-        -8.0f
-    },
-    (vec3) {
-        1.0f,
-        1.0f,
+        0.0f,
+        0.0f,
         0.0f
     },
+    (vec3) {
+        0.0f,
+        0.0f,
+        1.0f
+    },
     10.0f);
-
+    */
     debug("Meta materials successfully set");
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);

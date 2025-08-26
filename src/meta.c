@@ -43,8 +43,8 @@ void generateViewProjection() {
 
 void initializeScene() {
     worldUp[0] = 0.0f;
-    worldUp[1] = 0.0f;
-    worldUp[2] = 1.0f;
+    worldUp[1] = 1.0f;
+    worldUp[2] = 0.0f;
 
     //skybox = &primitives[0];
     //actor  = &primitives[primitiveCount - 1];
@@ -80,36 +80,36 @@ void updateSkybox() {
 }
 
 void updatePlayer() {
-    vec3 right;
+    vec3 left;
     vec3 up;
     vec3 movement;
 
     glmc_vec3_rotate(playerDirection, mouseDelta[0], worldUp);
-    glmc_vec3_crossn(playerDirection, worldUp, right);
+    glmc_vec3_crossn(worldUp, playerDirection, left);
 
     // TODO: Limit vertical rotation on global up and down
-    glmc_vec3_rotate(playerDirection, mouseDelta[1], right);
-    glmc_vec3_crossn(right, playerDirection, up);
+    glmc_vec3_rotate(playerDirection, mouseDelta[1], left);
+    glmc_vec3_crossn(playerDirection, left, up);
 
     glmc_vec3_normalize(playerDirection);
 
     glmc_vec3_scale(freeMovementInput, playerSpeed, movement);
 
-    glmc_vec3_muladds(right,           movement[0], playerPosition);
-    glmc_vec3_muladds(playerDirection, movement[1], playerPosition);
-    glmc_vec3_muladds(up,              movement[2], playerPosition);
+    glmc_vec3_muladds(left,            movement[0], playerPosition);
+    glmc_vec3_muladds(up,              movement[1], playerPosition);
+    glmc_vec3_muladds(playerDirection, movement[2], playerPosition);
 }
 
 void updateActor() {
-    vec3 right;
+    vec3 left;
     vec3 movement;
 
-    glmc_vec3_crossn(actorDirection, worldUp, right);
+    glmc_vec3_crossn(worldUp, actorDirection, left);
     glmc_vec3_scale(mainMovementInput, actorSpeed, movement);
 
-    glmc_vec3_muladds(right,          movement[0], actorPosition);
-    glmc_vec3_muladds(actorDirection, movement[1], actorPosition);
-    glmc_vec3_muladds(worldUp,        movement[2], actorPosition);
+    glmc_vec3_muladds(left,           movement[0], actorPosition);
+    glmc_vec3_muladds(worldUp,        movement[1], actorPosition);
+    glmc_vec3_muladds(actorDirection, movement[2], actorPosition);
 
     PrimitiveUniform *actorUniform = uniformBuffer + actor->uniformOffset;
     glmc_translate_make(actorUniform->model, actorPosition);
