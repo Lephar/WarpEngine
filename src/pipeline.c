@@ -51,13 +51,22 @@ void createPipeline() {
 void bindPipeline(VkCommandBuffer commandBuffer) {
     VkSampleMask sampleMask = 0xFF;
 
-    VkBool32 colorBlend = VK_FALSE;
-
     VkColorComponentFlags colorWriteMask =
         VK_COLOR_COMPONENT_A_BIT |
         VK_COLOR_COMPONENT_R_BIT |
         VK_COLOR_COMPONENT_G_BIT |
         VK_COLOR_COMPONENT_B_BIT ;
+
+    VkBool32 colorBlend = VK_TRUE;
+
+    VkColorBlendEquationEXT colorBlendEquations = {
+        .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
+        .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        .colorBlendOp = VK_BLEND_OP_ADD,
+        .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
+        .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+        .alphaBlendOp = VK_BLEND_OP_ADD
+    };
 
     vkCmdSetRasterizerDiscardEnable(commandBuffer, VK_FALSE);
 
@@ -84,15 +93,18 @@ void bindPipeline(VkCommandBuffer commandBuffer) {
     PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadDeviceFunction("vkCmdSetSampleMaskEXT");
     cmdSetSampleMask(commandBuffer, framebufferSet.sampleCount, &sampleMask);
 
+    PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadDeviceFunction("vkCmdSetColorWriteMaskEXT");
+    cmdSetColorWriteMask(commandBuffer, 0, 1, &colorWriteMask);
+
+    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
+    cmdSetColorBlendEnable(commandBuffer, 0, 1, &colorBlend);
+    PFN_vkCmdSetColorBlendEquationEXT cmdSetColorBlendEquation = loadDeviceFunction("vkCmdSetColorBlendEquationEXT");
+    cmdSetColorBlendEquation(commandBuffer, 0, 1, &colorBlendEquations);
+
     PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadDeviceFunction("vkCmdSetAlphaToOneEnableEXT");
     cmdSetAlphaToOneEnable(commandBuffer, VK_FALSE);
     PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadDeviceFunction("vkCmdSetAlphaToCoverageEnableEXT");
     cmdSetAlphaToCoverageEnable(commandBuffer, VK_FALSE);
-
-    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
-    cmdSetColorBlendEnable(commandBuffer, 0, 1, &colorBlend);
-    PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadDeviceFunction("vkCmdSetColorWriteMaskEXT");
-    cmdSetColorWriteMask(commandBuffer, 0, 1, &colorWriteMask);
 }
 
 void destroyPipeline() {
