@@ -75,7 +75,7 @@ void createInstance() {
         .pUserData = NULL
     };
 
-    VkBool32 valueTrue  = VK_TRUE;
+    //VkBool32 valueTrue  = VK_TRUE;
     VkBool32 valueFalse = VK_FALSE;
 
     VkLayerSettingEXT settings[] = {
@@ -95,17 +95,10 @@ void createInstance() {
         },
         {
             .pLayerName = validationLayer,
-            .pSettingName = "gpuav_image_layout",
-            .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
-            .valueCount = 1,
-            .pValues = &valueFalse
-        },
-        {
-            .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
-            .pValues = &valueTrue
+            .pValues = &valueFalse
         },
         {
             .pLayerName = validationLayer,
