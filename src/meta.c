@@ -37,7 +37,7 @@ void updateProjection() {
     glmc_perspective_rh_zo(cameraFieldOfView, aspectRatio, cameraNearPlane, cameraFarPlane, sceneUniform->projection);
 }
 
-void generateViewProjection() {
+void generateProjectionView() {
     glmc_mat4_mul(sceneUniform->projection, sceneUniform->view, sceneUniform->viewProjection);
 }
 
@@ -117,7 +117,7 @@ void updateActor() {
 
 void updateCamera() {
     updateView();
-    generateViewProjection();
+    generateProjectionView();
 }
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {

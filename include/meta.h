@@ -9,7 +9,7 @@ extern Primitive *actor;
 
 void updateView();
 void updateProjection();
-void generateViewProjection();
+void generateProjectionView();
 
 void initializeScene();
 void initializePlayer(vec3 position, vec3 direction, float speed);

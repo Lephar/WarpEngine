@@ -5,7 +5,7 @@
 layout(set = 0, binding = 0) uniform Scene {
     mat4 view;
     mat4 projection;
-    mat4 viewProjection;
+    mat4 projectionView;
 };
 
 layout(set = 1, binding = 0) uniform Primitive {
@@ -24,5 +24,5 @@ void main()
     outputTexcoord = inputTexcoord;
 
     gl_PointSize = 1.0f;
-    gl_Position = viewProjection * model * vec4(outputPosition, 1.0f);
+    gl_Position = projectionView * model * vec4(outputPosition, 1.0f);
 }
