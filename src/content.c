@@ -141,7 +141,7 @@ void loadContent() {
     },
     10.0f);
 
-    initializeCamera(M_PI_4, 1.0f, 1000.0f);
+    initializeCamera(M_PI_4, 1.0f, 128.0f);
     /*
     initializeActor((vec3) {
         0.0f,
