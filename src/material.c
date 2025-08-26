@@ -1,5 +1,6 @@
 #include "material.h"
 
+#include "config.h"
 #include "physicalDevice.h"
 #include "memory.h"
 #include "buffer.h"
@@ -42,11 +43,9 @@ Image *loadTextureRaw(const char *subdirectory, const char *filename) {
 
     int32_t mips = floor(log2(imax(width, height))) + 1;
 
-    ktxTexture2 *compressedTexture;
-
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // NOTICE: Ignored
-        .vkFormat = VK_FORMAT_BC7_SRGB_BLOCK,
+        .vkFormat = VK_FORMAT_R8G8B8A8_SRGB,
         .pDfd = NULL,
         .baseWidth = width,
         .baseHeight = height,
@@ -56,18 +55,29 @@ Image *loadTextureRaw(const char *subdirectory, const char *filename) {
         .numLayers = 1,
         .numFaces = 1,
         .isArray = KTX_FALSE,
-        .generateMipmaps = KTX_TRUE
+        .generateMipmaps = KTX_FALSE
     };
 
     ktx_error_code_e result;
+    ktxTexture2 *compressedTexture;
     result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
     assert(result == KTX_SUCCESS);
 
     ktxTexture *compressedTextureHandle = (ktxTexture *) compressedTexture;
     result = ktxTexture_SetImageFromMemory(compressedTextureHandle, 0, 0, 0, data, size);
-    debug("%d", result);
     assert(result == KTX_SUCCESS);
-    assert(0);
+    
+    ktxBasisParams compressionParameters = {
+        .structSize = sizeof(ktxBasisParams),
+        .uastc = KTX_TRUE,
+        .threadCount = threadCount,
+        .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL
+    };
+    
+    debug("\tCompressing %s", filename);
+    result = ktxTexture2_CompressBasisEx(compressedTexture, &compressionParameters);
+    debug("\tCompressed size:         %lu", ktxTexture_GetDataSize(compressedTextureHandle));
+    assert(result == KTX_SUCCESS);
 
     Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     debug("\tMemory Requirement Size: %lu", texture->memoryRequirements.size);
