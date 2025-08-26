@@ -42,6 +42,33 @@ Image *loadTextureRaw(const char *subdirectory, const char *filename) {
 
     int32_t mips = floor(log2(imax(width, height))) + 1;
 
+    ktxTexture2 *compressedTexture;
+
+    ktxTextureCreateInfo compressedTextureCreateInfo = {
+        .glInternalformat = 0, // NOTICE: Ignored
+        .vkFormat = VK_FORMAT_BC7_SRGB_BLOCK,
+        .pDfd = NULL,
+        .baseWidth = width,
+        .baseHeight = height,
+        .baseDepth = 1,
+        .numDimensions = 2,
+        .numLevels = 1,
+        .numLayers = 1,
+        .numFaces = 1,
+        .isArray = KTX_FALSE,
+        .generateMipmaps = KTX_TRUE
+    };
+
+    ktx_error_code_e result;
+    result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
+    assert(result == KTX_SUCCESS);
+
+    ktxTexture *compressedTextureHandle = (ktxTexture *) compressedTexture;
+    result = ktxTexture_SetImageFromMemory(compressedTextureHandle, 0, 0, 0, data, size);
+    debug("%d", result);
+    assert(result == KTX_SUCCESS);
+    assert(0);
+
     Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     debug("\tMemory Requirement Size: %lu", texture->memoryRequirements.size);
     debug("\tMemory Offset:           %lu", deviceMemory.offset);
@@ -187,20 +214,20 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
 
         if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture) {
             if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->has_basisu) {
-                material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri);
+                //material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri);
             } else {
-                material->metallicRoughness = loadTextureRaw(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri);
+                //material->metallicRoughness = loadTextureRaw(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri);
             }
         } else {
-            material->metallicRoughness = loadTextureRaw("assets/default/textures", "black.png");
+            //material->metallicRoughness = loadTextureRaw("assets/default/textures", "black.png");
         }
     }
 
     if(materialData->normal_texture.texture) {
         if(materialData->normal_texture.texture->has_basisu) {
-            material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri);
+            //material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri);
         } else {
-            material->normal = loadTextureRaw(subdirectory, materialData->normal_texture.texture->image->uri);
+            //material->normal = loadTextureRaw(subdirectory, materialData->normal_texture.texture->image->uri);
         }
     } // TODO: else?
 
