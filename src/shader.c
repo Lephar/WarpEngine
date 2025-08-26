@@ -60,7 +60,7 @@ void freeShaderIntermediate(ShaderIntermediate *shaderIntermediate) {
     free(shaderIntermediate);
 }
 
-ShaderModule *createShaderModule(ShaderIntermediate *shaderIntermediate) {
+ShaderModule *makeShaderModule(ShaderIntermediate *shaderIntermediate) {
     ShaderModule *shaderModule = malloc(sizeof(ShaderModule));
 
     if(shaderIntermediate->stage == shaderc_vertex_shader) {
@@ -111,6 +111,16 @@ void destroyShaderModule(ShaderModule *shaderModule) {
     free(shaderModule);
 }
 
+ShaderModule *createShaderModule(const char *subdirectory, const char *filename, shaderc_shader_kind stage) {
+    ShaderCode *shaderCode = loadShaderCode(subdirectory, filename, stage);
+    ShaderIntermediate *shaderIntermediate = compileShaderCode(shaderCode);
+    freeShaderCode(shaderCode);
+    ShaderModule *shaderModule = makeShaderModule(shaderIntermediate);
+    freeShaderIntermediate(shaderIntermediate);
+
+    return shaderModule;
+}
+
 void createModules() {
     shaderCompiler = shaderc_compiler_initialize();
     assert(shaderCompiler);
@@ -129,14 +139,8 @@ void createModules() {
 
     debug("Shader compiler created and compile options set");
 
-    ShaderCode *vertexShaderCode   = loadShaderCode("shaders", "vertex.vert",   shaderc_vertex_shader);
-    ShaderCode *fragmentShaderCode = loadShaderCode("shaders", "fragment.frag", shaderc_fragment_shader);
-
-    ShaderIntermediate *vertexShaderIntermediate   = compileShaderCode(vertexShaderCode);
-    ShaderIntermediate *fragmentShaderIntermediate = compileShaderCode(fragmentShaderCode);
-
-    vertexShaderModule   = createShaderModule(vertexShaderIntermediate);
-    fragmentShaderModule = createShaderModule(fragmentShaderIntermediate);
+    vertexShaderModule   = createShaderModule("shaders", "vertex.vert",   shaderc_vertex_shader);
+    fragmentShaderModule = createShaderModule("shaders", "fragment.frag", shaderc_fragment_shader);
 
     debug("Shader modules created");
 }
