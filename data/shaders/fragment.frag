@@ -4,7 +4,7 @@
 
 layout(set = 2, binding = 0) uniform sampler2D textureSampler;
 
-layout(location = 0) in vec3 inputPosition;
+layout(location = 0) in vec4 inputPosition;
 layout(location = 1) in vec2 inputTexcoord;
 
 layout(location = 0) out vec4 outputColor;
