@@ -70,7 +70,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
             for(cgltf_size positionIndex = 0; positionIndex < attributeAccessor->count; positionIndex++) {
                 memcpy(vertexBuffer[vertexCount + positionIndex].position, positions[positionIndex], sizeof(vec3));
             }
-        } else if(attribute->type == cgltf_attribute_type_texcoord) {
+        } else if(attribute->type == cgltf_attribute_type_texcoord && !strcmp(attribute->name, "TEXCOORD_0")) {
             vec2 *texcoords = attributeData;
 
             for(cgltf_size texcoordIndex = 0; texcoordIndex < attributeAccessor->count; texcoordIndex++) {
