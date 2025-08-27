@@ -196,82 +196,80 @@ Image *loadTexture(const char *subdirectory, const char *filename) {
     debug("\tImage Path: %s", path);
 
     ktxTexture2 *textureObject;
-    KTX_error_code ktxResult;
+    KTX_error_code result;
 
-    ktxResult = ktxTexture2_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &textureObject);
+    result = ktxTexture2_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &textureObject);
 
-    if(ktxResult != KTX_SUCCESS) {
-        debug("\tLoading texture failed with message: %s", ktxErrorString(ktxResult));
-        assert(ktxResult == KTX_SUCCESS);
+    if(result != KTX_SUCCESS) {
+        debug("\t\tLoading texture failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
     }
-
-    // TODO: Most ktxTexture2_* functions exist in the docs but aren't really exposed. Remove this old handle when they update.
-    ktxTexture *textureHandle = (ktxTexture *) textureObject;
-    debug("\tCompressed Size: %lu", ktxTexture_GetDataSize(textureHandle));
-
-    if(ktxTexture2_NeedsTranscoding(textureObject)) {
-        ktxResult = ktxTexture2_TranscodeBasis(textureObject, KTX_TTF_BC7_RGBA, 0);
-
-        if(ktxResult != KTX_SUCCESS) {
-            debug("\tTranscoding texture failed with message: %s", ktxErrorString(ktxResult));
-            assert(ktxResult == KTX_SUCCESS);
-        }
-
-        debug("\tTranscoded Size: %lu", ktxTexture_GetDataSize(textureHandle));
-    }
-
-    debug("\tMemory Offset:   %lu", deviceMemory.offset);
 
     ktx_uint32_t width  = textureObject->baseWidth;
     ktx_uint32_t height = textureObject->baseHeight;
     ktx_uint32_t depth  = textureObject->baseDepth;
     ktx_uint32_t mips   = textureObject->numLevels;
 
-    debug("\tWidth:  %u", width);
-    debug("\tHeight: %u", height);
-    debug("\tDepth:  %u", depth);
-    debug("\tMips:   %u", mips);
-
     assert(width <= physicalDeviceProperties.limits.maxImageDimension2D && height <= physicalDeviceProperties.limits.maxImageDimension2D);
+
+    debug("\t\tWidth:  %u", width);
+    debug("\t\tHeight: %u", height);
+    debug("\t\tDepth:  %u", depth);
+    debug("\t\tMips:   %u", mips);
+
+    // TODO: Most ktxTexture2_* functions exist in the docs but aren't really exposed. Remove this old handle when they update.
+    ktxTexture *textureObjectHandle = (ktxTexture *) textureObject;
+    debug("\t\tCompressed Size: %lu", ktxTexture_GetDataSize(textureObjectHandle));
+
+    if(ktxTexture2_NeedsTranscoding(textureObject)) {
+        result = ktxTexture2_TranscodeBasis(textureObject, KTX_TTF_BC7_RGBA, 0);
+
+        if(result != KTX_SUCCESS) {
+            debug("\t\tTranscoding texture failed with message: %s", ktxErrorString(result));
+            assert(result == KTX_SUCCESS);
+        }
+
+        debug("\t\tTranscoded Size: %lu", ktxTexture_GetDataSize(textureObjectHandle));
+    }
 
     Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     bindImageMemory(texture, &deviceMemory);
-
-    debug("\tImage created");
-
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-    ktx_uint8_t *data = ktxTexture_GetData(textureHandle);
+    debug("\t\tAligned Size:    %lu", texture->memoryRequirements.size);
+    debug("\t\tMemory Offset:   %lu", texture->memoryOffset);
+
+    ktx_uint8_t *data = ktxTexture_GetData(textureObjectHandle);
 
     for(ktx_uint32_t level = 0; level < mips; level++) {
         ktx_size_t offset;
-        ktxResult = ktxTexture2_GetImageOffset(textureObject, level, 0, 0, &offset);
+        result = ktxTexture2_GetImageOffset(textureObject, level, 0, 0, &offset);
 
-        if(ktxResult != KTX_SUCCESS) {
-            debug("\tGetting mip level %d data failed with message: %s", level, ktxErrorString(ktxResult));
-            assert(ktxResult == KTX_SUCCESS);
+        if(result != KTX_SUCCESS) {
+            debug("\t\tGetting mip level %d data failed with message: %s", level, ktxErrorString(result));
+            assert(result == KTX_SUCCESS);
         }
 
-        ktx_size_t levelSize = ktxTexture_GetImageSize(textureHandle, level);
+        ktx_size_t size = ktxTexture_GetImageSize(textureObjectHandle, level);
 
-        if(levelSize <= sharedBuffer.size) {
-            memcpy(mappedSharedMemory, data + offset, levelSize);
+        if(size <= sharedBuffer.size) {
+            memcpy(mappedSharedMemory, data + offset, size);
             copyBufferToImage(&sharedBuffer, 0, texture, level);
-        } else if (levelSize <= deviceBuffer.size) {
-            stagingBufferCopy(data, offset, 0, levelSize);
+        } else if (size <= deviceBuffer.size) {
+            stagingBufferCopy(data, offset, 0, size);
             copyBufferToImage(&deviceBuffer, 0, texture, level);
         } else {
-            debug("\tCan't copy image data, increase shared or device local buffer size!");
-            assert(levelSize <= sharedBuffer.size || levelSize <= deviceBuffer.size);
+            debug("\t\tCan't copy image data, increase shared or device local buffer size!");
+            assert(size <= sharedBuffer.size || size <= deviceBuffer.size);
         }
     }
 
-    debug("\tImage data copied");
+    ktxTexture2_Destroy(textureObject);
 
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     createImageView(texture);
 
-    ktxTexture2_Destroy(textureObject);
+    debug("\t\tTexture created");
 
     return texture;
 }

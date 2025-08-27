@@ -61,7 +61,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
 
         assert(primitiveVertexCount == attributeAccessor->count);
 
-        debug("\tAttribute %s: %lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
+        debug("\tAttribute %s:\t%lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
 
         // TODO: Check component data types too
         if(attribute->type == cgltf_attribute_type_position) {
