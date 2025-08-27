@@ -28,84 +28,164 @@ uint32_t findMaterial(cgltf_material *materialData) {
     return UINT32_MAX;
 }
 
-Image *loadTextureRaw(const char *subdirectory, const char *filename) {
+Image *loadTextureUncompressed(const char *subdirectory, const char *filename) {
     char path[PATH_MAX];
     makeFullPath(subdirectory, filename, path);
     debug("\tImage Path: %s", path);
 
     int32_t width  = 0;
     int32_t height = 0;
-    int32_t depth  = 0;
+    int32_t depth  = STBI_rgb_alpha;
 
-    stbi_uc *data = stbi_load(path, &width, &height, &depth, STBI_rgb_alpha);
-    size_t   size = width * height * STBI_rgb_alpha;
-    debug("\tLoaded Texture Size:     %lu", size);
+    // NOTICE: Allocates data double the necessary size because of our STBI_MALLOC override in implementation.c
+    uint8_t *data = stbi_load(path, &width, &height, NULL, depth);
 
-    int32_t mips = floor(log2(imax(width, height))) + 1;
+    assert((uint32_t) width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) height <= physicalDeviceProperties.limits.maxImageDimension2D);
+
+    size_t   size = width * height * depth;
+    uint32_t mips = floor(log2(imax(width, height))) + 1;
+
+    debug("\t\tWidth:  %u", width);
+    debug("\t\tHeight: %u", height);
+    debug("\t\tDepth:  %u", depth);
+    debug("\t\tMips:   %u", mips);
+
+    ktx_error_code_e result;
+    ktxTexture2 *compressedTexture;
+    ktxTexture *compressedTextureHandle;
 
     ktxTextureCreateInfo compressedTextureCreateInfo = {
-        .glInternalformat = 0, // NOTICE: Ignored
+        .glInternalformat = 0, // Ignored
         .vkFormat = VK_FORMAT_R8G8B8A8_SRGB,
-        .pDfd = NULL,
+        .pDfd = NULL, // Ignored
         .baseWidth = width,
         .baseHeight = height,
         .baseDepth = 1,
         .numDimensions = 2,
-        .numLevels = 1,
+        .numLevels = mips,
         .numLayers = 1,
         .numFaces = 1,
         .isArray = KTX_FALSE,
         .generateMipmaps = KTX_FALSE
     };
 
-    ktx_error_code_e result;
-    ktxTexture2 *compressedTexture;
     result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
-    assert(result == KTX_SUCCESS);
 
-    ktxTexture *compressedTextureHandle = (ktxTexture *) compressedTexture;
-    result = ktxTexture_SetImageFromMemory(compressedTextureHandle, 0, 0, 0, data, size);
-    assert(result == KTX_SUCCESS);
-    
+    if(result != KTX_SUCCESS) {
+        debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
+
+    compressedTextureHandle = (ktxTexture *) compressedTexture;
+
+    debug("\t\tRaw Size:   %lu", size);
+    debug("\t\tFinal Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));
+
+    uint32_t srcWidth  = width;
+    uint32_t srcHeight = height;
+    size_t   srcOffset = 0;
+    size_t   srcSize   = size;
+
+    result = ktxTexture_SetImageFromMemory(compressedTextureHandle, 0, 0, 0, data + srcOffset, srcSize);
+
+    if(result != KTX_SUCCESS) {
+        debug("\t\tSetting texture from memory failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
+
+    for(uint32_t level = 1; level < mips; level++) {
+        uint32_t dstWidth  = umax(srcWidth  / 2, 1);
+        uint32_t dstHeight = umax(srcHeight / 2, 1);
+        size_t   dstOffset = srcOffset + srcSize;
+        size_t   dstSize   = dstWidth * dstHeight * depth;
+        /*
+        debug("\t\tLevel: %u", level);
+        debug("\t\t\tWidth:  %u", dstWidth);
+        debug("\t\t\tHeight: %u", dstHeight);
+        debug("\t\t\tOffset: %u", dstOffset);
+        debug("\t\t\tSize:   %u", dstSize);
+        */
+        stbir_resize_uint8_srgb(data + srcOffset, srcWidth, srcHeight, 0, data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+
+        result = ktxTexture_SetImageFromMemory(compressedTextureHandle, level, 0, 0, data + dstOffset, dstSize);
+
+        if(result != KTX_SUCCESS) {
+            debug("\t\tSetting level from memory failed with message: %s", ktxErrorString(result));
+            assert(result == KTX_SUCCESS);
+        }
+
+        srcWidth  = dstWidth;
+        srcHeight = dstHeight;
+        srcOffset = dstOffset;
+        srcSize   = dstSize;
+    }
+
+    stbi_image_free(data);
+
     ktxBasisParams compressionParameters = {
         .structSize = sizeof(ktxBasisParams),
         .uastc = KTX_TRUE,
         .threadCount = threadCount,
         .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL
-    };
-    
-    debug("\tCompressing %s", filename);
+    }; // NOTICE: Many more params exist here that are zero initialized here
+
     result = ktxTexture2_CompressBasisEx(compressedTexture, &compressionParameters);
-    debug("\tCompressed size:         %lu", ktxTexture_GetDataSize(compressedTextureHandle));
-    assert(result == KTX_SUCCESS);
 
-    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
-    debug("\tMemory Requirement Size: %lu", texture->memoryRequirements.size);
-    debug("\tMemory Offset:           %lu", deviceMemory.offset);
-    debug("\tWidth:  %u", width);
-    debug("\tHeight: %u", height);
-    debug("\tDepth:  %u", depth);
-    debug("\tMips:   %u", mips);
-    debug("\tImage created");
+    if(result != KTX_SUCCESS) {
+        debug("\t\tCompressing texture failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
 
+    debug("\t\tCompressed Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));
+
+    if(ktxTexture2_NeedsTranscoding(compressedTexture)) {
+        result = ktxTexture2_TranscodeBasis(compressedTexture, KTX_TTF_BC7_RGBA, 0);
+
+        if(result != KTX_SUCCESS) {
+            debug("\t\tTranscoding texture failed with message: %s", ktxErrorString(result));
+            assert(result == KTX_SUCCESS);
+        }
+
+        debug("\t\tTranscoded Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));
+    }
+
+    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     bindImageMemory(texture, &deviceMemory);
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-    if(size <= sharedBuffer.size) {
-        memcpy(mappedSharedMemory, data, size);
-        copyBufferToImage(&sharedBuffer, 0, texture, 0);
-    } else if (size <= deviceBuffer.size) {
-        stagingBufferCopy(data, 0, 0, size);
-        copyBufferToImage(&deviceBuffer, 0, texture, 0);
-    } else {
-        debug("\tCan't copy image data, increase shared or device local buffer size!");
-        assert(size <= sharedBuffer.size || size <= deviceBuffer.size);
+    debug("\t\tAligned Size:    %lu", texture->memoryRequirements.size);
+    debug("\t\tMemory Offset:   %lu", texture->memoryOffset);
+
+    data = ktxTexture_GetData(compressedTextureHandle);
+
+    for(ktx_uint32_t level = 0; level < mips; level++) {
+        result = ktxTexture2_GetImageOffset(compressedTexture, level, 0, 0, &srcOffset);
+
+        if(result != KTX_SUCCESS) {
+            debug("\t\tGetting mip level %d data failed with message: %s", level, ktxErrorString(result));
+            assert(result == KTX_SUCCESS);
+        }
+
+        srcSize = ktxTexture_GetImageSize(compressedTextureHandle, level);
+
+        if(srcSize <= sharedBuffer.size) {
+            memcpy(mappedSharedMemory, data + srcOffset, srcSize);
+            copyBufferToImage(&sharedBuffer, 0, texture, level);
+        } else if (srcSize <= deviceBuffer.size) {
+            stagingBufferCopy(data, srcOffset, 0, srcSize);
+            copyBufferToImage(&deviceBuffer, 0, texture, level);
+        } else {
+            debug("\t\tCan't copy image data, increase shared or device local buffer size!");
+            assert(srcSize <= sharedBuffer.size || srcSize <= deviceBuffer.size);
+        }
     }
 
-    debug("\tImage data copied");
+    ktxTexture2_Destroy(compressedTexture);
 
-    generateMipmaps(texture);
+    transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     createImageView(texture);
+
+    debug("\t\tTexture created");
 
     return texture;
 }
@@ -215,28 +295,28 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
             if(materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu) {
                 material->baseColor = loadTexture(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri);
             } else {
-                material->baseColor = loadTextureRaw(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri);
+                material->baseColor = loadTextureUncompressed(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri);
             }
         } else {
-            material->baseColor = loadTextureRaw("assets/default/textures", "white.png");
+            material->baseColor = loadTextureUncompressed("assets/default/textures", "white.png");
         }
 
         if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture) {
             if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->has_basisu) {
-                //material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri);
+                material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri);
             } else {
-                //material->metallicRoughness = loadTextureRaw(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri);
+                material->metallicRoughness = loadTextureUncompressed(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri);
             }
         } else {
-            //material->metallicRoughness = loadTextureRaw("assets/default/textures", "black.png");
+            material->metallicRoughness = loadTextureUncompressed("assets/default/textures", "black.png");
         }
     }
 
     if(materialData->normal_texture.texture) {
         if(materialData->normal_texture.texture->has_basisu) {
-            //material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri);
+            material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri);
         } else {
-            //material->normal = loadTextureRaw(subdirectory, materialData->normal_texture.texture->image->uri);
+            material->normal = loadTextureUncompressed(subdirectory, materialData->normal_texture.texture->image->uri);
         }
     } // TODO: else?
 
