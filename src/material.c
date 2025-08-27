@@ -196,7 +196,6 @@ Image *loadTexture(const char *subdirectory, const char *filename) {
     return texture;
 }
 
-// TODO: Investigate texture seams
 void loadMaterial(const char *subdirectory, Material *material, cgltf_material *materialData) {
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);

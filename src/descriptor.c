@@ -22,9 +22,9 @@ void createSampler() {
         .magFilter = VK_FILTER_LINEAR,
         .minFilter = VK_FILTER_LINEAR,
         .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-        .addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-        .addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+        .addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+        .addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+        .addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
         .mipLodBias = 0.0f,
         .anisotropyEnable = VK_TRUE,
         .maxAnisotropy = 16.0f,
@@ -32,7 +32,7 @@ void createSampler() {
         .compareOp = VK_COMPARE_OP_NEVER,
         .minLod = 0.0f,
         .maxLod = floor(log2(physicalDeviceProperties.limits.maxImageDimension2D)) + 1,
-        .borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+        .borderColor = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK,
         .unnormalizedCoordinates = VK_FALSE
     };
 
