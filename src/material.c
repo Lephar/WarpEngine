@@ -328,6 +328,16 @@ void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
 }
 
 void destroyMaterial(Material *material) {
+    if(material->normal) {
+        destroyImageView(material->normal);
+        destroyImage(material->normal);
+    }
+
+    if(material->metallicRoughness) {
+        destroyImageView(material->metallicRoughness);
+        destroyImage(material->metallicRoughness);
+    }
+
     destroyImageView(material->baseColor);
     destroyImage(material->baseColor);
 }
