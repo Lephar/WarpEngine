@@ -37,6 +37,7 @@
 #include <shaderc/shaderc.h>
 
 #include "stb/stb_image.h"
+#include "stb/stb_image_resize2.h"
 #include "ktx/ktx.h"
 #include "cgltf/cgltf.h"
 #include "cglm/call.h"
