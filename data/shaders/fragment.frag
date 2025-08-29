@@ -22,8 +22,12 @@ vec4 position() {
 }
 
 vec4 depth() {
-    float distanceFalloff = 32.0f;
-    return vec4(vec3(pow(gl_FragCoord.z, distanceFalloff)), 1.0f);
+    float farPlane  = cameraProperties[2];
+    float nearPlane = cameraProperties[1];
+    float linearisedDepthValue = farPlane * nearPlane / (farPlane - gl_FragCoord.z * (farPlane - nearPlane));
+    float normalisedDepthValue = linearisedDepthValue / farPlane;
+
+    return vec4(vec3(normalisedDepthValue), 1.0f);
 }
 
 vec4 color() {
