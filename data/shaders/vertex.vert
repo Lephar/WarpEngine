@@ -6,6 +6,7 @@ layout(set = 0, binding = 0) uniform Scene {
     mat4 view;
     mat4 projection;
     mat4 projectionView;
+    vec4 cameraProperties;
 };
 
 layout(set = 1, binding = 0) uniform Primitive {

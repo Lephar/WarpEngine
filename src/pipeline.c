@@ -41,7 +41,7 @@ void createPipeline() {
 
     createSampler();
 
-    createDescriptorPool(&sceneDescriptorPool,     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    createDescriptorPool(&sceneDescriptorPool,     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
     createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
     createDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit,   VK_SHADER_STAGE_FRAGMENT_BIT);
 

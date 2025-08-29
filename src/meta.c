@@ -35,6 +35,11 @@ void updateView() {
 void updateProjection() {
     float aspectRatio = ((float) extent.width) / ((float) extent.height);
     glmc_perspective_rh_zo(cameraFieldOfView, aspectRatio, cameraNearPlane, cameraFarPlane, sceneUniform->projection);
+
+    sceneUniform->cameraProperties[0] = cameraFieldOfView;
+    sceneUniform->cameraProperties[1] = cameraNearPlane;
+    sceneUniform->cameraProperties[2] = cameraFarPlane;
+    sceneUniform->cameraProperties[3] = 1.0f; // Placeholder
 }
 
 void generateProjectionView() {

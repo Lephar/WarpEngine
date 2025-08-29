@@ -2,6 +2,13 @@
 
 #extension GL_ARB_separate_shader_objects : enable
 
+layout(set = 0, binding = 0) uniform Scene {
+    mat4 view;
+    mat4 projection;
+    mat4 projectionView;
+    vec4 cameraProperties;
+};
+
 layout(set = 2, binding = 0) uniform sampler2D textureSampler;
 
 layout(location = 0) in vec4 inputPosition;

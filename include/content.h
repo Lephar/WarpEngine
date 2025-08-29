@@ -13,6 +13,7 @@ struct sceneUniform {
     mat4 view;
     mat4 projection;
     mat4 viewProjection;
+    vec4 cameraProperties;
 } typedef SceneUniform;
 
 struct primitiveUniform {
