@@ -6,10 +6,13 @@ typedef struct image Image;
 
 struct material {
     char name[UINT8_MAX];
+    bool transparent;
+    vec4 baseColorFactor;
     Image *baseColor;
+    float metallicFactor;
+    float roughnessFactor;
     Image *metallicRoughness;
     Image *normal;
-    bool transparent;
     VkDescriptorSet descriptorSet;
 } typedef Material;
 

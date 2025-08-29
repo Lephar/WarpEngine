@@ -289,6 +289,9 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     }
 
     if(materialData->has_pbr_metallic_roughness) {
+        memcpy(material->baseColorFactor, materialData->pbr_metallic_roughness.base_color_factor, sizeof(vec4));
+        debug("\tBase color factor: [%0.4f, %0.4f, %0.4f, %0.4f]", material->baseColorFactor[0], material->baseColorFactor[1], material->baseColorFactor[2], material->baseColorFactor[3]);
+
         if(materialData->pbr_metallic_roughness.base_color_texture.texture) {
             if(materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu) {
                 material->baseColor = loadTexture(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri);
@@ -298,6 +301,11 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
         } else {
             material->baseColor = loadTextureUncompressed("assets/default/textures", "white.png");
         }
+
+        material->metallicFactor  = materialData->pbr_metallic_roughness.metallic_factor;
+        debug("\tMetallic factor:    %0.4f", material->metallicFactor);
+        material->roughnessFactor = materialData->pbr_metallic_roughness.roughness_factor;
+        debug("\tRoughness factor:   %0.4f", material->roughnessFactor);
 
         if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture) {
             if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->has_basisu) {
