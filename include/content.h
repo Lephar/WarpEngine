@@ -6,7 +6,8 @@ typedef uint32_t Index;
 
 struct vertex {
     vec3 position;
-    vec2 texcoord;
+    vec2 texcoord0;
+    vec2 texcoord1;
 } typedef Vertex;
 
 struct sceneUniform {

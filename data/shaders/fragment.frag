@@ -12,7 +12,8 @@ layout(set = 0, binding = 0) uniform Scene {
 layout(set = 2, binding = 0) uniform sampler2D textureSampler;
 
 layout(location = 0) in vec4 inputPosition;
-layout(location = 1) in vec2 inputTexcoord;
+layout(location = 1) in vec2 inputTexcoord0;
+layout(location = 2) in vec2 inputTexcoord1;
 
 layout(location = 0) out vec4 outputColor;
 
@@ -26,7 +27,7 @@ vec4 depth() {
 }
 
 vec4 color() {
-    return texture(textureSampler, inputTexcoord);
+    return texture(textureSampler, inputTexcoord0);
 }
 
 void main() {
