@@ -37,6 +37,14 @@ vec4 color() {
     return baseColorFactor * texture(baseColorSampler, inputTexcoord0);
 }
 
+vec4 metallicRoughness() {
+    return vec4(metallicRoughnessFactor * texture(metallicRoughnessSampler, inputTexcoord0).rg, 0.0f, 1.0f);
+}
+
+vec4 normal() {
+    return vec4(texture(normalSampler, inputTexcoord0).rgb, 1.0f);
+}
+
 void main() {
-    outputColor = color();
+    outputColor = normal();
 }
