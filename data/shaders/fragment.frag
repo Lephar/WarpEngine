@@ -9,7 +9,9 @@ layout(set = 0, binding = 0) uniform Scene {
     vec4 cameraProperties;
 };
 
-layout(set = 2, binding = 0) uniform sampler2D textureSampler;
+layout(set = 3, binding = 0) uniform sampler2D baseColorSampler;
+layout(set = 3, binding = 1) uniform sampler2D metallicRoughnessSampler;
+layout(set = 3, binding = 2) uniform sampler2D normalSampler;
 
 layout(location = 0) in vec4 inputPosition;
 layout(location = 1) in vec2 inputTexcoord0;

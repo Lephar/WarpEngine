@@ -176,29 +176,44 @@ VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuff
     return descriptorSet;
 }
 
-VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampler sampler, Image *image) {
+VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampler sampler, Material *material) {
     VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
 
-    VkDescriptorImageInfo imageInfo = {
+    VkDescriptorImageInfo imageInfos[] = {
+        {
+            .sampler     = sampler,
+            .imageView   = material->baseColor->view,
+            .imageLayout = material->baseColor->layout
+        }, {
+            .sampler     = sampler,
+            .imageView   = material->metallicRoughness->view,
+            .imageLayout = material->metallicRoughness->layout
+        }, {
         .sampler     = sampler,
-        .imageView   = image->view,
-        .imageLayout = image->layout
+            .imageView   = material->normal->view,
+            .imageLayout = material->normal->layout
+        }
     };
 
-    VkWriteDescriptorSet descriptorWrite = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .pNext = NULL,
-        .dstSet = descriptorSet,
-        .dstBinding = 0,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = descriptorPool->type,
-        .pImageInfo = &imageInfo,
-        .pBufferInfo = NULL,
-        .pTexelBufferView = NULL
-    };
+    VkWriteDescriptorSet descriptorWrites[materialTextureCount];
 
-    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+    for(uint32_t bindingIndex = 0; bindingIndex < materialTextureCount; bindingIndex++) {
+        VkDescriptorImageInfo *imageInfo = &imageInfos[bindingIndex];
+        VkWriteDescriptorSet *descriptorWrite = &descriptorWrites[bindingIndex];
+        
+        descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite->pNext = NULL;
+        descriptorWrite->dstSet = descriptorSet;
+        descriptorWrite->dstBinding = bindingIndex;
+        descriptorWrite->dstArrayElement = 0;
+        descriptorWrite->descriptorCount = 1;
+        descriptorWrite->descriptorType = descriptorPool->type;
+        descriptorWrite->pImageInfo = imageInfo;
+        descriptorWrite->pBufferInfo = NULL;
+        descriptorWrite->pTexelBufferView = NULL;
+    }
+
+    vkUpdateDescriptorSets(device, materialTextureCount, descriptorWrites, 0, NULL);
     debug("\tMaterial descriptor set acquired");
 
     return descriptorSet;
