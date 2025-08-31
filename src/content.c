@@ -7,6 +7,7 @@
 #include "material.h"
 #include "meta.h"
 #include "primitive.h"
+#include "descriptor.h"
 
 #include "file.h"
 #include "logger.h"
@@ -179,6 +180,8 @@ void loadContent() {
         memcpy(mappedSharedMemory + factorOffset,                material->baseColorFactor,         sizeof(vec4));
         memcpy(mappedSharedMemory + factorOffset + sizeof(vec4), material->metallicRoughnessFactor, sizeof(vec2));
     }
+
+    factorDescriptorSet = getFactorDescriptorSet();
 
     debug("Material factors copied to uniform buffer and descriptor set created");
 }

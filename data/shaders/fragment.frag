@@ -9,6 +9,11 @@ layout(set = 0, binding = 0) uniform Scene {
     vec4 cameraProperties;
 };
 
+layout(set = 2, binding = 0) uniform Factor {
+    vec4 baseColorFactor;
+    vec2 metallicRoughnessFactor;
+};
+
 layout(set = 3, binding = 0) uniform sampler2D baseColorSampler;
 layout(set = 3, binding = 1) uniform sampler2D metallicRoughnessSampler;
 layout(set = 3, binding = 2) uniform sampler2D normalSampler;
@@ -29,7 +34,7 @@ vec4 depth() {
 }
 
 vec4 color() {
-    return texture(textureSampler, inputTexcoord0);
+    return baseColorFactor * texture(baseColorSampler, inputTexcoord0);
 }
 
 void main() {

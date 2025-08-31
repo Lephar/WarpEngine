@@ -16,6 +16,7 @@ extern VkSampler sampler;
 
 extern DescriptorPool sceneDescriptorPool;
 extern DescriptorPool primitiveDescriptorPool;
+extern DescriptorPool factorDescriptorPool;
 extern DescriptorPool materialDescriptorPool;
 
 void createSampler();

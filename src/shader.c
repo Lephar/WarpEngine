@@ -74,6 +74,7 @@ ShaderModule *makeShaderModule(ShaderIntermediate *shaderIntermediate) {
     VkDescriptorSetLayout layouts[] = {
         sceneDescriptorPool.layout,
         primitiveDescriptorPool.layout,
+        factorDescriptorPool.layout,
         materialDescriptorPool.layout
     };
 

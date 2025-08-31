@@ -15,6 +15,7 @@ void createPipelineLayout() {
     VkDescriptorSetLayout descriptorSetLayouts[] = {
         sceneDescriptorPool.layout,
         primitiveDescriptorPool.layout,
+        factorDescriptorPool.layout,
         materialDescriptorPool.layout
     };
 
@@ -46,6 +47,7 @@ void createPipeline() {
 
     createBufferDescriptorPool(&sceneDescriptorPool,     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
     createBufferDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    createBufferDescriptorPool(&factorDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                     VK_SHADER_STAGE_FRAGMENT_BIT);
     createSamplerDescriptorPool(&materialDescriptorPool, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit,   VK_SHADER_STAGE_FRAGMENT_BIT);
 
     createPipelineLayout();
@@ -112,6 +114,7 @@ void bindPipeline(VkCommandBuffer commandBuffer) {
 
 void destroyPipeline() {
     destroyDescriptorPool(&materialDescriptorPool);
+    destroyDescriptorPool(&factorDescriptorPool);
     destroyDescriptorPool(&primitiveDescriptorPool);
     destroyDescriptorPool(&sceneDescriptorPool);
     debug("Descriptor pools destroyed");

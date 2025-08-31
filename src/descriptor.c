@@ -13,6 +13,7 @@ VkSampler sampler;
 
 DescriptorPool sceneDescriptorPool;
 DescriptorPool primitiveDescriptorPool;
+DescriptorPool factorDescriptorPool;
 DescriptorPool materialDescriptorPool;
 
 void createSampler() {
@@ -190,7 +191,7 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
             .imageView   = material->metallicRoughness->view,
             .imageLayout = material->metallicRoughness->layout
         }, {
-        .sampler     = sampler,
+            .sampler     = sampler,
             .imageView   = material->normal->view,
             .imageLayout = material->normal->layout
         }

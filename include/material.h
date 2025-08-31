@@ -21,6 +21,8 @@ extern const uint32_t materialTextureCount;
 extern Image *defaultBlackTexture;
 extern Image *defaultWhiteTexture;
 
+extern VkDescriptorSet factorDescriptorSet;
+
 extern uint32_t materialCount;
 extern Material *materials;
 
