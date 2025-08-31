@@ -334,7 +334,7 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
 
     material->factorOffset = materialCount * factorUniformAlignment;
     material->materialDescriptorSet = getMaterialDescriptorSet(material);
-    
+
     materialCount++;
 }
 

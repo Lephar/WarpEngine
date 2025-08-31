@@ -84,9 +84,9 @@ void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType
 
     vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
     debug("\tDescriptor pool created with %u sets", descriptorPool->count);
+}
 
-
-}void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
+void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
     debug("Combined image sampler descriptor pool:");
 
     descriptorPool->type  = type;
@@ -147,6 +147,7 @@ VkDescriptorSet allocateDescriptorSet(DescriptorPool *descriptorPool) {
     };
 
     vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet);
+
     return descriptorSet;
 }
 
@@ -173,7 +174,6 @@ VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuff
     };
 
     vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
-    debug("\tBuffer%sdescriptor set acquired", descriptorPool->type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC ? " dynamic " : " ");
 
     return descriptorSet;
 }
@@ -216,7 +216,6 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
     }
 
     vkUpdateDescriptorSets(device, materialTextureCount, descriptorWrites, 0, NULL);
-    debug("\tMaterial descriptor set acquired");
 
     return descriptorSet;
 }
