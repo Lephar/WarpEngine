@@ -100,6 +100,8 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
     vertexBufferSize  += primitiveVertexCount * sizeof(Vertex);
     uniformBufferSize += primitiveUniformAlignment;
 
+    debug("\tBuffer offsets set and primitive created");
+
     primitiveCount++;
 }
 
