@@ -9,12 +9,14 @@ struct material {
     bool transparent;
     vec4 baseColorFactor;
     Image *baseColor;
-    float metallicFactor;
-    float roughnessFactor;
+    vec2 metallicRoughnessFactor;
     Image *metallicRoughness;
     Image *normal;
-    VkDescriptorSet descriptorSet;
+    uint32_t factorOffset;
+    VkDescriptorSet materialDescriptorSet;
 } typedef Material;
+
+extern const uint32_t materialTextureCount;
 
 extern Image *defaultBlackTexture;
 extern Image *defaultWhiteTexture;

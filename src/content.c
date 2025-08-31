@@ -171,6 +171,16 @@ void loadContent() {
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     debug("Shared memory cleared and set for uniform buffer usage");
+    
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        Material *material = &materials[materialIndex];
+        uint32_t factorOffset = factorUniformBufferOffset + material->factorOffset;
+
+        memcpy(mappedSharedMemory + factorOffset,                material->baseColorFactor,         sizeof(vec4));
+        memcpy(mappedSharedMemory + factorOffset + sizeof(vec4), material->metallicRoughnessFactor, sizeof(vec2));
+    }
+
+    debug("Material factors copied to uniform buffer and descriptor set created");
 }
 
 void updateUniforms(uint32_t framebufferIndex) {

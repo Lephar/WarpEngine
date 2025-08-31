@@ -7,13 +7,18 @@
 #include "image.h"
 #include "pipeline.h"
 #include "descriptor.h"
+#include "content.h"
 
 #include "file.h"
 #include "logger.h"
 #include "numerics.h"
 
+const uint32_t materialTextureCount = 3;
+
 Image *defaultBlackTexture = NULL;
 Image *defaultWhiteTexture = NULL;
+
+VkDescriptorSet factorDescriptorSet;
 
 uint32_t materialCount;
 Material *materials;
@@ -302,48 +307,52 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
             material->baseColor = loadTextureUncompressed("assets/default/textures", "white.png");
         }
 
-        material->metallicFactor  = materialData->pbr_metallic_roughness.metallic_factor;
-        debug("\tMetallic factor:    %0.4f", material->metallicFactor);
-        material->roughnessFactor = materialData->pbr_metallic_roughness.roughness_factor;
-        debug("\tRoughness factor:   %0.4f", material->roughnessFactor);
+        material->metallicRoughnessFactor[0] = materialData->pbr_metallic_roughness.metallic_factor;
+        material->metallicRoughnessFactor[1] = materialData->pbr_metallic_roughness.roughness_factor;
+        debug("\tMetallic roughness factor: [%0.4f, %0.4f]", material->metallicRoughnessFactor[0], material->metallicRoughnessFactor[1]);
 
         if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture) {
             if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->has_basisu) {
-                //material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri);
+                material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri);
             } else {
-                //material->metallicRoughness = loadTextureUncompressed(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri);
+                material->metallicRoughness = loadTextureUncompressed(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri);
             }
         } else {
-            //material->metallicRoughness = loadTextureUncompressed("assets/default/textures", "black.png");
+            material->metallicRoughness = loadTextureUncompressed("assets/default/textures", "black.png");
         }
     }
 
     if(materialData->normal_texture.texture) {
         if(materialData->normal_texture.texture->has_basisu) {
-            //material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri);
+            material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri);
         } else {
-            //material->normal = loadTextureUncompressed(subdirectory, materialData->normal_texture.texture->image->uri);
+            material->normal = loadTextureUncompressed(subdirectory, materialData->normal_texture.texture->image->uri);
         }
-    } // TODO: else?
+    } else {
+        material->normal = loadTextureUncompressed("assets/default/textures", "black.png");
+    }
 
-    material->descriptorSet = getMaterialDescriptorSet(material->baseColor);
+    material->factorOffset = materialCount * factorUniformAlignment;
+    material->materialDescriptorSet = getMaterialDescriptorSet(material);
+    
     materialCount++;
 }
 
 // NOTICE: This doesn't account for shader binding, use bindShader() beforehand
 void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &material->descriptorSet, 0, NULL);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &factorDescriptorSet,             1, &material->factorOffset);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &material->materialDescriptorSet, 0, NULL);
 }
 
 void destroyMaterial(Material *material) {
     if(material->normal) {
-        //destroyImageView(material->normal);
-        //destroyImage(material->normal);
+        destroyImageView(material->normal);
+        destroyImage(material->normal);
     }
 
     if(material->metallicRoughness) {
-        //destroyImageView(material->metallicRoughness);
-        //destroyImage(material->metallicRoughness);
+        destroyImageView(material->metallicRoughness);
+        destroyImage(material->metallicRoughness);
     }
 
     destroyImageView(material->baseColor);
