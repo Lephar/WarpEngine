@@ -340,8 +340,20 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
 
 // NOTICE: This doesn't account for shader binding, use bindShader() beforehand
 void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &factorDescriptorSet,             1, &material->factorOffset);
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &material->materialDescriptorSet, 0, NULL);
+    VkDescriptorSet descriptorSets[] = {
+        factorDescriptorSet,
+        material->materialDescriptorSet
+    };
+
+    uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
+
+    uint32_t dynamicOffsets[] = {
+        material->factorOffset
+    };
+
+    uint32_t dynamicOffsetCount = sizeof(dynamicOffsets) / sizeof(uint32_t);
+
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, descriptorSetCount, descriptorSets, dynamicOffsetCount, dynamicOffsets);
 }
 
 void destroyMaterial(Material *material) {
