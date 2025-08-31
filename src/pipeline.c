@@ -33,11 +33,14 @@ void createPipelineLayout() {
 }
 
 void createPipeline() {
-    sceneUniformAlignment     = align(sizeof(SceneUniform),     physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    primitiveUniformAlignment = align(sizeof(PrimitiveUniform), physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    sceneUniformAlignment     = align(sizeof(SceneUniform),        physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    primitiveUniformAlignment = align(sizeof(PrimitiveUniform),    physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
+    factorUniformAlignment    = align(sizeof(vec4) + sizeof(vec2), physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
     dynamicUniformBufferRange = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), primitiveUniformAlignment);
+    factorUniformBufferRange  = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), factorUniformAlignment);
     framebufferUniformStride  = sceneUniformAlignment + dynamicUniformBufferRange;
-    primitiveCountLimit       = dynamicUniformBufferRange / primitiveUniformAlignment;
+    primitiveCountLimit       = dynamicUniformBufferRange / umax(primitiveUniformAlignment, factorUniformAlignment);
+    factorUniformBufferOffset = framebufferCountLimit * framebufferUniformStride;
 
     createSampler();
 

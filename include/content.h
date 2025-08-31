@@ -30,8 +30,11 @@ extern VkDeviceSize uniformBufferSize;
 
 extern VkDeviceSize sceneUniformAlignment;
 extern VkDeviceSize primitiveUniformAlignment;
+extern VkDeviceSize factorUniformAlignment;
 extern VkDeviceSize dynamicUniformBufferRange;
+extern VkDeviceSize factorUniformBufferRange;
 extern VkDeviceSize framebufferUniformStride;
+extern VkDeviceSize factorUniformBufferOffset;
 
 extern uint32_t primitiveCountLimit;
 
