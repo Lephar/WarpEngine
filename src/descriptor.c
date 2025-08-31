@@ -40,12 +40,12 @@ void createSampler() {
     debug("Texture sampler created");
 }
 
-void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
-    debug("%s descriptor pool:", descriptorPool->type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER ? "Sampler" : "Buffer");
+void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
+    debug("%s buffer descriptor pool:", descriptorPool->type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ? "Dynamic uniform" : "Uniform");
 
-    descriptorPool->type    = type;
-    descriptorPool->count   = count;
-    descriptorPool->stage   = stage;
+    descriptorPool->type  = type;
+    descriptorPool->count = count;
+    descriptorPool->stage = stage;
 
     VkDescriptorSetLayoutBinding layoutBinding = {
         .binding = 0,
@@ -65,6 +65,54 @@ void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type,
 
     vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
     debug("\tDescriptor set layout created");
+
+    VkDescriptorPoolSize poolSize = {
+        .type = type,
+        .descriptorCount = count
+    };
+
+    VkDescriptorPoolCreateInfo poolInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .maxSets = count,
+        .poolSizeCount = 1,
+        .pPoolSizes = &poolSize
+    };
+
+    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
+    debug("\tDescriptor pool created with %u sets", descriptorPool->count);
+
+
+}void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
+    debug("Combined image sampler descriptor pool:");
+
+    descriptorPool->type  = type;
+    descriptorPool->count = count;
+    descriptorPool->stage = stage;
+
+    VkDescriptorSetLayoutBinding *layoutBindings = malloc(materialTextureCount * sizeof(VkDescriptorSetLayoutBinding));
+    
+    for(uint32_t bindingIndex = 0; bindingIndex < materialTextureCount; bindingIndex++) {
+        VkDescriptorSetLayoutBinding *layoutBinding = &layoutBindings[bindingIndex];
+    
+        layoutBinding->binding = bindingIndex;
+        layoutBinding->descriptorType = type;
+        layoutBinding->descriptorCount = 1;
+        layoutBinding->stageFlags = stage;
+        layoutBinding->pImmutableSamplers = NULL;
+    };
+
+    VkDescriptorSetLayoutCreateInfo layoutInfo = {
+        .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0,
+        .bindingCount = materialTextureCount,
+        .pBindings = layoutBindings
+    };
+
+    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
+    debug("\tDescriptor set layout created with %u bindings", materialTextureCount);
 
     VkDescriptorPoolSize poolSize = {
         .type = type,
