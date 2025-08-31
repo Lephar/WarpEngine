@@ -4,6 +4,7 @@
 #include "device.h"
 #include "buffer.h"
 #include "image.h"
+#include "material.h"
 #include "content.h"
 
 #include "logger.h"
@@ -219,16 +220,20 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
     return descriptorSet;
 }
 
-VkDescriptorSet getSceneDescriptorSet(uint32_t index) {
-    return createBufferDescriptorSet(&sceneDescriptorPool, sharedBuffer.buffer, index * framebufferUniformStride, sceneUniformAlignment);
+VkDescriptorSet getSceneDescriptorSet(uint32_t framebufferIndex) {
+    return createBufferDescriptorSet(&sceneDescriptorPool, sharedBuffer.buffer, framebufferIndex * framebufferUniformStride, sceneUniformAlignment);
 }
 
-VkDescriptorSet getPrimitiveDescriptorSet(uint32_t index) {
-    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, index * framebufferUniformStride + sceneUniformAlignment, dynamicUniformBufferRange);
+VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferIndex) {
+    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferIndex * framebufferUniformStride + sceneUniformAlignment, dynamicUniformBufferRange);
 }
 
-VkDescriptorSet getMaterialDescriptorSet(Image *image) {
-    return createImageDescriptorSet(&materialDescriptorPool, sampler, image);
+VkDescriptorSet getFactorDescriptorSet() {
+    return createBufferDescriptorSet(&factorDescriptorPool, sharedBuffer.buffer, factorUniformBufferOffset, factorUniformBufferRange);
+}
+
+VkDescriptorSet getMaterialDescriptorSet(Material *material) {
+    return createImageDescriptorSet(&materialDescriptorPool, sampler, material);
 }
 
 void resetDescriptorPool(DescriptorPool *descriptorPool) {
