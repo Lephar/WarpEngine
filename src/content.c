@@ -172,7 +172,7 @@ void loadContent() {
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     debug("Shared memory cleared and set for uniform buffer usage");
-    
+
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         Material *material = &materials[materialIndex];
         uint32_t factorOffset = factorUniformBufferOffset + material->factorOffset;
@@ -213,17 +213,31 @@ void bindContentBuffers(VkCommandBuffer commandBuffer) {
             .binding = 0,
             .format = VK_FORMAT_R32G32B32_SFLOAT,
             .offset = offsetof(Vertex, position)
-        }, {
+        },{
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
             .pNext = NULL,
             .location = 1,
+            .binding = 0,
+            .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+            .offset = offsetof(Vertex, tangent)
+        },{
+            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+            .pNext = NULL,
+            .location = 2,
+            .binding = 0,
+            .format = VK_FORMAT_R32G32B32_SFLOAT,
+            .offset = offsetof(Vertex, normal)
+        }, {
+            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+            .pNext = NULL,
+            .location = 3,
             .binding = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
             .offset = offsetof(Vertex, texcoord0)
         }, {
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
             .pNext = NULL,
-            .location = 2,
+            .location = 4,
             .binding = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
             .offset = offsetof(Vertex, texcoord1)

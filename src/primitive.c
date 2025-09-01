@@ -63,12 +63,24 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
 
         debug("\tAttribute %s:\t%lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
 
-        // TODO: Check component data types too
+        // TODO: Check component data types too (Is this necessary?)
         if(attribute->type == cgltf_attribute_type_position) {
             vec3 *positions = attributeData;
 
             for(cgltf_size positionIndex = 0; positionIndex < attributeAccessor->count; positionIndex++) {
                 memcpy(vertexBuffer[vertexCount + positionIndex].position, positions[positionIndex], sizeof(vec3));
+            }
+        } else if(attribute->type == cgltf_attribute_type_tangent) {
+            vec4 *tangents = attributeData;
+
+            for(cgltf_size tangentIndex = 0; tangentIndex < attributeAccessor->count; tangentIndex++) {
+                memcpy(vertexBuffer[vertexCount + tangentIndex].tangent, tangents[tangentIndex], sizeof(vec4)); // WARN: THERE IS A CLANG BUG ON THIS LINE
+            }
+        } else if(attribute->type == cgltf_attribute_type_normal) {
+            vec3 *normals = attributeData;
+
+            for(cgltf_size normalIndex = 0; normalIndex < attributeAccessor->count; normalIndex++) {
+                memcpy(vertexBuffer[vertexCount + normalIndex].normal, normals[normalIndex], sizeof(vec3));
             }
         } else if(attribute->type == cgltf_attribute_type_texcoord) {
             vec2 *texcoords = attributeData;
@@ -82,7 +94,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
                     memcpy(vertexBuffer[vertexCount + texcoordIndex].texcoord1, texcoords[texcoordIndex], sizeof(vec2));
                 }
             }
-        } // TODO: Load normal and tangent too
+        } // TODO: Load color and weight if not too redundant
     }
 
     PrimitiveUniform *primitiveUniform = uniformBuffer + primitive->uniformOffset;

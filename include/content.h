@@ -6,6 +6,8 @@ typedef uint32_t Index;
 
 struct vertex {
     vec3 position;
+    vec4 tangent;
+    vec3 normal;
     vec2 texcoord0;
     vec2 texcoord1;
 } typedef Vertex;

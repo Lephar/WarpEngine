@@ -19,14 +19,16 @@ layout(set = 3, binding = 1) uniform sampler2D metallicRoughnessSampler;
 layout(set = 3, binding = 2) uniform sampler2D normalSampler;
 
 layout(location = 0) in vec4 inputPosition;
-layout(location = 1) in vec2 inputTexcoord0;
-layout(location = 2) in vec2 inputTexcoord1;
+layout(location = 1) in vec4 inputTangent;
+layout(location = 2) in vec4 inputNormal;
+layout(location = 3) in vec2 inputTexcoord0;
+layout(location = 4) in vec2 inputTexcoord1;
 
 layout(location = 0) out vec4 outputColor;
 
 vec4 depth() {
-    float farPlane  = cameraProperties[2];
     float nearPlane = cameraProperties[1];
+    float farPlane  = cameraProperties[2];
     float linearisedDepthValue = farPlane * nearPlane / (farPlane - gl_FragCoord.z * (farPlane - nearPlane));
     float normalisedDepthValue = linearisedDepthValue / farPlane;
 
@@ -42,9 +44,9 @@ vec4 metallicRoughness() {
 }
 
 vec4 normal() {
-    return vec4(texture(normalSampler, inputTexcoord0).rgb, 1.0f);
+    return texture(normalSampler, inputTexcoord0);
 }
 
 void main() {
-    outputColor = normal();
+    outputColor = color();
 }
