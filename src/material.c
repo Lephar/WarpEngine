@@ -33,14 +33,14 @@ uint32_t findMaterial(cgltf_material *materialData) {
     return UINT32_MAX;
 }
 
-Image *loadTextureUncompressed(const char *subdirectory, const char *filename, bool normalMap) {
+Image *loadUncompressedTexture(const char *subdirectory, const char *filename, bool isColor) {
     char path[PATH_MAX];
     makeFullPath(subdirectory, filename, path);
     debug("\tImage Path: %s", path);
 
     int32_t width  = 0;
     int32_t height = 0;
-    int32_t depth  = STBI_rgb_alpha;
+    int32_t depth  = STBI_rgb_alpha; // TODO: Consider the normal and metallic roughness channels
 
     // NOTICE: Allocates data double the necessary size because of our STBI_MALLOC override in implementation.c
     uint8_t *data = stbi_load(path, &width, &height, NULL, depth);
@@ -61,7 +61,7 @@ Image *loadTextureUncompressed(const char *subdirectory, const char *filename, b
 
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
-        .vkFormat = VK_FORMAT_R8G8B8A8_SRGB,
+        .vkFormat = isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
         .pDfd = NULL, // Ignored
         .baseWidth = width,
         .baseHeight = height,
@@ -129,10 +129,10 @@ Image *loadTextureUncompressed(const char *subdirectory, const char *filename, b
 
     ktxBasisParams compressionParameters = {
         .structSize = sizeof(ktxBasisParams),
-        .uastc = KTX_TRUE,
+        .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
         .threadCount = threadCount,
         .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
-        .normalMap = normalMap // TODO: Only valid for linear textures?
+        .normalMap = !isColor // TODO: Can metallic roughness be consiedered same with normal maps?
     }; // NOTICE: Many more params exist here that are zero initialized here
 
     result = ktxTexture2_CompressBasisEx(compressedTexture, &compressionParameters);
@@ -155,7 +155,7 @@ Image *loadTextureUncompressed(const char *subdirectory, const char *filename, b
         debug("\t\tTranscoded Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));
     }
 
-    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, isColor ? VK_FORMAT_BC7_SRGB_BLOCK : VK_FORMAT_BC7_UNORM_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     bindImageMemory(texture, &deviceMemory);
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
@@ -196,7 +196,7 @@ Image *loadTextureUncompressed(const char *subdirectory, const char *filename, b
     return texture;
 }
 
-Image *loadTexture(const char *subdirectory, const char *filename) {
+Image *loadTexture(const char *subdirectory, const char *filename, bool isColor) {
     char path[PATH_MAX];
     makeFullPath(subdirectory, filename, path);
     debug("\tImage Path: %s", path);
@@ -238,7 +238,7 @@ Image *loadTexture(const char *subdirectory, const char *filename) {
         debug("\t\tTranscoded Size: %lu", ktxTexture_GetDataSize(textureObjectHandle));
     }
 
-    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_BC7_SRGB_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, isColor ? VK_FORMAT_BC7_SRGB_BLOCK : VK_FORMAT_BC7_UNORM_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     bindImageMemory(texture, &deviceMemory);
     transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
@@ -300,12 +300,12 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
 
         if(materialData->pbr_metallic_roughness.base_color_texture.texture) {
             if(materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu) {
-                material->baseColor = loadTexture(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri);
+                material->baseColor = loadTexture(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->basisu_image->uri, true);
             } else {
-                material->baseColor = loadTextureUncompressed(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, false);
+                material->baseColor = loadUncompressedTexture(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, true);
             }
         } else {
-            material->baseColor = loadTextureUncompressed("assets/default/textures", "white.png", false);
+            material->baseColor = loadUncompressedTexture("assets/default/textures", "white.png", true);
         }
 
         material->metallicRoughnessFactor[0] = materialData->pbr_metallic_roughness.metallic_factor;
@@ -314,30 +314,30 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
 
         if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture) {
             if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->has_basisu) {
-                material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri);
+                material->metallicRoughness = loadTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->basisu_image->uri, false);
             } else {
-                material->metallicRoughness = loadTextureUncompressed(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri, false);
+                material->metallicRoughness = loadUncompressedTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri, false);
             }
         } else {
-            material->metallicRoughness = loadTextureUncompressed("assets/default/textures", "black.png", false);
+            material->metallicRoughness = loadUncompressedTexture("assets/default/textures", "black.png", false);
         }
     }
 
     if(materialData->normal_texture.texture) {
         if(materialData->normal_texture.texture->has_basisu) {
-            material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri);
+            material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri, false);
         } else {
-            material->normal = loadTextureUncompressed(subdirectory, materialData->normal_texture.texture->image->uri, true);
+            material->normal = loadUncompressedTexture(subdirectory, materialData->normal_texture.texture->image->uri, false);
         }
     } else {
-        material->normal = loadTextureUncompressed("assets/default/textures", "black.png", true);
+        material->normal = loadUncompressedTexture("assets/default/textures", "black.png", false);
     }
 
     material->factorOffset = materialCount * factorUniformAlignment;
     material->materialDescriptorSet = getMaterialDescriptorSet(material);
 
     debug("\tTexture descriptor sets acquired and material created");
-    
+
     materialCount++;
 }
 

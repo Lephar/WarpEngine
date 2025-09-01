@@ -40,7 +40,8 @@ vec4 color() {
 }
 
 vec4 metallicRoughness() {
-    return vec4(metallicRoughnessFactor * texture(metallicRoughnessSampler, inputTexcoord0).rg, 0.0f, 1.0f);
+    vec4 metallicRoughness = texture(metallicRoughnessSampler, inputTexcoord0);
+    return vec4(metallicRoughness.r, metallicRoughnessFactor.y * metallicRoughness.g, metallicRoughnessFactor.x * metallicRoughness.b, metallicRoughness.a);
 }
 
 vec4 normal() {
@@ -48,5 +49,5 @@ vec4 normal() {
 }
 
 void main() {
-    outputColor = color();
+    outputColor = texture(metallicRoughnessSampler, inputTexcoord0);
 }
