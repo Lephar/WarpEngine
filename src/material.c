@@ -132,7 +132,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
         .threadCount = threadCount,
         .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
-        .normalMap = !isColor // TODO: Can metallic roughness be consiedered same with normal maps?
+        .normalMap = false // !isColor // TODO: Can metallic roughness be consiedered same with normal maps?
     }; // NOTICE: Many more params exist here that are zero initialized here
 
     result = ktxTexture2_CompressBasisEx(compressedTexture, &compressionParameters);
