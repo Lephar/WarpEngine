@@ -10,7 +10,7 @@
 #include "content.h"
 #include "shader.h"
 #include "material.h"
-#include "meta.h"
+#include "scene.h"
 #include "primitive.h"
 
 #include "logger.h"

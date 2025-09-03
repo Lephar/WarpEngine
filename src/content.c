@@ -5,7 +5,7 @@
 #include "buffer.h"
 #include "image.h"
 #include "material.h"
-#include "meta.h"
+#include "scene.h"
 #include "primitive.h"
 #include "descriptor.h"
 
@@ -159,7 +159,7 @@ void loadContent() {
     },
     10.0f);
     */
-    debug("Meta materials successfully set");
+    debug("Scene successfully set");
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
