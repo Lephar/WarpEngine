@@ -18,7 +18,7 @@ void *loadDeviceFunction(const char *name) {
 void createDevice() {
     const char *extensionNames[] = {
         VK_KHR_MAINTENANCE_7_EXTENSION_NAME,
-          //VK_KHR_MAINTENANCE_8_EXTENSION_NAME,
+        VK_KHR_MAINTENANCE_8_EXTENSION_NAME,
         VK_KHR_SWAPCHAIN_EXTENSION_NAME,
         VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME,
         VK_EXT_SHADER_OBJECT_EXTENSION_NAME
@@ -90,17 +90,16 @@ void createDevice() {
         .pNext = &version14Features,
         .maintenance7 = VK_TRUE
     };
-    /*
+
     VkPhysicalDeviceMaintenance8FeaturesKHR maintenance8Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR,
         .pNext = &maintenance7Features,
         .maintenance8 = VK_TRUE
     };
-    */
+
     VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT swapchainMaintenance1Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT,
-        .pNext = &maintenance7Features,
-      //.pNext = &maintenance8Features,
+        .pNext = &maintenance8Features,
         .swapchainMaintenance1 = VK_TRUE
     };
 
