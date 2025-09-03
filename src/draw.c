@@ -42,7 +42,7 @@ void render() {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         Material *material = &materials[materialIndex];
 
-        if(!material->transparent) {
+        if(!material->isTransparent) {
             bindMaterial(framebuffer->renderCommandBuffer, material);
 
             for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
@@ -58,7 +58,7 @@ void render() {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         Material *material = &materials[materialIndex];
 
-        if(material->transparent) {
+        if(material->isTransparent) {
             bindMaterial(framebuffer->renderCommandBuffer, material);
 
             for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {

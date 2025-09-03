@@ -132,7 +132,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
         .threadCount = threadCount,
         .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
-        .normalMap = false // !isColor // TODO: Can metallic roughness be consiedered same with normal maps?
+        .normalMap = false // TODO: Research that topic to see how that can be used for metallic roughness and normal maps
     }; // NOTICE: Many more params exist here that are zero initialized here
 
     result = ktxTexture2_CompressBasisEx(compressedTexture, &compressionParameters);
@@ -289,10 +289,12 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     material->normal            = NULL;
 
     if(materialData->alpha_mode == cgltf_alpha_mode_blend) {
-        material->transparent = true;
+        material->isTransparent = true;
     } else {
-        material->transparent = false;
+        material->isTransparent = false;
     }
+
+    material->isDoubleSided = materialData->double_sided;
 
     if(materialData->has_pbr_metallic_roughness) {
         memcpy(material->baseColorFactor, materialData->pbr_metallic_roughness.base_color_factor, sizeof(vec4));
@@ -324,6 +326,9 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     }
 
     if(materialData->normal_texture.texture) {
+        material->normalScale = materialData->normal_texture.scale;
+        debug("\tNormal scale: %0.4f", material->normalScale);
+
         if(materialData->normal_texture.texture->has_basisu) {
             material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri, false);
         } else {
@@ -332,6 +337,9 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     } else {
         material->normal = loadUncompressedTexture("assets/default/textures", "black.png", false);
     }
+
+    memcpy(material->emissiveFactor, materialData->emissive_factor, sizeof(vec3));
+    debug("\tEmissive factor: [%0.4f, %0.4f, %0.4f]", material->emissiveFactor[0], material->emissiveFactor[1], material->emissiveFactor[2]);
 
     material->factorOffset = materialCount * factorUniformAlignment;
     material->materialDescriptorSet = getMaterialDescriptorSet(material);

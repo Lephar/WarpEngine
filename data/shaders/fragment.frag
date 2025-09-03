@@ -12,6 +12,8 @@ layout(set = 0, binding = 0) uniform Scene {
 layout(set = 2, binding = 0) uniform Factor {
     vec4 baseColorFactor;
     vec2 metallicRoughnessFactor;
+    vec3 emissiveFactor;
+    float normalScale;
 };
 
 layout(set = 3, binding = 0) uniform sampler2D baseColorSampler;
