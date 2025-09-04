@@ -221,15 +221,15 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
 }
 
 VkDescriptorSet getSceneDescriptorSet(uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&sceneDescriptorPool, sharedBuffer.buffer, framebufferIndex * framebufferUniformStride, sceneUniformAlignment);
+    return createBufferDescriptorSet(&sceneDescriptorPool, sharedBuffer.buffer, framebufferSetUniformBufferOffset + framebufferIndex * framebufferUniformBufferStride + primitiveUniformBufferRange, sceneUniformAlignment);
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferIndex * framebufferUniformStride + sceneUniformAlignment, dynamicUniformBufferRange);
+    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferSetUniformBufferOffset + framebufferIndex * framebufferUniformBufferStride, primitiveUniformBufferRange);
 }
 
 VkDescriptorSet getFactorDescriptorSet() {
-    return createBufferDescriptorSet(&factorDescriptorPool, sharedBuffer.buffer, factorUniformBufferOffset, factorUniformBufferRange);
+    return createBufferDescriptorSet(&factorDescriptorPool, sharedBuffer.buffer, 0, materialUniformBufferRange);
 }
 
 VkDescriptorSet getMaterialDescriptorSet(Material *material) {
