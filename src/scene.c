@@ -16,21 +16,16 @@ void updateView() {
     vec3 target;
 
     glmc_vec3_add(playerPosition, playerDirection, target);
-    glmc_lookat_rh_zo(playerPosition, target, worldUp, sceneUniform->view);
+    glmc_lookat_rh_zo(playerPosition, target, worldUp, sceneUniform.view);
 }
 
 void updateProjection() {
     float aspectRatio = ((float) extent.width) / ((float) extent.height);
-    glmc_perspective_rh_zo(cameraFieldOfView, aspectRatio, cameraNearPlane, cameraFarPlane, sceneUniform->projection);
-
-    sceneUniform->cameraProperties[0] = cameraFieldOfView;
-    sceneUniform->cameraProperties[1] = cameraNearPlane;
-    sceneUniform->cameraProperties[2] = cameraFarPlane;
-    sceneUniform->cameraProperties[3] = 1.0f; // Placeholder
+    glmc_perspective_rh_zo(sceneUniform.cameraProperties[0], aspectRatio, sceneUniform.cameraProperties[1], sceneUniform.cameraProperties[2], sceneUniform.projection);
 }
 
 void generateProjectionView() {
-    glmc_mat4_mul(sceneUniform->projection, sceneUniform->view, sceneUniform->viewProjection);
+    glmc_mat4_mul(sceneUniform.projection, sceneUniform.view, sceneUniform.viewProjection);
 }
 
 void initializeScene() {
@@ -49,14 +44,10 @@ void initializePlayer(vec3 position, vec3 direction, float speed) {
 }
 
 void initializeCamera(float fieldOfView, float nearPlane, float farPlane) {
-    cameraFieldOfView = fieldOfView;
-    cameraNearPlane   = nearPlane;
-    cameraFarPlane    = farPlane;
-}
-
-void updateSkybox() {
-    PrimitiveUniform *skyboxUniform = uniformBuffer + skybox->uniformOffset;
-    glmc_translate_make(skyboxUniform->model, playerPosition);
+    sceneUniform.cameraProperties[0] = fieldOfView;
+    sceneUniform.cameraProperties[1] = nearPlane;
+    sceneUniform.cameraProperties[2] = farPlane;
+    sceneUniform.cameraProperties[3] = 1.0f; // Placeholder
 }
 
 void updatePlayer() {
