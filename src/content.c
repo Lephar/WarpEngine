@@ -88,28 +88,23 @@ void loadAsset(const char *subdirectory, const char *filename) {
 }
 
 void createContentBuffers() {
-    const VkDeviceSize indexBufferSizeLimit   =     deviceBuffer.size / 4;
-    const VkDeviceSize vertexBufferSizeLimit  = 3 * deviceBuffer.size / 4;
-    const VkDeviceSize uniformBufferSizeLimit = framebufferUniformStride;
+    const VkDeviceSize indexBufferSizeLimit  =     deviceBuffer.size / 4;
+    const VkDeviceSize vertexBufferSizeLimit = 3 * deviceBuffer.size / 4;
 
-    indexBuffer   = malloc(indexBufferSizeLimit);
-    vertexBuffer  = malloc(vertexBufferSizeLimit);
-    uniformBuffer = calloc(uniformBufferSizeLimit, 1);
+    indexBuffer  = malloc(indexBufferSizeLimit);
+    vertexBuffer = malloc(vertexBufferSizeLimit);
 
     materials  = malloc(primitiveCountLimit * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
-    indexCount  = 0;
-    vertexCount = 0;
-
-    indexBufferSize   = 0;
-    vertexBufferSize  = 0;
-    uniformBufferSize = sceneUniformAlignment;
-
-    sceneUniform = uniformBuffer;
+    materialUniforms  = malloc(primitiveCountLimit * sizeof(MaterialUniform));
+    primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
 
     materialCount  = 0;
     primitiveCount = 0;
+
+    indexCount  = 0;
+    vertexCount = 0;
 
     debug("Content buffers created");
 }
@@ -137,6 +132,9 @@ void loadContent() {
 
     debug("Scene successfully set");
 
+    const VkDeviceSize indexBufferSize  = indexCount  * sizeof(Index);
+    const VkDeviceSize vertexBufferSize = vertexCount * sizeof(Vertex);
+
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
 
@@ -149,14 +147,6 @@ void loadContent() {
 
     debug("Shared memory cleared and set for uniform buffer usage");
 
-    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        Material *material = &materials[materialIndex];
-        uint32_t factorOffset = factorUniformBufferOffset + material->factorOffset;
-
-        memcpy(mappedSharedMemory + factorOffset,                material->baseColorFactor,         sizeof(vec4));
-        memcpy(mappedSharedMemory + factorOffset + sizeof(vec4), material->metallicRoughnessFactor, sizeof(vec2));
-    }
-
     factorDescriptorSet = getFactorDescriptorSet();
 
     debug("Material factors copied to uniform buffer and descriptor set created");
@@ -166,7 +156,17 @@ void updateUniforms(uint32_t framebufferIndex) {
     updatePlayer();
     updateCamera();
 
-    memcpy(mappedSharedMemory + framebufferIndex * framebufferUniformStride, uniformBuffer, framebufferUniformStride);
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        memcpy(mappedSharedMemory + materialIndex * materialUniformAlignment, &materialUniforms[materialIndex], sizeof(MaterialUniform));
+    }
+
+    VkDeviceSize framebufferUniformBufferOffset = framebufferSetUniformBufferOffset + framebufferIndex * framebufferUniformBufferStride;
+
+    for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
+        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + primitiveIndex * primitiveUniformAlignment, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
+    }
+
+    memcpy(mappedSharedMemory + framebufferUniformBufferOffset + primitiveUniformBufferRange, &sceneUniform, sceneUniformAlignment);
 }
 
 void bindContentBuffers(VkCommandBuffer commandBuffer) {
@@ -220,8 +220,10 @@ void bindContentBuffers(VkCommandBuffer commandBuffer) {
 
     uint32_t vertexAttributeCount = sizeof(vertexAttributes) / sizeof(VkVertexInputAttributeDescription2EXT);
 
+    const VkDeviceSize vertexBufferOffset = indexCount * sizeof(Index);
+
     vkCmdBindIndexBuffer(commandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-    vkCmdBindVertexBuffers(commandBuffer, 0, 1, &deviceBuffer.buffer, &indexBufferSize);
+    vkCmdBindVertexBuffers(commandBuffer, 0, 1, &deviceBuffer.buffer, &vertexBufferOffset);
 
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(commandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
@@ -235,6 +237,4 @@ void freeContent() {
     }
 
     free(materials);
-
-    free(uniformBuffer);
 }

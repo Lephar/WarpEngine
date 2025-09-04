@@ -115,10 +115,6 @@ void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
     indexCount  += accessor->count;
     vertexCount += primitiveVertexCount;
 
-    indexBufferSize   += accessor->count      * sizeof(Index);
-    vertexBufferSize  += primitiveVertexCount * sizeof(Vertex);
-    uniformBufferSize += primitiveUniformAlignment;
-
     debug("\tBuffer offsets set and primitive created");
 
     primitiveCount++;
