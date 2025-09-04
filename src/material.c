@@ -13,8 +13,6 @@
 #include "logger.h"
 #include "numerics.h"
 
-const uint32_t materialTextureCount = 3;
-
 Image *defaultBlackTexture = NULL;
 Image *defaultWhiteTexture = NULL;
 

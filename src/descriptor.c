@@ -94,10 +94,10 @@ void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorTyp
     descriptorPool->stage = stage;
 
     VkDescriptorSetLayoutBinding *layoutBindings = malloc(materialTextureCount * sizeof(VkDescriptorSetLayoutBinding));
-    
+
     for(uint32_t bindingIndex = 0; bindingIndex < materialTextureCount; bindingIndex++) {
         VkDescriptorSetLayoutBinding *layoutBinding = &layoutBindings[bindingIndex];
-    
+
         layoutBinding->binding = bindingIndex;
         layoutBinding->descriptorType = type;
         layoutBinding->descriptorCount = 1;
@@ -202,7 +202,7 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
     for(uint32_t bindingIndex = 0; bindingIndex < materialTextureCount; bindingIndex++) {
         VkDescriptorImageInfo *imageInfo = &imageInfos[bindingIndex];
         VkWriteDescriptorSet *descriptorWrite = &descriptorWrites[bindingIndex];
-        
+
         descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrite->pNext = NULL;
         descriptorWrite->dstSet = descriptorSet;

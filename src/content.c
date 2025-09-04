@@ -139,19 +139,7 @@ void loadContent() {
     10.0f);
 
     initializeCamera(M_PI_4, 1.0f, 128.0f);
-    /*
-    initializeActor((vec3) {
-        0.0f,
-        0.0f,
-        0.0f
-    },
-    (vec3) {
-        0.0f,
-        0.0f,
-        1.0f
-    },
-    10.0f);
-    */
+
     debug("Scene successfully set");
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
@@ -180,9 +168,7 @@ void loadContent() {
 }
 
 void updateUniforms(uint32_t framebufferIndex) {
-    //updateSkybox();
     updatePlayer();
-    //updateActor();
     updateCamera();
 
     memcpy(mappedSharedMemory + framebufferIndex * framebufferUniformStride, uniformBuffer, framebufferUniformStride);
