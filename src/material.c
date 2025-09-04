@@ -281,7 +281,13 @@ Image *loadTexture(const char *subdirectory, const char *filename, bool isColor)
     return texture;
 }
 
-void loadMaterial(const char *subdirectory, Material *material, cgltf_material *materialData) {
+void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
+    assert(materialCount < materialCountLimit);
+    const uint32_t materialIndex = materialCount;
+
+    Material        *material        = &materials[materialIndex];
+    MaterialUniform *materialUniform = &materialUniforms[materialIndex];
+
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
 
@@ -298,8 +304,8 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     material->isDoubleSided = materialData->double_sided;
 
     if(materialData->has_pbr_metallic_roughness) {
-        memcpy(material->baseColorFactor, materialData->pbr_metallic_roughness.base_color_factor, sizeof(vec4));
-        debug("\tBase color factor: [%0.4f, %0.4f, %0.4f, %0.4f]", material->baseColorFactor[0], material->baseColorFactor[1], material->baseColorFactor[2], material->baseColorFactor[3]);
+        memcpy(materialUniform->baseColorFactor, materialData->pbr_metallic_roughness.base_color_factor, sizeof(vec4));
+        debug("\tBase color factor: [%0.4f, %0.4f, %0.4f, %0.4f]", materialUniform->baseColorFactor[0], materialUniform->baseColorFactor[1], materialUniform->baseColorFactor[2], materialUniform->baseColorFactor[3]);
 
         if(materialData->pbr_metallic_roughness.base_color_texture.texture) {
             if(materialData->pbr_metallic_roughness.base_color_texture.texture->has_basisu) {
@@ -311,9 +317,9 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
             material->baseColor = loadUncompressedTexture("assets/default/textures", "white.png", true);
         }
 
-        material->metallicRoughnessFactor[0] = materialData->pbr_metallic_roughness.metallic_factor;
-        material->metallicRoughnessFactor[1] = materialData->pbr_metallic_roughness.roughness_factor;
-        debug("\tMetallic roughness factor: [%0.4f, %0.4f]", material->metallicRoughnessFactor[0], material->metallicRoughnessFactor[1]);
+        materialUniform->metallicRoughnessFactor[0] = materialData->pbr_metallic_roughness.metallic_factor;
+        materialUniform->metallicRoughnessFactor[1] = materialData->pbr_metallic_roughness.roughness_factor;
+        debug("\tMetallic roughness factor: [%0.4f, %0.4f]", materialUniform->metallicRoughnessFactor[0], materialUniform->metallicRoughnessFactor[1]);
 
         if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture) {
             if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->has_basisu) {
@@ -327,8 +333,8 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
     }
 
     if(materialData->normal_texture.texture) {
-        material->normalScale = materialData->normal_texture.scale;
-        debug("\tNormal scale: %0.4f", material->normalScale);
+        materialUniform->normalScale = materialData->normal_texture.scale;
+        debug("\tNormal scale: %0.4f", materialUniform->normalScale);
 
         if(materialData->normal_texture.texture->has_basisu) {
             material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri, false);
@@ -339,10 +345,10 @@ void loadMaterial(const char *subdirectory, Material *material, cgltf_material *
         material->normal = loadUncompressedTexture("assets/default/textures", "black.png", false);
     }
 
-    memcpy(material->emissiveFactor, materialData->emissive_factor, sizeof(vec3));
-    debug("\tEmissive factor: [%0.4f, %0.4f, %0.4f]", material->emissiveFactor[0], material->emissiveFactor[1], material->emissiveFactor[2]);
+    memcpy(materialUniform->emissiveFactor, materialData->emissive_factor, sizeof(vec3));
+    debug("\tEmissive factor: [%0.4f, %0.4f, %0.4f]", materialUniform->emissiveFactor[0], materialUniform->emissiveFactor[1], materialUniform->emissiveFactor[2]);
 
-    material->factorOffset = materialCount * factorUniformAlignment;
+    material->factorOffset = materialIndex * materialUniformAlignment;
     material->materialDescriptorSet = getMaterialDescriptorSet(material);
 
     debug("\tTexture descriptor sets acquired and material created");

@@ -11,8 +11,14 @@ uint32_t primitiveCount;
 Primitive *primitives;
 PrimitiveUniform *primitiveUniforms;
 
-void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 transform) {
-    debug("Primitive Index: %d", primitiveCount);
+void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
+    assert(primitiveCount < primitiveCountLimit);
+    const uint32_t primitiveIndex = primitiveCount;
+
+    Primitive *primitive = &primitives[primitiveIndex];
+    PrimitiveUniform *primitiveUniform = &primitiveUniforms[primitiveIndex];
+
+    debug("Primitive Index: %d", primitiveIndex);
     debug("\tType: %d", primitiveData->type);
 
     uint32_t materialIndex = findMaterial(primitiveData->material);
@@ -34,7 +40,7 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
     primitive->indexBegin    = indexCount;
     primitive->indexCount    = accessor->count;
     primitive->vertexOffset  = vertexCount;
-    primitive->uniformOffset = uniformBufferSize;
+    primitive->uniformOffset = primitiveCount * sizeof(PrimitiveUniform);
 
     debug("\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
@@ -99,7 +105,6 @@ void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 tr
         } // TODO: Load color and weight if not too redundant
     }
 
-    PrimitiveUniform *primitiveUniform = uniformBuffer + primitive->uniformOffset;
     memcpy(primitiveUniform->model, transform, sizeof(primitiveUniform->model));
 
     debug("\tIndex begin:    %lu", primitive->indexBegin);

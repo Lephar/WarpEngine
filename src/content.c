@@ -62,13 +62,11 @@ void loadAsset(const char *subdirectory, const char *filename) {
         cgltf_material *materialData = &data->materials[materialIndex];
 
         if(findMaterial(materialData) < materialCount) {
+            debug("Material already found, skipping...");
             continue;
         }
 
-        assert(materialCount < primitiveCountLimit);
-        Material *material = &materials[materialCount];
-
-        loadMaterial(subdirectory, material, materialData);
+        loadMaterial(subdirectory, materialData);
     }
 
     for(cgltf_size nodeIndex = 0; nodeIndex < data->nodes_count; nodeIndex++) {
@@ -81,10 +79,7 @@ void loadAsset(const char *subdirectory, const char *filename) {
             cgltf_mesh *meshData = nodeData->mesh;
 
             for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
-                assert(primitiveCount < primitiveCountLimit);
-                Primitive *primitiveReference = &primitives[primitiveCount];
-
-                loadPrimitive(primitiveReference, &meshData->primitives[primitiveIndex], transform);
+                loadPrimitive(&meshData->primitives[primitiveIndex], transform);
             }
         }
     }
