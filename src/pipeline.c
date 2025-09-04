@@ -3,6 +3,9 @@
 #include "physicalDevice.h"
 #include "device.h"
 #include "content.h"
+#include "scene.h"
+#include "primitive.h"
+#include "material.h"
 #include "descriptor.h"
 #include "framebuffer.h"
 
@@ -34,14 +37,21 @@ void createPipelineLayout() {
 }
 
 void createPipeline() {
-    sceneUniformAlignment     = align(sizeof(SceneUniform),        physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    primitiveUniformAlignment = align(sizeof(PrimitiveUniform),    physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    factorUniformAlignment    = align(sizeof(vec4) + sizeof(vec2), physicalDeviceProperties.limits.minUniformBufferOffsetAlignment);
-    dynamicUniformBufferRange = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), primitiveUniformAlignment);
-    factorUniformBufferRange  = alignBack(umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1), factorUniformAlignment);
-    framebufferUniformStride  = sceneUniformAlignment + dynamicUniformBufferRange;
-    primitiveCountLimit       = dynamicUniformBufferRange / umax(primitiveUniformAlignment, factorUniformAlignment);
-    factorUniformBufferOffset = framebufferCountLimit * framebufferUniformStride;
+    uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
+    uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
+
+    sceneUniformAlignment     = align(sizeof(SceneUniform),     minUniformBufferOffsetAlignment);
+    primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
+    materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
+
+    primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
+    materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
+
+    primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
+    materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
+
+    framebufferSetUniformBufferOffset = materialUniformBufferRange;
+    framebufferUniformBufferStride = primitiveUniformBufferRange + sceneUniformAlignment;
 
     createSampler();
 

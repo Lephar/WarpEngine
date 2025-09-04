@@ -15,25 +15,18 @@
 uint32_t indexCount;
 uint32_t vertexCount;
 
-VkDeviceSize indexBufferSize;
-VkDeviceSize vertexBufferSize;
-VkDeviceSize uniformBufferSize;
+Index  *indexBuffer;
+Vertex *vertexBuffer;
 
 VkDeviceSize sceneUniformAlignment;
 VkDeviceSize primitiveUniformAlignment;
-VkDeviceSize factorUniformAlignment;
-VkDeviceSize dynamicUniformBufferRange;
-VkDeviceSize factorUniformBufferRange;
-VkDeviceSize framebufferUniformStride;
-VkDeviceSize factorUniformBufferOffset;
+VkDeviceSize materialUniformAlignment;
 
-uint32_t primitiveCountLimit;
+VkDeviceSize primitiveUniformBufferRange;
+VkDeviceSize materialUniformBufferRange;
 
-Index  *indexBuffer;
-Vertex *vertexBuffer;
-void   *uniformBuffer;
-
-SceneUniform *sceneUniform;
+VkDeviceSize framebufferSetUniformBufferOffset;
+VkDeviceSize framebufferUniformBufferStride;
 
 void loadAsset(const char *subdirectory, const char *filename) {
     char fullPath[PATH_MAX];

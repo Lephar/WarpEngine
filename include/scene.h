@@ -2,7 +2,12 @@
 
 #include "pch.h"
 
-typedef struct primitive Primitive;
+struct sceneUniform {
+    mat4 view;
+    mat4 projection;
+    mat4 viewProjection;
+    vec4 cameraProperties;
+} typedef SceneUniform;
 
 extern Primitive *skybox;
 extern Primitive *actor;

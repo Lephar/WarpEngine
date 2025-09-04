@@ -18,10 +18,13 @@ const uint32_t materialTextureCount = 3;
 Image *defaultBlackTexture = NULL;
 Image *defaultWhiteTexture = NULL;
 
-VkDescriptorSet factorDescriptorSet;
-
+const uint32_t materialTextureCount = 3;
+uint32_t materialCountLimit;
 uint32_t materialCount;
 Material *materials;
+MaterialUniform *materialUniforms;
+
+VkDescriptorSet factorDescriptorSet;
 
 uint32_t findMaterial(cgltf_material *materialData) {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {

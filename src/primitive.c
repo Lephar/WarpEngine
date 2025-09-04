@@ -6,8 +6,10 @@
 
 #include "logger.h"
 
+uint32_t primitiveCountLimit;
 uint32_t primitiveCount;
 Primitive *primitives;
+PrimitiveUniform *primitiveUniforms;
 
 void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 transform) {
     debug("Primitive Index: %d", primitiveCount);

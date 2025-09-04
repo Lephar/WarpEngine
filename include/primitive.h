@@ -4,6 +4,10 @@
 
 typedef struct material Material;
 
+struct primitiveUniform {
+    mat4 model;
+} typedef PrimitiveUniform;
+
 struct primitive {
     Material *material;
     uint32_t indexBegin;
@@ -12,8 +16,10 @@ struct primitive {
     uint32_t uniformOffset;
 } typedef Primitive;
 
+extern uint32_t primitiveCountLimit;
 extern uint32_t primitiveCount;
 extern Primitive *primitives;
+extern PrimitiveUniform *primitiveUniforms;
 
-void loadPrimitive(Primitive *primitive, cgltf_primitive *primitiveData, mat4 transform);
+void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform);
 void drawPrimitive(VkCommandBuffer commandBuffer, VkDescriptorSet descriptorSet, Primitive *primitive);
