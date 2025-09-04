@@ -12,7 +12,7 @@ set(COMPILE_OPTIONS -Wall -Wextra)
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     list(APPEND COMPILE_OPTIONS -g -Og)
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    list(APPEND COMPILE_OPTIONS -Ofast -march=native -mtune=native)
+    list(APPEND COMPILE_OPTIONS -O3 -ffast-math -march=native -mtune=native)
 endif()
 
 file(GLOB_RECURSE HEADERS include/*.h)
