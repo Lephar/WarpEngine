@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+extern uint32_t descriptorSetLayoutCount;
+extern VkDescriptorSetLayout *descriptorSetLayouts;
 extern VkPipelineLayout pipelineLayout;
 
 void createPipeline();

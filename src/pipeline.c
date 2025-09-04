@@ -12,21 +12,24 @@
 #include "logger.h"
 #include "numerics.h"
 
+uint32_t descriptorSetLayoutCount;
+VkDescriptorSetLayout *descriptorSetLayouts;
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
-    VkDescriptorSetLayout descriptorSetLayouts[] = {
-        sceneDescriptorPool.layout,
-        primitiveDescriptorPool.layout,
-        factorDescriptorPool.layout,
-        materialDescriptorPool.layout
-    };
+    descriptorSetLayoutCount = 4;
+    descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
+
+    descriptorSetLayouts[0] = materialDescriptorPool.layout;
+    descriptorSetLayouts[1] = factorDescriptorPool.layout;
+    descriptorSetLayouts[2] = primitiveDescriptorPool.layout;
+    descriptorSetLayouts[3] = sceneDescriptorPool.layout;
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .setLayoutCount = sizeof(descriptorSetLayouts) / sizeof(VkDescriptorSetLayout),
+        .setLayoutCount = descriptorSetLayoutCount,
         .pSetLayouts = descriptorSetLayouts,
         .pushConstantRangeCount = 0,
         .pPushConstantRanges = NULL
@@ -55,10 +58,10 @@ void createPipeline() {
 
     createSampler();
 
-    createBufferDescriptorPool(&sceneDescriptorPool,     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
-    createBufferDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
-    createBufferDescriptorPool(&factorDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                     VK_SHADER_STAGE_FRAGMENT_BIT);
-    createSamplerDescriptorPool(&materialDescriptorPool, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, primitiveCountLimit,   VK_SHADER_STAGE_FRAGMENT_BIT);
+    createSamplerDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    VK_SHADER_STAGE_FRAGMENT_BIT);
+    createBufferDescriptorPool( &factorDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                     VK_SHADER_STAGE_FRAGMENT_BIT);
+    createBufferDescriptorPool( &primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    createBufferDescriptorPool( &sceneDescriptorPool,     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 
     createPipelineLayout();
 }

@@ -1,7 +1,7 @@
 #include "shader.h"
 
 #include "device.h"
-#include "descriptor.h"
+#include "pipeline.h"
 
 #include "file.h"
 #include "logger.h"
@@ -71,13 +71,6 @@ ShaderModule *makeShaderModule(ShaderIntermediate *shaderIntermediate) {
         shaderModule->nextStage = 0;
     } // TODO: Add other shader types
 
-    VkDescriptorSetLayout layouts[] = {
-        sceneDescriptorPool.layout,
-        primitiveDescriptorPool.layout,
-        factorDescriptorPool.layout,
-        materialDescriptorPool.layout
-    };
-
     VkShaderCreateInfoEXT shaderCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,
         .pNext = NULL,
@@ -88,8 +81,8 @@ ShaderModule *makeShaderModule(ShaderIntermediate *shaderIntermediate) {
         .codeSize = shaderIntermediate->size,
         .pCode = shaderIntermediate->data,
         .pName = "main",
-        .setLayoutCount = sizeof(layouts) / sizeof(VkDescriptorSetLayout),
-        .pSetLayouts = layouts,
+        .setLayoutCount = descriptorSetLayoutCount,
+        .pSetLayouts = descriptorSetLayouts,
         .pushConstantRangeCount = 0,
         .pPushConstantRanges = NULL,
         .pSpecializationInfo = NULL
