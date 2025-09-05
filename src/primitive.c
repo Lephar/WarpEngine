@@ -82,7 +82,14 @@ void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
             vec4 *tangents = attributeData;
 
             for(cgltf_size tangentIndex = 0; tangentIndex < attributeAccessor->count; tangentIndex++) {
-                memcpy(vertexBuffer[vertexCount + tangentIndex].tangent, tangents[tangentIndex], sizeof(vec4)); // WARN: THERE IS A CLANG BUG ON THIS LINE
+                // WARN: THERE IS A CLANG BUG ON THE LINE BELOW!
+                //memcpy(vertexBuffer[vertexCount + tangentIndex].tangent, tangents[tangentIndex], sizeof(vec4));
+
+                // TODO: Revert this when they fix the issue with clang
+                vertexBuffer[vertexCount + tangentIndex].tangent[0] = tangents[tangentIndex][0];
+                vertexBuffer[vertexCount + tangentIndex].tangent[1] = tangents[tangentIndex][1];
+                vertexBuffer[vertexCount + tangentIndex].tangent[2] = tangents[tangentIndex][2];
+                vertexBuffer[vertexCount + tangentIndex].tangent[3] = tangents[tangentIndex][3];
             }
         } else if(attribute->type == cgltf_attribute_type_normal) {
             vec3 *normals = attributeData;
