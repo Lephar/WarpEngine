@@ -314,7 +314,11 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
                 material->baseColor = loadUncompressedTexture(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, true);
             }
         } else {
-            material->baseColor = loadUncompressedTexture("assets/default/textures", "white.png", true);
+            if(defaultWhiteTexture == NULL) {
+                defaultWhiteTexture = loadUncompressedTexture("assets/default/textures", "white.png", true);
+            }
+
+            material->baseColor = defaultWhiteTexture;
         }
 
         materialUniform->metallicRoughnessFactor[0] = materialData->pbr_metallic_roughness.metallic_factor;
@@ -328,7 +332,11 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
                 material->metallicRoughness = loadUncompressedTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri, false);
             }
         } else {
-            material->metallicRoughness = loadUncompressedTexture("assets/default/textures", "black.png", false);
+            if(defaultBlackTexture == NULL) {
+                defaultBlackTexture = loadUncompressedTexture("assets/default/textures", "black.png", true);
+            }
+
+            material->metallicRoughness = defaultBlackTexture;
         }
     }
 
@@ -342,7 +350,11 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
             material->normal = loadUncompressedTexture(subdirectory, materialData->normal_texture.texture->image->uri, false);
         }
     } else {
-        material->normal = loadUncompressedTexture("assets/default/textures", "black.png", false);
+        if(defaultBlackTexture == NULL) {
+            defaultBlackTexture = loadUncompressedTexture("assets/default/textures", "black.png", true);
+        }
+
+        material->normal = defaultBlackTexture;
     }
 
     memcpy(materialUniform->emissiveFactor, materialData->emissive_factor, sizeof(vec3));
@@ -369,16 +381,18 @@ void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
 }
 
 void destroyMaterial(Material *material) {
-    if(material->normal) {
+    if(material->normal && material->normal != defaultBlackTexture) {
         destroyImageView(material->normal);
         destroyImage(material->normal);
     }
 
-    if(material->metallicRoughness) {
+    if(material->metallicRoughness && material->metallicRoughness != defaultBlackTexture) {
         destroyImageView(material->metallicRoughness);
         destroyImage(material->metallicRoughness);
     }
 
-    destroyImageView(material->baseColor);
-    destroyImage(material->baseColor);
+    if(material->baseColor != defaultWhiteTexture) {
+        destroyImageView(material->baseColor);
+        destroyImage(material->baseColor);
+    }
 }

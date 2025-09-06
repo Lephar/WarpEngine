@@ -230,11 +230,23 @@ void bindContentBuffers(VkCommandBuffer commandBuffer) {
 }
 
 void freeContent() {
+    free(primitiveUniforms);
     free(primitives);
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         destroyMaterial(&materials[materialIndex]);
     }
 
+    free(materialUniforms);
     free(materials);
+
+    if(defaultWhiteTexture != NULL) {
+        destroyImageView(defaultWhiteTexture);
+        destroyImage(defaultWhiteTexture);
+    }
+
+    if(defaultBlackTexture != NULL) {
+        destroyImageView(defaultBlackTexture);
+        destroyImage(defaultBlackTexture);
+    }
 }
