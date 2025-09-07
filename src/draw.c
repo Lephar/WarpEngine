@@ -27,7 +27,7 @@ void render() {
     uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
     Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
 
-    waitFramebuffer(framebuffer);
+    waitFramebufferDraw(framebuffer);
 
     updateUniforms(framebufferIndex);
 
@@ -140,8 +140,7 @@ void present() {
         },
     };
 
-    vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
-    vkResetFences(device, 1, &framebuffer->blitFence);
+    waitFramebufferBlit(framebuffer);
 
     uint32_t swapchainImageIndex = UINT32_MAX;
     VkResult swapchainStatus = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);

@@ -98,9 +98,14 @@ void createFramebufferSet() {
     }
 }
 
-void waitFramebuffer(Framebuffer *framebuffer) {
+void waitFramebufferDraw(Framebuffer *framebuffer) {
     vkWaitForFences(device, 1, &framebuffer->drawFence, VK_TRUE, UINT64_MAX);
     vkResetFences(  device, 1, &framebuffer->drawFence);
+}
+
+void waitFramebufferBlit(Framebuffer *framebuffer) {
+    vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
+    vkResetFences(  device, 1, &framebuffer->blitFence);
 }
 
 void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer) {
