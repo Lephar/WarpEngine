@@ -39,6 +39,15 @@ void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphore);
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->acquireSemaphore);
 
+    VkFenceCreateInfo unsignaledFenceInfo = {
+        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+        .pNext = NULL,
+        .flags = 0
+    };
+
+    VkFence semaphoreSignalFence;
+    vkCreateFence(device, &unsignaledFenceInfo, NULL, &semaphoreSignalFence);
+
     // TODO: This is not an elegant solution, change to timeline semaphores perhaps?
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -52,7 +61,9 @@ void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
         .pSignalSemaphores = &framebuffer->blitSemaphore
     };
 
-    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, semaphoreSignalFence);
+    vkWaitForFences(device, 1, &semaphoreSignalFence, true, UINT64_MAX);
+    vkDestroyFence(device, semaphoreSignalFence, NULL);
 
     VkFenceCreateInfo signaledFenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
