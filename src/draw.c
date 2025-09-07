@@ -143,31 +143,26 @@ void present() {
     waitFramebufferBlit(framebuffer);
 
     uint32_t swapchainImageIndex = UINT32_MAX;
-    VkResult swapchainStatus = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    VkResult acquisitionResult = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    assert(acquisitionResult != VK_TIMEOUT && acquisitionResult != VK_NOT_READY);
 
-    if( swapchainStatus == VK_ERROR_OUT_OF_HOST_MEMORY    ||
-        swapchainStatus == VK_ERROR_OUT_OF_DEVICE_MEMORY  ||
-        swapchainStatus == VK_ERROR_DEVICE_LOST           ||
-        swapchainStatus == VK_ERROR_UNKNOWN               ||
-        swapchainStatus == VK_ERROR_OUT_OF_DATE_KHR       ||
-        swapchainStatus == VK_ERROR_SURFACE_LOST_KHR      ||
-        swapchainStatus == VK_ERROR_VALIDATION_FAILED_EXT ||
-        swapchainStatus == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
-        debug("Hard error on swapchain image acquisition, skipping");
+    if(acquisitionResult == VK_ERROR_OUT_OF_HOST_MEMORY    ||
+       acquisitionResult == VK_ERROR_OUT_OF_DEVICE_MEMORY  ||
+       acquisitionResult == VK_ERROR_DEVICE_LOST           ||
+       acquisitionResult == VK_ERROR_UNKNOWN               ||
+       acquisitionResult == VK_ERROR_OUT_OF_DATE_KHR       ||
+       acquisitionResult == VK_ERROR_SURFACE_LOST_KHR      ||
+       acquisitionResult == VK_ERROR_VALIDATION_FAILED_EXT ||
+       acquisitionResult == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
+        debug("Hard error on swapchain image acquisition, quitting");
+        quitEvent = true;
         return;
-    } else if(  swapchainStatus == VK_TIMEOUT ||
-                swapchainStatus == VK_NOT_READY) {
-        debug("No swapchain image ready for the acquisition, this shouldn't happen as timeout is set to infinite");
-        return;
-    } else if(swapchainStatus == VK_SUBOPTIMAL_KHR) {
-        debug("Suboptimal swapchain image, drawing anyway");
+    } else if(acquisitionResult == VK_SUBOPTIMAL_KHR) {
+        debug("Suboptimal swapchain image, blitting anyway");
+        resizeEvent = true;
     }
 
-    // TODO: Can this happen when no error code returned?
-    if(swapchainImageIndex >= swapchain.imageCount) {
-        debug("Faulty swapchain image index returned, this shouldn't happen");
-        return;
-    }
+    assert(swapchainImageIndex < swapchain.imageCount);
 
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
 
