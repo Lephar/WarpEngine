@@ -146,17 +146,19 @@ void present() {
     uint32_t swapchainImageIndex = UINT32_MAX;
     VkResult swapchainStatus = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
 
-    if( swapchainStatus == VK_ERROR_OUT_OF_HOST_MEMORY   ||
-        swapchainStatus == VK_ERROR_OUT_OF_DEVICE_MEMORY ||
-        swapchainStatus == VK_ERROR_DEVICE_LOST          ||
-        swapchainStatus == VK_ERROR_OUT_OF_DATE_KHR      ||
-        swapchainStatus == VK_ERROR_SURFACE_LOST_KHR     ||
+    if( swapchainStatus == VK_ERROR_OUT_OF_HOST_MEMORY    ||
+        swapchainStatus == VK_ERROR_OUT_OF_DEVICE_MEMORY  ||
+        swapchainStatus == VK_ERROR_DEVICE_LOST           ||
+        swapchainStatus == VK_ERROR_UNKNOWN               ||
+        swapchainStatus == VK_ERROR_OUT_OF_DATE_KHR       ||
+        swapchainStatus == VK_ERROR_SURFACE_LOST_KHR      ||
+        swapchainStatus == VK_ERROR_VALIDATION_FAILED_EXT ||
         swapchainStatus == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
         debug("Hard error on swapchain image acquisition, skipping");
         return;
     } else if(  swapchainStatus == VK_TIMEOUT ||
                 swapchainStatus == VK_NOT_READY) {
-        debug("No swapchain image ready for the acquisition, skipping");
+        debug("No swapchain image ready for the acquisition, this shouldn't happen as timeout is set to infinite");
         return;
     } else if(swapchainStatus == VK_SUBOPTIMAL_KHR) {
         debug("Suboptimal swapchain image, drawing anyway");
