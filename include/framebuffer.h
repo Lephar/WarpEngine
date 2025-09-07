@@ -13,10 +13,9 @@ struct framebuffer {
     VkCommandBuffer renderCommandBuffer;
     VkCommandBuffer presentCommandBuffer;
 
-    VkSemaphore acquireSemaphore;
     VkSemaphore drawSemaphore;
-    VkSemaphore blitSemaphoreRender;
-    VkSemaphore blitSemaphorePresent;
+    VkSemaphore blitSemaphore;
+    VkSemaphore acquireSemaphore;
 
     VkFence drawFence;
     VkFence blitFence;

@@ -35,10 +35,9 @@ void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
         .flags = 0
     };
 
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->acquireSemaphore);
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->drawSemaphore);
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphoreRender);
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphorePresent);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->acquireSemaphore);
 
     // TODO: This is not an elegant solution, change to timeline semaphores perhaps?
     VkSubmitInfo submitInfo = {
@@ -50,19 +49,19 @@ void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
         .commandBufferCount = 0,
         .pCommandBuffers = NULL,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores = &framebuffer->blitSemaphoreRender
+        .pSignalSemaphores = &framebuffer->blitSemaphore
     };
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, VK_NULL_HANDLE);
 
-    VkFenceCreateInfo fenceInfo = {
+    VkFenceCreateInfo signaledFenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
         .pNext = NULL,
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
     };
 
-    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->drawFence);
-    vkCreateFence(device, &fenceInfo, NULL, &framebuffer->blitFence);
+    vkCreateFence(device, &signaledFenceInfo, NULL, &framebuffer->drawFence);
+    vkCreateFence(device, &signaledFenceInfo, NULL, &framebuffer->blitFence);
 }
 
 void createFramebufferSet() {
@@ -207,13 +206,12 @@ void endFramebuffer(Framebuffer *framebuffer) {
 }
 
 void destroyFramebuffer(Framebuffer *framebuffer) {
-    vkDestroyFence(device, framebuffer->drawFence, NULL);
     vkDestroyFence(device, framebuffer->blitFence, NULL);
+    vkDestroyFence(device, framebuffer->drawFence, NULL);
 
-    vkDestroySemaphore(device, framebuffer->acquireSemaphore,     NULL);
-    vkDestroySemaphore(device, framebuffer->drawSemaphore,        NULL);
-    vkDestroySemaphore(device, framebuffer->blitSemaphoreRender,  NULL);
-    vkDestroySemaphore(device, framebuffer->blitSemaphorePresent, NULL);
+    vkDestroySemaphore(device, framebuffer->acquireSemaphore, NULL);
+    vkDestroySemaphore(device, framebuffer->blitSemaphore, NULL);
+    vkDestroySemaphore(device, framebuffer->drawSemaphore, NULL);
 
     destroyImageView(framebuffer->resolve);
     destroyImage(    framebuffer->resolve);

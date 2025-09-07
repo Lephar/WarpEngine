@@ -79,7 +79,7 @@ void render() {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .pNext = NULL,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &framebuffer->blitSemaphoreRender,
+        .pWaitSemaphores = &framebuffer->blitSemaphore,
         .pWaitDstStageMask = &waitStage,
         .commandBufferCount = 1,
         .pCommandBuffers = &framebuffer->renderCommandBuffer,
@@ -164,6 +164,7 @@ void present() {
     assert(swapchainImageIndex < swapchain.imageCount);
 
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
+    VkSemaphore *presentSemaphore = &swapchain.presentSemaphores[swapchainImageIndex];
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
@@ -186,8 +187,8 @@ void present() {
     uint32_t waitSemaphoreCount = sizeof(waitSemaphores) / sizeof(VkSemaphore);
 
     VkSemaphore signalSemaphores[] = {
-        framebuffer->blitSemaphoreRender,
-        framebuffer->blitSemaphorePresent
+        framebuffer->blitSemaphore,
+        *presentSemaphore
     };
 
     uint32_t signalSemaphoreCount = sizeof(signalSemaphores) / sizeof(VkSemaphore);
@@ -210,7 +211,7 @@ void present() {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .pNext = NULL,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &framebuffer->blitSemaphorePresent,
+        .pWaitSemaphores = presentSemaphore,
         .swapchainCount = 1,
         .pSwapchains = &swapchain.swapchain,
         .pImageIndices = &swapchainImageIndex
