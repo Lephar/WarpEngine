@@ -217,7 +217,23 @@ void present() {
         .pImageIndices = &swapchainImageIndex
     };
 
-    vkQueuePresentKHR(graphicsQueue.queue, &presentInfo);
+    VkResult presentationResult = vkQueuePresentKHR(graphicsQueue.queue, &presentInfo);
+
+    if(presentationResult == VK_ERROR_DEVICE_LOST           ||
+       presentationResult == VK_ERROR_OUT_OF_DEVICE_MEMORY  ||
+       presentationResult == VK_ERROR_OUT_OF_HOST_MEMORY    ||
+       presentationResult == VK_ERROR_UNKNOWN               ||
+       presentationResult == VK_ERROR_OUT_OF_DATE_KHR       ||
+       presentationResult == VK_ERROR_SURFACE_LOST_KHR      ||
+       presentationResult == VK_ERROR_VALIDATION_FAILED_EXT ||
+       presentationResult == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
+        debug("Hard error on swapchain image presentation, quitting");
+        quitEvent = true;
+        return;
+    } else if(acquisitionResult == VK_SUBOPTIMAL_KHR) {
+        debug("Suboptimal swapchain image, presenting anyway");
+        resizeEvent = true;
+    }
 }
 
 // TODO: Fix synchronization errors and simplify logic
