@@ -154,12 +154,11 @@ void present() {
        acquisitionResult == VK_ERROR_SURFACE_LOST_KHR      ||
        acquisitionResult == VK_ERROR_VALIDATION_FAILED_EXT ||
        acquisitionResult == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
-        debug("Hard error on swapchain image acquisition, quitting");
-        quitEvent = true;
+        debug("Hard error on swapchain image acquisition, skipping");
+        // TODO: Signal necessary semaphores and fences here
         return;
     } else if(acquisitionResult == VK_SUBOPTIMAL_KHR) {
         debug("Suboptimal swapchain image, blitting anyway");
-        resizeEvent = true;
     }
 
     assert(swapchainImageIndex < swapchain.imageCount);
@@ -227,12 +226,11 @@ void present() {
        presentationResult == VK_ERROR_SURFACE_LOST_KHR      ||
        presentationResult == VK_ERROR_VALIDATION_FAILED_EXT ||
        presentationResult == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
-        debug("Hard error on swapchain image presentation, quitting");
-        quitEvent = true;
+        debug("Hard error on swapchain image presentation, skipping");
+        // TODO: Signal necessary semaphores and fences here
         return;
     } else if(acquisitionResult == VK_SUBOPTIMAL_KHR) {
         debug("Suboptimal swapchain image, presenting anyway");
-        resizeEvent = true;
     }
 }
 

@@ -101,7 +101,7 @@ void pollEvents() {
             quitEvent = true;
             return;
         } else if(event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED) {
-            debug("Recreating swapchain");
+            debug("Surface size changed, recreating swapchain");
             SDL_GetWindowSizeInPixels(window, (int32_t *) &extent.width, (int32_t *) &extent.height);
             resizeEvent = true;
         }
