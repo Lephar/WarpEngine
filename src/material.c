@@ -75,6 +75,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         .generateMipmaps = KTX_FALSE
     };
 
+    // TODO: Can storage be set directly to the data? 
     result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
 
     if(result != KTX_SUCCESS) {

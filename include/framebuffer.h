@@ -6,7 +6,6 @@ typedef struct image Image;
 
 struct framebuffer {
     Image *resolve;
-    Image *blit;
 
     VkDescriptorSet sceneDescriptorSet;
     VkDescriptorSet primitiveDescriptorSet;
@@ -30,7 +29,6 @@ struct framebufferSet {
 
     VkFormat depthStencilFormat;
     VkFormat colorFormat;
-    VkFormat saveFormat;
 
     Image *depthStencil;
     Image *color;

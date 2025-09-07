@@ -224,6 +224,7 @@ void present() {
     vkQueuePresentKHR(graphicsQueue.queue, &presentInfo);
 }
 
+// TODO: Fix synchronization errors and simplify logic
 void draw() {
     render();
     present();

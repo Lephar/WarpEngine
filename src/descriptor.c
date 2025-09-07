@@ -16,6 +16,7 @@ DescriptorPool primitiveDescriptorPool;
 DescriptorPool factorDescriptorPool;
 DescriptorPool materialDescriptorPool;
 
+// TODO: Load sampler from asset file
 void createSampler() {
     VkSamplerCreateInfo samplerInfo = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
