@@ -75,7 +75,7 @@ void allocateMemories() {
     vkGetImageMemoryRequirements(device, temporaryImage->image, &imageMemoryRequirements);
 
     Buffer temporaryBuffer;
-    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 1L << 20);
+    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 1L << 20L);
     VkMemoryRequirements bufferMemoryRequirements;
     vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
@@ -87,12 +87,12 @@ void allocateMemories() {
     debug("Device local memory:");
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
-    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 3L << 30);
+    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 2L << 30L);
 
     debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
     debug("\t%ld bytes allocated", deviceMemory.size);
 
-    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 1L << 20);
+    createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 1L << 20L);
     vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
     typeFilter = bufferMemoryRequirements.memoryTypeBits;
@@ -103,7 +103,7 @@ void allocateMemories() {
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
     allocateMemory(&sharedMemory, typeFilter,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 256L << 20);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 256L << 20L);
 
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
     debug("\t%ld bytes allocated",  sharedMemory.size);
