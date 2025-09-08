@@ -75,7 +75,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         .generateMipmaps = KTX_FALSE
     };
 
-    // TODO: Can storage be set directly to the data? 
+    // TODO: Can storage be set directly to the data?
     result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
 
     if(result != KTX_SUCCESS) {
@@ -316,7 +316,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
             }
         } else {
             if(defaultWhiteTexture == NULL) {
-                defaultWhiteTexture = loadUncompressedTexture("assets/default/textures", "white.png", true);
+                defaultWhiteTexture = loadTexture("assets/default/textures", "white.ktx2", true);
             }
 
             material->baseColor = defaultWhiteTexture;
@@ -334,7 +334,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
             }
         } else {
             if(defaultBlackTexture == NULL) {
-                defaultBlackTexture = loadUncompressedTexture("assets/default/textures", "black.png", true);
+                defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
             }
 
             material->metallicRoughness = defaultBlackTexture;
@@ -352,7 +352,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
         }
     } else {
         if(defaultBlackTexture == NULL) {
-            defaultBlackTexture = loadUncompressedTexture("assets/default/textures", "black.png", true);
+            defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
         }
 
         material->normal = defaultBlackTexture;
