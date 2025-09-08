@@ -4,14 +4,14 @@
 
 typedef struct memory Memory;
 
-struct buffer {
+typedef struct buffer {
     VkBufferUsageFlags usage;
     VkDeviceSize size;
     VkBuffer buffer;
     VkMemoryRequirements memoryRequirements;
     VkDeviceSize memoryOffset;
     Memory *memory;
-} typedef Buffer;
+} Buffer, *PBuffer;
 
 extern Buffer deviceBuffer;
 extern Buffer sharedBuffer;

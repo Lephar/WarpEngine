@@ -4,23 +4,23 @@
 
 typedef struct data Data;
 
-struct shaderCode {
+typedef struct shaderCode {
     shaderc_shader_kind stage;
     size_t size;
     char *data;
-} typedef ShaderCode;
+} ShaderCode, *PShaderCode;
 
-struct shaderIntermediate {
+typedef struct shaderIntermediate {
     shaderc_shader_kind stage;
     size_t size;
     uint32_t *data;
-} typedef ShaderIntermediate;
+} ShaderIntermediate, *PShaderIntermediate;
 
-struct shaderModule {
+typedef struct shaderModule {
     VkShaderStageFlagBits stage;
     VkShaderStageFlagBits nextStage;
     VkShaderEXT module;
-} typedef ShaderModule;
+} ShaderModule, *PShaderModule;
 
 extern ShaderModule *vertexShaderModule;
 extern ShaderModule *fragmentShaderModule;

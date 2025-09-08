@@ -4,13 +4,13 @@
 
 typedef struct material Material;
 
-struct descriptorPool {
+typedef struct descriptorPool {
     VkDescriptorType type;
     uint32_t count;
     VkShaderStageFlags stage;
     VkDescriptorSetLayout layout;
     VkDescriptorPool pool;
-} typedef DescriptorPool;
+} DescriptorPool, *PDescriptorPool;
 
 extern VkSampler sampler;
 

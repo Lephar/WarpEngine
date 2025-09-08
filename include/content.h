@@ -4,13 +4,13 @@
 
 typedef uint32_t Index;
 
-struct vertex {
+typedef struct vertex {
     vec3 position;
     vec4 tangent;
     vec3 normal;
     vec2 texcoord0;
     vec2 texcoord1;
-} typedef Vertex;
+} Vertex, *PVertex;
 
 extern uint32_t indexCount;
 extern uint32_t vertexCount;

@@ -2,12 +2,12 @@
 
 #include "pch.h"
 
-struct sceneUniform {
+typedef struct sceneUniform {
     mat4 view;
     mat4 projection;
     mat4 viewProjection;
     vec4 cameraProperties;
-} typedef SceneUniform;
+} SceneUniform, *PSceneUniform;
 
 extern SceneUniform sceneUniform;
 

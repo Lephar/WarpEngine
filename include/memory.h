@@ -2,14 +2,14 @@
 
 #include "pch.h"
 
-struct memory {
+typedef struct memory {
     VkMemoryPropertyFlags properties;
     uint32_t typeIndex;
     VkDeviceSize size;
     VkDeviceSize reusableMemoryOffset;
     VkDeviceSize offset;
     VkDeviceMemory memory;
-} typedef Memory;
+} Memory, *PMemory;
 
 extern Memory deviceMemory;
 extern Memory sharedMemory;

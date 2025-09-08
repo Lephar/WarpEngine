@@ -5,7 +5,7 @@
 typedef struct memory Memory;
 typedef struct buffer Buffer;
 
-struct image {
+typedef struct image {
     VkExtent2D extent;
     uint32_t mips;
     VkSampleCountFlagBits samples;
@@ -19,7 +19,7 @@ struct image {
     VkMemoryRequirements memoryRequirements;
     VkDeviceSize memoryOffset;
     Memory *memory;
-} typedef Image;
+} Image, *PImage;
 
 void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling);
 Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling);

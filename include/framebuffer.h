@@ -4,7 +4,7 @@
 
 typedef struct image Image;
 
-struct framebuffer {
+typedef struct framebuffer {
     Image *resolve;
 
     VkDescriptorSet sceneDescriptorSet;
@@ -18,9 +18,9 @@ struct framebuffer {
 
     VkFence drawFence;
     VkFence blitFence;
-} typedef Framebuffer;
+} Framebuffer, *PFramebuffer;
 
-struct framebufferSet {
+typedef struct framebufferSet {
     uint32_t imageCount;
 
     VkSampleCountFlagBits sampleCount;
@@ -32,7 +32,7 @@ struct framebufferSet {
     Image *color;
 
     Framebuffer *framebuffers;
-} typedef FramebufferSet;
+} FramebufferSet, *PFramebufferSet;
 
 extern const uint32_t framebufferCountLimit;
 

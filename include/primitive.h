@@ -4,17 +4,17 @@
 
 typedef struct material Material;
 
-struct primitiveUniform {
+typedef struct primitiveUniform {
     mat4 model;
-} typedef PrimitiveUniform;
+} PrimitiveUniform, *PPrimitiveUniform;
 
-struct primitive {
+typedef struct primitive {
     Material *material;
     uint32_t indexBegin;
     uint32_t indexCount;
     int32_t  vertexOffset;
     uint32_t uniformOffset;
-} typedef Primitive;
+} Primitive, *PPrimitive;
 
 extern uint32_t primitiveCountLimit;
 extern uint32_t primitiveCount;

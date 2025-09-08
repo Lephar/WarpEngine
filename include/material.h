@@ -4,14 +4,14 @@
 
 typedef struct image Image;
 
-struct materialUniform {
+typedef struct materialUniform {
     vec4 baseColorFactor;
     vec2 metallicRoughnessFactor;
     vec3 emissiveFactor;
     float normalScale;
-} typedef MaterialUniform;
+} MaterialUniform, *PMaterialUniform;
 
-struct material {
+typedef struct material {
     char name[UINT8_MAX];
     uint32_t isTransparent;
     uint32_t isDoubleSided;
@@ -20,7 +20,7 @@ struct material {
     Image *normal;
     uint32_t factorOffset;
     VkDescriptorSet materialDescriptorSet;
-} typedef Material;
+} Material, *PMaterial;
 
 extern Image *defaultBlackTexture;
 extern Image *defaultWhiteTexture;
