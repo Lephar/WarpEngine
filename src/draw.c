@@ -152,11 +152,25 @@ void present() {
        acquisitionResult == VK_ERROR_SURFACE_LOST_KHR      ||
        acquisitionResult == VK_ERROR_VALIDATION_FAILED_EXT ||
        acquisitionResult == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
-        debug("Hard error on swapchain image acquisition, skipping");
-        // TODO: Signal necessary semaphores and fences here
+        debug("Hard error on swapchain image acquisition, signaling the sempahore and skipping");
+
+        VkSubmitInfo submitInfo = {
+            .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+            .pNext = NULL,
+            .waitSemaphoreCount = 0,
+            .pWaitSemaphores = NULL,
+            .pWaitDstStageMask = NULL,
+            .commandBufferCount = 0,
+            .pCommandBuffers = NULL,
+            .signalSemaphoreCount = 1,
+            .pSignalSemaphores = &framebuffer->blitSemaphore
+        };
+
+        vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, NULL);
+
         return;
     } else if(acquisitionResult == VK_SUBOPTIMAL_KHR) {
-        debug("Suboptimal swapchain image, blitting anyway");
+        debug("Suboptimal swapchain image, rendering anyway");
     }
 
     assert(swapchainImageIndex < swapchain.imageCount);
@@ -232,15 +246,25 @@ void present() {
        presentationResult == VK_ERROR_SURFACE_LOST_KHR      ||
        presentationResult == VK_ERROR_VALIDATION_FAILED_EXT ||
        presentationResult == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
-        debug("Hard error on swapchain image presentation, skipping");
-        // TODO: Signal necessary semaphores and fences here
+        debug("Hard error on swapchain image presentation, releasing the image and skipping");
+
+        VkReleaseSwapchainImagesInfoEXT releaseInfo = {
+            .sType = VK_STRUCTURE_TYPE_RELEASE_SWAPCHAIN_IMAGES_INFO_EXT,
+            .pNext = NULL,
+            .swapchain = swapchain.swapchain,
+            .imageIndexCount = 1,
+            .pImageIndices = &swapchainImageIndex
+        };
+
+        PFN_vkReleaseSwapchainImagesEXT releaseSwapchainImages = loadDeviceFunction("vkReleaseSwapchainImagesEXT");
+        releaseSwapchainImages(device, &releaseInfo);
+
         return;
     } else if(acquisitionResult == VK_SUBOPTIMAL_KHR) {
         debug("Suboptimal swapchain image, presenting anyway");
     }
 }
 
-// TODO: Fix synchronization errors and simplify logic
 void draw() {
     render();
     present();
