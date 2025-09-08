@@ -15,7 +15,6 @@ struct framebuffer {
 
     VkSemaphore drawSemaphore;
     VkSemaphore blitSemaphore;
-    VkSemaphore acquireSemaphore;
 
     VkFence drawFence;
     VkFence blitFence;

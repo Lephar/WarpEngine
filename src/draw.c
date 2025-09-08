@@ -140,10 +140,8 @@ void present() {
         },
     };
 
-    waitFramebufferBlit(framebuffer);
-
     uint32_t swapchainImageIndex = UINT32_MAX;
-    VkResult acquisitionResult = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, framebuffer->acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    VkResult acquisitionResult = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, swapchain.acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
     assert(acquisitionResult != VK_TIMEOUT && acquisitionResult != VK_NOT_READY);
 
     if(acquisitionResult == VK_ERROR_OUT_OF_HOST_MEMORY    ||
@@ -164,7 +162,14 @@ void present() {
     assert(swapchainImageIndex < swapchain.imageCount);
 
     Image *swapchainImage = &swapchain.images[swapchainImageIndex];
+    VkSemaphore *acquireSemaphore = &swapchain.acquireSemaphores[swapchainImageIndex];
     VkSemaphore *presentSemaphore = &swapchain.presentSemaphores[swapchainImageIndex];
+
+    VkSemaphore temporarySemaphore = *acquireSemaphore;
+    *acquireSemaphore = swapchain.acquireSemaphore;
+    swapchain.acquireSemaphore = temporarySemaphore;
+
+    waitFramebufferBlit(framebuffer);
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
@@ -180,8 +185,8 @@ void present() {
     };
 
     VkSemaphore waitSemaphores[] = {
-        framebuffer->acquireSemaphore,
-        framebuffer->drawSemaphore
+        framebuffer->drawSemaphore,
+        *acquireSemaphore
     };
 
     uint32_t waitSemaphoreCount = sizeof(waitSemaphores) / sizeof(VkSemaphore);

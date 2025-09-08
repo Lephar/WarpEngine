@@ -37,7 +37,6 @@ void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
 
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->drawSemaphore);
     vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphore);
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->acquireSemaphore);
 
     VkFenceCreateInfo unsignaledFenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
@@ -220,7 +219,6 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
     vkDestroyFence(device, framebuffer->blitFence, NULL);
     vkDestroyFence(device, framebuffer->drawFence, NULL);
 
-    vkDestroySemaphore(device, framebuffer->acquireSemaphore, NULL);
     vkDestroySemaphore(device, framebuffer->blitSemaphore, NULL);
     vkDestroySemaphore(device, framebuffer->drawSemaphore, NULL);
 
