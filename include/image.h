@@ -6,7 +6,7 @@ typedef struct memory Memory;
 typedef struct buffer Buffer;
 
 struct image {
-    VkExtent3D extent;
+    VkExtent2D extent;
     uint32_t mips;
     VkSampleCountFlagBits samples;
     VkFormat format;

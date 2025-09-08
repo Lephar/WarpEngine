@@ -10,7 +10,6 @@
 void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling) {
     image->extent.width = width;
     image->extent.height = height;
-    image->extent.depth = 1;
     image->mips = mips;
     image->samples = samples;
     image->format = format;
@@ -214,7 +213,7 @@ void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, 
         .imageExtent = {
             .width  = umax(1, image->extent.width  >> mipLevel),
             .height = umax(1, image->extent.height >> mipLevel),
-            .depth  = image->extent.depth
+            .depth  = 1
         }
     };
 
