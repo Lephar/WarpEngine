@@ -31,6 +31,10 @@
 #include <netinet/tcp.h>
 #include <sys/sysinfo.h>
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 #include <vulkan/vulkan.h>
