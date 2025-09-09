@@ -121,7 +121,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         result = ktxTexture_SetImageFromMemory(compressedTextureHandle, level, 0, 0, data + dstOffset, dstSize);
 
         if(result != KTX_SUCCESS) {
-            debug("\t\tSetting level from memory failed with message: %s", ktxErrorString(result));
+            debug("\t\tSetting mip level %u from memory failed with message: %s", level, ktxErrorString(result));
             assert(result == KTX_SUCCESS);
         }
 
@@ -174,7 +174,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         result = ktxTexture2_GetImageOffset(compressedTexture, level, 0, 0, &srcOffset);
 
         if(result != KTX_SUCCESS) {
-            debug("\t\tGetting mip level %d data failed with message: %s", level, ktxErrorString(result));
+            debug("\t\tGetting mip level %u data failed with message: %s", level, ktxErrorString(result));
             assert(result == KTX_SUCCESS);
         }
 
@@ -258,7 +258,7 @@ Image *loadTexture(const char *subdirectory, const char *filename, bool isColor)
         result = ktxTexture2_GetImageOffset(textureObject, level, 0, 0, &offset);
 
         if(result != KTX_SUCCESS) {
-            debug("\t\tGetting mip level %d data failed with message: %s", level, ktxErrorString(result));
+            debug("\t\tGetting mip level %u data failed with message: %s", level, ktxErrorString(result));
             assert(result == KTX_SUCCESS);
         }
 
