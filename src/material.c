@@ -112,7 +112,11 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         debug("\t\t\tOffset: %u", dstOffset);
         debug("\t\t\tSize:   %u", dstSize);
         */
-        stbir_resize_uint8_srgb(data + srcOffset, srcWidth, srcHeight, 0, data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+        if(isColor) {
+            stbir_resize_uint8_srgb(data + srcOffset, srcWidth, srcHeight, 0, data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+        } else {
+            stbir_resize_uint8_linear(data + srcOffset, srcWidth, srcHeight, 0, data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+        }
 
         result = ktxTexture_SetImageFromMemory(compressedTextureHandle, level, 0, 0, data + dstOffset, dstSize);
 
