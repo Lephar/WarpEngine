@@ -156,5 +156,5 @@ void destroyWindow() {
 void quitSystem() {
     SDL_Quit();
 
-    debug("System quitted");
+    debug("System quit");
 }

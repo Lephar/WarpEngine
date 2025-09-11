@@ -32,5 +32,5 @@ void loopNetwork() {
 
 void quitNetwork() {
     close(server);
-    debug("Discconected from server");
+    debug("Disconnected from server");
 }
