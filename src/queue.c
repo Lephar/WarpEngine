@@ -154,7 +154,7 @@ void endSingleCommand(Queue *queue, VkCommandBuffer *commandBuffer) {
         .pNext = nullptr,
         .waitSemaphoreCount = 0,
         .pWaitSemaphores = nullptr,
-        .pWaitDstStageMask = 0,
+        .pWaitDstStageMask = nullptr,
         .commandBufferCount = 1,
         .pCommandBuffers = commandBuffer,
         .signalSemaphoreCount = 0,

@@ -8,6 +8,8 @@
 #include "numerics.h"
 
 void wrapImage(Image *image, VkImage handle, uint32_t width, uint32_t height, uint32_t mips, VkSampleCountFlagBits samples, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect, VkImageTiling tiling) {
+    assert(image);
+
     image->extent.width = width;
     image->extent.height = height;
     image->mips = mips;
