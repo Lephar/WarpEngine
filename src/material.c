@@ -205,9 +205,7 @@ Image *loadTexture(const char *subdirectory, const char *filename, bool isColor)
     debug("\tImage Path: %s", path);
 
     ktxTexture2 *textureObject;
-    KTX_error_code result;
-
-    result = ktxTexture2_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &textureObject);
+    KTX_error_code result = ktxTexture2_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &textureObject);
 
     if(result != KTX_SUCCESS) {
         debug("\t\tLoading texture failed with message: %s", ktxErrorString(result));
