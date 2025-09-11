@@ -47,16 +47,16 @@ void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags p
 
     VkMemoryAllocateInfo memoryInfo = {
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .allocationSize = memory->size,
         .memoryTypeIndex = memory->typeIndex
     };
 
-    vkAllocateMemory(device, &memoryInfo, NULL, &memory->memory);
+    vkAllocateMemory(device, &memoryInfo, nullptr, &memory->memory);
 }
 
 void *mapMemory(Memory *memory) {
-    assert(memory->memory != VK_NULL_HANDLE);
+    assert(memory->memory != nullptr);
     assert(memory->properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
     void *map;
@@ -117,7 +117,7 @@ void unmapMemory(Memory *memory) {
 }
 
 void freeMemory(Memory *memory) {
-    vkFreeMemory(device, memory->memory, NULL);
+    vkFreeMemory(device, memory->memory, nullptr);
 
     memory->properties = 0;
     memory->typeIndex = UINT32_MAX;

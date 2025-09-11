@@ -19,12 +19,12 @@ void configure(int argc, char *argv[]) {
 
     char *separator = strrchr(argv[0], '/');
 
-    char *result = NULL;
+    char *result = nullptr;
     int32_t length = 0;
 
-    if(separator == NULL) {
+    if(separator == nullptr) {
         result = getcwd(rootPath, PATH_MAX);
-        assert(result != NULL);
+        assert(result != nullptr);
 
         length = snprintf(executableName, PATH_MAX, "%s", argv[0]);
         assert(length < PATH_MAX);
@@ -44,15 +44,15 @@ void configure(int argc, char *argv[]) {
     char config[PATH_MAX];
 
     if(argc < 2) {
-        makeFullPath(NULL, "config.txt", config);
+        makeFullPath(nullptr, "config.txt", config);
     } else {
-        makeFullPath(NULL, argv[1],      config);
+        makeFullPath(nullptr, argv[1],      config);
     }
 
     debug("Config:  %s", config);
 
     FILE *file = fopen(config, "r");
-    assert(file != NULL);
+    assert(file != nullptr);
 
     char discard[PATH_MAX];
     fscanf(file, "%s", discard);

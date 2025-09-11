@@ -20,7 +20,7 @@ DescriptorPool materialDescriptorPool;
 void createSampler() {
     VkSamplerCreateInfo samplerInfo = {
         .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .magFilter = VK_FILTER_LINEAR,
         .minFilter = VK_FILTER_LINEAR,
@@ -39,7 +39,7 @@ void createSampler() {
         .unnormalizedCoordinates = VK_FALSE
     };
 
-    vkCreateSampler(device, &samplerInfo, NULL, &sampler);
+    vkCreateSampler(device, &samplerInfo, nullptr, &sampler);
     debug("Texture sampler created");
 }
 
@@ -55,18 +55,18 @@ void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType
         .descriptorType = type,
         .descriptorCount = 1,
         .stageFlags = stage,
-        .pImmutableSamplers = NULL
+        .pImmutableSamplers = nullptr
     };
 
     VkDescriptorSetLayoutCreateInfo layoutInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .bindingCount = 1,
         .pBindings = &layoutBinding
     };
 
-    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
+    vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorPool->layout);
     debug("\tDescriptor set layout created");
 
     VkDescriptorPoolSize poolSize = {
@@ -76,14 +76,14 @@ void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType
 
     VkDescriptorPoolCreateInfo poolInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .maxSets = count,
         .poolSizeCount = 1,
         .pPoolSizes = &poolSize
     };
 
-    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
+    vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool->pool);
     debug("\tDescriptor pool created with %u sets", descriptorPool->count);
 }
 
@@ -103,18 +103,18 @@ void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorTyp
         layoutBinding->descriptorType = type;
         layoutBinding->descriptorCount = 1;
         layoutBinding->stageFlags = stage;
-        layoutBinding->pImmutableSamplers = NULL;
+        layoutBinding->pImmutableSamplers = nullptr;
     };
 
     VkDescriptorSetLayoutCreateInfo layoutInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .bindingCount = materialTextureCount,
         .pBindings = layoutBindings
     };
 
-    vkCreateDescriptorSetLayout(device, &layoutInfo, NULL, &descriptorPool->layout);
+    vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorPool->layout);
     debug("\tDescriptor set layout created with %u bindings", materialTextureCount);
 
     VkDescriptorPoolSize poolSize = {
@@ -124,14 +124,14 @@ void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorTyp
 
     VkDescriptorPoolCreateInfo poolInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .maxSets = count,
         .poolSizeCount = 1,
         .pPoolSizes = &poolSize
     };
 
-    vkCreateDescriptorPool(device, &poolInfo, NULL, &descriptorPool->pool);
+    vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool->pool);
     debug("\tDescriptor pool created with %u sets", descriptorPool->count);
 }
 
@@ -141,7 +141,7 @@ VkDescriptorSet allocateDescriptorSet(DescriptorPool *descriptorPool) {
 
     VkDescriptorSetAllocateInfo allocateInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .descriptorPool = descriptorPool->pool,
         .descriptorSetCount = 1,
         .pSetLayouts = &descriptorPool->layout
@@ -163,18 +163,18 @@ VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuff
 
     VkWriteDescriptorSet descriptorWrite = {
         .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .pNext = NULL,
+        .pNext = nullptr,
         .dstSet = descriptorSet,
         .dstBinding = 0,
         .dstArrayElement = 0,
         .descriptorCount = 1,
         .descriptorType = descriptorPool->type,
-        .pImageInfo = NULL,
+        .pImageInfo = nullptr,
         .pBufferInfo = &bufferInfo,
-        .pTexelBufferView = NULL
+        .pTexelBufferView = nullptr
     };
 
-    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, NULL);
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
 
     return descriptorSet;
 }
@@ -205,18 +205,18 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampl
         VkWriteDescriptorSet *descriptorWrite = &descriptorWrites[bindingIndex];
 
         descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrite->pNext = NULL;
+        descriptorWrite->pNext = nullptr;
         descriptorWrite->dstSet = descriptorSet;
         descriptorWrite->dstBinding = bindingIndex;
         descriptorWrite->dstArrayElement = 0;
         descriptorWrite->descriptorCount = 1;
         descriptorWrite->descriptorType = descriptorPool->type;
         descriptorWrite->pImageInfo = imageInfo;
-        descriptorWrite->pBufferInfo = NULL;
-        descriptorWrite->pTexelBufferView = NULL;
+        descriptorWrite->pBufferInfo = nullptr;
+        descriptorWrite->pTexelBufferView = nullptr;
     }
 
-    vkUpdateDescriptorSets(device, materialTextureCount, descriptorWrites, 0, NULL);
+    vkUpdateDescriptorSets(device, materialTextureCount, descriptorWrites, 0, nullptr);
 
     return descriptorSet;
 }
@@ -242,6 +242,6 @@ void resetDescriptorPool(DescriptorPool *descriptorPool) {
 }
 
 void destroyDescriptorPool(DescriptorPool *descriptorPool) {
-    vkDestroyDescriptorPool(device, descriptorPool->pool, NULL);
-    vkDestroyDescriptorSetLayout(device, descriptorPool->layout, NULL);
+    vkDestroyDescriptorPool(device, descriptorPool->pool, nullptr);
+    vkDestroyDescriptorSetLayout(device, descriptorPool->layout, nullptr);
 }

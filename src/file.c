@@ -5,7 +5,7 @@ char executableName[PATH_MAX];
 const char *dataDirectory = "data";
 
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]) {
-    if(subdirectory == NULL || strncmp(subdirectory, "", PATH_MAX) == 0) {
+    if(subdirectory == nullptr || strncmp(subdirectory, "", PATH_MAX) == 0) {
         snprintf(outFullPath, PATH_MAX, "%s/%s/%s",    rootPath, dataDirectory, filename);
     } else {
         snprintf(outFullPath, PATH_MAX, "%s/%s/%s/%s", rootPath, dataDirectory, subdirectory, filename);
@@ -21,7 +21,7 @@ size_t loadTextFile(const char *subdirectory, const char *filename, char **outDa
     size_t size = ftell(file);
     rewind(file);
 
-    if(*outData == NULL) {
+    if(*outData == nullptr) {
         *outData = malloc(size + 1);
     }
 

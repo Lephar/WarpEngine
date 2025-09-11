@@ -15,7 +15,7 @@ void createSwapchain() {
 
     VkSwapchainPresentModesCreateInfoEXT presentModesInfo = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_EXT,
-        .pNext = NULL,
+        .pNext = nullptr,
         .presentModeCount = 1,
         .pPresentModes = &presentMode
     };
@@ -33,17 +33,17 @@ void createSwapchain() {
         .imageUsage = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .queueFamilyIndexCount = 0,
-        .pQueueFamilyIndices = NULL,
+        .pQueueFamilyIndices = nullptr,
         .preTransform = surfaceCapabilities.currentTransform,
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         .presentMode = presentMode,
         .clipped = VK_TRUE,
-        .oldSwapchain = NULL
+        .oldSwapchain = nullptr
     };
 
-    vkCreateSwapchainKHR(device, &swapchainInfo, NULL, &swapchain.swapchain);
+    vkCreateSwapchainKHR(device, &swapchainInfo, nullptr, &swapchain.swapchain);
 
-    vkGetSwapchainImagesKHR(device, swapchain.swapchain, &swapchain.imageCount, NULL);
+    vkGetSwapchainImagesKHR(device, swapchain.swapchain, &swapchain.imageCount, nullptr);
     VkImage *handles = malloc(swapchain.imageCount * sizeof(VkImage));
     swapchain.images = malloc(swapchain.imageCount * sizeof(Image  ));
     swapchain.acquireSemaphores = malloc(swapchain.imageCount * sizeof(VkSemaphore));
@@ -54,18 +54,18 @@ void createSwapchain() {
 
     VkSemaphoreCreateInfo semaphoreInfo = {
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0
     };
 
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &swapchain.acquireSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, nullptr, &swapchain.acquireSemaphore);
 
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
         wrapImage(&swapchain.images[imageIndex], handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
         transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
-        vkCreateSemaphore(device, &semaphoreInfo, NULL, &swapchain.acquireSemaphores[imageIndex]);
-        vkCreateSemaphore(device, &semaphoreInfo, NULL, &swapchain.presentSemaphores[imageIndex]);
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &swapchain.acquireSemaphores[imageIndex]);
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &swapchain.presentSemaphores[imageIndex]);
 
         debug("\tWrapped and transitioned image %u and created the semaphores", imageIndex);
     }
@@ -75,13 +75,13 @@ void createSwapchain() {
 
 void destroySwapchain() {
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
-        vkDestroySemaphore(device, swapchain.presentSemaphores[imageIndex], NULL);
-        vkDestroySemaphore(device, swapchain.acquireSemaphores[imageIndex], NULL);
+        vkDestroySemaphore(device, swapchain.presentSemaphores[imageIndex], nullptr);
+        vkDestroySemaphore(device, swapchain.acquireSemaphores[imageIndex], nullptr);
     }
 
-    vkDestroySemaphore(device, swapchain.acquireSemaphore, NULL);
+    vkDestroySemaphore(device, swapchain.acquireSemaphore, nullptr);
 
-    vkDestroySwapchainKHR(device, swapchain.swapchain, NULL);
+    vkDestroySwapchainKHR(device, swapchain.swapchain, nullptr);
 
     free(swapchain.presentSemaphores);
     free(swapchain.acquireSemaphores);

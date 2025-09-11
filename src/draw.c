@@ -77,7 +77,7 @@ void render() {
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .waitSemaphoreCount = 1,
         .pWaitSemaphores = &framebuffer->blitSemaphore,
         .pWaitDstStageMask = &waitStage,
@@ -96,9 +96,9 @@ void present() {
 
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-        .pInheritanceInfo = NULL
+        .pInheritanceInfo = nullptr
     };
 
     VkImageBlit region = {
@@ -141,7 +141,7 @@ void present() {
     };
 
     uint32_t swapchainImageIndex = UINT32_MAX;
-    VkResult acquisitionResult = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, swapchain.acquireSemaphore, VK_NULL_HANDLE, &swapchainImageIndex);
+    VkResult acquisitionResult = vkAcquireNextImageKHR(device, swapchain.swapchain, UINT64_MAX, swapchain.acquireSemaphore, nullptr, &swapchainImageIndex);
     assert(acquisitionResult != VK_TIMEOUT && acquisitionResult != VK_NOT_READY);
 
     if(acquisitionResult == VK_ERROR_OUT_OF_HOST_MEMORY    ||
@@ -156,17 +156,17 @@ void present() {
 
         VkSubmitInfo submitInfo = {
             .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            .pNext = NULL,
+            .pNext = nullptr,
             .waitSemaphoreCount = 0,
-            .pWaitSemaphores = NULL,
-            .pWaitDstStageMask = NULL,
+            .pWaitSemaphores = nullptr,
+            .pWaitDstStageMask = nullptr,
             .commandBufferCount = 0,
-            .pCommandBuffers = NULL,
+            .pCommandBuffers = nullptr,
             .signalSemaphoreCount = 1,
             .pSignalSemaphores = &framebuffer->blitSemaphore
         };
 
-        vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, NULL);
+        vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, nullptr);
 
         return;
     } else if(acquisitionResult == VK_SUBOPTIMAL_KHR) {
@@ -214,7 +214,7 @@ void present() {
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .waitSemaphoreCount = waitSemaphoreCount,
         .pWaitSemaphores = waitSemaphores,
         .pWaitDstStageMask = waitStages,
@@ -228,7 +228,7 @@ void present() {
 
     VkPresentInfoKHR presentInfo = {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-        .pNext = NULL,
+        .pNext = nullptr,
         .waitSemaphoreCount = 1,
         .pWaitSemaphores = presentSemaphore,
         .swapchainCount = 1,
@@ -250,7 +250,7 @@ void present() {
 
         VkReleaseSwapchainImagesInfoEXT releaseInfo = {
             .sType = VK_STRUCTURE_TYPE_RELEASE_SWAPCHAIN_IMAGES_INFO_EXT,
-            .pNext = NULL,
+            .pNext = nullptr,
             .swapchain = swapchain.swapchain,
             .imageIndexCount = 1,
             .pImageIndices = &swapchainImageIndex

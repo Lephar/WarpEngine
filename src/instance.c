@@ -57,12 +57,12 @@ void createInstance() {
     memcpy(extensions,                      baseExtensions,   baseExtensionCount   * sizeof(const char *));
     memcpy(extensions + baseExtensionCount, systemExtensions, systemExtensionCount * sizeof(const char *));
 
-    void *instanceNext = NULL;
+    void *instanceNext = nullptr;
 
 #if DEBUG
     VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {
         .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .messageSeverity =  VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   |
                             VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
@@ -72,7 +72,7 @@ void createInstance() {
                         VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT  |
                         VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
         .pfnUserCallback = messageCallback,
-        .pUserData = NULL
+        .pUserData = nullptr
     };
 
     //VkBool32 valueTrue  = VK_TRUE;
@@ -130,7 +130,7 @@ void createInstance() {
 
     VkApplicationInfo applicationInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .pApplicationName = executableName,
         .applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
         .pEngineName = executableName,
@@ -159,7 +159,7 @@ void createInstance() {
         debug("\t%s", extensions[index]);
     }
 
-    vkCreateInstance(&instanceInfo, NULL, &instance);
+    vkCreateInstance(&instanceInfo, nullptr, &instance);
     debug("Instance created");
 
     PFN_vkGetInstanceProcAddr intermediateInstanceFunctionLoader = loadSystemFunction("vkGetInstanceProcAddr");
@@ -168,7 +168,7 @@ void createInstance() {
 
 #if DEBUG
     PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessenger = loadInstanceFunction("vkCreateDebugUtilsMessengerEXT");
-    createDebugUtilsMessenger(instance, &messengerInfo, NULL, &messenger);
+    createDebugUtilsMessenger(instance, &messengerInfo, nullptr, &messenger);
     debug("Messenger created");
 #endif
 }
@@ -176,10 +176,10 @@ void createInstance() {
 void destroyInstance() {
 #if DEBUG
     PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessenger = loadInstanceFunction("vkDestroyDebugUtilsMessengerEXT");
-    destroyDebugUtilsMessenger(instance, messenger, NULL);
+    destroyDebugUtilsMessenger(instance, messenger, nullptr);
     debug("Messenger destroyed");
 #endif
 
-    vkDestroyInstance(instance, NULL);
+    vkDestroyInstance(instance, nullptr);
     debug("Instance destroyed");
 }

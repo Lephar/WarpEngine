@@ -31,47 +31,47 @@ void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
 
     VkSemaphoreCreateInfo semaphoreInfo = {
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0
     };
 
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->drawSemaphore);
-    vkCreateSemaphore(device, &semaphoreInfo, NULL, &framebuffer->blitSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, nullptr, &framebuffer->drawSemaphore);
+    vkCreateSemaphore(device, &semaphoreInfo, nullptr, &framebuffer->blitSemaphore);
 
     VkFenceCreateInfo unsignaledFenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0
     };
 
     VkFence semaphoreSignalFence;
-    vkCreateFence(device, &unsignaledFenceInfo, NULL, &semaphoreSignalFence);
+    vkCreateFence(device, &unsignaledFenceInfo, nullptr, &semaphoreSignalFence);
 
     // TODO: This is not an elegant solution, change to timeline semaphores perhaps?
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .waitSemaphoreCount = 0,
-        .pWaitSemaphores = NULL,
-        .pWaitDstStageMask = NULL,
+        .pWaitSemaphores = nullptr,
+        .pWaitDstStageMask = nullptr,
         .commandBufferCount = 0,
-        .pCommandBuffers = NULL,
+        .pCommandBuffers = nullptr,
         .signalSemaphoreCount = 1,
         .pSignalSemaphores = &framebuffer->blitSemaphore
     };
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, semaphoreSignalFence);
     vkWaitForFences(device, 1, &semaphoreSignalFence, true, UINT64_MAX);
-    vkDestroyFence(device, semaphoreSignalFence, NULL);
+    vkDestroyFence(device, semaphoreSignalFence, nullptr);
 
     VkFenceCreateInfo signaledFenceInfo = {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
     };
 
-    vkCreateFence(device, &signaledFenceInfo, NULL, &framebuffer->drawFence);
-    vkCreateFence(device, &signaledFenceInfo, NULL, &framebuffer->blitFence);
+    vkCreateFence(device, &signaledFenceInfo, nullptr, &framebuffer->drawFence);
+    vkCreateFence(device, &signaledFenceInfo, nullptr, &framebuffer->blitFence);
 }
 
 void createFramebufferSet() {
@@ -120,18 +120,18 @@ void waitFramebufferBlit(Framebuffer *framebuffer) {
 void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer) {
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-        .pInheritanceInfo = NULL
+        .pInheritanceInfo = nullptr
     };
 
     VkRenderingAttachmentInfo depthStencilAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .imageView = framebufferSet->depthStencil->view,
         .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_NONE,
-        .resolveImageView = VK_NULL_HANDLE,
+        .resolveImageView = nullptr,
         .resolveImageLayout = 0,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -145,7 +145,7 @@ void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer) 
 
     VkRenderingAttachmentInfo colorAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .imageView = framebufferSet->color->view,
         .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT,
@@ -167,7 +167,7 @@ void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer) 
 
     VkRenderingInfo renderingInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .renderArea = {
             .offset = {
@@ -216,11 +216,11 @@ void endFramebuffer(Framebuffer *framebuffer) {
 }
 
 void destroyFramebuffer(Framebuffer *framebuffer) {
-    vkDestroyFence(device, framebuffer->blitFence, NULL);
-    vkDestroyFence(device, framebuffer->drawFence, NULL);
+    vkDestroyFence(device, framebuffer->blitFence, nullptr);
+    vkDestroyFence(device, framebuffer->drawFence, nullptr);
 
-    vkDestroySemaphore(device, framebuffer->blitSemaphore, NULL);
-    vkDestroySemaphore(device, framebuffer->drawSemaphore, NULL);
+    vkDestroySemaphore(device, framebuffer->blitSemaphore, nullptr);
+    vkDestroySemaphore(device, framebuffer->drawSemaphore, nullptr);
 
     destroyImageView(framebuffer->resolve);
     destroyImage(    framebuffer->resolve);

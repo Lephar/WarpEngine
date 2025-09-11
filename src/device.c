@@ -41,7 +41,7 @@ void createDevice() {
 
     for(uint32_t queueInfoIndex = 0; queueInfoIndex < distinctQueueFamilyCount; queueInfoIndex++) {
         queueInfos[queueInfoIndex].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueInfos[queueInfoIndex].pNext = NULL;
+        queueInfos[queueInfoIndex].pNext = nullptr;
         queueInfos[queueInfoIndex].flags = 0;
         queueInfos[queueInfoIndex].queueCount = 0,
         queueInfos[queueInfoIndex].pQueuePriorities = queuePriorities;
@@ -65,7 +65,7 @@ void createDevice() {
 
     VkPhysicalDeviceVulkan11Features version11Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
-        .pNext = NULL
+        .pNext = nullptr
     };
 
     VkPhysicalDeviceVulkan12Features version12Features = {
@@ -116,13 +116,13 @@ void createDevice() {
         .queueCreateInfoCount = distinctQueueFamilyCount,
         .pQueueCreateInfos = queueInfos,
         .enabledLayerCount = 0,
-        .ppEnabledLayerNames = NULL,
+        .ppEnabledLayerNames = nullptr,
         .enabledExtensionCount = extensionCount,
         .ppEnabledExtensionNames = extensionNames,
         .pEnabledFeatures = &deviceFeatures
     };
 
-    vkCreateDevice(physicalDevice, &deviceInfo, NULL, &device);
+    vkCreateDevice(physicalDevice, &deviceInfo, nullptr, &device);
     debug("Device created");
 
     PFN_vkGetDeviceProcAddr intermediateDeviceFunctionLoader = loadInstanceFunction("vkGetDeviceProcAddr");
@@ -134,7 +134,7 @@ void createDevice() {
 
 void destroyDevice() {
     vkDeviceWaitIdle(device);
-    vkDestroyDevice(device, NULL);
+    vkDestroyDevice(device, nullptr);
 
     free(queueFamilyProperties);
     free(queueInfos);

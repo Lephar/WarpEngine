@@ -49,7 +49,7 @@ void initializeSystem() {
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
     SDL_Init(SDL_INIT_VIDEO);
 
-    SDL_Vulkan_LoadLibrary(NULL);
+    SDL_Vulkan_LoadLibrary(nullptr);
 
     systemFunctionLoader = (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
     systemExtensions = SDL_Vulkan_GetInstanceExtensions(&systemExtensionCount);
@@ -58,7 +58,7 @@ void initializeSystem() {
 }
 
 void *loadSystemFunction(const char *name) {
-    void  *systemFunction = systemFunctionLoader(NULL, name);
+    void  *systemFunction = systemFunctionLoader(nullptr, name);
     assert(systemFunction);
     return systemFunction;
 }
@@ -75,7 +75,7 @@ void createWindow() {
 
 void initializeMainLoop() {
 #if DEBUG
-    timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, NULL);
+    timer = SDL_AddTimer(SEC_TO_MSEC, timerCallback, nullptr);
 #endif
 
     SDL_HideCursor();

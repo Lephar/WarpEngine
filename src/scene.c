@@ -77,5 +77,5 @@ void updateCamera() {
 }
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &sceneDescriptorSet, 0, NULL);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &sceneDescriptorSet, 0, nullptr);
 }

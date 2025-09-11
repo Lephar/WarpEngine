@@ -17,16 +17,16 @@ void createBuffer(Buffer *buffer, VkBufferUsageFlags usage, VkDeviceSize size)
 
     VkBufferCreateInfo bufferInfo = {
         .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .size = size,
         .usage = usage,
         .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .queueFamilyIndexCount = 0,
-        .pQueueFamilyIndices = NULL
+        .pQueueFamilyIndices = nullptr
     };
 
-    vkCreateBuffer(device, &bufferInfo, NULL, &buffer->buffer);
+    vkCreateBuffer(device, &bufferInfo, nullptr, &buffer->buffer);
     vkGetBufferMemoryRequirements(device, buffer->buffer, &buffer->memoryRequirements);
 }
 
@@ -90,9 +90,9 @@ void unmapBufferMemory(Buffer *buffer) {
 }
 
 void destroyBuffer(Buffer *buffer) {
-    vkDestroyBuffer(device, buffer->buffer, NULL);
+    vkDestroyBuffer(device, buffer->buffer, nullptr);
 
-    buffer->memory = NULL;
+    buffer->memory = nullptr;
 }
 
 void destroyBuffers() {

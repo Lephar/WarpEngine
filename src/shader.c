@@ -15,7 +15,7 @@ ShaderModule *fragmentShaderModule;
 ShaderCode *loadShaderCode(const char *subdirectory, const char *filename, shaderc_shader_kind stage) {
     ShaderCode *shaderCode = malloc(sizeof(ShaderCode));
     shaderCode->stage = stage;
-    shaderCode->data  = NULL;
+    shaderCode->data  = nullptr;
     shaderCode->size  = loadTextFile(subdirectory, filename, &shaderCode->data);
 
     debug("%s shader code with %lu bytes of size loaded successfully", shaderCode->stage == shaderc_vertex_shader ? "Vertex" : "Fragment", shaderCode->size);
@@ -73,7 +73,7 @@ ShaderModule *makeShaderModule(ShaderIntermediate *shaderIntermediate) {
 
     VkShaderCreateInfoEXT shaderCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = VK_SHADER_CREATE_LINK_STAGE_BIT_EXT,
         .stage = shaderModule->stage,
         .nextStage = shaderModule->nextStage,
@@ -84,12 +84,12 @@ ShaderModule *makeShaderModule(ShaderIntermediate *shaderIntermediate) {
         .setLayoutCount = descriptorSetLayoutCount,
         .pSetLayouts = descriptorSetLayouts,
         .pushConstantRangeCount = 0,
-        .pPushConstantRanges = NULL,
-        .pSpecializationInfo = NULL
+        .pPushConstantRanges = nullptr,
+        .pSpecializationInfo = nullptr
     };
 
     PFN_vkCreateShadersEXT createShaders = loadDeviceFunction("vkCreateShadersEXT");
-    createShaders(device, 1, &shaderCreateInfo, NULL, &shaderModule->module);
+    createShaders(device, 1, &shaderCreateInfo, nullptr, &shaderModule->module);
     debug("%s shader module created successfully", shaderModule->stage == VK_SHADER_STAGE_VERTEX_BIT ? "Vertex" : "Fragment");
 
     return shaderModule;
@@ -100,7 +100,7 @@ void destroyShaderModule(ShaderModule *shaderModule) {
     shaderModule->nextStage = VK_SHADER_STAGE_ALL;
 
     PFN_vkDestroyShaderEXT destroyShader = loadDeviceFunction("vkDestroyShaderEXT");
-    destroyShader(device, shaderModule->module, NULL);
+    destroyShader(device, shaderModule->module, nullptr);
 
     free(shaderModule);
 }

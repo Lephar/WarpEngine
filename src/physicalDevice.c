@@ -16,7 +16,7 @@ VkPhysicalDeviceMemoryProperties memoryProperties;
 
 void selectPhysicalDevice() {
     uint32_t deviceCount;
-    vkEnumeratePhysicalDevices(instance, &deviceCount, NULL);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
     VkPhysicalDevice *devices = malloc(deviceCount * sizeof(VkPhysicalDevice));
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices);
 
@@ -38,7 +38,7 @@ void selectPhysicalDevice() {
 
     VkPhysicalDeviceProperties2 physicalDeviceProperties2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
-        .pNext = NULL,
+        .pNext = nullptr,
         .properties = {}
     };
 
@@ -48,7 +48,7 @@ void selectPhysicalDevice() {
 
     VkPhysicalDeviceFeatures2 physicalDeviceFeatures2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-        .pNext = NULL,
+        .pNext = nullptr,
         .features = {}
     };
 
@@ -58,7 +58,7 @@ void selectPhysicalDevice() {
 
     VkPhysicalDeviceMemoryProperties2 memoryProperties2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
-        .pNext = NULL,
+        .pNext = nullptr,
         .memoryProperties = {}
     };
 
@@ -66,13 +66,13 @@ void selectPhysicalDevice() {
 
     memoryProperties = memoryProperties2.memoryProperties;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queueFamilyCount, NULL);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queueFamilyCount, nullptr);
 
     VkQueueFamilyProperties2 *queueFamilyProperties2 = malloc(queueFamilyCount * sizeof(VkQueueFamilyProperties2));
 
     for(uint32_t queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCount; queueFamilyIndex++) {
         queueFamilyProperties2[queueFamilyIndex].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
-        queueFamilyProperties2[queueFamilyIndex].pNext = NULL;
+        queueFamilyProperties2[queueFamilyIndex].pNext = nullptr;
         memset(&queueFamilyProperties2[queueFamilyIndex].queueFamilyProperties, 0, sizeof(VkQueueFamilyProperties));
     }
 

@@ -31,7 +31,7 @@ Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCount
 
     VkImageCreateInfo imageInfo = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .imageType = VK_IMAGE_TYPE_2D,
         .format = format,
@@ -52,7 +52,7 @@ Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCount
     };
 
     VkImage handle;
-    vkCreateImage(device, &imageInfo, NULL, &handle);
+    vkCreateImage(device, &imageInfo, nullptr, &handle);
 
     Image *image = malloc(sizeof(Image));
     wrapImage(image, handle, width, height, mips, samples, format, usage, aspect, tiling);
@@ -70,7 +70,7 @@ void bindImageMemory(Image *image, Memory *memory) {
 void createImageView(Image *image) {
     VkImageViewCreateInfo imageViewInfo = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .image = image->image,
         .viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -90,7 +90,7 @@ void createImageView(Image *image) {
         }
     };
 
-    vkCreateImageView(device, &imageViewInfo, NULL, &image->view);
+    vkCreateImageView(device, &imageViewInfo, nullptr, &image->view);
 }
 
 void generateMipmaps(Image *image) {
@@ -98,7 +98,7 @@ void generateMipmaps(Image *image) {
 
     VkImageMemoryBarrier barrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        .pNext = NULL,
+        .pNext = nullptr,
         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         .image = image->image,
@@ -121,7 +121,7 @@ void generateMipmaps(Image *image) {
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 
-        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
+        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
         VkImageBlit blit = {
             .srcSubresource = {
@@ -169,7 +169,7 @@ void generateMipmaps(Image *image) {
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
+        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
         if(mipWidth  > 1) {
             mipWidth  /= 2;
@@ -186,7 +186,7 @@ void generateMipmaps(Image *image) {
     barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
     barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-    vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
+    vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     endSingleGraphicsCommand(commandBuffer);
 
     image->layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -258,7 +258,7 @@ void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, V
 
     VkImageMemoryBarrier memoryBarrier = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        .pNext = NULL,
+        .pNext = nullptr,
         .srcAccessMask = sourceAccessMask,
         .dstAccessMask = targetAccessMask,
         .oldLayout = image->layout,
@@ -275,7 +275,7 @@ void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, V
         }
     };
 
-    vkCmdPipelineBarrier(*commandBuffer, sourceStage, targetStage, 0, 0, NULL, 0, NULL, 1, &memoryBarrier);
+    vkCmdPipelineBarrier(*commandBuffer, sourceStage, targetStage, 0, 0, nullptr, 0, nullptr, 1, &memoryBarrier);
 
     image->layout = layout;
 }
@@ -287,13 +287,13 @@ void transitionImageLayout(Image *image, VkImageLayout layout) {
 }
 
 void destroyImageView(Image *image) {
-    vkDestroyImageView(device, image->view, NULL);
+    vkDestroyImageView(device, image->view, nullptr);
 }
 
 void destroyImage(Image *image) {
-    vkDestroyImage(device, image->image, NULL);
+    vkDestroyImage(device, image->image, nullptr);
 
-    image->memory = NULL;
+    image->memory = nullptr;
 
     free(image);
 }

@@ -32,7 +32,7 @@ void loadAsset(const char *subdirectory, const char *filename) {
     char fullPath[PATH_MAX];
     makeFullPath(subdirectory, filename, fullPath);
 
-    cgltf_data *data = NULL;
+    cgltf_data *data = nullptr;
     cgltf_options assetOptions = {};
     cgltf_result result;
 
@@ -172,7 +172,7 @@ void updateUniforms(uint32_t framebufferIndex) {
 void bindContentBuffers(VkCommandBuffer commandBuffer) {
     VkVertexInputBindingDescription2EXT vertexBinding = {
         .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
-        .pNext = NULL,
+        .pNext = nullptr,
         .binding = 0,
         .stride = sizeof(Vertex),
         .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
@@ -182,35 +182,35 @@ void bindContentBuffers(VkCommandBuffer commandBuffer) {
     VkVertexInputAttributeDescription2EXT vertexAttributes[] = {
         {
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = NULL,
+            .pNext = nullptr,
             .location = 0,
             .binding = 0,
             .format = VK_FORMAT_R32G32B32_SFLOAT,
             .offset = offsetof(Vertex, position)
         },{
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = NULL,
+            .pNext = nullptr,
             .location = 1,
             .binding = 0,
             .format = VK_FORMAT_R32G32B32A32_SFLOAT,
             .offset = offsetof(Vertex, tangent)
         },{
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = NULL,
+            .pNext = nullptr,
             .location = 2,
             .binding = 0,
             .format = VK_FORMAT_R32G32B32_SFLOAT,
             .offset = offsetof(Vertex, normal)
         }, {
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = NULL,
+            .pNext = nullptr,
             .location = 3,
             .binding = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
             .offset = offsetof(Vertex, texcoord0)
         }, {
             .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = NULL,
+            .pNext = nullptr,
             .location = 4,
             .binding = 0,
             .format = VK_FORMAT_R32G32_SFLOAT,
@@ -240,12 +240,12 @@ void freeContent() {
     free(materialUniforms);
     free(materials);
 
-    if(defaultWhiteTexture != NULL) {
+    if(defaultWhiteTexture != nullptr) {
         destroyImageView(defaultWhiteTexture);
         destroyImage(defaultWhiteTexture);
     }
 
-    if(defaultBlackTexture != NULL) {
+    if(defaultBlackTexture != nullptr) {
         destroyImageView(defaultBlackTexture);
         destroyImage(defaultBlackTexture);
     }

@@ -24,9 +24,9 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
     PRawTexture texture = malloc(sizeof(RawTexture));
 
     texture->info = makeTextureInfo(subdirectory, filename, isColorTexture);
-    texture->data = NULL;
+    texture->data = nullptr;
 
-    int32_t result = stbi_info(texture->info->path, &texture->info->width, &texture->info->height, NULL);
+    int32_t result = stbi_info(texture->info->path, &texture->info->width, &texture->info->height, nullptr);
 
     // TODO: Check error result and string
 
@@ -44,7 +44,7 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
 
 void loadRawTexture(PRawTexture texture) {
     // NOTICE: Allocates data double the necessary size because of our STBI_MALLOC override in implementation.c
-    texture->data = stbi_load(texture->info->path, NULL, NULL, NULL, texture->info->depth);
+    texture->data = stbi_load(texture->info->path, nullptr, nullptr, nullptr, texture->info->depth);
     texture->info->size = texture->info->width * texture->info->height * texture->info->depth;
 }
 
@@ -82,7 +82,7 @@ PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
         .vkFormat = compressedTexture->info->isColorTexture ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
-        .pDfd = NULL, // Ignored
+        .pDfd = nullptr, // Ignored
         .baseWidth = compressedTexture->info->width,
         .baseHeight = compressedTexture->info->height,
         .baseDepth = 1,
@@ -166,7 +166,7 @@ PCompressedTexture initializeCompressedTexture(const char *subdirectory, const c
     PCompressedTexture texture = malloc(sizeof(CompressedTexture));
 
     texture->info = makeTextureInfo(subdirectory, filename, isColorTexture);
-    texture->data = NULL;
+    texture->data = nullptr;
 
     ktx_error_code_e result = ktxTexture2_CreateFromNamedFile(texture->info->path, 0, &texture->handle);
 

@@ -27,15 +27,15 @@ void createPipelineLayout() {
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = 0,
         .setLayoutCount = descriptorSetLayoutCount,
         .pSetLayouts = descriptorSetLayouts,
         .pushConstantRangeCount = 0,
-        .pPushConstantRanges = NULL
+        .pPushConstantRanges = nullptr
     };
 
-    vkCreatePipelineLayout(device, &pipelineLayoutInfo, NULL, &pipelineLayout);
+    vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout);
     debug("Pipeline layout created");
 }
 
@@ -132,9 +132,9 @@ void destroyPipeline() {
     destroyDescriptorPool(&sceneDescriptorPool);
     debug("Descriptor pools destroyed");
 
-    vkDestroySampler(device, sampler, NULL);
+    vkDestroySampler(device, sampler, nullptr);
     debug("Texture sampler destroyed");
 
-    vkDestroyPipelineLayout(device, pipelineLayout, NULL);
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
     debug("Pipeline layout destroyed");
 }

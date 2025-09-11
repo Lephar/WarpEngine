@@ -16,7 +16,7 @@ VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
 void selectPresentMode() {
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, NULL);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
 
     VkPresentModeKHR *presentModes = malloc(presentModeCount * sizeof(VkPresentModeKHR));
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
@@ -58,18 +58,18 @@ void selectPresentMode() {
 void selectSurfaceFormat() {
     VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
-        .pNext = NULL,
+        .pNext = nullptr,
         .surface = surface
     };
 
     uint32_t surfaceFormatCount;
-    vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo, &surfaceFormatCount, NULL);
+    vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo, &surfaceFormatCount, nullptr);
 
     VkSurfaceFormat2KHR *surfaceFormats = malloc(surfaceFormatCount * sizeof(VkSurfaceFormat2KHR));
 
     for(uint32_t surfaceFormatIndex = 0; surfaceFormatIndex < surfaceFormatCount; surfaceFormatIndex++) {
         surfaceFormats[surfaceFormatIndex].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
-        surfaceFormats[surfaceFormatIndex].pNext = NULL;
+        surfaceFormats[surfaceFormatIndex].pNext = nullptr;
         memset(&surfaceFormats[surfaceFormatIndex].surfaceFormat, 0, sizeof(VkSurfaceFormatKHR));
     }
 
@@ -118,7 +118,7 @@ void selectSurfaceFormat() {
 void generateSurfaceCapabilities() {
     VkSurfacePresentModeEXT presentModeInfo = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_EXT,
-        .pNext = NULL,
+        .pNext = nullptr,
         .presentMode = presentMode
     };
 
@@ -131,9 +131,9 @@ void generateSurfaceCapabilities() {
     // NOTICE: We don't care about the other present modes compatible with the current one
     VkSurfacePresentModeCompatibilityEXT presentModeCompatibilityInfo = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_EXT,
-        .pNext = NULL,
+        .pNext = nullptr,
         .presentModeCount = 0,
-        .pPresentModes = NULL
+        .pPresentModes = nullptr
     };
 
     VkSurfaceCapabilities2KHR surfaceCapabilitiesInfo = {
@@ -148,7 +148,7 @@ void generateSurfaceCapabilities() {
 }
 
 void createSurface() {
-    bool result = SDL_Vulkan_CreateSurface(window, instance, NULL, &surface);
+    bool result = SDL_Vulkan_CreateSurface(window, instance, nullptr, &surface);
     assert(result);
 
     debug("Surface created");
@@ -174,6 +174,6 @@ void createSurface() {
 }
 
 void destroySurface() {
-    SDL_Vulkan_DestroySurface(instance, surface, NULL);
+    SDL_Vulkan_DestroySurface(instance, surface, nullptr);
     debug("Surface destroyed");
 }

@@ -13,8 +13,8 @@
 #include "logger.h"
 #include "numerics.h"
 
-Image *defaultBlackTexture = NULL;
-Image *defaultWhiteTexture = NULL;
+Image *defaultBlackTexture = nullptr;
+Image *defaultWhiteTexture = nullptr;
 
 const uint32_t materialTextureCount = 3;
 uint32_t materialCountLimit;
@@ -44,7 +44,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
     int32_t depth  = STBI_rgb_alpha; // TODO: Consider the normal and metallic roughness channels
 
     // NOTICE: Allocates data double the necessary size because of our STBI_MALLOC override in implementation.c
-    uint8_t *data = stbi_load(path, &width, &height, NULL, depth);
+    uint8_t *data = stbi_load(path, &width, &height, nullptr, depth);
 
     assert((uint32_t) width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) height <= physicalDeviceProperties.limits.maxImageDimension2D);
 
@@ -63,7 +63,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
         .vkFormat = isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
-        .pDfd = NULL, // Ignored
+        .pDfd = nullptr, // Ignored
         .baseWidth = width,
         .baseHeight = height,
         .baseDepth = 1,
@@ -296,9 +296,9 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
     debug("Material Name: %s", materialData->name);
     strncpy(material->name, materialData->name, UINT8_MAX);
 
-    material->baseColor         = NULL;
-    material->metallicRoughness = NULL;
-    material->normal            = NULL;
+    material->baseColor         = nullptr;
+    material->metallicRoughness = nullptr;
+    material->normal            = nullptr;
 
     if(materialData->alpha_mode == cgltf_alpha_mode_blend) {
         material->isTransparent = true;
@@ -319,7 +319,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
                 material->baseColor = loadUncompressedTexture(subdirectory, materialData->pbr_metallic_roughness.base_color_texture.texture->image->uri, true);
             }
         } else {
-            if(defaultWhiteTexture == NULL) {
+            if(defaultWhiteTexture == nullptr) {
                 defaultWhiteTexture = loadTexture("assets/default/textures", "white.ktx2", true);
             }
 
@@ -337,7 +337,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
                 material->metallicRoughness = loadUncompressedTexture(subdirectory, materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->image->uri, false);
             }
         } else {
-            if(defaultBlackTexture == NULL) {
+            if(defaultBlackTexture == nullptr) {
                 defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
             }
 
@@ -355,7 +355,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
             material->normal = loadUncompressedTexture(subdirectory, materialData->normal_texture.texture->image->uri, false);
         }
     } else {
-        if(defaultBlackTexture == NULL) {
+        if(defaultBlackTexture == nullptr) {
             defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
         }
 

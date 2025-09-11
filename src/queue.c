@@ -95,12 +95,12 @@ void getQueues() {
 
         VkCommandPoolCreateInfo commandPoolInfo = {
             .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-            .pNext = NULL,
+            .pNext = nullptr,
             .flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
             .queueFamilyIndex = queueReference->queueFamilyIndex
         };
 
-        vkCreateCommandPool(device, &commandPoolInfo, NULL, &queueReference->commandPool);
+        vkCreateCommandPool(device, &commandPoolInfo, nullptr, &queueReference->commandPool);
         debug("\tCommand pool created");
     }
 }
@@ -108,7 +108,7 @@ void getQueues() {
 VkCommandBuffer allocateSingleCommandBuffer(Queue *queue) {
     VkCommandBufferAllocateInfo commandBufferInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .commandPool = queue->commandPool,
         .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1
@@ -122,9 +122,9 @@ VkCommandBuffer allocateSingleCommandBuffer(Queue *queue) {
 void beginSingleCommand(VkCommandBuffer *commandBuffer) {
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-        .pInheritanceInfo = NULL
+        .pInheritanceInfo = nullptr
     };
 
     vkBeginCommandBuffer(*commandBuffer, &beginInfo);
@@ -151,17 +151,17 @@ void endSingleCommand(Queue *queue, VkCommandBuffer *commandBuffer) {
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        .pNext = NULL,
+        .pNext = nullptr,
         .waitSemaphoreCount = 0,
-        .pWaitSemaphores = NULL,
+        .pWaitSemaphores = nullptr,
         .pWaitDstStageMask = 0,
         .commandBufferCount = 1,
         .pCommandBuffers = commandBuffer,
         .signalSemaphoreCount = 0,
-        .pSignalSemaphores = NULL
+        .pSignalSemaphores = nullptr
     };
 
-    vkQueueSubmit(queue->queue, 1, &submitInfo, NULL);
+    vkQueueSubmit(queue->queue, 1, &submitInfo, nullptr);
     vkQueueWaitIdle(queue->queue);
     vkFreeCommandBuffers(device, queue->commandPool, 1, commandBuffer);
 }
@@ -177,7 +177,7 @@ void endSingleGraphicsCommand(VkCommandBuffer commandBuffer) {
 void clearQueues() {
     for(uint32_t queueIndex = 0; queueIndex < queueCount; queueIndex++) {
         vkQueueWaitIdle(queueReferences[queueIndex]->queue);
-        vkDestroyCommandPool(device, queueReferences[queueIndex]->commandPool, NULL);
+        vkDestroyCommandPool(device, queueReferences[queueIndex]->commandPool, nullptr);
         debug("Command pool %d destroy", queueIndex);
     }
 }
