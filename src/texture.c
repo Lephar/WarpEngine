@@ -28,7 +28,10 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
 
     int32_t result = stbi_info(texture->info->path, (int32_t *) &texture->info->width, (int32_t*) &texture->info->height, nullptr);
 
-    // TODO: Check error result and string
+    if(result != 0) {
+        debug("Image meta data loading failed with message: %s", stbi_failure_reason());
+        assert(result == 0);
+    }
 
     assert((uint32_t) texture->info->width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) texture->info->height <= physicalDeviceProperties.limits.maxImageDimension2D);
 
