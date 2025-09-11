@@ -137,8 +137,8 @@ void generateMipmaps(Image *image) {
                     .z = 0
                 },
                 {
-                    .x = mipWidth,
-                    .y = mipHeight,
+                    .x = (int32_t) mipWidth,
+                    .y = (int32_t) mipHeight,
                     .z = 1
                 }
             },
@@ -155,8 +155,8 @@ void generateMipmaps(Image *image) {
                     .z = 0
                 },
                 {
-                    .x = imax(1, mipWidth  / 2),
-                    .y = imax(1, mipHeight / 2),
+                    .x = (int32_t) umax(1, mipWidth  / 2),
+                    .y = (int32_t) umax(1, mipHeight / 2),
                     .z = 1
                 }
             }

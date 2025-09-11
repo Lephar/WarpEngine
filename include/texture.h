@@ -9,9 +9,9 @@ typedef struct textureInfo {
 
     uint32_t isColorTexture;
 
-    int32_t  width;
-    int32_t  height;
-    int32_t  depth;
+    uint32_t width;
+    uint32_t height;
+    uint32_t depth;
 
     uint32_t mips;
     size_t   size;

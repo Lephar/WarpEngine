@@ -34,7 +34,7 @@ void createSampler() {
         .compareEnable = VK_FALSE,
         .compareOp = VK_COMPARE_OP_NEVER,
         .minLod = 0.0f,
-        .maxLod = floor(log2(physicalDeviceProperties.limits.maxImageDimension2D)) + 1,
+        .maxLod = (float) floor(log2(physicalDeviceProperties.limits.maxImageDimension2D)) + 1,
         .borderColor = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK,
         .unnormalizedCoordinates = VK_FALSE
     };

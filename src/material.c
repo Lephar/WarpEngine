@@ -49,7 +49,7 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
     assert((uint32_t) width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) height <= physicalDeviceProperties.limits.maxImageDimension2D);
 
     size_t   size = width * height * depth;
-    uint32_t mips = floor(log2(imax(width, height))) + 1;
+    uint32_t mips = (uint32_t) floor(log2(imax(width, height))) + 1;
 
     debug("\t\tWidth:  %u", width);
     debug("\t\tHeight: %u", height);
@@ -110,9 +110,9 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
         debug("\t\t\tSize:   %u", dstSize);
         */
         if(isColor) {
-            stbir_resize_uint8_srgb(data + srcOffset, srcWidth, srcHeight, 0, data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_srgb(data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
         } else {
-            stbir_resize_uint8_linear(data + srcOffset, srcWidth, srcHeight, 0, data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_linear(data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
         }
 
         result = ktxTexture_SetImageFromMemory(compressedTextureHandle, level, 0, 0, data + dstOffset, dstSize);

@@ -115,8 +115,8 @@ void present() {
                 .z = 0
             },
             {
-                .x = framebuffer->resolve->extent.width,
-                .y = framebuffer->resolve->extent.height,
+                .x = (int32_t) framebuffer->resolve->extent.width,
+                .y = (int32_t) framebuffer->resolve->extent.height,
                 .z = 1
             }
         },
@@ -133,8 +133,8 @@ void present() {
                 .z = 0
             },
             {
-                .x = extent.width,
-                .y = extent.height,
+                .x = (int32_t) extent.width,
+                .y = (int32_t) extent.height,
                 .z = 1
             }
         },

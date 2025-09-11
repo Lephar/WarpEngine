@@ -26,13 +26,13 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
     texture->info = makeTextureInfo(subdirectory, filename, isColorTexture);
     texture->data = nullptr;
 
-    int32_t result = stbi_info(texture->info->path, &texture->info->width, &texture->info->height, nullptr);
+    int32_t result = stbi_info(texture->info->path, (int32_t *) &texture->info->width, (int32_t*) &texture->info->height, nullptr);
 
     // TODO: Check error result and string
 
     assert((uint32_t) texture->info->width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) texture->info->height <= physicalDeviceProperties.limits.maxImageDimension2D);
 
-    texture->info->mips = floor(log2(imax(texture->info->width, texture->info->height))) + 1;
+    texture->info->mips = (uint32_t) floor(log2(umax(texture->info->width, texture->info->height))) + 1;
 
     debug("\t\tWidth:  %u", texture->info->width);
     debug("\t\tHeight: %u", texture->info->height);
@@ -44,7 +44,7 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
 
 void loadRawTexture(PRawTexture texture) {
     // NOTICE: Allocates data double the necessary size because of our STBI_MALLOC override in implementation.c
-    texture->data = stbi_load(texture->info->path, nullptr, nullptr, nullptr, texture->info->depth);
+    texture->data = stbi_load(texture->info->path, nullptr, nullptr, nullptr, (int32_t) texture->info->depth);
     texture->info->size = texture->info->width * texture->info->height * texture->info->depth;
 }
 
@@ -61,9 +61,9 @@ void generateRawMipmaps(PRawTexture texture) {
         size_t   dstSize   = dstWidth * dstHeight * texture->info->depth;
 
         if(texture->info->isColorTexture) {
-            stbir_resize_uint8_srgb(texture->data + srcOffset, srcWidth, srcHeight, 0, texture->data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_srgb(texture->data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, texture->data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
         } else {
-            stbir_resize_uint8_linear(texture->data + srcOffset, srcWidth, srcHeight, 0, texture->data + dstOffset, dstWidth, dstHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_linear(texture->data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, texture->data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
         }
 
         texture->info->size += dstSize;

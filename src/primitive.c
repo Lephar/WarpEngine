@@ -39,7 +39,7 @@ void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
 
     primitive->indexBegin    = indexCount;
     primitive->indexCount    = accessor->count;
-    primitive->vertexOffset  = vertexCount;
+    primitive->vertexOffset  = (int32_t) vertexCount;
     primitive->uniformOffset = primitiveCount * sizeof(PrimitiveUniform);
 
     debug("\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);

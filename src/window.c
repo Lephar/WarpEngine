@@ -64,7 +64,7 @@ void *loadSystemFunction(const char *name) {
 }
 
 void createWindow() {
-    window = SDL_CreateWindow(executableName, extent.width, extent.height, SDL_WINDOW_VULKAN);
+    window = SDL_CreateWindow(executableName, (int32_t) extent.width, (int32_t) extent.height, SDL_WINDOW_VULKAN);
 
     SDL_GetWindowSizeInPixels(window, (int32_t *) &extent.width, (int32_t *) &extent.height);
 
@@ -109,26 +109,26 @@ void pollEvents() {
 
     struct timespec timePrevious = timeCurrent;
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
-    timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (timeCurrent.tv_sec - timePrevious.tv_sec) + (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
+    timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (float) (timeCurrent.tv_sec - timePrevious.tv_sec) + (float) (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
 
     float mouseX;
     float mouseY;
     SDL_GetRelativeMouseState(&mouseX, &mouseY);
-    SDL_WarpMouseInWindow(window, extent.width / 2.0f, extent.height / 2.0f);
+    SDL_WarpMouseInWindow(window, (float) extent.width / 2.0f, (float) extent.height / 2.0f);
 
-    mouseDelta[0] = -2.0f * mouseX / extent.width;
-    mouseDelta[1] =  2.0f * mouseY / extent.height;
+    mouseDelta[0] = -2.0f * mouseX / (float) extent.width;
+    mouseDelta[1] =  2.0f * mouseY / (float) extent.height;
 
     int keyCount = 0;
     const bool *states = SDL_GetKeyboardState(&keyCount);
 
-    freeMovementInput[0] = states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D];
-    freeMovementInput[1] = states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F];
-    freeMovementInput[2] = states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S];
+    freeMovementInput[0] = (float) (states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D]);
+    freeMovementInput[1] = (float) (states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F]);
+    freeMovementInput[2] = (float) (states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S]);
 
-    mainMovementInput[0] = states[SDL_SCANCODE_LEFT]    - states[SDL_SCANCODE_RIGHT];
-    mainMovementInput[1] = states[SDL_SCANCODE_KP_PLUS] - states[SDL_SCANCODE_KP_MINUS];
-    mainMovementInput[2] = states[SDL_SCANCODE_UP]      - states[SDL_SCANCODE_DOWN];
+    mainMovementInput[0] = (float) (states[SDL_SCANCODE_LEFT]    - states[SDL_SCANCODE_RIGHT]);
+    mainMovementInput[1] = (float) (states[SDL_SCANCODE_KP_PLUS] - states[SDL_SCANCODE_KP_MINUS]);
+    mainMovementInput[2] = (float) (states[SDL_SCANCODE_UP]      - states[SDL_SCANCODE_DOWN]);
 
     if(compareFloat(glmc_vec3_norm2(freeMovementInput), 0.0f)) {
         glmc_vec3_scale_as(freeMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), freeMovementInput);
