@@ -116,6 +116,7 @@ void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorTyp
 
     vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorPool->layout);
     debug("\tDescriptor set layout created with %u bindings", materialTextureCount);
+    free(layoutBindings);
 
     VkDescriptorPoolSize poolSize = {
         .type = type,
