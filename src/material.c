@@ -56,10 +56,6 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
     debug("\t\tDepth:  %u", depth);
     debug("\t\tMips:   %u", mips);
 
-    ktx_error_code_e result;
-    ktxTexture2 *compressedTexture;
-    ktxTexture *compressedTextureHandle;
-
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
         .vkFormat = isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
@@ -76,14 +72,15 @@ Image *loadUncompressedTexture(const char *subdirectory, const char *filename, b
     };
 
     // TODO: Can storage be set directly to the data?
-    result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
+    ktxTexture2 *compressedTexture;
+    ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
 
     if(result != KTX_SUCCESS) {
         debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
         assert(result == KTX_SUCCESS);
     }
 
-    compressedTextureHandle = (ktxTexture *) compressedTexture;
+    ktxTexture *compressedTextureHandle = (ktxTexture *) compressedTexture;
 
     debug("\t\tRaw Size:   %lu", size);
     debug("\t\tFinal Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));

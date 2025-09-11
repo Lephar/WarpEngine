@@ -34,9 +34,7 @@ void loadAsset(const char *subdirectory, const char *filename) {
 
     cgltf_data *data = nullptr;
     cgltf_options assetOptions = {};
-    cgltf_result result;
-
-    result = cgltf_parse_file(&assetOptions, fullPath, &data);
+    cgltf_result result = cgltf_parse_file(&assetOptions, fullPath, &data);
 
     if(result != cgltf_result_success) {
         debug("Failed to read %s: %d", filename, result);

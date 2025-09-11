@@ -19,11 +19,10 @@ void configure(int argc, char *argv[]) {
 
     char *separator = strrchr(argv[0], '/');
 
-    char *result = nullptr;
     int32_t length = 0;
 
     if(separator == nullptr) {
-        result = getcwd(rootPath, PATH_MAX);
+        char *result = getcwd(rootPath, PATH_MAX);
         assert(result != nullptr);
 
         length = snprintf(executableName, PATH_MAX, "%s", argv[0]);
