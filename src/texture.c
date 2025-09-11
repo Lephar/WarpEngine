@@ -29,7 +29,7 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
     int32_t result = stbi_info(texture->info->path, (int32_t *) &texture->info->width, (int32_t*) &texture->info->height, nullptr);
 
     if(result != 0) {
-        debug("Image meta data loading failed with message: %s", stbi_failure_reason());
+        debug("\t\tImage meta data loading failed with message: %s", stbi_failure_reason());
         assert(result == 0);
     }
 
@@ -64,7 +64,7 @@ void generateRawMipmaps(PRawTexture texture) {
         size_t   dstSize   = dstWidth * dstHeight * texture->info->depth;
 
         if(texture->info->isColorTexture) {
-            stbir_resize_uint8_srgb(texture->data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, texture->data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_srgb(  texture->data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, texture->data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
         } else {
             stbir_resize_uint8_linear(texture->data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, texture->data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
         }
@@ -98,18 +98,18 @@ PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
     };
 
     // TODO: Can storage be set directly to the data?
-    ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture->handle);
+    /*ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture->handle);
 
     if(result != KTX_SUCCESS) {
         debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
         assert(result == KTX_SUCCESS);
     }
 
-    ktxTexture *compatibilityHandle = (ktxTexture*) compressedTexture->handle;
+    ktxTexture *texture->compatibility = (ktxTexture*) compressedTexture->handle;
 
     debug("\t\tRaw Size:   %lu", rawTexture->info->size);
 
-    compressedTexture->info->size = ktxTexture_GetDataSize(compatibilityHandle);
+    compressedTexture->info->size = ktxTexture_GetDataSize(texture->compatibility);
     debug("\t\tFinal Size: %lu", compressedTexture->info->size);
 
     for(uint32_t level = 0; level < compressedTexture->info->mips; level++) {
@@ -121,10 +121,10 @@ PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
             assert(result == KTX_SUCCESS);
         }
 
-        size_t size = ktxTexture_GetImageSize(compatibilityHandle, level);
+        size_t size = ktxTexture_GetImageSize(texture->compatibility, level);
 
         // TODO: Make sure stbi and ktx offsets match
-        result = ktxTexture_SetImageFromMemory(compatibilityHandle, level, 0, 0, rawTexture->data + offset, size);
+        result = ktxTexture_SetImageFromMemory(texture->compatibility, level, 0, 0, rawTexture->data + offset, size);
 
         if(result != KTX_SUCCESS) {
             debug("\t\tSetting mip level %u from memory failed with message: %s", level, ktxErrorString(result));
@@ -133,7 +133,17 @@ PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
     }
 
     stbi_image_free(rawTexture->data);
-    free(rawTexture);
+    free(rawTexture);*/
+
+    // NOTICE: Let's try!
+    ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_NO_STORAGE, &compressedTexture->handle);
+
+    if(result != KTX_SUCCESS) {
+        debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
+
+    compressedTexture->handle->pData = rawTexture->data;
 
     // TODO: IS THIS NECESSARY?
     /*ktxBasisParams compressionParameters = {
@@ -151,17 +161,6 @@ PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
         assert(result == KTX_SUCCESS);
     }*/
 
-    if(ktxTexture2_NeedsTranscoding(compressedTexture->handle)) {
-        result = ktxTexture2_TranscodeBasis(compressedTexture->handle, KTX_TTF_BC7_RGBA, 0);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tTranscoding texture failed with message: %s", ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-
-        debug("\t\tTranscoded Size: %lu", ktxTexture_GetDataSize(compatibilityHandle));
-    }
-
     return compressedTexture;
 }
 
@@ -178,15 +177,19 @@ PCompressedTexture initializeCompressedTexture(const char *subdirectory, const c
         assert(result == KTX_SUCCESS);
     }
 
+    ktxTexture *compatibilityHandle = (ktxTexture*) texture->handle;
+
     texture->info->width  = texture->handle->baseWidth;
     texture->info->height = texture->handle->baseHeight;
     texture->info->depth  = texture->handle->baseDepth;
     texture->info->mips   = texture->handle->numLevels;
+    texture->info->size   = ktxTexture_GetDataSize(compatibilityHandle);
 
     debug("\t\tWidth:  %u", texture->info->width);
     debug("\t\tHeight: %u", texture->info->height);
     debug("\t\tDepth:  %u", texture->info->depth);
     debug("\t\tMips:   %u", texture->info->mips);
+    debug("\t\tSize:   %u", texture->info->size);
 
     return texture;
 }
@@ -205,9 +208,13 @@ void loadCompressedTexture(PCompressedTexture texture) {
 
     texture->info->size = ktxTexture_GetDataSize(compatibilityHandle);
     debug("\t\tCompressed Size: %lu", texture->info->size);
+}
+
+void transcodeCompressedTexture(PCompressedTexture texture) {
+    ktxTexture *compatibilityHandle = (ktxTexture*) texture->handle;
 
     if(ktxTexture2_NeedsTranscoding(texture->handle)) {
-        result = ktxTexture2_TranscodeBasis(texture->handle, KTX_TTF_BC7_RGBA, 0);
+        ktx_error_code_e result = ktxTexture2_TranscodeBasis(texture->handle, KTX_TTF_BC7_RGBA, 0);
 
         if(result != KTX_SUCCESS) {
             debug("\t\tTranscoding texture failed with message: %s", ktxErrorString(result));
