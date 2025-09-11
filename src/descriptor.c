@@ -180,7 +180,7 @@ VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuff
     return descriptorSet;
 }
 
-VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkSampler sampler, Material *material) {
+VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, Material *material) {
     VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
 
     VkDescriptorImageInfo imageInfos[] = {
@@ -235,7 +235,7 @@ VkDescriptorSet getFactorDescriptorSet() {
 }
 
 VkDescriptorSet getMaterialDescriptorSet(Material *material) {
-    return createImageDescriptorSet(&materialDescriptorPool, sampler, material);
+    return createImageDescriptorSet(&materialDescriptorPool, material);
 }
 
 void resetDescriptorPool(DescriptorPool *descriptorPool) {

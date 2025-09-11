@@ -42,7 +42,7 @@ extern FramebufferSet framebufferSet;
 void createFramebufferSet();
 void waitFramebufferDraw(Framebuffer *framebuffer);
 void waitFramebufferBlit(Framebuffer *framebuffer);
-void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer);
+void beginFramebuffer(Framebuffer *framebuffer);
 void bindFramebuffer(Framebuffer *framebuffer);
 void endFramebuffer(Framebuffer *framebuffer);
 void destroyFramebufferSet();

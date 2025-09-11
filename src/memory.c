@@ -21,14 +21,14 @@ VkDeviceSize alignMemory(Memory *memory, VkMemoryRequirements memoryRequirements
     return bindOffset;
 }
 
-void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags properties, VkDeviceSize size) {
-    memory->properties = properties;
+void allocateMemory(Memory *memory, uint32_t typeFilter, VkMemoryPropertyFlags requiredProperties, VkDeviceSize size) {
+    memory->properties = requiredProperties;
     memory->typeIndex = UINT32_MAX;
     memory->offset = 0;
     memory->size = size;
 
     for(uint32_t memoryIndex = 0; memoryIndex < memoryProperties.memoryTypeCount; memoryIndex++) {
-        if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & properties) == properties) {
+        if((typeFilter & (1 << memoryIndex)) && (memoryProperties.memoryTypes[memoryIndex].propertyFlags & requiredProperties) == requiredProperties) {
             memory->typeIndex = memoryIndex; // TODO: Implement an actual logic
             break;
         }

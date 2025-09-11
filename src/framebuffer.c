@@ -117,7 +117,7 @@ void waitFramebufferBlit(Framebuffer *framebuffer) {
     vkResetFences(  device, 1, &framebuffer->blitFence);
 }
 
-void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer) {
+void beginFramebuffer(Framebuffer *framebuffer) {
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .pNext = nullptr,
@@ -128,7 +128,7 @@ void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer) 
     VkRenderingAttachmentInfo depthStencilAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
         .pNext = nullptr,
-        .imageView = framebufferSet->depthStencil->view,
+        .imageView = framebufferSet.depthStencil->view,
         .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_NONE,
         .resolveImageView = nullptr,
@@ -146,7 +146,7 @@ void beginFramebuffer(FramebufferSet *framebufferSet, Framebuffer *framebuffer) 
     VkRenderingAttachmentInfo colorAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
         .pNext = nullptr,
-        .imageView = framebufferSet->color->view,
+        .imageView = framebufferSet.color->view,
         .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT,
         .resolveImageView = framebuffer->resolve->view,
