@@ -5,11 +5,15 @@ char executableName[PATH_MAX];
 const char *dataDirectory = "data";
 
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]) {
+    int length = 0;
+
     if(subdirectory == nullptr || strncmp(subdirectory, "", PATH_MAX) == 0) {
-        snprintf(outFullPath, PATH_MAX, "%s/%s/%s",    rootPath, dataDirectory, filename);
+        length = snprintf(outFullPath, PATH_MAX, "%s/%s/%s",    rootPath, dataDirectory, filename);
     } else {
-        snprintf(outFullPath, PATH_MAX, "%s/%s/%s/%s", rootPath, dataDirectory, subdirectory, filename);
+        length = snprintf(outFullPath, PATH_MAX, "%s/%s/%s/%s", rootPath, dataDirectory, subdirectory, filename);
     }
+
+    assert(length < PATH_MAX);
 }
 
 size_t loadTextFile(const char *subdirectory, const char *filename, char **outData) {

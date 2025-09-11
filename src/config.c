@@ -55,10 +55,12 @@ void configure(int argc, char *argv[]) {
     assert(file != nullptr);
 
     char discard[PATH_MAX];
-    fscanf(file, "%s", discard);
+    length = fscanf(file, "%s", discard);
+    assert(length != 0 && length != EOF);
     assert(strncasecmp(discard, "Window:", PATH_MAX) == 0);
 
-    fscanf(file, "%u%u", &extent.width, &extent.height);
+    length = fscanf(file, "%u%u", &extent.width, &extent.height);
+    assert(length != 0 && length != EOF);
     debug("Width:   %u", extent.width );
     debug("Height:  %u", extent.height);
 
