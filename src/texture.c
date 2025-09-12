@@ -3,139 +3,104 @@
 #include "physicalDevice.h"
 
 #include "logger.h"
-#include "config.h"
 #include "file.h"
 #include "numerics.h"
 
-PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, bool isColorTexture) {
+PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, bool isColor) {
     PTextureInfo info = malloc(sizeof(TextureInfo));
 
     makeFullPath(subdirectory, filename, info->path);
     debug("\tImage Path: %s", info->path);
 
-    info->isColorTexture = isColorTexture;
-    info->depth = STBI_rgb_alpha; // TODO: Consider the normal and metallic roughness channels
-    info->size = 0;
+    info->isColor = isColor;
+    info->size    = 0;
 
     return info;
 }
 
-PRawTexture initializeRawTexture(const char *subdirectory, const char *filename, bool isColorTexture) {
+PRawTexture initializeRawTexture(const char *subdirectory, const char *filename, bool isColor) {
     PRawTexture texture = malloc(sizeof(RawTexture));
 
-    texture->info = makeTextureInfo(subdirectory, filename, isColorTexture);
-    texture->data = nullptr;
+    texture->info  = makeTextureInfo(subdirectory, filename, isColor);
 
-    int32_t result = stbi_info(texture->info->path, (int32_t *) &texture->info->width, (int32_t*) &texture->info->height, nullptr);
+    int32_t result = stbi_info(texture->info->path, (int32_t *) &texture->width, (int32_t *) &texture->height, (int32_t *) &texture->depth);
 
     if(result != 0) {
         debug("\t\tImage meta data loading failed with message: %s", stbi_failure_reason());
         assert(result == 0);
     }
 
-    assert((uint32_t) texture->info->width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) texture->info->height <= physicalDeviceProperties.limits.maxImageDimension2D);
+    assert((uint32_t) texture->width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) texture->height <= physicalDeviceProperties.limits.maxImageDimension2D);
 
-    texture->info->mips = (uint32_t) floor(log2(umax(texture->info->width, texture->info->height))) + 1;
+    texture->mips = 0;
+    texture->data = nullptr;
 
-    debug("\t\tWidth:  %u", texture->info->width);
-    debug("\t\tHeight: %u", texture->info->height);
-    debug("\t\tDepth:  %u", texture->info->depth);
-    debug("\t\tMips:   %u", texture->info->mips);
+    debug("\t\tWidth:  %u", texture->width);
+    debug("\t\tHeight: %u", texture->height);
+    debug("\t\tDepth:  %u", texture->depth);
 
     return texture;
 }
 
 void loadRawTexture(PRawTexture texture) {
-    // NOTICE: Allocates data double the necessary size because of our STBI_MALLOC override in implementation.c
-    texture->data = stbi_load(texture->info->path, nullptr, nullptr, nullptr, (int32_t) texture->info->depth);
-    texture->info->size = texture->info->width * texture->info->height * texture->info->depth;
+    // NOTICE: Allocates double the necessary size for data because of our STBI_MALLOC override in implementation.c
+    texture->data = stbi_load(texture->info->path, nullptr, nullptr, nullptr, STBI_rgb_alpha);
+
+    texture->depth = STBI_rgb_alpha; // TODO: Consider the normal and metallic roughness channels
+    texture->mips = 1;
+    texture->info->size = texture->width * texture->height * texture->depth;
+
+    debug("\t\tMips:   %u", texture->mips);
+    debug("\t\tSize:   %u", texture->info->size);
 }
 
 void generateRawMipmaps(PRawTexture texture) {
-    uint32_t srcWidth  = texture->info->width;
-    uint32_t srcHeight = texture->info->height;
-    size_t   srcOffset = 0;
-    size_t   srcSize   = texture->info->size;
+    texture->mips = (uint32_t) floor(log2(umax(texture->width, texture->height))) + 1;
 
-    for(uint32_t level = 1; level < texture->info->mips; level++) {
-        uint32_t dstWidth  = umax(srcWidth  / 2, 1);
-        uint32_t dstHeight = umax(srcHeight / 2, 1);
-        size_t   dstOffset = srcOffset + srcSize;
-        size_t   dstSize   = dstWidth * dstHeight * texture->info->depth;
+    uint32_t sourceWidth  = texture->width;
+    uint32_t sourceHeight = texture->height;
+    size_t   sourceOffset = 0;
+    size_t   sourceSize   = texture->info->size;
 
-        if(texture->info->isColorTexture) {
-            stbir_resize_uint8_srgb(  texture->data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, texture->data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
+    for(uint32_t level = 1; level < texture->mips; level++) {
+        uint32_t destinationWidth  = umax(sourceWidth  / 2, 1);
+        uint32_t destinationHeight = umax(sourceHeight / 2, 1);
+        size_t   destinationOffset = sourceOffset + sourceSize;
+        size_t   destinationSize   = destinationWidth * destinationHeight * texture->depth;
+
+        if(texture->info->isColor) {
+            stbir_resize_uint8_srgb(  texture->data + sourceOffset, (int32_t) sourceWidth, (int32_t) sourceHeight, 0, texture->data + destinationOffset, (int32_t) destinationWidth, (int32_t) destinationHeight, 0, STBIR_RGBA);
         } else {
-            stbir_resize_uint8_linear(texture->data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, texture->data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_linear(texture->data + sourceOffset, (int32_t) sourceWidth, (int32_t) sourceHeight, 0, texture->data + destinationOffset, (int32_t) destinationWidth, (int32_t) destinationHeight, 0, STBIR_RGBA);
         }
 
-        texture->info->size += dstSize;
+        texture->info->size += destinationSize;
 
-        srcWidth  = dstWidth;
-        srcHeight = dstHeight;
-        srcOffset = dstOffset;
-        srcSize   = dstSize;
+        sourceWidth  = destinationWidth;
+        sourceHeight = destinationHeight;
+        sourceOffset = destinationOffset;
+        sourceSize   = destinationSize;
     }
 }
 
 PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
     PCompressedTexture compressedTexture = malloc(sizeof(CompressedTexture));
-    compressedTexture->info = rawTexture->info;
 
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
-        .vkFormat = compressedTexture->info->isColorTexture ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
+        .vkFormat = rawTexture->info->isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
         .pDfd = nullptr, // Ignored
-        .baseWidth = compressedTexture->info->width,
-        .baseHeight = compressedTexture->info->height,
+        .baseWidth = rawTexture->width,
+        .baseHeight = rawTexture->height,
         .baseDepth = 1,
         .numDimensions = 2,
-        .numLevels = compressedTexture->info->mips,
+        .numLevels = rawTexture->mips,
         .numLayers = 1,
         .numFaces = 1,
         .isArray = KTX_FALSE,
         .generateMipmaps = KTX_FALSE
     };
 
-    // TODO: Can storage be set directly to the data?
-    /*ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture->handle);
-
-    if(result != KTX_SUCCESS) {
-        debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
-        assert(result == KTX_SUCCESS);
-    }
-
-    ktxTexture *texture->compatibility = (ktxTexture*) compressedTexture->handle;
-
-    debug("\t\tRaw Size:   %lu", rawTexture->info->size);
-
-    compressedTexture->info->size = ktxTexture_GetDataSize(texture->compatibility);
-    debug("\t\tFinal Size: %lu", compressedTexture->info->size);
-
-    for(uint32_t level = 0; level < compressedTexture->info->mips; level++) {
-        size_t offset;
-        result = ktxTexture2_GetImageOffset(compressedTexture->handle, level, 0, 0, &offset);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tGetting mip level %u data failed with message: %s", level, ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-
-        size_t size = ktxTexture_GetImageSize(texture->compatibility, level);
-
-        // TODO: Make sure stbi and ktx offsets match
-        result = ktxTexture_SetImageFromMemory(texture->compatibility, level, 0, 0, rawTexture->data + offset, size);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tSetting mip level %u from memory failed with message: %s", level, ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-    }
-
-    stbi_image_free(rawTexture->data);
-    free(rawTexture);*/
-
-    // NOTICE: Let's try!
     ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_NO_STORAGE, &compressedTexture->handle);
 
     if(result != KTX_SUCCESS) {
@@ -144,31 +109,17 @@ PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
     }
 
     compressedTexture->handle->pData = rawTexture->data;
+    compressedTexture->info = rawTexture->info;
 
-    // TODO: IS THIS NECESSARY?
-    /*ktxBasisParams compressionParameters = {
-        .structSize = sizeof(ktxBasisParams),
-        .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
-        .threadCount = threadCount,
-        .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
-        .normalMap = false // TODO: Research that topic to see how that can be used for metallic roughness and normal maps
-    }; // NOTICE: Many more params exist here that are zero initialized here
-
-    result = ktxTexture2_CompressBasisEx(compressedTexture->handle, &compressionParameters);
-
-    if(result != KTX_SUCCESS) {
-        debug("\t\tCompressing texture failed with message: %s", ktxErrorString(result));
-        assert(result == KTX_SUCCESS);
-    }*/
+    free(rawTexture);
 
     return compressedTexture;
 }
 
-PCompressedTexture initializeCompressedTexture(const char *subdirectory, const char *filename, bool isColorTexture) {
+PCompressedTexture initializeCompressedTexture(const char *subdirectory, const char *filename, bool isColor) {
     PCompressedTexture texture = malloc(sizeof(CompressedTexture));
 
-    texture->info = makeTextureInfo(subdirectory, filename, isColorTexture);
-    texture->data = nullptr;
+    texture->info = makeTextureInfo(subdirectory, filename, isColor);
 
     ktx_error_code_e result = ktxTexture2_CreateFromNamedFile(texture->info->path, 0, &texture->handle);
 
@@ -177,42 +128,32 @@ PCompressedTexture initializeCompressedTexture(const char *subdirectory, const c
         assert(result == KTX_SUCCESS);
     }
 
-    ktxTexture *compatibilityHandle = (ktxTexture*) texture->handle;
+    debug("\t\tWidth:  %u", texture->handle->baseWidth);
+    debug("\t\tHeight: %u", texture->handle->baseHeight);
+    debug("\t\tDepth:  %u", texture->handle->baseDepth);
+    debug("\t\tMips:   %u", texture->handle->numLevels);
 
-    texture->info->width  = texture->handle->baseWidth;
-    texture->info->height = texture->handle->baseHeight;
-    texture->info->depth  = texture->handle->baseDepth;
-    texture->info->mips   = texture->handle->numLevels;
-    texture->info->size   = ktxTexture_GetDataSize(compatibilityHandle);
-
-    debug("\t\tWidth:  %u", texture->info->width);
-    debug("\t\tHeight: %u", texture->info->height);
-    debug("\t\tDepth:  %u", texture->info->depth);
-    debug("\t\tMips:   %u", texture->info->mips);
-    debug("\t\tSize:   %u", texture->info->size);
+    texture->compatibilityHandle = (ktxTexture*) texture->handle;
 
     return texture;
 }
 
 void loadCompressedTexture(PCompressedTexture texture) {
-    ktxTexture2_Destroy(texture->handle);
+    //texture->info->size = ktxTexture_GetDataSizeUncompressed(texture->compatibilityHandle);
+    texture->info->size = ktxTexture_GetDataSize(texture->compatibilityHandle);
+    texture->handle->pData = malloc(texture->info->size);
 
-    ktx_error_code_e result = ktxTexture2_CreateFromNamedFile(texture->info->path, KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &texture->handle);
+    ktx_error_code_e result = ktxTexture2_LoadImageData(texture->handle, nullptr, texture->info->size);
 
     if(result != KTX_SUCCESS) {
-        debug("\t\tLoading texture failed with message: %s", ktxErrorString(result));
+        debug("\t\tLoading texture data failed with message: %s", ktxErrorString(result));
         assert(result == KTX_SUCCESS);
     }
 
-    ktxTexture *compatibilityHandle = (ktxTexture*) texture->handle;
-
-    texture->info->size = ktxTexture_GetDataSize(compatibilityHandle);
-    debug("\t\tCompressed Size: %lu", texture->info->size);
+    // TODO: Done?
 }
 
 void transcodeCompressedTexture(PCompressedTexture texture) {
-    ktxTexture *compatibilityHandle = (ktxTexture*) texture->handle;
-
     if(ktxTexture2_NeedsTranscoding(texture->handle)) {
         ktx_error_code_e result = ktxTexture2_TranscodeBasis(texture->handle, KTX_TTF_BC7_RGBA, 0);
 
@@ -221,9 +162,7 @@ void transcodeCompressedTexture(PCompressedTexture texture) {
             assert(result == KTX_SUCCESS);
         }
 
-        texture->info->size = ktxTexture_GetDataSize(compatibilityHandle);
+        texture->info->size = ktxTexture_GetDataSize(texture->compatibilityHandle);
         debug("\t\tTranscoded Size: %lu", texture->info->size);
     }
-
-    texture->data = ktxTexture_GetData(compatibilityHandle);
 }
