@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+typedef struct image *PImage;
+
 typedef struct textureInfo {
     char path[PATH_MAX];
 
@@ -24,9 +26,18 @@ typedef struct rawTexture {
 typedef struct compressedTexture {
     PTextureInfo info;
 
-    uint32_t isCompressed;
-    uint32_t isTranscoded;
-
     ktxTexture2 *handle;
     ktxTexture  *compatibilityHandle;
 } CompressedTexture, *PCompressedTexture;
+
+PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, bool isColor);
+PRawTexture initializeRawTexture(const char *subdirectory, const char *filename, bool isColor);
+void loadRawTexture(PRawTexture texture);
+void generateRawMipmaps(PRawTexture texture);
+PCompressedTexture convertRawTexture(PRawTexture rawTexture);
+void compressConvertedTexture(PCompressedTexture texture);
+PCompressedTexture initializeCompressedTexture(const char *subdirectory, const char *filename, bool isColor);
+void loadCompressedTexture(PCompressedTexture texture);
+void transcodeCompressedTexture(PCompressedTexture texture);
+PImage createTextureImage(PCompressedTexture texture);
+void loadTextureImage(PImage image, PCompressedTexture texture);
