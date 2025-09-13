@@ -97,12 +97,15 @@ void generateRawMipmaps(PRawTexture texture) {
     debug("\t\tMipmaps generated");
 }
 
-PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
-    PCompressedTexture compressedTexture = malloc(sizeof(CompressedTexture));
+PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
+    PCompressedTexture convertedTexture = malloc(sizeof(CompressedTexture));
+
+    convertedTexture->info = rawTexture->info;
 
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
         .vkFormat = rawTexture->info->isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
+        //.vkFormat = rawTexture->info->isColor ? VK_FORMAT_BC7_SRGB_BLOCK : VK_FORMAT_BC7_UNORM_BLOCK,
         .pDfd = nullptr, // Ignored
         .baseWidth = rawTexture->width,
         .baseHeight = rawTexture->height,
@@ -115,19 +118,51 @@ PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
         .generateMipmaps = KTX_FALSE
     };
 
-    ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_NO_STORAGE, &compressedTexture->handle);
+    ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &convertedTexture->handle);
 
     if(result != KTX_SUCCESS) {
         debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
         assert(result == KTX_SUCCESS);
     }
 
-    compressedTexture->handle->pData = rawTexture->data;
-    compressedTexture->info = rawTexture->info;
+    convertedTexture->compatibilityHandle = (ktxTexture *) convertedTexture->handle;
+    convertedTexture->info->size = ktxTexture_GetDataSize(convertedTexture->compatibilityHandle);
+    debug("\t\tConverted Size: %lu", convertedTexture->info->size);
 
+
+    size_t   offset = 0;
+    uint32_t width  = rawTexture->width;
+    uint32_t height = rawTexture->height;
+    size_t   size   = rawTexture->width * rawTexture->height * rawTexture->depth;
+
+    for(uint32_t level = 0; level < rawTexture->mips; level++) {
+        /*
+        size_t convertedOffset = 0;
+        ktxTexture2_GetImageOffset(convertedTexture->handle, level, 0, 0, &convertedOffset);
+        size_t convertedSize = ktxTexture_GetImageSize(convertedTexture->compatibilityHandle, level);
+
+        debug("\t\tImage Level: %u", level);
+        debug("\t\t\tRaw Offset:       %lu", offset);
+        debug("\t\t\tConverted Offset: %lu", convertedOffset);
+        debug("\t\t\tRaw Size:         %lu", size);
+        debug("\t\t\tConverted Size:   %lu", convertedSize);
+        */
+        ktxTexture_SetImageFromMemory(convertedTexture->compatibilityHandle, level, 0, 0, rawTexture->data + offset, size);
+
+        offset += size;
+        width   = umax(width  / 2, 1);
+        height  = umax(height / 2, 1);
+        size    = width * height * rawTexture->depth;
+    }
+
+    stbi_image_free(rawTexture->data);
     free(rawTexture);
 
-    return compressedTexture;
+    convertedTexture->info->size = ktxTexture_GetDataSize(convertedTexture->compatibilityHandle);
+    debug("\t\tConverted Size: %lu", convertedTexture->info->size);
+    debug("\t\tRaw texture converted");
+
+    return convertedTexture;
 }
 
 PCompressedTexture initializeCompressedTexture(const char *subdirectory, const char *filename, bool isColor) {
