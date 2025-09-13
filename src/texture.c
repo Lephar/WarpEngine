@@ -210,12 +210,15 @@ PCompressedTexture initializeCompressedTexture(const char *subdirectory, const c
         assert(result == KTX_SUCCESS);
     }
 
+    texture->compatibilityHandle = (ktxTexture*) texture->handle;
+    texture->info->size = ktxTexture_GetDataSize(texture->compatibilityHandle);
+
     debug("\t\tWidth:  %u", texture->handle->baseWidth);
     debug("\t\tHeight: %u", texture->handle->baseHeight);
     debug("\t\tDepth:  %u", texture->handle->baseDepth);
     debug("\t\tMips:   %u", texture->handle->numLevels);
-
-    texture->compatibilityHandle = (ktxTexture*) texture->handle;
+    debug("\t\tInitial Size: %lu", texture->info->size);
+    debug("\t\tCompressed texture initialized");
 
     return texture;
 }
