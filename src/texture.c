@@ -256,3 +256,17 @@ void transcodeCompressedTexture(PCompressedTexture texture) {
         debug("\t\tCompressed texture transcoded");
     }
 }
+
+PImage createTextureImage(PCompressedTexture texture) {
+    PImage image = createImage(texture->handle->baseWidth, texture->handle->baseHeight, texture->handle->numLevels, VK_SAMPLE_COUNT_1_BIT, texture->info->isColor ? VK_FORMAT_BC7_SRGB_BLOCK : VK_FORMAT_BC7_UNORM_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+    bindImageMemory(image, &deviceMemory);
+    transitionImageLayout(image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    debug("\t\tAligned Size:  %lu", image->memoryRequirements.size);
+    debug("\t\tMemory Offset: %lu", image->memoryOffset);
+    debug("\t\tTexture image created");
+
+    return image;
+}
+
+}
