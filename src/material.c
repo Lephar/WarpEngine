@@ -1,17 +1,12 @@
 #include "material.h"
 
-#include "config.h"
-#include "physicalDevice.h"
-#include "memory.h"
-#include "buffer.h"
 #include "image.h"
 #include "pipeline.h"
 #include "descriptor.h"
 #include "content.h"
+#include "texture.h"
 
-#include "file.h"
 #include "logger.h"
-#include "numerics.h"
 
 Image *defaultBlackTexture = nullptr;
 Image *defaultWhiteTexture = nullptr;
@@ -35,250 +30,28 @@ uint32_t findMaterial(cgltf_material *materialData) {
 }
 
 Image *loadUncompressedTexture(const char *subdirectory, const char *filename, bool isColor) {
-    char path[PATH_MAX];
-    makeFullPath(subdirectory, filename, path);
-    debug("\tImage Path: %s", path);
+    PRawTexture rawTexture = initializeRawTexture(subdirectory, filename, isColor);
+    loadRawTexture(rawTexture);
+    generateRawMipmaps(rawTexture);
 
-    int32_t width  = 0;
-    int32_t height = 0;
-    int32_t depth  = STBI_rgb_alpha; // TODO: Consider the normal and metallic roughness channels
+    PCompressedTexture compressedTexture = convertRawTexture(rawTexture);
+    compressConvertedTexture(compressedTexture);
+    transcodeCompressedTexture(compressedTexture);
 
-    // NOTICE: Allocates data double the necessary size because of our STBI_MALLOC override in implementation.c
-    uint8_t *data = stbi_load(path, &width, &height, nullptr, depth);
+    PImage image = createTextureImage(compressedTexture);
+    loadTextureImage(image, compressedTexture);
 
-    assert((uint32_t) width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) height <= physicalDeviceProperties.limits.maxImageDimension2D);
-
-    size_t   size = width * height * depth;
-    uint32_t mips = (uint32_t) floor(log2(imax(width, height))) + 1;
-
-    debug("\t\tWidth:  %u", width);
-    debug("\t\tHeight: %u", height);
-    debug("\t\tDepth:  %u", depth);
-    debug("\t\tMips:   %u", mips);
-
-    ktxTextureCreateInfo compressedTextureCreateInfo = {
-        .glInternalformat = 0, // Ignored
-        .vkFormat = isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
-        .pDfd = nullptr, // Ignored
-        .baseWidth = width,
-        .baseHeight = height,
-        .baseDepth = 1,
-        .numDimensions = 2,
-        .numLevels = mips,
-        .numLayers = 1,
-        .numFaces = 1,
-        .isArray = KTX_FALSE,
-        .generateMipmaps = KTX_FALSE
-    };
-
-    // TODO: Can storage be set directly to the data?
-    ktxTexture2 *compressedTexture;
-    ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &compressedTexture);
-
-    if(result != KTX_SUCCESS) {
-        debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
-        assert(result == KTX_SUCCESS);
-    }
-
-    ktxTexture *compressedTextureHandle = (ktxTexture *) compressedTexture;
-
-    debug("\t\tRaw Size:   %lu", size);
-    debug("\t\tFinal Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));
-
-    uint32_t srcWidth  = width;
-    uint32_t srcHeight = height;
-    size_t   srcOffset = 0;
-    size_t   srcSize   = size;
-
-    result = ktxTexture_SetImageFromMemory(compressedTextureHandle, 0, 0, 0, data + srcOffset, srcSize);
-
-    if(result != KTX_SUCCESS) {
-        debug("\t\tSetting texture from memory failed with message: %s", ktxErrorString(result));
-        assert(result == KTX_SUCCESS);
-    }
-
-    for(uint32_t level = 1; level < mips; level++) {
-        uint32_t dstWidth  = umax(srcWidth  / 2, 1);
-        uint32_t dstHeight = umax(srcHeight / 2, 1);
-        size_t   dstOffset = srcOffset + srcSize;
-        size_t   dstSize   = dstWidth * dstHeight * depth;
-        /*
-        debug("\t\tLevel: %u", level);
-        debug("\t\t\tWidth:  %u", dstWidth);
-        debug("\t\t\tHeight: %u", dstHeight);
-        debug("\t\t\tOffset: %u", dstOffset);
-        debug("\t\t\tSize:   %u", dstSize);
-        */
-        if(isColor) {
-            stbir_resize_uint8_srgb(data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
-        } else {
-            stbir_resize_uint8_linear(data + srcOffset, (int32_t) srcWidth, (int32_t) srcHeight, 0, data + dstOffset, (int32_t) dstWidth, (int32_t) dstHeight, 0, STBIR_RGBA);
-        }
-
-        result = ktxTexture_SetImageFromMemory(compressedTextureHandle, level, 0, 0, data + dstOffset, dstSize);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tSetting mip level %u from memory failed with message: %s", level, ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-
-        srcWidth  = dstWidth;
-        srcHeight = dstHeight;
-        srcOffset = dstOffset;
-        srcSize   = dstSize;
-    }
-
-    stbi_image_free(data);
-
-    ktxBasisParams compressionParameters = {
-        .structSize = sizeof(ktxBasisParams),
-        .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
-        .threadCount = threadCount,
-        .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
-        .normalMap = false // TODO: Research that topic to see how that can be used for metallic roughness and normal maps
-    }; // NOTICE: Many more params exist here that are zero initialized here
-
-    result = ktxTexture2_CompressBasisEx(compressedTexture, &compressionParameters);
-
-    if(result != KTX_SUCCESS) {
-        debug("\t\tCompressing texture failed with message: %s", ktxErrorString(result));
-        assert(result == KTX_SUCCESS);
-    }
-
-    debug("\t\tCompressed Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));
-
-    if(ktxTexture2_NeedsTranscoding(compressedTexture)) {
-        result = ktxTexture2_TranscodeBasis(compressedTexture, KTX_TTF_BC7_RGBA, 0);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tTranscoding texture failed with message: %s", ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-
-        debug("\t\tTranscoded Size: %lu", ktxTexture_GetDataSize(compressedTextureHandle));
-    }
-
-    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, isColor ? VK_FORMAT_BC7_SRGB_BLOCK : VK_FORMAT_BC7_UNORM_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
-    bindImageMemory(texture, &deviceMemory);
-    transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
-    debug("\t\tAligned Size:    %lu", texture->memoryRequirements.size);
-    debug("\t\tMemory Offset:   %lu", texture->memoryOffset);
-
-    data = ktxTexture_GetData(compressedTextureHandle);
-
-    for(ktx_uint32_t level = 0; level < mips; level++) {
-        result = ktxTexture2_GetImageOffset(compressedTexture, level, 0, 0, &srcOffset);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tGetting mip level %u data failed with message: %s", level, ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-
-        srcSize = ktxTexture_GetImageSize(compressedTextureHandle, level);
-
-        if(srcSize <= sharedBuffer.size) {
-            memcpy(mappedSharedMemory, data + srcOffset, srcSize);
-            copyBufferToImage(&sharedBuffer, 0, texture, level);
-        } else if (srcSize <= deviceBuffer.size) {
-            stagingBufferCopy(data, srcOffset, 0, srcSize);
-            copyBufferToImage(&deviceBuffer, 0, texture, level);
-        } else {
-            debug("\t\tCan't copy image data, increase shared or device local buffer size!");
-            assert(srcSize <= sharedBuffer.size || srcSize <= deviceBuffer.size);
-        }
-    }
-
-    ktxTexture2_Destroy(compressedTexture);
-
-    transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    createImageView(texture);
-
-    debug("\t\tTexture created");
-
-    return texture;
+    return image;
 }
 
 Image *loadTexture(const char *subdirectory, const char *filename, bool isColor) {
-    char path[PATH_MAX];
-    makeFullPath(subdirectory, filename, path);
-    debug("\tImage Path: %s", path);
+    PCompressedTexture compressedTexture = initializeCompressedTexture(subdirectory, filename, isColor);
+    transcodeCompressedTexture(compressedTexture);
 
-    ktxTexture2 *textureObject;
-    KTX_error_code result = ktxTexture2_CreateFromNamedFile(path, KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &textureObject);
+    PImage image = createTextureImage(compressedTexture);
+    loadTextureImage(image, compressedTexture);
 
-    if(result != KTX_SUCCESS) {
-        debug("\t\tLoading texture failed with message: %s", ktxErrorString(result));
-        assert(result == KTX_SUCCESS);
-    }
-
-    ktx_uint32_t width  = textureObject->baseWidth;
-    ktx_uint32_t height = textureObject->baseHeight;
-    ktx_uint32_t depth  = textureObject->baseDepth;
-    ktx_uint32_t mips   = textureObject->numLevels;
-
-    assert(width <= physicalDeviceProperties.limits.maxImageDimension2D && height <= physicalDeviceProperties.limits.maxImageDimension2D);
-
-    debug("\t\tWidth:  %u", width);
-    debug("\t\tHeight: %u", height);
-    debug("\t\tDepth:  %u", depth);
-    debug("\t\tMips:   %u", mips);
-
-    // TODO: Most ktxTexture2_* functions exist in the docs but aren't really exposed. Remove this old handle when they update.
-    ktxTexture *textureObjectHandle = (ktxTexture *) textureObject;
-    debug("\t\tCompressed Size: %lu", ktxTexture_GetDataSize(textureObjectHandle));
-
-    if(ktxTexture2_NeedsTranscoding(textureObject)) {
-        result = ktxTexture2_TranscodeBasis(textureObject, KTX_TTF_BC7_RGBA, 0);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tTranscoding texture failed with message: %s", ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-
-        debug("\t\tTranscoded Size: %lu", ktxTexture_GetDataSize(textureObjectHandle));
-    }
-
-    Image *texture = createImage(width, height, mips, VK_SAMPLE_COUNT_1_BIT, isColor ? VK_FORMAT_BC7_SRGB_BLOCK : VK_FORMAT_BC7_UNORM_BLOCK, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
-    bindImageMemory(texture, &deviceMemory);
-    transitionImageLayout(texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
-    debug("\t\tAligned Size:    %lu", texture->memoryRequirements.size);
-    debug("\t\tMemory Offset:   %lu", texture->memoryOffset);
-
-    ktx_uint8_t *data = ktxTexture_GetData(textureObjectHandle);
-
-    for(ktx_uint32_t level = 0; level < mips; level++) {
-        ktx_size_t offset;
-        result = ktxTexture2_GetImageOffset(textureObject, level, 0, 0, &offset);
-
-        if(result != KTX_SUCCESS) {
-            debug("\t\tGetting mip level %u data failed with message: %s", level, ktxErrorString(result));
-            assert(result == KTX_SUCCESS);
-        }
-
-        ktx_size_t size = ktxTexture_GetImageSize(textureObjectHandle, level);
-
-        if(size <= sharedBuffer.size) {
-            memcpy(mappedSharedMemory, data + offset, size);
-            copyBufferToImage(&sharedBuffer, 0, texture, level);
-        } else if (size <= deviceBuffer.size) {
-            stagingBufferCopy(data, offset, 0, size);
-            copyBufferToImage(&deviceBuffer, 0, texture, level);
-        } else {
-            debug("\t\tCan't copy image data, increase shared or device local buffer size!");
-            assert(size <= sharedBuffer.size || size <= deviceBuffer.size);
-        }
-    }
-
-    ktxTexture2_Destroy(textureObject);
-
-    transitionImageLayout(texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    createImageView(texture);
-
-    debug("\t\tTexture created");
-
-    return texture;
+    return image;
 }
 
 void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
