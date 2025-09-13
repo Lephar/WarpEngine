@@ -129,6 +129,16 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
     convertedTexture->info->size = ktxTexture_GetDataSize(convertedTexture->compatibilityHandle);
     debug("\t\tConverted Size: %lu", convertedTexture->info->size);
 
+    if(rawTexture->info->isColor) {
+        result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_SRGB);
+    } else {
+        result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_LINEAR);
+    }
+
+    if(result != KTX_SUCCESS) {
+        debug("\t\tSetting transfer function failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
 
     size_t   offset = 0;
     uint32_t width  = rawTexture->width;
