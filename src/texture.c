@@ -27,13 +27,13 @@ PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, boo
 PRawTexture initializeRawTexture(const char *subdirectory, const char *filename, bool isColor) {
     PRawTexture texture = malloc(sizeof(RawTexture));
 
-    texture->info  = makeTextureInfo(subdirectory, filename, isColor);
+    texture->info = makeTextureInfo(subdirectory, filename, isColor);
 
-    int32_t result = stbi_info(texture->info->path, (int32_t *) &texture->width, (int32_t *) &texture->height, (int32_t *) &texture->depth);
+    int32_t success = stbi_info(texture->info->path, (int32_t *) &texture->width, (int32_t *) &texture->height, (int32_t *) &texture->depth);
 
-    if(result != 0) {
+    if(success == false) {
         debug("\t\tImage meta data loading failed with message: %s", stbi_failure_reason());
-        assert(result == 0);
+        assert(success == true);
     }
 
     assert((uint32_t) texture->width <= physicalDeviceProperties.limits.maxImageDimension2D && (uint32_t) texture->height <= physicalDeviceProperties.limits.maxImageDimension2D);
@@ -43,7 +43,9 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
 
     debug("\t\tWidth:  %u", texture->width);
     debug("\t\tHeight: %u", texture->height);
-    debug("\t\tDepth:  %u", texture->depth);
+    debug("\t\tFile Depth:    %u", texture->depth);
+    debug("\t\tLoaded Levels: %u", texture->mips);
+    debug("\t\tRaw texture initialized");
 
     return texture;
 }
