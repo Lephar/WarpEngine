@@ -235,7 +235,10 @@ void loadCompressedTexture(PCompressedTexture texture) {
         assert(result == KTX_SUCCESS);
     }
 
-    // TODO: Done?
+    texture->info->size = ktxTexture_GetDataSize(texture->compatibilityHandle);
+
+    debug("\t\tLoaded Size: %lu", texture->info->size);
+    debug("\t\tCompressed texture loaded");
 }
 
 void transcodeCompressedTexture(PCompressedTexture texture) {
