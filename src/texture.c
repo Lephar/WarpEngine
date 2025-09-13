@@ -269,4 +269,39 @@ PImage createTextureImage(PCompressedTexture texture) {
     return image;
 }
 
+void loadTextureImage(PImage image, PCompressedTexture texture) {
+    uint8_t *data = ktxTexture_GetData(texture->compatibilityHandle);
+
+    for(ktx_uint32_t level = 0; level < texture->handle->numLevels; level++) {
+        size_t offset = 0;
+        ktx_error_code_e result = ktxTexture2_GetImageOffset(texture->handle, level, 0, 0, &offset);
+
+        if(result != KTX_SUCCESS) {
+            debug("\t\tGetting mip level %u data failed with message: %s", level, ktxErrorString(result));
+            assert(result == KTX_SUCCESS);
+        }
+
+        size_t size = ktxTexture_GetImageSize(texture->compatibilityHandle, level);
+
+        if(size <= sharedBuffer.size) {
+            memcpy(mappedSharedMemory, data + offset, size);
+            copyBufferToImage(&sharedBuffer, 0, image, level);
+        } else if (size <= deviceBuffer.size) {
+            stagingBufferCopy(data, offset, 0, size);
+            copyBufferToImage(&deviceBuffer, 0, image, level);
+        } else {
+            debug("\t\tCan't copy image data, increase shared or device local buffer size!");
+            assert(size <= sharedBuffer.size || size <= deviceBuffer.size);
+        }
+    }
+
+    ktxTexture2_Destroy(texture->handle);
+    free(texture->info);
+    free(texture);
+
+    transitionImageLayout(image, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    createImageView(image);
+
+    debug("\t\tTexture image loaded into memory");
+    //assert(0);
 }
