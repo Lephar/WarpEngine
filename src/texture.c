@@ -251,6 +251,8 @@ void transcodeCompressedTexture(PCompressedTexture texture) {
         }
 
         texture->info->size = ktxTexture_GetDataSize(texture->compatibilityHandle);
+
         debug("\t\tTranscoded Size: %lu", texture->info->size);
+        debug("\t\tCompressed texture transcoded");
     }
 }
