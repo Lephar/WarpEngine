@@ -1,9 +1,12 @@
 #include "texture.h"
 
+#include "buffer.h"
 #include "physicalDevice.h"
+#include "memory.h"
 
 #include "logger.h"
 #include "file.h"
+#include "image.h"
 #include "numerics.h"
 
 PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, bool isColor) {
@@ -14,6 +17,9 @@ PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, boo
 
     info->isColor = isColor;
     info->size    = 0;
+
+    debug("\t\tInitial Size: %lu", info->size);
+    debug("\t\t%s texture info initialized", info->isColor ? "Color" : "Non-color");
 
     return info;
 }
