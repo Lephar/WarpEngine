@@ -91,6 +91,10 @@ void generateRawMipmaps(PRawTexture texture) {
         sourceOffset = destinationOffset;
         sourceSize   = destinationSize;
     }
+
+    debug("\t\tGenerated Levels: %u",   texture->mips);
+    debug("\t\tLevels Total Size: %lu", texture->info->size);
+    debug("\t\tMipmaps generated");
 }
 
 PCompressedTexture compressRawTexture(PRawTexture rawTexture) {
