@@ -175,6 +175,29 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
     return convertedTexture;
 }
 
+void compressConvertedTexture(PCompressedTexture texture) {
+    ktxBasisParams compressionParameters = {
+        .structSize = sizeof(ktxBasisParams),
+        .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
+        .threadCount = 12, // threadCount
+        .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
+        //.normalMap = !isColor
+        .normalMap = false // TODO: Research that topic to see how that can be used for metallic roughness and normal maps
+    }; // NOTICE: Many more params exist here that are zero initialized here
+
+    ktx_error_code_e result = ktxTexture2_CompressBasisEx(texture->handle, &compressionParameters);
+
+    if(result != KTX_SUCCESS) {
+        debug("\t\tCompressing texture failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
+
+    texture->info->size = ktxTexture_GetDataSize(texture->compatibilityHandle);
+
+    debug("\t\tCompressed Size: %lu", texture->info->size);
+    debug("\t\tConverted texture compressed");
+}
+
 PCompressedTexture initializeCompressedTexture(const char *subdirectory, const char *filename, bool isColor) {
     PCompressedTexture texture = malloc(sizeof(CompressedTexture));
 
