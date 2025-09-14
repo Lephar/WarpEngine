@@ -18,7 +18,6 @@ PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, boo
     info->isColor = isColor;
     info->size    = 0;
 
-    debug("\t\tInitial Size: %lu", info->size);
     debug("\t\t%s texture info initialized", info->isColor ? "Color" : "Non-color");
 
     return info;
@@ -43,8 +42,7 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
 
     debug("\t\tWidth:  %u", texture->width);
     debug("\t\tHeight: %u", texture->height);
-    debug("\t\tFile Depth:    %u", texture->depth);
-    debug("\t\tLoaded Levels: %u", texture->mips);
+    debug("\t\tOriginal Depth: %u", texture->depth);
     debug("\t\tRaw texture initialized");
 
     return texture;
@@ -57,8 +55,8 @@ void loadRawTexture(PRawTexture texture) {
     texture->mips = 1;
     texture->info->size = texture->width * texture->height * texture->depth;
 
-    debug("\t\tRequested Depth: %u", texture->depth);
-    debug("\t\tOriginal Levels: %u", texture->mips);
+    debug("\t\tDepth: %u", texture->depth);
+    debug("\t\tLoaded Levels: %u", texture->mips);
     debug("\t\tRaw Size: %lu", texture->info->size);
     debug("\t\tRaw texture loaded");
 }
@@ -103,9 +101,9 @@ void generateRawMipmaps(PRawTexture texture) {
         sourceSize   = destinationSize;
     }
 
-    debug("\t\tGenerated Levels: %u",   texture->mips);
-    debug("\t\tLevels Total Size: %lu", texture->info->size);
-    debug("\t\tMipmaps generated");
+    debug("\t\tTotal Used Size:  %lu", texture->info->size);
+    debug("\t\tFinal Level Count: %u", texture->mips);
+    debug("\t\tRaw mipmaps generated");
 }
 
 PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
@@ -116,7 +114,6 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
         .vkFormat = rawTexture->info->isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
-        //.vkFormat = rawTexture->info->isColor ? VK_FORMAT_BC7_SRGB_BLOCK : VK_FORMAT_BC7_UNORM_BLOCK,
         .pDfd = nullptr, // Ignored
         .baseWidth = rawTexture->width,
         .baseHeight = rawTexture->height,
@@ -274,7 +271,7 @@ void compressConvertedTexture(PCompressedTexture texture) {
         .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
         //.normalMap = !isColor
         .normalMap = false // TODO: Research that topic to see how that can be used for metallic roughness and normal maps
-    }; // NOTICE: Many more params exist here that are zero initialized here
+    }; // NOTICE: Many more params exist here that are zero initialized
 
     ktx_error_code_e result = ktxTexture2_CompressBasisEx(texture->handle, &compressionParameters);
 
@@ -307,15 +304,14 @@ PCompressedTexture initializeCompressedTexture(const char *subdirectory, const c
     debug("\t\tWidth:  %u", texture->handle->baseWidth);
     debug("\t\tHeight: %u", texture->handle->baseHeight);
     debug("\t\tDepth:  %u", texture->handle->baseDepth);
-    debug("\t\tMips:   %u", texture->handle->numLevels);
-    debug("\t\tInitial Size: %lu", texture->info->size);
+    debug("\t\tLevels: %u", texture->handle->numLevels);
+    debug("\t\tAllocated Size: %lu", texture->info->size);
     debug("\t\tCompressed texture initialized");
 
     return texture;
 }
 
 void loadCompressedTexture(PCompressedTexture texture) {
-    //texture->info->size = ktxTexture_GetDataSizeUncompressed(texture->compatibilityHandle);
     texture->info->size = ktxTexture_GetDataSize(texture->compatibilityHandle);
     texture->handle->pData = malloc(texture->info->size);
 
@@ -394,5 +390,4 @@ void loadTextureImage(PImage image, PCompressedTexture texture) {
     createImageView(image);
 
     debug("\t\tTexture image loaded into memory");
-    //assert(0);
 }
