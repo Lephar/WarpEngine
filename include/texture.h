@@ -30,11 +30,12 @@ typedef struct compressedTexture {
     ktxTexture  *compatibilityHandle;
 } CompressedTexture, *PCompressedTexture;
 
-PTextureInfo makeTextureInfo(const char *subdirectory, const char *filename, bool isColor);
 PRawTexture initializeRawTexture(const char *subdirectory, const char *filename, bool isColor);
 void loadRawTexture(PRawTexture texture);
 void generateRawMipmaps(PRawTexture texture);
 PCompressedTexture convertRawTexture(PRawTexture rawTexture);
+PCompressedTexture convertRawBaseTexture(PRawTexture rawTexture);
+void generateConvertedMipmaps(PCompressedTexture texture);
 void compressConvertedTexture(PCompressedTexture texture);
 PCompressedTexture initializeCompressedTexture(const char *subdirectory, const char *filename, bool isColor);
 void loadCompressedTexture(PCompressedTexture texture);
