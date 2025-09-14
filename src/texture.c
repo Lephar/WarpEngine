@@ -4,6 +4,7 @@
 #include "physicalDevice.h"
 #include "memory.h"
 
+#include "config.h"
 #include "logger.h"
 #include "file.h"
 #include "image.h"
@@ -237,7 +238,7 @@ void compressConvertedTexture(PCompressedTexture texture) {
     ktxBasisParams compressionParameters = {
         .structSize = sizeof(ktxBasisParams),
         .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
-        .threadCount = 16, // threadCount
+        .threadCount = threadCount,
         .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
         //.normalMap = !isColor
         .normalMap = false // TODO: Research that topic to see how that can be used for metallic roughness and normal maps
