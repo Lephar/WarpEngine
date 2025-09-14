@@ -216,6 +216,45 @@ PCompressedTexture convertRawBaseTexture(PRawTexture rawTexture) {
     return convertedTexture;
 }
 
+void generateConvertedMipmaps(PCompressedTexture texture) {
+    int32_t sourceWidth  = (int32_t) texture->handle->baseWidth;
+    int32_t sourceHeight = (int32_t) texture->handle->baseHeight;
+
+    size_t sourceOffset = 0;
+    ktx_error_code_e result = ktxTexture2_GetImageOffset(texture->handle, 0, 0, 0, &sourceOffset);
+
+    if(result != KTX_SUCCESS) {
+        debug("\t\tGetting base image offset failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
+
+    for(uint32_t level = 1; level < texture->handle->numLevels; level++) {
+        int32_t destinationWidth  = imax(sourceWidth  / 2, 1);
+        int32_t destinationHeight = imax(sourceHeight / 2, 1);
+
+        size_t destinationOffset = 0;
+        result = ktxTexture2_GetImageOffset(texture->handle, level, 0, 0, &destinationOffset);
+
+        if(result != KTX_SUCCESS) {
+            debug("\t\tGetting level %u image offset failed with message: %s", level, ktxErrorString(result));
+            assert(result == KTX_SUCCESS);
+        }
+
+        if(texture->info->isColor) {
+            stbir_resize_uint8_srgb(  texture->handle->pData + sourceOffset, sourceWidth, sourceHeight, 0, texture->handle->pData + destinationOffset, destinationWidth, destinationHeight, 0, STBIR_RGBA);
+        } else {
+            stbir_resize_uint8_linear(texture->handle->pData + sourceOffset, sourceWidth, sourceHeight, 0, texture->handle->pData + destinationOffset, destinationWidth, destinationHeight, 0, STBIR_RGBA);
+        }
+
+        sourceWidth  = destinationWidth;
+        sourceHeight = destinationHeight;
+        sourceOffset = destinationOffset;
+    }
+
+    debug("\t\tFinal Level Count: %u: %u", texture->handle->numLevels);
+    debug("\t\tConverted mipmaps generated");
+}
+
 void compressConvertedTexture(PCompressedTexture texture) {
     ktxBasisParams compressionParameters = {
         .structSize = sizeof(ktxBasisParams),
