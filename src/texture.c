@@ -127,8 +127,8 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
 
     convertedTexture->compatibilityHandle = (ktxTexture *) convertedTexture->handle;
     convertedTexture->info->size = ktxTexture_GetDataSize(convertedTexture->compatibilityHandle);
-    debug("\t\tConverted Size: %lu", convertedTexture->info->size);
 
+    // TODO: Make sure that this is not inferred from ktxTextureCreateInfo.vkFormat of ktxTexture2_Create
     if(rawTexture->info->isColor) {
         result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_SRGB);
     } else {
@@ -146,17 +146,6 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
     size_t   size   = rawTexture->width * rawTexture->height * rawTexture->depth;
 
     for(uint32_t level = 0; level < rawTexture->mips; level++) {
-        /*
-        size_t convertedOffset = 0;
-        ktxTexture2_GetImageOffset(convertedTexture->handle, level, 0, 0, &convertedOffset);
-        size_t convertedSize = ktxTexture_GetImageSize(convertedTexture->compatibilityHandle, level);
-
-        debug("\t\tImage Level: %u", level);
-        debug("\t\t\tRaw Offset:       %lu", offset);
-        debug("\t\t\tConverted Offset: %lu", convertedOffset);
-        debug("\t\t\tRaw Size:         %lu", size);
-        debug("\t\t\tConverted Size:   %lu", convertedSize);
-        */
         ktxTexture_SetImageFromMemory(convertedTexture->compatibilityHandle, level, 0, 0, rawTexture->data + offset, size);
 
         offset += size;
@@ -168,9 +157,61 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
     stbi_image_free(rawTexture->data);
     free(rawTexture);
 
-    convertedTexture->info->size = ktxTexture_GetDataSize(convertedTexture->compatibilityHandle);
     debug("\t\tConverted Size: %lu", convertedTexture->info->size);
     debug("\t\tRaw texture converted");
+
+    return convertedTexture;
+}
+
+PCompressedTexture convertRawBaseTexture(PRawTexture rawTexture) {
+    PCompressedTexture convertedTexture = malloc(sizeof(CompressedTexture));
+
+    convertedTexture->info = rawTexture->info;
+
+    ktxTextureCreateInfo compressedTextureCreateInfo = {
+        .glInternalformat = 0, // Ignored
+        .vkFormat = rawTexture->info->isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
+        .pDfd = nullptr, // Ignored
+        .baseWidth = rawTexture->width,
+        .baseHeight = rawTexture->height,
+        .baseDepth = 1,
+        .numDimensions = 2,
+        .numLevels = (uint32_t) floor(log2(umax(rawTexture->width, rawTexture->height))) + 1,
+        .numLayers = 1,
+        .numFaces = 1,
+        .isArray = KTX_FALSE,
+        .generateMipmaps = KTX_FALSE
+    };
+
+    ktx_error_code_e result = ktxTexture2_Create(&compressedTextureCreateInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &convertedTexture->handle);
+
+    if(result != KTX_SUCCESS) {
+        debug("\t\tCreating texture failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
+
+    convertedTexture->compatibilityHandle = (ktxTexture *) convertedTexture->handle;
+
+    // TODO: Make sure that this is not inferred from ktxTextureCreateInfo.vkFormat of ktxTexture2_Create
+    if(rawTexture->info->isColor) {
+        result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_SRGB);
+    } else {
+        result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_LINEAR);
+    }
+
+    if(result != KTX_SUCCESS) {
+        debug("\t\tSetting transfer function failed with message: %s", ktxErrorString(result));
+        assert(result == KTX_SUCCESS);
+    }
+
+    ktxTexture_SetImageFromMemory(convertedTexture->compatibilityHandle, 0, 0, 0, rawTexture->data, rawTexture->info->size);
+
+    stbi_image_free(rawTexture->data);
+    free(rawTexture);
+
+    convertedTexture->info->size = ktxTexture_GetDataSize(convertedTexture->compatibilityHandle);
+    debug("\t\tConverted Size: %lu", convertedTexture->info->size);
+    debug("\t\tRaw base texture converted");
 
     return convertedTexture;
 }
@@ -179,7 +220,7 @@ void compressConvertedTexture(PCompressedTexture texture) {
     ktxBasisParams compressionParameters = {
         .structSize = sizeof(ktxBasisParams),
         .uastc = KTX_TRUE, // TODO: Dive further into that compression optimization rabbit hole
-        .threadCount = 12, // threadCount
+        .threadCount = 16, // threadCount
         .compressionLevel = KTX_ETC1S_DEFAULT_COMPRESSION_LEVEL,
         //.normalMap = !isColor
         .normalMap = false // TODO: Research that topic to see how that can be used for metallic roughness and normal maps
