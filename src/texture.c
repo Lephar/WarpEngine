@@ -76,21 +76,21 @@ void generateRawMipmaps(PRawTexture texture) {
 
     texture->mips = (uint32_t) floor(log2(umax(texture->width, texture->height))) + 1;
 
-    uint32_t sourceWidth  = texture->width;
-    uint32_t sourceHeight = texture->height;
-    size_t   sourceOffset = 0;
-    size_t   sourceSize   = texture->info->size;
+    int32_t sourceWidth  = (int32_t) texture->width;
+    int32_t sourceHeight = (int32_t) texture->height;
+    size_t  sourceOffset = 0;
+    size_t  sourceSize   = texture->info->size;
 
     for(uint32_t level = 1; level < texture->mips; level++) {
-        uint32_t destinationWidth  = umax(sourceWidth  / 2, 1);
-        uint32_t destinationHeight = umax(sourceHeight / 2, 1);
-        size_t   destinationOffset = sourceOffset + sourceSize;
-        size_t   destinationSize   = destinationWidth * destinationHeight * texture->depth;
+        int32_t destinationWidth  = imax(sourceWidth  / 2, 1);
+        int32_t destinationHeight = imax(sourceHeight / 2, 1);
+        size_t  destinationOffset = sourceOffset + sourceSize;
+        size_t  destinationSize   = destinationWidth * destinationHeight * texture->depth;
 
         if(texture->info->isColor) {
-            stbir_resize_uint8_srgb(  texture->data + sourceOffset, (int32_t) sourceWidth, (int32_t) sourceHeight, 0, texture->data + destinationOffset, (int32_t) destinationWidth, (int32_t) destinationHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_srgb(  texture->data + sourceOffset, sourceWidth, sourceHeight, 0, texture->data + destinationOffset, destinationWidth, destinationHeight, 0, STBIR_RGBA);
         } else {
-            stbir_resize_uint8_linear(texture->data + sourceOffset, (int32_t) sourceWidth, (int32_t) sourceHeight, 0, texture->data + destinationOffset, (int32_t) destinationWidth, (int32_t) destinationHeight, 0, STBIR_RGBA);
+            stbir_resize_uint8_linear(texture->data + sourceOffset, sourceWidth, sourceHeight, 0, texture->data + destinationOffset, destinationWidth, destinationHeight, 0, STBIR_RGBA);
         }
 
         texture->info->size += destinationSize;
