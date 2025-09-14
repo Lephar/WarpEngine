@@ -51,7 +51,6 @@ PRawTexture initializeRawTexture(const char *subdirectory, const char *filename,
 }
 
 void loadRawTexture(PRawTexture texture) {
-    // NOTICE: Allocates double the necessary size for data because of our STBI_MALLOC override in implementation.c
     texture->data = stbi_load(texture->info->path, (int32_t *) &texture->width, (int32_t *) &texture->height, (int32_t *) &texture->depth, STBI_rgb_alpha);
 
     texture->depth = STBI_rgb_alpha; // TODO: Consider the normal and metallic roughness channels
@@ -65,6 +64,18 @@ void loadRawTexture(PRawTexture texture) {
 }
 
 void generateRawMipmaps(PRawTexture texture) {
+    size_t size = 4 * texture->info->size / 3; // NOTICE: Sum of mip size series
+    void *result = realloc(texture->data, size);
+
+    if(result == nullptr) {
+        debug("\t\tAllocation for raw mipmap generation failed");
+        free(texture->data);
+        assert(result != nullptr);
+    }
+
+    texture->data = result;
+    debug("\t\tReallocated Size: %lu", size);
+
     texture->mips = (uint32_t) floor(log2(umax(texture->width, texture->height))) + 1;
 
     uint32_t sourceWidth  = texture->width;
