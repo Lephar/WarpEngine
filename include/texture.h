@@ -4,27 +4,23 @@
 
 typedef struct image *PImage;
 
-typedef struct textureInfo {
+typedef struct rawTexture {
     char path[PATH_MAX];
 
     uint32_t isColor;
 
-    size_t size;
-} TextureInfo, *PTextureInfo;
-
-typedef struct rawTexture {
-    PTextureInfo info;
-
     uint32_t width;
     uint32_t height;
     uint32_t depth;
+
     uint32_t mips;
+    size_t   size;
 
     stbi_uc *data;
 } RawTexture, *PRawTexture;
 
 typedef struct compressedTexture {
-    PTextureInfo info;
+    uint32_t isColor;
 
     ktxTexture2 *handle;
     ktxTexture  *compatibilityHandle;
