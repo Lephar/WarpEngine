@@ -32,13 +32,10 @@ uint32_t findMaterial(cgltf_material *materialData) {
 Image *loadUncompressedTexture(const char *subdirectory, const char *filename, bool isColor) {
     PRawTexture rawTexture = initializeRawTexture(subdirectory, filename, isColor);
     loadRawTexture(rawTexture);
+    generateRawMipmaps(rawTexture);
 
-    //generateRawMipmaps(rawTexture);
-    //PCompressedTexture compressedTexture = convertRawTexture(rawTexture);
-
-    PCompressedTexture compressedTexture = convertRawBaseTexture(rawTexture);
-    generateConvertedMipmaps(compressedTexture);
-
+    PCompressedTexture compressedTexture = convertRawTexture(rawTexture);
+    //generateConvertedMipmaps(compressedTexture);
     compressConvertedTexture(compressedTexture);
     transcodeCompressedTexture(compressedTexture);
 

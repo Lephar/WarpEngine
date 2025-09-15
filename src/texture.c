@@ -97,20 +97,18 @@ void generateRawMipmaps(PRawTexture texture) {
     debug("\t\tRaw mipmaps generated");
 }
 
-PCompressedTexture initializeConvertedTexture(PTextureInfo info, uint32_t width, uint32_t height, uint32_t mips) {
+PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
     PCompressedTexture convertedTexture = malloc(sizeof(CompressedTexture));
-
-    convertedTexture->info = info;
 
     ktxTextureCreateInfo compressedTextureCreateInfo = {
         .glInternalformat = 0, // Ignored
-        .vkFormat = info->isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
+        .vkFormat = rawTexture->isColor ? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM,
         .pDfd = nullptr, // Ignored
-        .baseWidth = width,
-        .baseHeight = height,
+        .baseWidth = rawTexture->width,
+        .baseHeight = rawTexture->height,
         .baseDepth = 1,
         .numDimensions = 2,
-        .numLevels = mips,
+        .numLevels = (uint32_t) floor(log2(umax(rawTexture->width, rawTexture->height))) + 1,
         .numLayers = 1,
         .numFaces = 1,
         .isArray = KTX_FALSE,
@@ -124,10 +122,8 @@ PCompressedTexture initializeConvertedTexture(PTextureInfo info, uint32_t width,
         assert(result == KTX_SUCCESS);
     }
 
-    convertedTexture->compatibilityHandle = (ktxTexture *) convertedTexture->handle;
-
     // TODO: Make sure that this is not inferred from ktxTextureCreateInfo.vkFormat of ktxTexture2_Create
-    if(info->isColor) {
+    if(rawTexture->isColor) {
         result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_SRGB);
     } else {
         result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_LINEAR);
@@ -138,11 +134,8 @@ PCompressedTexture initializeConvertedTexture(PTextureInfo info, uint32_t width,
         assert(result == KTX_SUCCESS);
     }
 
-    return convertedTexture;
-}
-
-PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
-    PCompressedTexture convertedTexture = initializeConvertedTexture(rawTexture->info, rawTexture->width, rawTexture->height, rawTexture->mips);
+    convertedTexture->isColor = rawTexture->isColor;
+    convertedTexture->compatibilityHandle = (ktxTexture *) convertedTexture->handle;
 
     size_t   offset = 0;
     uint32_t width  = rawTexture->width;
@@ -163,23 +156,6 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
 
     debug("\t\tConverted Size: %lu", ktxTexture_GetDataSize(convertedTexture->compatibilityHandle));
     debug("\t\tRaw texture converted");
-
-    return convertedTexture;
-}
-
-PCompressedTexture convertRawBaseTexture(PRawTexture rawTexture) {
-    uint32_t mips = (uint32_t) floor(log2(umax(rawTexture->width, rawTexture->height))) + 1;
-
-    PCompressedTexture convertedTexture = initializeConvertedTexture(rawTexture->info, rawTexture->width, rawTexture->height, mips);
-
-    ktxTexture_SetImageFromMemory(convertedTexture->compatibilityHandle, 0, 0, 0, rawTexture->data, rawTexture->info->size);
-
-    stbi_image_free(rawTexture->data);
-    free(rawTexture);
-
-    convertedTexture->info->size = ktxTexture_GetDataSize(convertedTexture->compatibilityHandle);
-    debug("\t\tConverted Size: %lu", convertedTexture->info->size);
-    debug("\t\tRaw base texture converted");
 
     return convertedTexture;
 }
