@@ -39,7 +39,7 @@ void createPipelineLayout() {
     debug("Pipeline layout created");
 }
 
-void createPipeline() {
+void setPipelineDetails() {
     uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
     uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
 
@@ -55,7 +55,9 @@ void createPipeline() {
 
     framebufferSetUniformBufferOffset = materialUniformBufferRange;
     framebufferUniformBufferStride = primitiveUniformBufferRange + sceneUniformAlignment;
+}
 
+void createPipeline() {
     createSampler();
 
     createSamplerDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    VK_SHADER_STAGE_FRAGMENT_BIT);

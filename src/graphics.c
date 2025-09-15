@@ -28,6 +28,7 @@ void startGraphicsModule() {
     PThread instanceThread = dispatchThread(0, nullptr, createInstance);
     PThread physicalDeviceThread = dispatchThread(1, &instanceThread, selectPhysicalDevice);
     PThread queueDetailsThread = dispatchThread(1, &physicalDeviceThread, generateQueueDetails);
+    PThread pipelineDetailsThread = dispatchThread(1, &physicalDeviceThread, setPipelineDetails);
 
     PThread surfaceDependencies[] = {
         //windowThread,
@@ -41,14 +42,21 @@ void startGraphicsModule() {
     PThread deviceThread = dispatchThread(1, &queueDetailsThread, createDevice);
     PThread queueThread = dispatchThread(1, &deviceThread, getQueues);
 
-    PThread pipelineThread = dispatchThread(1, &deviceThread, createPipeline);
+    PThread pipelineDependencies[] = {
+        pipelineDetailsThread,
+        deviceThread
+    };
+
+    uint32_t pipelineDependencyCount = sizeof(pipelineDependencies) / sizeof(PThread);
+
+    PThread pipelineThread = dispatchThread(pipelineDependencyCount, pipelineDependencies, createPipeline);
     PThread moduleThread = dispatchThread(1, &pipelineThread, createModules);
 
     PThread memoryThread = dispatchThread(1, &deviceThread, allocateMemories);
     PThread bufferThread = dispatchThread(1, &memoryThread, createBuffers);
 
     PThread contentBuffersDependencies[] = {
-        pipelineThread,
+        pipelineDetailsThread,
         bufferThread
     };
 
