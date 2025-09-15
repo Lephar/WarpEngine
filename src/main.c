@@ -1,16 +1,22 @@
 #include "main.h"
 
+#include "config.h"
+#include "content.h"
+#include "network.h"
+#include "graphics.h"
+
 int main(int argc, char *argv[]) {
     configure(argc, argv);
 
-    //initNetwork();
-    initEngine();
+    //startContentModule();
+    //startNetworkModule();
+    startGraphicsModule();
+    //initEngine();
+    //loopEngine();
 
-    //loopNetwork();
-    loopEngine();
-
-    //quitNetwork();
-    quitEngine();
+    //stopGraphicsModule();
+    //stopNetworkModule();
+    //stopContentModule();
 
     return EXIT_SUCCESS;
 }
