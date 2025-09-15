@@ -8,8 +8,9 @@
 #include "numerics.h"
 #include "logger.h"
 
-Memory deviceMemory;
 Memory sharedMemory;
+Memory contentMemory;
+Memory frameMemory;
 
 void *mappedSharedMemory;
 
@@ -67,43 +68,48 @@ void *mapMemory(Memory *memory) {
 }
 
 void allocateMemories() {
-    Image *temporaryImage = createImage(800, 600, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM,
-        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+    Image *temporaryImage = createImage(800, 600, 1, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
     VkMemoryRequirements imageMemoryRequirements;
     vkGetImageMemoryRequirements(device, temporaryImage->image, &imageMemoryRequirements);
+
+    // TODO: Syntax highlighting fails for %b but it compiles, contribute to clangd maybe?
+    uint32_t typeFilter = imageMemoryRequirements.memoryTypeBits;
+    destroyImage(temporaryImage);
+
+    debug("Device local frame memory:");
+    debug("\tSuitable type indices:\t%08b", typeFilter);
+
+    allocateMemory(&frameMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 256L << 20L);
+
+    debug("\tSelected type index:\t%u", frameMemory.typeIndex);
+    debug("\t%ld bytes allocated", frameMemory.size);
 
     Buffer temporaryBuffer;
     createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 1L << 20L);
     VkMemoryRequirements bufferMemoryRequirements;
     vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
-    // TODO: Syntax highlighting fails for %b but it compiles, contribute to clangd maybe?
-    uint32_t typeFilter = imageMemoryRequirements.memoryTypeBits & bufferMemoryRequirements.memoryTypeBits;
-
+    typeFilter &= bufferMemoryRequirements.memoryTypeBits;
     destroyBuffer(&temporaryBuffer);
-    destroyImage(temporaryImage);
 
-    debug("Device local memory:");
+    debug("Device local content memory:");
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
-    allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 2L << 30L);
-    deviceMemory.reusableMemoryOffset = deviceMemory.size - (128L << 20L);
+    allocateMemory(&contentMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 2L << 30L);
 
-    debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
-    debug("\t%ld bytes allocated", deviceMemory.size);
+    debug("\tSelected type index:\t%u", contentMemory.typeIndex);
+    debug("\t%ld bytes allocated", contentMemory.size);
 
     createBuffer(&temporaryBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 1L << 20L);
     vkGetBufferMemoryRequirements(device, temporaryBuffer.buffer, &bufferMemoryRequirements);
 
     typeFilter = bufferMemoryRequirements.memoryTypeBits;
-
     destroyBuffer(&temporaryBuffer);
 
-    debug("Host visible memory:");
+    debug("Host visible shared memory:");
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
-    allocateMemory(&sharedMemory, typeFilter,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 256L << 20L);
+    allocateMemory(&sharedMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 256L << 20L);
 
     debug("\tSelected type index:\t%u", sharedMemory.typeIndex);
     debug("\t%ld bytes allocated",  sharedMemory.size);
@@ -128,8 +134,11 @@ void freeMemory(Memory *memory) {
 void freeMemories() {
     unmapMemory(&sharedMemory);
     freeMemory(&sharedMemory);
-    debug("Host visible memory freed");
+    debug("Host visible shared memory freed");
 
-    freeMemory(&deviceMemory);
-    debug("Device local memory freed");
+    freeMemory(&contentMemory);
+    debug("Device local content memory freed");
+
+    freeMemory(&contentMemory);
+    debug("Device local frame memory freed");
 }

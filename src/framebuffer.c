@@ -18,7 +18,7 @@ FramebufferSet framebufferSet;
 void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
     framebuffer->resolve = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
 
-    bindImageMemory(framebuffer->resolve, &deviceMemory);
+    bindImageMemory(framebuffer->resolve, &frameMemory);
     createImageView(framebuffer->resolve);
 
     transitionImageLayout(framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
@@ -82,13 +82,13 @@ void createFramebufferSet() {
     assert(framebufferSet.sampleCount & physicalDeviceProperties.limits.framebufferColorSampleCounts);
 
     framebufferSet.depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT;
-    framebufferSet.colorFormat        = VK_FORMAT_B8G8R8A8_SRGB;
+    framebufferSet.colorFormat        = VK_FORMAT_R8G8B8A8_SRGB;
 
     framebufferSet.depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_TILING_OPTIMAL);
     framebufferSet.color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT,                               VK_IMAGE_TILING_OPTIMAL);
 
-    bindImageMemory(framebufferSet.depthStencil, &deviceMemory);
-    bindImageMemory(framebufferSet.color,        &deviceMemory);
+    bindImageMemory(framebufferSet.depthStencil, &frameMemory);
+    bindImageMemory(framebufferSet.color,        &frameMemory);
 
     createImageView(framebufferSet.depthStencil);
     createImageView(framebufferSet.color);
@@ -241,5 +241,5 @@ void destroyFramebufferSet() {
 
     free(framebufferSet.framebuffers);
 
-    deviceMemory.offset = deviceMemory.reusableMemoryOffset;
+    frameMemory.offset = 0;
 }

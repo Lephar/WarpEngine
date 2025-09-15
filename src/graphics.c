@@ -75,8 +75,7 @@ void startGraphicsModule() {
 
     PThread swapchainDependencies[] = {
         surfaceThread,
-        queueThread,
-        contentThread
+        queueThread
     };
 
     uint32_t swapchainDependencyCount = sizeof(swapchainDependencies) / sizeof(PThread);
@@ -86,6 +85,7 @@ void startGraphicsModule() {
 
     waitThread(moduleThread);
     waitThread(framebufferSetThread);
+    waitThread(contentThread);
 }
 
 void initEngine() {
