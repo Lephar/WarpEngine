@@ -122,18 +122,6 @@ PCompressedTexture convertRawTexture(PRawTexture rawTexture) {
         assert(result == KTX_SUCCESS);
     }
 
-    // TODO: Make sure that this is not inferred from ktxTextureCreateInfo.vkFormat of ktxTexture2_Create
-    if(rawTexture->isColor) {
-        result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_SRGB);
-    } else {
-        result = ktxTexture2_SetTransferFunction(convertedTexture->handle, KHR_DF_TRANSFER_LINEAR);
-    }
-
-    if(result != KTX_SUCCESS) {
-        debug("\t\tSetting transfer function failed with message: %s", ktxErrorString(result));
-        assert(result == KTX_SUCCESS);
-    }
-
     convertedTexture->isColor = rawTexture->isColor;
     convertedTexture->compatibilityHandle = (ktxTexture *) convertedTexture->handle;
 
