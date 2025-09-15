@@ -6,13 +6,13 @@ typedef struct memory {
     VkMemoryPropertyFlags properties;
     uint32_t typeIndex;
     VkDeviceSize size;
-    VkDeviceSize reusableMemoryOffset;
     VkDeviceSize offset;
     VkDeviceMemory memory;
 } Memory, *PMemory;
 
-extern Memory deviceMemory;
 extern Memory sharedMemory;
+extern Memory contentMemory;
+extern Memory frameMemory;
 
 extern void *mappedSharedMemory;
 
