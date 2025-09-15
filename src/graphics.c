@@ -18,20 +18,16 @@
 #include "thread.h"
 
 void startGraphicsModule() {
-    initializeSystem();
-    createWindow();
+    PThread systemThread = dispatchThread(0, nullptr, initializeSystem);
+    PThread windowThread = dispatchThread(1, &systemThread, createWindow);
 
-    //PThread systemThread = dispatchThread(0, nullptr, initializeSystem);
-    //PThread windowThread = dispatchThread(1, &systemThread, createWindow);
-
-    //PThread instanceThread = dispatchThread(1, &systemThread, createInstance);
-    PThread instanceThread = dispatchThread(0, nullptr, createInstance);
+    PThread instanceThread = dispatchThread(1, &systemThread, createInstance);
     PThread physicalDeviceThread = dispatchThread(1, &instanceThread, selectPhysicalDevice);
     PThread queueDetailsThread = dispatchThread(1, &physicalDeviceThread, generateQueueDetails);
     PThread pipelineDetailsThread = dispatchThread(1, &physicalDeviceThread, setPipelineDetails);
 
     PThread surfaceDependencies[] = {
-        //windowThread,
+        windowThread,
         queueDetailsThread
     };
 
@@ -94,6 +90,7 @@ void initEngine() {
     createInstance();
     selectPhysicalDevice();
     generateQueueDetails();
+    setPipelineDetails();
     createSurface();
     createDevice();
     getQueues();
