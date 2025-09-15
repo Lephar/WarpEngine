@@ -1,21 +1,20 @@
 #include "thread.h"
 
+void waitThread(PThread thread) {
+    sem_wait(&thread->semaphore);
+    sem_post(&thread->semaphore); // TODO: Use pthread_cond_wait maybe?
+}
+
 void *startThread(void *arg) {
     Thread *thread = arg;
 
     for(uint32_t dependencyIndex = 0; dependencyIndex < thread->dependencyCount; dependencyIndex++) {
         PThread dependency = thread->dependencies[dependencyIndex];
-
-        pthread_mutex_lock(&dependency->mutex);
-        pthread_cond_wait(&dependency->cond, &dependency->mutex);
-        pthread_mutex_unlock(&dependency->mutex);
+        waitThread(dependency);
     }
 
     thread->routine();
-
-    pthread_mutex_lock(&thread->mutex);
-    pthread_cond_broadcast(&thread->cond);
-    pthread_mutex_unlock(&thread->mutex);
+    sem_post(&thread->semaphore);
 
     return nullptr;
 }
@@ -23,8 +22,7 @@ void *startThread(void *arg) {
 PThread makeThread(uint32_t dependencyCount, PThread *dependencies, void (*routine)()) {
     PThread thread = malloc(sizeof(Thread));
 
-    pthread_mutex_init(&thread->mutex, nullptr);
-    pthread_cond_init(&thread->cond, nullptr);
+    sem_init(&thread->semaphore, 0, 0);
 
     thread->dependencyCount = dependencyCount;
     thread->dependencies = malloc(thread->dependencyCount * sizeof(PThread));
@@ -41,10 +39,4 @@ PThread dispatchThread(uint32_t dependencyCount, PThread *dependencies, void (*r
     pthread_create(&thread->thread, nullptr, startThread, thread);
 
     return thread;
-}
-
-void waitThread(PThread thread) {
-    pthread_mutex_lock(&thread->mutex);
-    pthread_cond_wait(&thread->cond, &thread->mutex);
-    pthread_mutex_unlock(&thread->mutex);
 }

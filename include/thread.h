@@ -5,8 +5,7 @@
 typedef struct thread {
     pthread_t thread;
 
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
+    sem_t semaphore;
 
     uint32_t dependencyCount;
     struct thread **dependencies;
@@ -14,5 +13,5 @@ typedef struct thread {
     void (*routine)();
 } Thread, *PThread;
 
-PThread dispatchThread(uint32_t dependencyCount, PThread *dependencies, void (*routine)());
 void waitThread(PThread thread);
+PThread dispatchThread(uint32_t dependencyCount, PThread *dependencies, void (*routine)());
