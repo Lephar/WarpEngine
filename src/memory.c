@@ -87,6 +87,7 @@ void allocateMemories() {
     debug("\tSuitable type indices:\t%08b", typeFilter);
 
     allocateMemory(&deviceMemory, typeFilter, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 2L << 30L);
+    deviceMemory.reusableMemoryOffset = deviceMemory.size - (128L << 20L);
 
     debug("\tSelected type index:\t%u", deviceMemory.typeIndex);
     debug("\t%ld bytes allocated", deviceMemory.size);
