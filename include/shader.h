@@ -2,8 +2,6 @@
 
 #include "pch.h"
 
-typedef struct data Data;
-
 typedef struct shaderCode {
     shaderc_shader_kind stage;
     size_t size;
