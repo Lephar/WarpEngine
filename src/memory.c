@@ -139,6 +139,6 @@ void freeMemories() {
     freeMemory(&contentMemory);
     debug("Device local content memory freed");
 
-    freeMemory(&contentMemory);
+    freeMemory(&frameMemory);
     debug("Device local frame memory freed");
 }
