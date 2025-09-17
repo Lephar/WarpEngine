@@ -1,8 +1,5 @@
 #include "instance.h"
 
-#include "window.h"
-
-#include "file.h"
 #include "logger.h"
 
 VkInstance instance;
@@ -10,7 +7,7 @@ PFN_vkGetInstanceProcAddr instanceFunctionLoader;
 #if DEBUG
 VkDebugUtilsMessengerEXT messenger;
 
-VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData) {
     (void)severity;
     (void)type;
     (void)pUserData;
@@ -27,7 +24,7 @@ void *loadInstanceFunction(const char *name) {
     return instanceFunction;
 }
 
-void createInstance() {
+VkInstance createInstance(const char *applicationName, const char *engineName, uint32_t requiredExtensionCount, const char *const *requiredExtensions, PFN_vkGetInstanceProcAddr systemFunctionLoader) {
 #if DEBUG
     const char *validationLayer = "VK_LAYER_KHRONOS_validation";
 #endif
@@ -51,11 +48,21 @@ void createInstance() {
 
     const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
 
-    const uint32_t extensionCount = systemExtensionCount + baseExtensionCount;
+    const uint32_t extensionCount = requiredExtensionCount + baseExtensionCount;
     const char **extensions = malloc(extensionCount * sizeof(const char *));
 
     memcpy(extensions,                      baseExtensions,   baseExtensionCount   * sizeof(const char *));
-    memcpy(extensions + baseExtensionCount, systemExtensions, systemExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount, requiredExtensions, requiredExtensionCount * sizeof(const char *));
+
+    debug("Instance layers (count = %d):", layerCount);
+    for(uint32_t index = 0; index < layerCount; index++) {
+        debug("\t%s", layers[index]);
+    }
+
+    debug("Instance extensions (count = %d):", extensionCount);
+    for(uint32_t index = 0; index < extensionCount; index++) {
+        debug("\t%s", extensions[index]);
+    }
 
     void *instanceNext = nullptr;
 
@@ -131,9 +138,9 @@ void createInstance() {
     VkApplicationInfo applicationInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pNext = nullptr,
-        .pApplicationName = executableName,
+        .pApplicationName = applicationName,
         .applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-        .pEngineName = executableName,
+        .pEngineName = engineName,
         .engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
         .apiVersion = VK_API_VERSION_1_4
     };
@@ -149,22 +156,11 @@ void createInstance() {
         .ppEnabledExtensionNames = extensions
     };
 
-    debug("Instance layers (count = %d):", layerCount);
-    for(uint32_t index = 0; index < layerCount; index++) {
-        debug("\t%s", layers[index]);
-    }
-
-    debug("Instance extensions (count = %d):", extensionCount);
-    for(uint32_t index = 0; index < extensionCount; index++) {
-        debug("\t%s", extensions[index]);
-    }
-
     vkCreateInstance(&instanceInfo, nullptr, &instance);
     debug("Instance created");
     free(extensions);
 
-    PFN_vkGetInstanceProcAddr intermediateInstanceFunctionLoader = loadSystemFunction("vkGetInstanceProcAddr");
-    instanceFunctionLoader = (PFN_vkGetInstanceProcAddr) intermediateInstanceFunctionLoader(instance, "vkGetInstanceProcAddr");
+    instanceFunctionLoader = (PFN_vkGetInstanceProcAddr) systemFunctionLoader(instance, "vkGetInstanceProcAddr");
     debug("Instance function loader initialized");
 
 #if DEBUG
@@ -172,6 +168,8 @@ void createInstance() {
     createDebugUtilsMessenger(instance, &messengerInfo, nullptr, &messenger);
     debug("Messenger created");
 #endif
+
+    return instance;
 }
 
 void destroyInstance() {
