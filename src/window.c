@@ -4,8 +4,9 @@
 #include "logger.h"
 
 SDL_Window *window;
-int32_t width;
-int32_t height;
+
+int32_t windowWidth;
+int32_t windowHeight;
 
 uint32_t frameIndex;
 uint32_t frameIndexCheckpoint;
@@ -39,29 +40,28 @@ uint32_t timerCallback(void *userData, uint32_t id, uint32_t interval) {
 }
 #endif
 
-PFN_vkGetInstanceProcAddr initializeSystem() {
+void initializeSystem() {
     // NOTICE: RenderDoc doesn't support Wayland yet
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_Vulkan_LoadLibrary(nullptr);
 
     debug("System initialized with %s driver", SDL_GetCurrentVideoDriver());
+}
 
-    SDL_Vulkan_LoadLibrary(nullptr);
-    return (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
+void *getSystemFunctionLoader() {
+    return SDL_Vulkan_GetVkGetInstanceProcAddr();
 }
 
 const char *const *getRequiredExtensions(uint32_t requiredExtensionCount) {
     return SDL_Vulkan_GetInstanceExtensions(&requiredExtensionCount);
 }
 
-SDL_Window *createWindow(const char *windowTitle, int32_t windowWidth, int32_t windowHeight) {
-    window = SDL_CreateWindow(windowTitle, windowWidth, windowHeight, SDL_WINDOW_VULKAN);
+void createWindow(const char *title, int32_t width, int32_t height) {
+    window = SDL_CreateWindow(title, width, height, SDL_WINDOW_VULKAN);
+    SDL_GetWindowSizeInPixels(window, &windowWidth, &windowHeight);
 
-    SDL_GetWindowSizeInPixels(window, &width, &height);
-
-    debug("Window created: %dx%d", width, height);
-
-    return window;
+    debug("Window created: %dx%d", windowWidth, windowHeight);
 }
 
 void initializeMainLoop() {
@@ -93,7 +93,7 @@ void pollEvents() {
             return;
         } else if(event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED) {
             debug("Surface size changed, recreating swapchain");
-            SDL_GetWindowSizeInPixels(window, (int32_t *) &extent.width, (int32_t *) &extent.height);
+            SDL_GetWindowSizeInPixels(window, &windowWidth, &windowHeight);
             resizeEvent = true;
         }
     }
@@ -105,10 +105,10 @@ void pollEvents() {
     float mouseX;
     float mouseY;
     SDL_GetRelativeMouseState(&mouseX, &mouseY);
-    SDL_WarpMouseInWindow(window, (float) extent.width / 2.0f, (float) extent.height / 2.0f);
+    SDL_WarpMouseInWindow(window, (float) windowWidth / 2.0f, (float) windowHeight / 2.0f);
 
-    mouseDelta[0] = -2.0f * mouseX / (float) extent.width;
-    mouseDelta[1] =  2.0f * mouseY / (float) extent.height;
+    mouseDelta[0] = -2.0f * mouseX / (float) windowWidth;
+    mouseDelta[1] =  2.0f * mouseY / (float) windowHeight;
 
     int keyCount = 0;
     const bool *states = SDL_GetKeyboardState(&keyCount);

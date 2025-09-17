@@ -2,6 +2,11 @@
 
 #include "pch.h"
 
+extern SDL_Window *window;
+
+extern int32_t windowWidth;
+extern int32_t windowHeight;
+
 extern uint32_t frameIndex;
 extern float timeDelta; // In microseconds
 
@@ -12,10 +17,12 @@ extern vec3 freeMovementInput;
 extern bool resizeEvent;
 extern bool quitEvent;
 
+void initializeSystem();
 
-PFN_vkGetInstanceProcAddr initializeSystem();
-SDL_Window *createWindow(const char *windowTitle, int32_t windowWidth, int32_t windowHeight);
+void *getSystemFunctionLoader();
 const char *const *getRequiredExtensions(uint32_t requiredExtensionCount);
+
+void createWindow(const char *title, int32_t width, int32_t height);
 
 void initializeMainLoop();
 void pollEvents();
