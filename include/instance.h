@@ -2,7 +2,8 @@
 
 #include "pch.h"
 
-void *loadInstanceFunction(const char *name);
+extern VkInstance instance;
 
-VkInstance createInstance(const char *applicationName, const char *engineName, uint32_t requiredExtensionCount, const char *const *requiredExtensions, PFN_vkGetInstanceProcAddr systemFunctionLoader);
+void *loadInstanceFunction(const char *name);
+void createInstance(const char *applicationName, const char *engineName, uint32_t requiredExtensionCount, const char *const *requiredExtensions, PFN_vkGetInstanceProcAddr systemFunctionLoader);
 void destroyInstance();

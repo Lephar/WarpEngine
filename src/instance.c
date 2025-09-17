@@ -24,7 +24,7 @@ void *loadInstanceFunction(const char *name) {
     return instanceFunction;
 }
 
-VkInstance createInstance(const char *applicationName, const char *engineName, uint32_t requiredExtensionCount, const char *const *requiredExtensions, PFN_vkGetInstanceProcAddr systemFunctionLoader) {
+void createInstance(const char *applicationName, const char *engineName, uint32_t requiredExtensionCount, const char *const *requiredExtensions, PFN_vkGetInstanceProcAddr systemFunctionLoader) {
 #if DEBUG
     const char *validationLayer = "VK_LAYER_KHRONOS_validation";
 #endif
@@ -40,15 +40,16 @@ VkInstance createInstance(const char *applicationName, const char *engineName, u
     const char *baseExtensions[] = {
 #if DEBUG
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-        VK_EXT_LAYER_SETTINGS_EXTENSION_NAME
+        VK_EXT_LAYER_SETTINGS_EXTENSION_NAME,
 #endif
     };
 
     const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
 
     const char *surfaceExtensions[] = {
+        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
         VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME,
-        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME
+        VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME,
     };
 
     const uint32_t surfaceExtensionCount = sizeof(surfaceExtensions) / sizeof(const char *);
@@ -73,21 +74,6 @@ VkInstance createInstance(const char *applicationName, const char *engineName, u
     void *instanceNext = nullptr;
 
 #if DEBUG
-    VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {
-        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-        .pNext = nullptr,
-        .flags = 0,
-        .messageSeverity =  VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   |
-                            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                            VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT    |
-                            VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
-        .messageType =  VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT     |
-                        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT  |
-                        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
-        .pfnUserCallback = messageCallback,
-        .pUserData = nullptr
-    };
-
     //VkBool32 valueTrue  = VK_TRUE;
     VkBool32 valueFalse = VK_FALSE;
 
@@ -98,29 +84,25 @@ VkInstance createInstance(const char *applicationName, const char *engineName, u
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueFalse
-        },
-        {
+        }, {
             .pLayerName = validationLayer,
             .pSettingName = "gpuav_enable",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueFalse
-        },
-        {
+        }, {
             .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueFalse
-        },
-        {
+        }, {
             .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices_amd",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &valueFalse
-        },
-        {
+        }, {
             .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices_nvidia",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
@@ -133,12 +115,27 @@ VkInstance createInstance(const char *applicationName, const char *engineName, u
 
     VkLayerSettingsCreateInfoEXT settingsInfo = {
         .sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT,
-        .pNext = &messengerInfo,
+        .pNext = nullptr,
         .settingCount = settingsCount,
         .pSettings = settings
     };
 
-    instanceNext = &settingsInfo;
+    VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+        .pNext = &settingsInfo,
+        .flags = 0,
+        .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   |
+                           VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                           VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT    |
+                           VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
+        .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT     |
+                       VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT  |
+                       VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+        .pfnUserCallback = messageCallback,
+        .pUserData = nullptr
+    };
+
+    instanceNext = &messengerInfo;
 #endif
 
     VkApplicationInfo applicationInfo = {
@@ -174,8 +171,6 @@ VkInstance createInstance(const char *applicationName, const char *engineName, u
     createDebugUtilsMessenger(instance, &messengerInfo, nullptr, &messenger);
     debug("Messenger created");
 #endif
-
-    return instance;
 }
 
 void destroyInstance() {
