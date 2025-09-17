@@ -40,19 +40,25 @@ VkInstance createInstance(const char *applicationName, const char *engineName, u
     const char *baseExtensions[] = {
 #if DEBUG
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
-        VK_EXT_LAYER_SETTINGS_EXTENSION_NAME,
+        VK_EXT_LAYER_SETTINGS_EXTENSION_NAME
 #endif
-        VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME,
-        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME
     };
 
     const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
 
-    const uint32_t extensionCount = requiredExtensionCount + baseExtensionCount;
+    const char *surfaceExtensions[] = {
+        VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME,
+        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME
+    };
+
+    const uint32_t surfaceExtensionCount = sizeof(surfaceExtensions) / sizeof(const char *);
+
+    const uint32_t extensionCount = baseExtensionCount +  surfaceExtensionCount + requiredExtensionCount;
     const char **extensions = malloc(extensionCount * sizeof(const char *));
 
-    memcpy(extensions,                      baseExtensions,   baseExtensionCount   * sizeof(const char *));
-    memcpy(extensions + baseExtensionCount, requiredExtensions, requiredExtensionCount * sizeof(const char *));
+    memcpy(extensions, baseExtensions, baseExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount, surfaceExtensions, surfaceExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount + surfaceExtensionCount, requiredExtensions, requiredExtensionCount * sizeof(const char *));
 
     debug("Instance layers (count = %d):", layerCount);
     for(uint32_t index = 0; index < layerCount; index++) {
