@@ -1,6 +1,7 @@
 #include "physicalDevice.h"
 
 #include "instance.h"
+#include "surface.h"
 
 #include "logger.h"
 
@@ -15,27 +16,40 @@ VkQueueFamilyProperties *queueFamilyProperties;
 VkPhysicalDeviceMemoryProperties memoryProperties;
 
 void selectPhysicalDevice() {
-    uint32_t deviceCount;
-    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-    VkPhysicalDevice *devices = malloc(deviceCount * sizeof(VkPhysicalDevice));
-    vkEnumeratePhysicalDevices(instance, &deviceCount, devices);
+    uint32_t physicalDeviceCount = 0;
+    vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
+    VkPhysicalDevice *physicalDevices = malloc(physicalDeviceCount * sizeof(VkPhysicalDevice));
+    vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices);
 
-    uint32_t selectedIndex = 0;
+    uint32_t discretePhysicalDeviceIndex   = UINT32_MAX;
+    uint32_t integratedPhysicalDeviceIndex = UINT32_MAX;
 
-    for(uint32_t deviceIndex = 1; deviceIndex < deviceCount; deviceIndex++) {
+    for(uint32_t physicalDeviceIndex = 0; physicalDeviceIndex < physicalDeviceCount; physicalDeviceIndex++) {
         VkPhysicalDeviceProperties properties;
-        vkGetPhysicalDeviceProperties(devices[deviceIndex], &properties);
+        vkGetPhysicalDeviceProperties(physicalDevices[physicalDeviceIndex], &properties);
 
-        // TODO: Implement better device selection
-        if(properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-            selectedIndex = deviceIndex;
+        if(getSurfaceSupport(physicalDevices[physicalDeviceIndex])) {
+            if(properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+                discretePhysicalDeviceIndex = physicalDeviceIndex;
+                break;
+            } else if(properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
+                integratedPhysicalDeviceIndex = physicalDeviceIndex;
+            }
         }
     }
 
-    physicalDevice = devices[selectedIndex];
+    assert(discretePhysicalDeviceIndex != UINT32_MAX || integratedPhysicalDeviceIndex != UINT32_MAX);
 
-    free(devices);
+    if(discretePhysicalDeviceIndex != UINT32_MAX) {
+        physicalDevice = physicalDevices[discretePhysicalDeviceIndex];
+    } else {
+        physicalDevice = physicalDevices[integratedPhysicalDeviceIndex];
+    }
 
+    free(physicalDevices);
+}
+
+void generatePhysicalDeviceDetails() {
     VkPhysicalDeviceProperties2 physicalDeviceProperties2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
         .pNext = nullptr,
