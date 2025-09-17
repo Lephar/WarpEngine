@@ -1,16 +1,11 @@
 #include "window.h"
 
-#include "file.h"
 #include "numerics.h"
 #include "logger.h"
 
-PFN_vkGetInstanceProcAddr systemFunctionLoader;
-
-uint32_t systemExtensionCount;
-char const *const *systemExtensions;
-
 SDL_Window *window;
-VkExtent2D extent;
+int32_t width;
+int32_t height;
 
 uint32_t frameIndex;
 uint32_t frameIndexCheckpoint;
@@ -44,33 +39,29 @@ uint32_t timerCallback(void *userData, uint32_t id, uint32_t interval) {
 }
 #endif
 
-void initializeSystem() {
+PFN_vkGetInstanceProcAddr initializeSystem() {
     // NOTICE: RenderDoc doesn't support Wayland yet
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
     SDL_Init(SDL_INIT_VIDEO);
 
-    SDL_Vulkan_LoadLibrary(nullptr);
-
-    systemFunctionLoader = (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
-    systemExtensions = SDL_Vulkan_GetInstanceExtensions(&systemExtensionCount);
-
     debug("System initialized with %s driver", SDL_GetCurrentVideoDriver());
+
+    SDL_Vulkan_LoadLibrary(nullptr);
+    return (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
 }
 
-void *loadSystemFunction(const char *name) {
-    void  *systemFunction = systemFunctionLoader(nullptr, name);
-    assert(systemFunction);
-    return systemFunction;
+const char *const *getRequiredExtensions(uint32_t requiredExtensionCount) {
+    return SDL_Vulkan_GetInstanceExtensions(&requiredExtensionCount);
 }
 
-void createWindow() {
-    window = SDL_CreateWindow(executableName, (int32_t) extent.width, (int32_t) extent.height, SDL_WINDOW_VULKAN);
+SDL_Window *createWindow(const char *windowTitle, int32_t windowWidth, int32_t windowHeight) {
+    window = SDL_CreateWindow(windowTitle, windowWidth, windowHeight, SDL_WINDOW_VULKAN);
 
-    SDL_GetWindowSizeInPixels(window, (int32_t *) &extent.width, (int32_t *) &extent.height);
+    SDL_GetWindowSizeInPixels(window, &width, &height);
 
-    debug("Window created:");
-    debug("\tWidth:  %u", extent.width );
-    debug("\tHeight: %u", extent.height);
+    debug("Window created: %dx%d", width, height);
+
+    return window;
 }
 
 void initializeMainLoop() {
