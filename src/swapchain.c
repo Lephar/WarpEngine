@@ -28,7 +28,7 @@ void createSwapchain() {
         .minImageCount = swapchain.imageCount,
         .imageFormat = surfaceFormat.format,
         .imageColorSpace = surfaceFormat.colorSpace,
-        .imageExtent = extent,
+        .imageExtent = surfaceExtent,
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
@@ -61,7 +61,7 @@ void createSwapchain() {
     vkCreateSemaphore(device, &semaphoreInfo, nullptr, &swapchain.acquireSemaphore);
 
     for(uint32_t imageIndex = 0; imageIndex < swapchain.imageCount; imageIndex++) {
-        wrapImage(&swapchain.images[imageIndex], handles[imageIndex], extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+        wrapImage(&swapchain.images[imageIndex], handles[imageIndex], surfaceExtent.width, surfaceExtent.height, 1, VK_SAMPLE_COUNT_1_BIT, surfaceFormat.format, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
         transitionImageLayout(&swapchain.images[imageIndex], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
         vkCreateSemaphore(device, &semaphoreInfo, nullptr, &swapchain.acquireSemaphores[imageIndex]);

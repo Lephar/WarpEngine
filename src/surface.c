@@ -3,7 +3,6 @@
 #include "window.h"
 #include "instance.h"
 #include "physicalDevice.h"
-#include "queue.h"
 
 #include "logger.h"
 
@@ -13,6 +12,32 @@ VkPresentModeKHR presentMode;
 VkSurfaceFormatKHR surfaceFormat;
 
 VkSurfaceCapabilitiesKHR surfaceCapabilities;
+
+VkExtent2D surfaceExtent;
+
+void createSurface() {
+    VkBool32 result = SDL_Vulkan_CreateSurface(window, instance, nullptr, &surface);
+    assert(result);
+
+    debug("Surface created");
+}
+
+VkBool32 getSurfaceSupport(VkPhysicalDevice physicalDevice) {
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queueFamilyCount, nullptr);
+
+    for(uint32_t queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCount; queueFamilyIndex++) {
+        VkBool32 support = VK_FALSE;
+        VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, &support);
+        assert(result);
+
+        if(support) {
+            return VK_TRUE;
+        }
+    }
+
+    return VK_FALSE;
+}
 
 void selectPresentMode() {
     uint32_t presentModeCount;
@@ -115,7 +140,9 @@ void selectSurfaceFormat() {
     free(surfaceFormats);
 }
 
-void generateSurfaceCapabilities() {
+void setSurfaceCapabilities() {
+    VkPhysicalDevice physicalDevice = getPhysicalDevice();
+
     VkSurfacePresentModeEXT presentModeInfo = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_EXT,
         .pNext = nullptr,
@@ -136,6 +163,7 @@ void generateSurfaceCapabilities() {
         .pPresentModes = nullptr
     };
 
+    // TODO: Revisit whole thing
     VkSurfaceCapabilities2KHR surfaceCapabilitiesInfo = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
         .pNext = &presentModeCompatibilityInfo,
@@ -147,30 +175,22 @@ void generateSurfaceCapabilities() {
     surfaceCapabilities = surfaceCapabilitiesInfo.surfaceCapabilities;
 }
 
-void createSurface() {
-    bool result = SDL_Vulkan_CreateSurface(window, instance, nullptr, &surface);
-    assert(result);
-
-    debug("Surface created");
-
-    VkBool32 surfaceSupport;
-    vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, graphicsQueue.queueFamilyIndex, surface, &surfaceSupport);
-    assert(surfaceSupport);
-
-    selectPresentMode();
-
-    selectSurfaceFormat();
-
-    generateSurfaceCapabilities();
-
-    if( surfaceCapabilities.currentExtent.width != 0          && surfaceCapabilities.currentExtent.height != 0 &&
-        surfaceCapabilities.currentExtent.width != 1          && surfaceCapabilities.currentExtent.height != 1 &&
-        surfaceCapabilities.currentExtent.width != UINT32_MAX && surfaceCapabilities.currentExtent.height != UINT32_MAX) {
-        extent = surfaceCapabilities.currentExtent;
+void setSurfaceExtent() {
+    if(surfaceCapabilities.currentExtent.width == 0          || surfaceCapabilities.currentExtent.height == 0 ||
+       surfaceCapabilities.currentExtent.width == 1          || surfaceCapabilities.currentExtent.height == 1 ||
+       surfaceCapabilities.currentExtent.width == UINT32_MAX || surfaceCapabilities.currentExtent.height == UINT32_MAX) {
+        surfaceExtent.width  = windowWidth;
+        surfaceExtent.height = windowHeight;
+    } else {
+        surfaceExtent = surfaceCapabilities.currentExtent;
     }
+}
 
-    debug("Surface details set:");
-    debug("\tSurface extent: %u %u", extent.width, extent.height);
+void generateSurfaceDetails() {
+    selectPresentMode();
+    selectSurfaceFormat();
+    setSurfaceCapabilities();
+    setSurfaceExtent();
 }
 
 void destroySurface() {
