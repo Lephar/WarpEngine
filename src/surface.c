@@ -22,14 +22,14 @@ void createSurface() {
     debug("Surface created");
 }
 
-VkBool32 getSurfaceSupport(VkPhysicalDevice physicalDevice) {
-    uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queueFamilyCount, nullptr);
+VkBool32 getSurfaceSupport(VkPhysicalDevice physicalDeviceCandidate) {
+    uint32_t queueFamilyCountCandidate = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDeviceCandidate, &queueFamilyCountCandidate, nullptr);
 
-    for(uint32_t queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCount; queueFamilyIndex++) {
+    for(uint32_t queueFamilyIndex = 0; queueFamilyIndex < queueFamilyCountCandidate; queueFamilyIndex++) {
         VkBool32 support = VK_FALSE;
-        VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, &support);
-        assert(result);
+        VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDeviceCandidate, queueFamilyIndex, surface, &support);
+        assert(result == VK_SUCCESS);
 
         if(support) {
             return VK_TRUE;
@@ -141,8 +141,6 @@ void selectSurfaceFormat() {
 }
 
 void setSurfaceCapabilities() {
-    VkPhysicalDevice physicalDevice = getPhysicalDevice();
-
     VkSurfacePresentModeEXT presentModeInfo = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_EXT,
         .pNext = nullptr,
@@ -194,6 +192,7 @@ void generateSurfaceDetails() {
 }
 
 void destroySurface() {
+    // NOTICE: I contributed this function to SDL :)
     SDL_Vulkan_DestroySurface(instance, surface, nullptr);
     debug("Surface destroyed");
 }

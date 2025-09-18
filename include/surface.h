@@ -9,9 +9,9 @@ extern VkSurfaceFormatKHR surfaceFormat;
 
 extern VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
-VkExtent2D surfaceExtent;
+extern VkExtent2D surfaceExtent;
 
 void createSurface();
-VkBool32 getSurfaceSupport(VkPhysicalDevice physicalDevice);
+VkBool32 getSurfaceSupport(VkPhysicalDevice physicalDeviceCandidate);
 void generateSurfaceDetails();
 void destroySurface();
