@@ -1,6 +1,6 @@
 #include "framebuffer.h"
 
-#include "window.h"
+#include "surface.h"
 #include "physicalDevice.h"
 #include "device.h"
 #include "queue.h"
@@ -16,7 +16,7 @@ FramebufferSet oldFramebufferSet;
 FramebufferSet framebufferSet;
 
 void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
-    framebuffer->resolve = createImage(extent.width, extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+    framebuffer->resolve = createImage(surfaceExtent.width, surfaceExtent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
 
     bindImageMemory(framebuffer->resolve, &frameMemory);
     createImageView(framebuffer->resolve);
@@ -84,8 +84,8 @@ void createFramebufferSet() {
     framebufferSet.depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT;
     framebufferSet.colorFormat        = VK_FORMAT_R8G8B8A8_SRGB;
 
-    framebufferSet.depthStencil = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_TILING_OPTIMAL);
-    framebufferSet.color        = createImage(extent.width, extent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT,                               VK_IMAGE_TILING_OPTIMAL);
+    framebufferSet.depthStencil = createImage(surfaceExtent.width, surfaceExtent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_TILING_OPTIMAL);
+    framebufferSet.color        = createImage(surfaceExtent.width, surfaceExtent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT,                               VK_IMAGE_TILING_OPTIMAL);
 
     bindImageMemory(framebufferSet.depthStencil, &frameMemory);
     bindImageMemory(framebufferSet.color,        &frameMemory);
@@ -172,7 +172,7 @@ void beginFramebuffer(Framebuffer *framebuffer) {
                 .x = 0,
                 .y = 0,
             },
-            .extent = extent
+            .extent = surfaceExtent
         },
         .layerCount = 1,
         .viewMask = 0,
@@ -189,9 +189,9 @@ void beginFramebuffer(Framebuffer *framebuffer) {
 void bindFramebuffer(Framebuffer *framebuffer) {
     VkViewport viewport = {
         .x = 0.0f,
-        .y = (float) extent.height,
-        .width = (float) extent.width,
-        .height = - (float) extent.height,
+        .y = (float) surfaceExtent.height,
+        .width = (float) surfaceExtent.width,
+        .height = - (float) surfaceExtent.height,
         .minDepth = 0.0f,
         .maxDepth = 1.0f
     };
@@ -201,7 +201,7 @@ void bindFramebuffer(Framebuffer *framebuffer) {
             .x = 0,
             .y = 0
         },
-        .extent = extent
+        .extent = surfaceExtent
     };
 
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);

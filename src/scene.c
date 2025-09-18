@@ -1,6 +1,7 @@
 #include "scene.h"
 
 #include "window.h"
+#include "surface.h"
 #include "pipeline.h"
 
 vec3 worldUp;
@@ -20,7 +21,7 @@ void updateView() {
 }
 
 void updateProjection() {
-    float aspectRatio = ((float) extent.width) / ((float) extent.height);
+    float aspectRatio = ((float) surfaceExtent.width) / ((float) surfaceExtent.height);
     glmc_perspective_rh_zo(sceneUniform.cameraProperties[0], aspectRatio, sceneUniform.cameraProperties[1], sceneUniform.cameraProperties[2], sceneUniform.projection);
 }
 

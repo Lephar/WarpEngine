@@ -1,6 +1,7 @@
 #include "draw.h"
 
 #include "window.h"
+#include "surface.h"
 #include "device.h"
 #include "queue.h"
 #include "image.h"
@@ -133,8 +134,8 @@ void present() {
                 .z = 0
             },
             {
-                .x = (int32_t) extent.width,
-                .y = (int32_t) extent.height,
+                .x = (int32_t) surfaceExtent.width,
+                .y = (int32_t) surfaceExtent.height,
                 .z = 1
             }
         },

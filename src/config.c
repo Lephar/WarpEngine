@@ -58,10 +58,10 @@ void configure(int argc, char *argv[]) {
     assert(length != 0 && length != EOF);
     assert(strncasecmp(discard, "Window:", PATH_MAX) == 0);
 
-    length = fscanf(file, "%u%u", &extent.width, &extent.height);
+    length = fscanf(file, "%u%u", &windowWidth, &windowHeight);
     assert(length != 0 && length != EOF);
-    debug("Width:   %u", extent.width );
-    debug("Height:  %u", extent.height);
+    debug("Width:   %u", windowWidth );
+    debug("Height:  %u", windowHeight);
 
     fclose(file);
 }
