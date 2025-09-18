@@ -13,4 +13,4 @@ extern VkQueueFamilyProperties *queueFamilyProperties;
 extern VkPhysicalDeviceMemoryProperties memoryProperties;
 
 void selectPhysicalDevice();
-void generatePhysicalDeviceDetails();
+void setPhysicalDeviceDetails();

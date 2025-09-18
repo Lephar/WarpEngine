@@ -46,10 +46,12 @@ void selectPhysicalDevice() {
         physicalDevice = physicalDevices[integratedPhysicalDeviceIndex];
     }
 
+    debug("Physical device selected: %s", physicalDeviceProperties.deviceName);
+
     free(physicalDevices);
 }
 
-void generatePhysicalDeviceDetails() {
+void setPhysicalDeviceDetails() {
     VkPhysicalDeviceProperties2 physicalDeviceProperties2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
         .pNext = nullptr,
@@ -98,7 +100,7 @@ void generatePhysicalDeviceDetails() {
         queueFamilyProperties[queueFamilyIndex] = queueFamilyProperties2[queueFamilyIndex].queueFamilyProperties;
     }
 
-    debug("Physical device selected: %s", physicalDeviceProperties.deviceName);
+    debug("Physical device details set");
 
     free(queueFamilyProperties2);
 }
