@@ -1,5 +1,6 @@
 #include "window.h"
 
+#include "file.h"
 #include "numerics.h"
 #include "logger.h"
 
@@ -53,12 +54,12 @@ void *getSystemFunctionLoader() {
     return SDL_Vulkan_GetVkGetInstanceProcAddr();
 }
 
-const char *const *getRequiredExtensions(uint32_t requiredExtensionCount) {
-    return SDL_Vulkan_GetInstanceExtensions(&requiredExtensionCount);
+const char *const *getSystemExtensions(uint32_t *requiredExtensionCount) {
+    return SDL_Vulkan_GetInstanceExtensions(requiredExtensionCount);
 }
 
-void createWindow(const char *title, int32_t width, int32_t height) {
-    window = SDL_CreateWindow(title, width, height, SDL_WINDOW_VULKAN);
+void createWindow() {
+    window = SDL_CreateWindow(executableName, windowWidth, windowHeight, SDL_WINDOW_VULKAN);
     SDL_GetWindowSizeInPixels(window, &windowWidth, &windowHeight);
 
     debug("Window created: %dx%d", windowWidth, windowHeight);

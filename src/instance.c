@@ -1,6 +1,8 @@
 #include "instance.h"
 
+#include "file.h"
 #include "logger.h"
+#include "window.h"
 
 VkInstance instance;
 PFN_vkGetInstanceProcAddr instanceFunctionLoader;
@@ -24,7 +26,7 @@ void *loadInstanceFunction(const char *name) {
     return instanceFunction;
 }
 
-void createInstance(const char *applicationName, const char *engineName, uint32_t requiredExtensionCount, const char *const *requiredExtensions, PFN_vkGetInstanceProcAddr systemFunctionLoader) {
+void createInstance() {
 #if DEBUG
     const char *validationLayer = "VK_LAYER_KHRONOS_validation";
 #endif
@@ -46,6 +48,9 @@ void createInstance(const char *applicationName, const char *engineName, uint32_
 
     const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
 
+    uint32_t systemExtensionCount = 0;
+    const char *const *systemExtensions = getSystemExtensions(&systemExtensionCount);
+
     const char *surfaceExtensions[] = {
         VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
         VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME,
@@ -54,12 +59,12 @@ void createInstance(const char *applicationName, const char *engineName, uint32_
 
     const uint32_t surfaceExtensionCount = sizeof(surfaceExtensions) / sizeof(const char *);
 
-    const uint32_t extensionCount = baseExtensionCount +  surfaceExtensionCount + requiredExtensionCount;
+    const uint32_t extensionCount = baseExtensionCount + systemExtensionCount + surfaceExtensionCount;
     const char **extensions = malloc(extensionCount * sizeof(const char *));
 
     memcpy(extensions, baseExtensions, baseExtensionCount * sizeof(const char *));
-    memcpy(extensions + baseExtensionCount, surfaceExtensions, surfaceExtensionCount * sizeof(const char *));
-    memcpy(extensions + baseExtensionCount + surfaceExtensionCount, requiredExtensions, requiredExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount, systemExtensions, systemExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount + systemExtensionCount, surfaceExtensions, surfaceExtensionCount * sizeof(const char *));
 
     debug("Instance layers (count = %d):", layerCount);
     for(uint32_t index = 0; index < layerCount; index++) {
@@ -141,9 +146,9 @@ void createInstance(const char *applicationName, const char *engineName, uint32_
     VkApplicationInfo applicationInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pNext = nullptr,
-        .pApplicationName = applicationName,
+        .pApplicationName = executableName,
         .applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-        .pEngineName = engineName,
+        .pEngineName = executableName,
         .engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
         .apiVersion = VK_API_VERSION_1_4
     };
@@ -163,6 +168,7 @@ void createInstance(const char *applicationName, const char *engineName, uint32_
     debug("Instance created");
     free(extensions);
 
+    PFN_vkGetInstanceProcAddr systemFunctionLoader = getSystemFunctionLoader();
     instanceFunctionLoader = (PFN_vkGetInstanceProcAddr) systemFunctionLoader(instance, "vkGetInstanceProcAddr");
     debug("Instance function loader initialized");
 

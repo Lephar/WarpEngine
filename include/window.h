@@ -20,9 +20,9 @@ extern bool quitEvent;
 void initializeSystem();
 
 void *getSystemFunctionLoader();
-const char *const *getRequiredExtensions(uint32_t requiredExtensionCount);
+const char *const *getSystemExtensions(uint32_t *requiredExtensionCount);
 
-void createWindow(const char *title, int32_t width, int32_t height);
+void createWindow();
 
 void initializeMainLoop();
 void pollEvents();
