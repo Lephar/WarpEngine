@@ -19,10 +19,12 @@ void initEngine() {
     initializeSystem();
     createWindow();
     createInstance();
+    createSurface();
     selectPhysicalDevice();
+    setPhysicalDeviceDetails();
+    generateSurfaceDetails();
     generateQueueDetails();
     setPipelineDetails();
-    createSurface();
     createDevice();
     getQueues();
     createPipeline();
