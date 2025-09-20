@@ -79,8 +79,9 @@ void selectPresentMode() {
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes);
 
     VkPresentModeKHR preferredPresentModes[] = {
+        VK_PRESENT_MODE_FIFO_LATEST_READY_EXT,
         VK_PRESENT_MODE_MAILBOX_KHR,
-        VK_PRESENT_MODE_IMMEDIATE_KHR
+        VK_PRESENT_MODE_IMMEDIATE_KHR,
     };
 
     uint32_t preferredPresentModeCount = sizeof(preferredPresentModes) / sizeof(VkPresentModeKHR);
