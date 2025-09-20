@@ -1,6 +1,7 @@
 #include "device.h"
 
 #include "instance.h"
+#include "surface.h"
 #include "physicalDevice.h"
 #include "queue.h"
 
@@ -16,19 +17,26 @@ void *loadDeviceFunction(const char *name) {
 }
 
 void createDevice() {
-    const char *extensionNames[] = {
+    const char *baseExtensions[] = {
         VK_KHR_MAINTENANCE_7_EXTENSION_NAME,
         VK_KHR_MAINTENANCE_8_EXTENSION_NAME,
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-        VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME,
-        VK_EXT_SHADER_OBJECT_EXTENSION_NAME
+        VK_EXT_SHADER_OBJECT_EXTENSION_NAME,
     };
 
-    uint32_t extensionCount = sizeof(extensionNames) / sizeof(const char *);
+    uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
+
+    uint32_t surfaceExtensionCount = 0;
+    const char **surfaceExtensions = getSurfaceDeviceExtensions(&surfaceExtensionCount);
+
+    uint32_t extensionCount = baseExtensionCount + surfaceExtensionCount;
+    const char **extensions = malloc(extensionCount * sizeof(const char *));
+
+    memcpy(extensions, baseExtensions, baseExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount, surfaceExtensions, surfaceExtensionCount * sizeof(const char *));
 
     debug("Device extensions (count = %d):", extensionCount);
     for(uint32_t index = 0; index < extensionCount; index++) {
-        debug("\t%s", extensionNames[index]);
+        debug("\t%s", extensions[index]);
     }
 
     float *queuePriorities = malloc(queueCount * sizeof(float));
@@ -56,80 +64,78 @@ void createDevice() {
         }
     }
 
-    VkPhysicalDeviceFeatures deviceFeatures = {
-        .fillModeNonSolid = VK_TRUE,
-        .wideLines = VK_TRUE,
-        .largePoints = VK_TRUE,
-        .samplerAnisotropy = VK_TRUE
-    };
-
-    VkPhysicalDeviceVulkan11Features version11Features = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
-        .pNext = nullptr
-    };
-
-    VkPhysicalDeviceVulkan12Features version12Features = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-        .pNext = &version11Features
-    };
-
-    VkPhysicalDeviceVulkan13Features version13Features = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
-        .pNext = &version12Features,
-        .dynamicRendering = VK_TRUE
-    };
-
-    VkPhysicalDeviceVulkan14Features version14Features = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
-        .pNext = &version13Features,
-        .hostImageCopy = VK_TRUE
-    };
-
-    VkPhysicalDeviceMaintenance7FeaturesKHR maintenance7Features = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR,
-        .pNext = &version14Features,
-        .maintenance7 = VK_TRUE
+    VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
+        .pNext = getSurfaceDeviceFeatures(),
+        .shaderObject = VK_TRUE,
     };
 
     VkPhysicalDeviceMaintenance8FeaturesKHR maintenance8Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR,
-        .pNext = &maintenance7Features,
-        .maintenance8 = VK_TRUE
+        .pNext = &shaderObjectFeatures,
+        .maintenance8 = VK_TRUE,
     };
 
-    VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT swapchainMaintenance1Features = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT,
+    VkPhysicalDeviceMaintenance7FeaturesKHR maintenance7Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR,
         .pNext = &maintenance8Features,
-        .swapchainMaintenance1 = VK_TRUE
+        .maintenance7 = VK_TRUE,
     };
 
-    VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
-        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
-        .pNext = &swapchainMaintenance1Features,
-        .shaderObject = VK_TRUE
+    VkPhysicalDeviceVulkan14Features version14Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
+        .pNext = &maintenance7Features,
+        .hostImageCopy = VK_TRUE,
+    };
+
+    VkPhysicalDeviceVulkan13Features version13Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
+        .pNext = &version14Features,
+        .dynamicRendering = VK_TRUE,
+    };
+
+    VkPhysicalDeviceVulkan12Features version12Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+        .pNext = &version13Features,
+    };
+
+    VkPhysicalDeviceVulkan11Features version11Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
+        .pNext = &version12Features,
+    };
+
+    VkPhysicalDeviceFeatures2 physicalDeviceFeatures2 = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
+        .pNext = &version11Features,
+        .features = {
+            .fillModeNonSolid = VK_TRUE,
+            .wideLines = VK_TRUE,
+            .largePoints = VK_TRUE,
+            .samplerAnisotropy = VK_TRUE,
+        },
     };
 
     VkDeviceCreateInfo deviceInfo = {
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-        .pNext = &shaderObjectFeatures,
+        .pNext = &physicalDeviceFeatures2,
         .flags = 0,
         .queueCreateInfoCount = distinctQueueFamilyCount,
         .pQueueCreateInfos = queueInfos,
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = nullptr,
         .enabledExtensionCount = extensionCount,
-        .ppEnabledExtensionNames = extensionNames,
-        .pEnabledFeatures = &deviceFeatures
+        .ppEnabledExtensionNames = extensions,
+        .pEnabledFeatures = nullptr,
     };
 
     vkCreateDevice(physicalDevice, &deviceInfo, nullptr, &device);
     debug("Device created");
-
-    PFN_vkGetDeviceProcAddr intermediateDeviceFunctionLoader = loadInstanceFunction("vkGetDeviceProcAddr");
-    deviceFunctionLoader = (PFN_vkGetDeviceProcAddr) intermediateDeviceFunctionLoader(device, "vkGetDeviceProcAddr");
-    debug("Device function loader initialized");
-
     free(queuePriorities);
+    free(extensions);
+
+    PFN_vkGetDeviceProcAddr instanceDeviceFunctionLoader = loadInstanceFunction("vkGetDeviceProcAddr");
+    deviceFunctionLoader = (PFN_vkGetDeviceProcAddr) instanceDeviceFunctionLoader(device, "vkGetDeviceProcAddr");
+    debug("Device function loader initialized");
 }
 
 void destroyDevice() {
