@@ -1,6 +1,5 @@
 #include "swapchain.h"
 
-#include "window.h"
 #include "surface.h"
 #include "device.h"
 #include "image.h"
@@ -38,7 +37,7 @@ void createSwapchain() {
         .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         .presentMode = presentMode,
         .clipped = VK_TRUE,
-        .oldSwapchain = nullptr
+        .oldSwapchain = nullptr, // TODO: Use this
     };
 
     vkCreateSwapchainKHR(device, &swapchainInfo, nullptr, &swapchain.swapchain);
