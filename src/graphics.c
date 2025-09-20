@@ -22,7 +22,7 @@ void initEngine() {
     createSurface();
     selectPhysicalDevice();
     setPhysicalDeviceDetails();
-    generateSurfaceDetails();
+    setSurfaceDetails();
     generateQueueDetails();
     setPipelineDetails();
     createDevice();
@@ -42,9 +42,9 @@ void recreateSwapchain() {
 
     destroyFramebufferSet();
     destroySwapchain();
-    destroySurface();
 
-    createSurface();
+    setSurfaceDetails();
+
     createSwapchain();
     createFramebufferSet();
 

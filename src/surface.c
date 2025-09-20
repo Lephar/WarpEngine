@@ -216,7 +216,7 @@ void setSurfaceExtent() {
     }
 }
 
-void generateSurfaceDetails() {
+void setSurfaceDetails() {
     selectPresentMode();
     selectSurfaceFormat();
     setSurfaceCapabilities();
