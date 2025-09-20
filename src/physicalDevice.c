@@ -24,8 +24,9 @@ void selectPhysicalDevice() {
     uint32_t discretePhysicalDeviceIndex   = UINT32_MAX;
     uint32_t integratedPhysicalDeviceIndex = UINT32_MAX;
 
+    VkPhysicalDeviceProperties properties;
+
     for(uint32_t physicalDeviceIndex = 0; physicalDeviceIndex < physicalDeviceCount; physicalDeviceIndex++) {
-        VkPhysicalDeviceProperties properties;
         vkGetPhysicalDeviceProperties(physicalDevices[physicalDeviceIndex], &properties);
 
         if(getSurfaceSupport(physicalDevices[physicalDeviceIndex])) {
@@ -46,7 +47,8 @@ void selectPhysicalDevice() {
         physicalDevice = physicalDevices[integratedPhysicalDeviceIndex];
     }
 
-    debug("Physical device selected: %s", physicalDeviceProperties.deviceName);
+    vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+    debug("Physical device selected: %s", properties.deviceName);
 
     free(physicalDevices);
 }
