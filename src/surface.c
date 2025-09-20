@@ -110,6 +110,8 @@ void selectPresentMode() {
         presentMode = presentModes[0];
     }
 
+    debug("Present Mode Selected: %d", presentMode);
+
     free(presentModes);
 }
 
@@ -170,40 +172,49 @@ void selectSurfaceFormat() {
         surfaceFormat = surfaceFormats[0].surfaceFormat;
     }
 
+    debug("Surface Format Selected:");
+    debug("\tFormat:      %d", surfaceFormat.format);
+    debug("\tColor Space: %d", surfaceFormat.colorSpace);
+
     free(surfaceFormats);
 }
 
 void setSurfaceCapabilities() {
-    VkSurfacePresentModeEXT presentModeInfo = {
+    VkSurfacePresentModeEXT surfacePresentMode = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_EXT,
         .pNext = nullptr,
         .presentMode = presentMode
     };
 
-    VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo = {
+    VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo2 = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
-        .pNext = &presentModeInfo,
+        .pNext = &surfacePresentMode,
         .surface = surface
     };
 
-    // NOTICE: We don't care about the other present modes compatible with the current one
-    VkSurfacePresentModeCompatibilityEXT presentModeCompatibilityInfo = {
+    VkSurfacePresentModeCompatibilityEXT surfacePresentModeCompatibility = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_EXT,
         .pNext = nullptr,
         .presentModeCount = 0,
         .pPresentModes = nullptr
     };
 
-    // TODO: Revisit whole thing
-    VkSurfaceCapabilities2KHR surfaceCapabilitiesInfo = {
+    VkSurfaceCapabilities2KHR surfaceCapabilities2 = {
         .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
-        .pNext = &presentModeCompatibilityInfo,
+        .pNext = &surfacePresentModeCompatibility,
         .surfaceCapabilities = {}
     };
 
-    vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, &surfaceInfo, &surfaceCapabilitiesInfo);
+    vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, &surfaceInfo2, &surfaceCapabilities2);
+    surfacePresentModeCompatibility.pPresentModes = malloc(surfacePresentModeCompatibility.presentModeCount * sizeof(VkPresentModeKHR));
+    vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, &surfaceInfo2, &surfaceCapabilities2);
 
-    surfaceCapabilities = surfaceCapabilitiesInfo.surfaceCapabilities;
+    // NOTICE: We don't care about the other present modes compatible with the current one
+    assert(presentMode == surfacePresentModeCompatibility.pPresentModes[0]);
+    free(surfacePresentModeCompatibility.pPresentModes);
+
+    surfaceCapabilities = surfaceCapabilities2.surfaceCapabilities;
+    debug("Surface Capabilities Set:");
 }
 
 void setSurfaceExtent() {
@@ -215,6 +226,8 @@ void setSurfaceExtent() {
     } else {
         surfaceExtent = surfaceCapabilities.currentExtent;
     }
+
+    debug("\tExtent: %ux%u", surfaceExtent.width, surfaceExtent.height);
 }
 
 void setSurfaceDetails() {
