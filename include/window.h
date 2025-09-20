@@ -2,6 +2,7 @@
 
 #include "pch.h"
 
+extern PFN_vkGetInstanceProcAddr systemFunctionLoader;
 extern SDL_Window *window;
 
 extern int32_t windowWidth;
@@ -18,9 +19,7 @@ extern bool resizeEvent;
 extern bool quitEvent;
 
 void initializeSystem();
-
 void *getSystemFunctionLoader();
-const char *const *getSystemExtensions(uint32_t *requiredExtensionCount);
 
 void createWindow();
 

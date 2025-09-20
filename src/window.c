@@ -4,6 +4,8 @@
 #include "numerics.h"
 #include "logger.h"
 
+PFN_vkGetInstanceProcAddr systemFunctionLoader;
+
 SDL_Window *window;
 
 int32_t windowWidth;
@@ -45,17 +47,11 @@ void initializeSystem() {
     // NOTICE: RenderDoc doesn't support Wayland yet
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
     SDL_Init(SDL_INIT_VIDEO);
+
     SDL_Vulkan_LoadLibrary(nullptr);
+    systemFunctionLoader = (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
 
     debug("System initialized with %s driver", SDL_GetCurrentVideoDriver());
-}
-
-void *getSystemFunctionLoader() {
-    return SDL_Vulkan_GetVkGetInstanceProcAddr();
-}
-
-const char *const *getSystemExtensions(uint32_t *requiredExtensionCount) {
-    return SDL_Vulkan_GetInstanceExtensions(requiredExtensionCount);
 }
 
 void createWindow() {
