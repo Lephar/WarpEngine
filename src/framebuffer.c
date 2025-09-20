@@ -10,7 +10,8 @@
 
 #include "logger.h"
 
-const uint32_t framebufferCountLimit = 4;
+const uint32_t framebufferSetCountLimit = 3;
+const uint32_t framebufferSetFramebufferCountLimit = 3;
 
 FramebufferSet oldFramebufferSet;
 FramebufferSet framebufferSet;
