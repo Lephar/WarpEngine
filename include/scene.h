@@ -17,7 +17,7 @@ void generateProjectionView();
 
 void initializeScene();
 void initializePlayer(vec3 position, vec3 direction, float speed);
-void initializeCamera(float cameraFieldOfView, float cameraNearPlane, float cameraFarPlane);
+void initializeCamera(float fieldOfView, float nearPlane, float farPlane);
 
 void updatePlayer();
 void updateCamera();
