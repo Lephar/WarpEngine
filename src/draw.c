@@ -33,7 +33,7 @@ void render() {
 
     waitFramebufferDraw(framebufferSetIndex, framebufferIndex);
 
-    updateUniforms(framebufferSetIndex, framebufferIndex);
+    updateUniformBuffer(framebufferSetIndex, framebufferIndex);
 
     beginFramebuffer(framebufferSetIndex, framebufferIndex);
     bindFramebuffer(framebufferSetIndex, framebufferIndex);

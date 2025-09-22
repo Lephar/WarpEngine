@@ -146,7 +146,7 @@ void loadContent() {
     debug("Shared memory cleared and set for uniform buffer usage");
 }
 
-void updateUniforms(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     updatePlayer();
     updateCamera();
 
@@ -160,7 +160,7 @@ void updateUniforms(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
         memcpy(mappedSharedMemory + uniformBufferOffset + primitiveIndex * primitiveUniformAlignment, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
     }
 
-    uniformBufferOffset += primitiveCountLimit * primitiveUniformAlignment;
+    uniformBufferOffset += primitiveUniformBufferRange;
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         memcpy(mappedSharedMemory + uniformBufferOffset + materialIndex * materialUniformAlignment, &materialUniforms[materialIndex], sizeof(MaterialUniform));

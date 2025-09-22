@@ -30,6 +30,6 @@ extern VkDeviceSize framebufferSetUniformBufferSize;
 
 void createContentBuffers();
 void loadContent();
-void updateUniforms(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 void freeContent();
