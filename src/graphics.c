@@ -35,19 +35,19 @@ void initEngine() {
     createContentBuffers();
     loadContent();
     createSwapchain();
-    createFramebufferSet();
+    createFramebufferSets();
 }
 
 void recreateSwapchain() {
     vkDeviceWaitIdle(device);
 
-    destroyFramebufferSet();
+    destroyFramebufferSets();
     destroySwapchain();
 
     setSurfaceDetails();
 
     createSwapchain();
-    createFramebufferSet();
+    createFramebufferSets();
 
     initializeDraw();
 
@@ -77,7 +77,7 @@ void loopEngine() {
 void quitEngine() {
     vkDeviceWaitIdle(device);
 
-    destroyFramebufferSet();
+    destroyFramebufferSets();
     destroySwapchain();
     freeContent();
     destroyBuffers();

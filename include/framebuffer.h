@@ -5,8 +5,6 @@
 typedef struct image Image;
 
 typedef struct framebuffer {
-    Image *resolve;
-
     VkDescriptorSet sceneDescriptorSet;
     VkDescriptorSet primitiveDescriptorSet;
 
@@ -18,32 +16,36 @@ typedef struct framebuffer {
 
     VkFence drawFence;
     VkFence blitFence;
+
+    Image *resolve;
 } Framebuffer, *PFramebuffer;
 
 typedef struct framebufferSet {
-    uint32_t imageCount;
+    VkExtent2D extent;
 
     VkSampleCountFlagBits sampleCount;
-
     VkFormat depthStencilFormat;
     VkFormat colorFormat;
 
     Image *depthStencil;
     Image *color;
 
+    uint32_t framebufferCount;
     Framebuffer *framebuffers;
 } FramebufferSet, *PFramebufferSet;
 
 extern const uint32_t framebufferSetCountLimit;
 extern const uint32_t framebufferSetFramebufferCountLimit;
 
-extern FramebufferSet oldFramebufferSet;
-extern FramebufferSet framebufferSet;
+extern uint32_t framebufferSetCount;
+extern FramebufferSet *framebufferSets;
 
-void createFramebufferSet();
-void waitFramebufferDraw(Framebuffer *framebuffer);
-void waitFramebufferBlit(Framebuffer *framebuffer);
-void beginFramebuffer(Framebuffer *framebuffer);
-void bindFramebuffer(Framebuffer *framebuffer);
-void endFramebuffer(Framebuffer *framebuffer);
-void destroyFramebufferSet();
+void createFramebufferSets();
+void createFramebufferSet(uint32_t framebufferSetIndex);
+void waitFramebufferDraw(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+void waitFramebufferBlit(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+void beginFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+void endFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+void destroyFramebufferSet(uint32_t framebufferSetIndex);
+void destroyFramebufferSets();

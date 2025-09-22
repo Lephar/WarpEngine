@@ -13,19 +13,22 @@
 const uint32_t framebufferSetCountLimit = 3;
 const uint32_t framebufferSetFramebufferCountLimit = 3;
 
-FramebufferSet oldFramebufferSet;
-FramebufferSet framebufferSet;
+uint32_t framebufferSetCount;
+FramebufferSet *framebufferSets;
 
-void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
-    framebuffer->resolve = createImage(surfaceExtent.width, surfaceExtent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet.colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
+void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
+    framebuffer->resolve = createImage(framebufferSet->extent.width, framebufferSet->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet->colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
 
     bindImageMemory(framebuffer->resolve, &frameMemory);
     createImageView(framebuffer->resolve);
 
     transitionImageLayout(framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-    framebuffer->sceneDescriptorSet     =     getSceneDescriptorSet(index);
-    framebuffer->primitiveDescriptorSet = getPrimitiveDescriptorSet(index);
+    framebuffer->sceneDescriptorSet     =     getSceneDescriptorSet(framebufferSetIndex, framebufferIndex);
+    framebuffer->primitiveDescriptorSet = getPrimitiveDescriptorSet(framebufferSetIndex, framebufferIndex);
 
     framebuffer->renderCommandBuffer  = allocateSingleCommandBuffer(&graphicsQueue);
     framebuffer->presentCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
@@ -75,48 +78,68 @@ void createFramebuffer(Framebuffer *framebuffer, uint32_t index) {
     vkCreateFence(device, &signaledFenceInfo, nullptr, &framebuffer->blitFence);
 }
 
-void createFramebufferSet() {
-    framebufferSet.imageCount = 2;
+void createFramebufferSet(uint32_t framebufferSetIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
 
-    framebufferSet.sampleCount = VK_SAMPLE_COUNT_4_BIT;
-    assert(framebufferSet.sampleCount & physicalDeviceProperties.limits.framebufferDepthSampleCounts);
-    assert(framebufferSet.sampleCount & physicalDeviceProperties.limits.framebufferColorSampleCounts);
+    framebufferSet->extent = surfaceExtent;
+    framebufferSet->framebufferCount = 2;
+    framebufferSet->sampleCount = VK_SAMPLE_COUNT_4_BIT;
+    assert(framebufferSet->sampleCount & physicalDeviceProperties.limits.framebufferDepthSampleCounts);
+    assert(framebufferSet->sampleCount & physicalDeviceProperties.limits.framebufferColorSampleCounts);
 
-    framebufferSet.depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT;
-    framebufferSet.colorFormat        = VK_FORMAT_R8G8B8A8_SRGB;
+    framebufferSet->depthStencilFormat = VK_FORMAT_D24_UNORM_S8_UINT;
+    framebufferSet->colorFormat        = VK_FORMAT_R8G8B8A8_SRGB;
 
-    framebufferSet.depthStencil = createImage(surfaceExtent.width, surfaceExtent.height, 1, framebufferSet.sampleCount, framebufferSet.depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_TILING_OPTIMAL);
-    framebufferSet.color        = createImage(surfaceExtent.width, surfaceExtent.height, 1, framebufferSet.sampleCount, framebufferSet.colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT,                               VK_IMAGE_TILING_OPTIMAL);
+    framebufferSet->depthStencil = createImage(framebufferSet->extent.width, framebufferSet->extent.height, 1, framebufferSet->sampleCount, framebufferSet->depthStencilFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_TILING_OPTIMAL);
+    framebufferSet->color        = createImage(framebufferSet->extent.width, framebufferSet->extent.height, 1, framebufferSet->sampleCount, framebufferSet->colorFormat,        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,         VK_IMAGE_ASPECT_COLOR_BIT,                               VK_IMAGE_TILING_OPTIMAL);
 
-    bindImageMemory(framebufferSet.depthStencil, &frameMemory);
-    bindImageMemory(framebufferSet.color,        &frameMemory);
+    bindImageMemory(framebufferSet->depthStencil, &frameMemory);
+    bindImageMemory(framebufferSet->color,        &frameMemory);
 
-    createImageView(framebufferSet.depthStencil);
-    createImageView(framebufferSet.color);
+    createImageView(framebufferSet->depthStencil);
+    createImageView(framebufferSet->color);
 
-    transitionImageLayout(framebufferSet.depthStencil, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-    transitionImageLayout(framebufferSet.color,        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    transitionImageLayout(framebufferSet->depthStencil, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+    transitionImageLayout(framebufferSet->color,        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-    framebufferSet.framebuffers = malloc(framebufferSet.imageCount * sizeof(Framebuffer));
+    framebufferSet->framebuffers = malloc(framebufferSet->framebufferCount * sizeof(Framebuffer));
 
-    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.imageCount; framebufferIndex++) {
+    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet->framebufferCount; framebufferIndex++) {
         debug("Framebuffer %d:", framebufferIndex);
-        createFramebuffer(&framebufferSet.framebuffers[framebufferIndex], framebufferIndex);
+        createFramebuffer(framebufferSetIndex, framebufferIndex);
         debug("\tSuccessfully created");
     }
 }
 
-void waitFramebufferDraw(Framebuffer *framebuffer) {
+void createFramebufferSets() {
+    framebufferSetCount = 1; // TODO: This is arbitrary
+    framebufferSets = malloc(framebufferSetCount * sizeof(FramebufferSet));
+
+    for(uint32_t framebufferSetIndex = 0; framebufferSetIndex < framebufferSetCount; framebufferSetIndex++) {
+        createFramebufferSet(framebufferSetIndex);
+    }
+}
+
+void waitFramebufferDraw(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     vkWaitForFences(device, 1, &framebuffer->drawFence, VK_TRUE, UINT64_MAX);
     vkResetFences(  device, 1, &framebuffer->drawFence);
 }
 
-void waitFramebufferBlit(Framebuffer *framebuffer) {
+void waitFramebufferBlit(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
     vkResetFences(  device, 1, &framebuffer->blitFence);
 }
 
-void beginFramebuffer(Framebuffer *framebuffer) {
+void beginFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .pNext = nullptr,
@@ -127,7 +150,7 @@ void beginFramebuffer(Framebuffer *framebuffer) {
     VkRenderingAttachmentInfo depthStencilAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
         .pNext = nullptr,
-        .imageView = framebufferSet.depthStencil->view,
+        .imageView = framebufferSet->depthStencil->view,
         .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_NONE,
         .resolveImageView = nullptr,
@@ -145,7 +168,7 @@ void beginFramebuffer(Framebuffer *framebuffer) {
     VkRenderingAttachmentInfo colorAttachmentInfo = {
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
         .pNext = nullptr,
-        .imageView = framebufferSet.color->view,
+        .imageView = framebufferSet->color->view,
         .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .resolveMode = VK_RESOLVE_MODE_AVERAGE_BIT,
         .resolveImageView = framebuffer->resolve->view,
@@ -173,7 +196,7 @@ void beginFramebuffer(Framebuffer *framebuffer) {
                 .x = 0,
                 .y = 0,
             },
-            .extent = surfaceExtent
+            .extent = framebufferSet->extent,
         },
         .layerCount = 1,
         .viewMask = 0,
@@ -188,11 +211,15 @@ void beginFramebuffer(Framebuffer *framebuffer) {
 }
 
 void bindFramebuffer(Framebuffer *framebuffer) {
+void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     VkViewport viewport = {
         .x = 0.0f,
-        .y = (float) surfaceExtent.height,
-        .width = (float) surfaceExtent.width,
-        .height = - (float) surfaceExtent.height,
+        .y = (float) framebufferSet->extent.height,
+        .width = (float) framebufferSet->extent.width,
+        .height = - (float) framebufferSet->extent.height,
         .minDepth = 0.0f,
         .maxDepth = 1.0f
     };
@@ -202,19 +229,25 @@ void bindFramebuffer(Framebuffer *framebuffer) {
             .x = 0,
             .y = 0
         },
-        .extent = surfaceExtent
+        .extent = framebufferSet->extent
     };
 
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount( framebuffer->renderCommandBuffer, 1, &scissor);
 }
 
-void endFramebuffer(Framebuffer *framebuffer) {
+void endFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     vkCmdEndRendering( framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);
 }
 
-void destroyFramebuffer(Framebuffer *framebuffer) {
+void destroyFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     vkDestroyFence(device, framebuffer->blitFence, nullptr);
     vkDestroyFence(device, framebuffer->drawFence, nullptr);
 
@@ -225,22 +258,33 @@ void destroyFramebuffer(Framebuffer *framebuffer) {
     destroyImage(    framebuffer->resolve);
 }
 
-void destroyFramebufferSet() {
-    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet.imageCount; framebufferIndex++) {
-        destroyFramebuffer(&framebufferSet.framebuffers[framebufferIndex]);
+void destroyFramebufferSet(uint32_t framebufferSetIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+
+    for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet->framebufferCount; framebufferIndex++) {
+        destroyFramebuffer(framebufferSetIndex, framebufferIndex);
         debug("Framebuffer %d destroyed", framebufferIndex);
     }
 
-    destroyImageView(framebufferSet.color);
-    destroyImageView(framebufferSet.depthStencil);
+    destroyImageView(framebufferSet->color);
+    destroyImageView(framebufferSet->depthStencil);
 
-    destroyImage(framebufferSet.color);
-    destroyImage(framebufferSet.depthStencil);
+    destroyImage(framebufferSet->color);
+    destroyImage(framebufferSet->depthStencil);
 
     resetDescriptorPool(&primitiveDescriptorPool);
     resetDescriptorPool(&sceneDescriptorPool);
 
-    free(framebufferSet.framebuffers);
+    free(framebufferSet->framebuffers);
+}
+
+void destroyFramebufferSets() {
+    for(uint32_t framebufferSetIndex = 0; framebufferSetIndex < framebufferSetCount; framebufferSetIndex++) {
+        destroyFramebufferSet(framebufferSetIndex);
+    }
+
+    free(framebufferSets);
+    framebufferSetCount = 0;
 
     frameMemory.offset = 0;
 }

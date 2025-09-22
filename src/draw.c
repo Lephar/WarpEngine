@@ -25,15 +25,18 @@ void initializeDraw() {
 }
 
 void render() {
-    uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
-    Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
+    uint32_t framebufferSetIndex = 0;
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
 
-    waitFramebufferDraw(framebuffer);
+    uint32_t framebufferIndex = frameIndex % framebufferSet->framebufferCount;
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
+    waitFramebufferDraw(framebufferSetIndex, framebufferIndex);
 
     updateUniforms(framebufferIndex);
 
-    beginFramebuffer(framebuffer);
-    bindFramebuffer(framebuffer);
+    beginFramebuffer(framebufferSetIndex, framebufferIndex);
+    bindFramebuffer(framebufferSetIndex, framebufferIndex);
 
     bindContentBuffers(framebuffer->renderCommandBuffer);
     bindPipeline(framebuffer->renderCommandBuffer);
@@ -72,7 +75,7 @@ void render() {
         }
     }
 
-    endFramebuffer(framebuffer);
+    endFramebuffer(framebufferSetIndex, framebufferIndex);
 
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
@@ -92,8 +95,11 @@ void render() {
 }
 
 void present() {
-    uint32_t framebufferIndex = frameIndex % framebufferSet.imageCount;
-    Framebuffer *framebuffer = &framebufferSet.framebuffers[framebufferIndex];
+    uint32_t framebufferSetIndex = 0;
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+
+    uint32_t framebufferIndex = frameIndex % framebufferSet->framebufferCount;
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -153,7 +159,7 @@ void present() {
        acquisitionResult == VK_ERROR_SURFACE_LOST_KHR      ||
        acquisitionResult == VK_ERROR_VALIDATION_FAILED_EXT ||
        acquisitionResult == VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT) {
-        debug("Hard error on swapchain image acquisition, signaling the sempahore and skipping");
+        debug("Hard error on swapchain image acquisition, signaling the semaphore and skipping");
 
         VkSubmitInfo submitInfo = {
             .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -184,7 +190,7 @@ void present() {
     *acquireSemaphore = swapchain.acquireSemaphore;
     swapchain.acquireSemaphore = temporarySemaphore;
 
-    waitFramebufferBlit(framebuffer);
+    waitFramebufferBlit(framebufferSetIndex, framebufferIndex);
 
     vkBeginCommandBuffer(framebuffer->presentCommandBuffer, &beginInfo);
     recordTransitionImageLayout(&framebuffer->presentCommandBuffer, framebuffer->resolve, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
