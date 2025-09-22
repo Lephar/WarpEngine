@@ -19,7 +19,7 @@ typedef struct material {
     Image *metallicRoughness;
     Image *normal;
     uint32_t factorOffset;
-    VkDescriptorSet materialDescriptorSet;
+    VkDescriptorSet samplerDescriptorSet;
 } Material, *PMaterial;
 
 extern Image *defaultBlackTexture;
@@ -31,9 +31,7 @@ extern uint32_t materialCount;
 extern Material *materials;
 extern MaterialUniform *materialUniforms;
 
-extern VkDescriptorSet factorDescriptorSet;
-
 uint32_t findMaterial(cgltf_material *materialData);
 void loadMaterial(const char *subdirectory, cgltf_material *materialData);
-void bindMaterial(VkCommandBuffer commandBuffer, Material *material);
+void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Material *material);
 void destroyMaterial(Material *material);

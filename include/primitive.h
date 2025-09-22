@@ -22,4 +22,4 @@ extern Primitive *primitives;
 extern PrimitiveUniform *primitiveUniforms;
 
 void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform);
-void drawPrimitive(VkCommandBuffer commandBuffer, VkDescriptorSet descriptorSet, Primitive *primitive);
+void drawPrimitive(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Primitive *primitive);

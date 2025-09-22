@@ -33,7 +33,7 @@ void render() {
 
     waitFramebufferDraw(framebufferSetIndex, framebufferIndex);
 
-    updateUniforms(framebufferIndex);
+    updateUniforms(framebufferSetIndex, framebufferIndex);
 
     beginFramebuffer(framebufferSetIndex, framebufferIndex);
     bindFramebuffer(framebufferSetIndex, framebufferIndex);
@@ -41,19 +41,19 @@ void render() {
     bindContentBuffers(framebuffer->renderCommandBuffer);
     bindPipeline(framebuffer->renderCommandBuffer);
     bindShaders(framebuffer->renderCommandBuffer, vertexShaderModule, fragmentShaderModule);
-    bindScene(framebuffer->renderCommandBuffer, framebuffer->sceneDescriptorSet);
+    bindScene(framebuffer->renderCommandBuffer, framebuffer->cameraDescriptorSet);
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         Material *material = &materials[materialIndex];
 
         if(!material->isTransparent) {
-            bindMaterial(framebuffer->renderCommandBuffer, material);
+            bindMaterial(framebufferSetIndex, framebufferIndex, material);
 
             for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
                 Primitive *primitive = &primitives[primitiveIndex];
 
                 if(primitive->material == material) {
-                    drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, primitive);
+                    drawPrimitive(framebufferSetIndex, framebufferIndex, primitive);
                 }
             }
         }
@@ -63,13 +63,13 @@ void render() {
         Material *material = &materials[materialIndex];
 
         if(material->isTransparent) {
-            bindMaterial(framebuffer->renderCommandBuffer, material);
+            bindMaterial(framebufferSetIndex, framebufferIndex, material);
 
             for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
                 Primitive *primitive = &primitives[primitiveIndex];
 
                 if(primitive->material == material) {
-                    drawPrimitive(framebuffer->renderCommandBuffer, framebuffer->primitiveDescriptorSet, primitive);
+                    drawPrimitive(framebufferSetIndex, framebufferIndex, primitive);
                 }
             }
         }

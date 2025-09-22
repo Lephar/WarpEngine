@@ -2,6 +2,7 @@
 
 #include "pipeline.h"
 #include "content.h"
+#include "framebuffer.h"
 #include "material.h"
 
 #include "logger.h"
@@ -128,7 +129,10 @@ void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
 }
 
 // NOTICE: This doesn't account for material binding, use bindMaterial() beforehand
-void drawPrimitive(VkCommandBuffer commandBuffer, VkDescriptorSet primitiveDescriptorSet, Primitive *primitive) {
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &primitiveDescriptorSet, 1, &primitive->uniformOffset);
-    vkCmdDrawIndexed(commandBuffer, primitive->indexCount, 1, primitive->indexBegin, primitive->vertexOffset, 0);
+void drawPrimitive(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Primitive *primitive) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &framebuffer->primitiveDescriptorSet, 1, &primitive->uniformOffset);
+    vkCmdDrawIndexed(framebuffer->renderCommandBuffer, primitive->indexCount, 1, primitive->indexBegin, primitive->vertexOffset, 0);
 }

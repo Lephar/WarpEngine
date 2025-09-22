@@ -27,8 +27,9 @@ void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
 
     transitionImageLayout(framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-    framebuffer->sceneDescriptorSet     =     getSceneDescriptorSet(framebufferSetIndex, framebufferIndex);
+    framebuffer->cameraDescriptorSet    = getCameraDescriptorSet(   framebufferSetIndex, framebufferIndex);
     framebuffer->primitiveDescriptorSet = getPrimitiveDescriptorSet(framebufferSetIndex, framebufferIndex);
+    framebuffer->materialDescriptorSet  = getMaterialDescriptorSet( framebufferSetIndex, framebufferIndex);
 
     framebuffer->renderCommandBuffer  = allocateSingleCommandBuffer(&graphicsQueue);
     framebuffer->presentCommandBuffer = allocateSingleCommandBuffer(&graphicsQueue);
@@ -279,7 +280,7 @@ void destroyFramebufferSet(uint32_t framebufferSetIndex) {
     destroyImage(framebufferSet->depthStencil);
 
     resetDescriptorPool(&primitiveDescriptorPool);
-    resetDescriptorPool(&sceneDescriptorPool);
+    resetDescriptorPool(&cameraDescriptorPool);
 
     free(framebufferSet->framebuffers);
 }

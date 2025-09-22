@@ -20,10 +20,10 @@ void createPipelineLayout() {
     descriptorSetLayoutCount = 4;
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
 
-    descriptorSetLayouts[0] = materialDescriptorPool.layout;
-    descriptorSetLayouts[1] = factorDescriptorPool.layout;
-    descriptorSetLayouts[2] = primitiveDescriptorPool.layout;
-    descriptorSetLayouts[3] = sceneDescriptorPool.layout;
+    descriptorSetLayouts[0] = cameraDescriptorPool.layout;
+    descriptorSetLayouts[1] = primitiveDescriptorPool.layout;
+    descriptorSetLayouts[2] = materialDescriptorPool.layout;
+    descriptorSetLayouts[3] = samplerDescriptorPool.layout;
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -40,10 +40,10 @@ void createPipelineLayout() {
 }
 
 void setPipelineDetails() {
-    uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
-    uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
+    const uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
+    const uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
 
-    sceneUniformAlignment     = align(sizeof(SceneUniform),     minUniformBufferOffsetAlignment);
+    cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
 
@@ -53,17 +53,18 @@ void setPipelineDetails() {
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
 
-    framebufferSetUniformBufferOffset = materialUniformBufferRange;
-    framebufferUniformBufferStride = primitiveUniformBufferRange + sceneUniformAlignment;
+    framebufferUniformBufferSize = cameraUniformAlignment + primitiveUniformBufferRange + materialUniformBufferRange;
+    framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;
 }
 
 void createPipeline() {
     createSampler();
 
-    createSamplerDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,                  VK_SHADER_STAGE_FRAGMENT_BIT);
-    createBufferDescriptorPool( &factorDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1,                             VK_SHADER_STAGE_FRAGMENT_BIT);
-    createBufferDescriptorPool( &primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
-    createBufferDescriptorPool( &sceneDescriptorPool,     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
+    createSamplerDescriptorPool(&samplerDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+    createBufferDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
+    createBufferDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
+    createBufferDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
 
     createPipelineLayout();
 }
@@ -105,10 +106,10 @@ void bindPipeline(VkCommandBuffer commandBuffer) {
 }
 
 void destroyPipeline() {
-    destroyDescriptorPool(&materialDescriptorPool);
-    destroyDescriptorPool(&factorDescriptorPool);
+    destroyDescriptorPool(&samplerDescriptorPool);
+    destroyDescriptorPool(&cameraDescriptorPool);
     destroyDescriptorPool(&primitiveDescriptorPool);
-    destroyDescriptorPool(&sceneDescriptorPool);
+    destroyDescriptorPool(&materialDescriptorPool);
     debug("Descriptor pools destroyed");
 
     vkDestroySampler(device, sampler, nullptr);

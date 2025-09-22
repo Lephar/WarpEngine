@@ -18,18 +18,18 @@ extern uint32_t vertexCount;
 extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 
-extern VkDeviceSize sceneUniformAlignment;
+extern VkDeviceSize cameraUniformAlignment;
 extern VkDeviceSize primitiveUniformAlignment;
 extern VkDeviceSize materialUniformAlignment;
 
 extern VkDeviceSize primitiveUniformBufferRange;
 extern VkDeviceSize materialUniformBufferRange;
 
-extern VkDeviceSize framebufferSetUniformBufferOffset;
-extern VkDeviceSize framebufferUniformBufferStride;
+extern VkDeviceSize framebufferUniformBufferSize;
+extern VkDeviceSize framebufferSetUniformBufferSize;
 
 void createContentBuffers();
 void loadContent();
-void updateUniforms(uint32_t framebufferIndex);
+void updateUniforms(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 void bindContentBuffers(VkCommandBuffer commandBuffer);
 void freeContent();

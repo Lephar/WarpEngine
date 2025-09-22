@@ -18,15 +18,15 @@ uint32_t vertexCount;
 Index  *indexBuffer;
 Vertex *vertexBuffer;
 
-VkDeviceSize sceneUniformAlignment;
+VkDeviceSize cameraUniformAlignment;
 VkDeviceSize primitiveUniformAlignment;
 VkDeviceSize materialUniformAlignment;
 
 VkDeviceSize primitiveUniformBufferRange;
 VkDeviceSize materialUniformBufferRange;
 
-VkDeviceSize framebufferSetUniformBufferOffset;
-VkDeviceSize framebufferUniformBufferStride;
+VkDeviceSize framebufferUniformBufferSize;
+VkDeviceSize framebufferSetUniformBufferSize;
 
 void loadAsset(const char *subdirectory, const char *filename) {
     char fullPath[PATH_MAX];
@@ -144,27 +144,23 @@ void loadContent() {
     memset(mappedSharedMemory, 0, sharedBuffer.size);
 
     debug("Shared memory cleared and set for uniform buffer usage");
-
-    factorDescriptorSet = getFactorDescriptorSet();
-
-    debug("Material factors copied to uniform buffer and descriptor set created");
 }
 
-void updateUniforms(uint32_t framebufferIndex) {
+void updateUniforms(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     updatePlayer();
     updateCamera();
 
-    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        memcpy(mappedSharedMemory + materialIndex * materialUniformAlignment, &materialUniforms[materialIndex], sizeof(MaterialUniform));
-    }
+    const VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
 
-    VkDeviceSize framebufferUniformBufferOffset = framebufferSetUniformBufferOffset + framebufferIndex * framebufferUniformBufferStride;
+    memcpy(mappedSharedMemory + uniformBufferOffset, &cameraUniform, cameraUniformAlignment);
 
     for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
-        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + primitiveIndex * primitiveUniformAlignment, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
+        memcpy(mappedSharedMemory + uniformBufferOffset + primitiveIndex * primitiveUniformAlignment, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
     }
 
-    memcpy(mappedSharedMemory + framebufferUniformBufferOffset + primitiveUniformBufferRange, &sceneUniform, sceneUniformAlignment);
+    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+        memcpy(mappedSharedMemory + uniformBufferOffset + materialIndex * materialUniformAlignment, &materialUniforms[materialIndex], sizeof(MaterialUniform));
+    }
 }
 
 void bindContentBuffers(VkCommandBuffer commandBuffer) {

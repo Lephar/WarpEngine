@@ -14,20 +14,20 @@ typedef struct descriptorPool {
 
 extern VkSampler sampler;
 
-extern DescriptorPool sceneDescriptorPool;
+extern DescriptorPool cameraDescriptorPool;
 extern DescriptorPool primitiveDescriptorPool;
-extern DescriptorPool factorDescriptorPool;
 extern DescriptorPool materialDescriptorPool;
+extern DescriptorPool samplerDescriptorPool;
 
 void createSampler();
 
 void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage);
 void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage);
 
-VkDescriptorSet getSceneDescriptorSet(uint32_t framebufferIndex);
-VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferIndex);
-VkDescriptorSet getFactorDescriptorSet();
-VkDescriptorSet getMaterialDescriptorSet(Material *material);
+VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getSamplerDescriptorSet(Material *material);
 
 void resetDescriptorPool(DescriptorPool *descriptorPool);
 void destroyDescriptorPool(DescriptorPool *descriptorPool);

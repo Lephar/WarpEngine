@@ -5,6 +5,7 @@
 #include "pipeline.h"
 #include "descriptor.h"
 #include "content.h"
+#include "framebuffer.h"
 #include "texture.h"
 
 #include "logger.h"
@@ -17,8 +18,6 @@ uint32_t materialCountLimit;
 uint32_t materialCount;
 Material *materials;
 MaterialUniform *materialUniforms;
-
-VkDescriptorSet factorDescriptorSet;
 
 uint32_t findMaterial(cgltf_material *materialData) {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
@@ -136,7 +135,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
     debug("\tEmissive factor: [%0.4f, %0.4f, %0.4f]", materialUniform->emissiveFactor[0], materialUniform->emissiveFactor[1], materialUniform->emissiveFactor[2]);
 
     material->factorOffset = materialIndex * materialUniformAlignment;
-    material->materialDescriptorSet = getMaterialDescriptorSet(material);
+    material->samplerDescriptorSet = getSamplerDescriptorSet(material);
 
     debug("\tTexture descriptor sets acquired and material created");
 
@@ -144,7 +143,10 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
 }
 
 // NOTICE: This doesn't account for shader binding, use bindShader() beforehand
-void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
+void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Material *material) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     VkColorBlendEquationEXT colorBlendEquations = {
         .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
         .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
@@ -155,18 +157,18 @@ void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
     };
 
     VkDescriptorSet descriptorSets[] = {
-        material->materialDescriptorSet,
-        factorDescriptorSet
+        framebuffer->materialDescriptorSet,
+        material->samplerDescriptorSet,
     };
 
     uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
 
     PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
-    cmdSetColorBlendEnable(commandBuffer, 0, 1, &material->isTransparent);
+    cmdSetColorBlendEnable(framebuffer->renderCommandBuffer, 0, 1, &material->isTransparent);
     PFN_vkCmdSetColorBlendEquationEXT cmdSetColorBlendEquation = loadDeviceFunction("vkCmdSetColorBlendEquationEXT");
-    cmdSetColorBlendEquation(commandBuffer, 0, 1, &colorBlendEquations);
+    cmdSetColorBlendEquation(framebuffer->renderCommandBuffer, 0, 1, &colorBlendEquations);
 
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSetCount, descriptorSets, 1, &material->factorOffset);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, descriptorSetCount, descriptorSets, 1, &material->factorOffset);
 }
 
 void destroyMaterial(Material *material) {

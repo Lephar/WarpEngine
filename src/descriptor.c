@@ -11,10 +11,10 @@
 
 VkSampler sampler;
 
-DescriptorPool sceneDescriptorPool;
+DescriptorPool cameraDescriptorPool;
 DescriptorPool primitiveDescriptorPool;
-DescriptorPool factorDescriptorPool;
 DescriptorPool materialDescriptorPool;
+DescriptorPool samplerDescriptorPool;
 
 // TODO: Load sampler from asset file
 void createSampler() {
@@ -222,20 +222,20 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, Materia
     return descriptorSet;
 }
 
-VkDescriptorSet getSceneDescriptorSet(uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&sceneDescriptorPool, sharedBuffer.buffer, framebufferSetUniformBufferOffset + framebufferIndex * framebufferUniformBufferStride + primitiveUniformBufferRange, sceneUniformAlignment);
+VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    return createBufferDescriptorSet(&cameraDescriptorPool,    sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize, cameraUniformAlignment);
 }
 
-VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferSetUniformBufferOffset + framebufferIndex * framebufferUniformBufferStride, primitiveUniformBufferRange);
+VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + cameraUniformAlignment, primitiveUniformBufferRange);
 }
 
-VkDescriptorSet getFactorDescriptorSet() {
-    return createBufferDescriptorSet(&factorDescriptorPool, sharedBuffer.buffer, 0, materialUniformBufferRange);
+VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + cameraUniformAlignment + primitiveUniformBufferRange, materialUniformBufferRange);
 }
 
-VkDescriptorSet getMaterialDescriptorSet(Material *material) {
-    return createImageDescriptorSet(&materialDescriptorPool, material);
+VkDescriptorSet getSamplerDescriptorSet(Material *material) {
+    return createImageDescriptorSet(&samplerDescriptorPool, material);
 }
 
 void resetDescriptorPool(DescriptorPool *descriptorPool) {

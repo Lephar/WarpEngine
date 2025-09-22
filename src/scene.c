@@ -11,22 +11,22 @@ vec3 playerDirection;
 
 float playerSpeed;
 
-SceneUniform sceneUniform;
+CameraUniform cameraUniform;
 
 void updateView() {
     vec3 target;
 
     glmc_vec3_add(playerPosition, playerDirection, target);
-    glmc_lookat_rh_zo(playerPosition, target, worldUp, sceneUniform.view);
+    glmc_lookat_rh_zo(playerPosition, target, worldUp, cameraUniform.view);
 }
 
 void updateProjection() {
     float aspectRatio = ((float) surfaceExtent.width) / ((float) surfaceExtent.height);
-    glmc_perspective_rh_zo(sceneUniform.cameraProperties[0], aspectRatio, sceneUniform.cameraProperties[1], sceneUniform.cameraProperties[2], sceneUniform.projection);
+    glmc_perspective_rh_zo(cameraUniform.properties[0], aspectRatio, cameraUniform.properties[1], cameraUniform.properties[2], cameraUniform.projection);
 }
 
 void generateProjectionView() {
-    glmc_mat4_mul(sceneUniform.projection, sceneUniform.view, sceneUniform.viewProjection);
+    glmc_mat4_mul(cameraUniform.projection, cameraUniform.view, cameraUniform.viewProjection);
 }
 
 void initializeScene() {
@@ -45,10 +45,10 @@ void initializePlayer(vec3 position, vec3 direction, float speed) {
 }
 
 void initializeCamera(float fieldOfView, float nearPlane, float farPlane) {
-    sceneUniform.cameraProperties[0] = fieldOfView;
-    sceneUniform.cameraProperties[1] = nearPlane;
-    sceneUniform.cameraProperties[2] = farPlane;
-    sceneUniform.cameraProperties[3] = 1.0f; // Placeholder
+    cameraUniform.properties[0] = fieldOfView;
+    cameraUniform.properties[1] = nearPlane;
+    cameraUniform.properties[2] = farPlane;
+    cameraUniform.properties[3] = 1.0f; // Placeholder
 }
 
 void updatePlayer() {
@@ -78,5 +78,5 @@ void updateCamera() {
 }
 
 void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet) {
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3, 1, &sceneDescriptorSet, 0, nullptr);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &sceneDescriptorSet, 0, nullptr);
 }

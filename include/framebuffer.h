@@ -5,8 +5,9 @@
 typedef struct image Image;
 
 typedef struct framebuffer {
-    VkDescriptorSet sceneDescriptorSet;
+    VkDescriptorSet cameraDescriptorSet;
     VkDescriptorSet primitiveDescriptorSet;
+    VkDescriptorSet materialDescriptorSet;
 
     VkCommandBuffer renderCommandBuffer;
     VkCommandBuffer presentCommandBuffer;
