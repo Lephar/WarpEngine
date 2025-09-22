@@ -210,10 +210,11 @@ void beginFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     vkCmdBeginRendering(framebuffer->renderCommandBuffer, &renderingInfo);
 }
 
-void bindFramebuffer(Framebuffer *framebuffer) {
 void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
     Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
+    VkSampleMask sampleMask = 0xFF;
 
     VkViewport viewport = {
         .x = 0.0f,
@@ -231,6 +232,11 @@ void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
         },
         .extent = framebufferSet->extent
     };
+
+    PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadDeviceFunction("vkCmdSetRasterizationSamplesEXT");
+    cmdSetRasterizationSamples(framebuffer->renderCommandBuffer, framebufferSet->sampleCount);
+    PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadDeviceFunction("vkCmdSetSampleMaskEXT");
+    cmdSetSampleMask(framebuffer->renderCommandBuffer, framebufferSet->sampleCount, &sampleMask);
 
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount( framebuffer->renderCommandBuffer, 1, &scissor);

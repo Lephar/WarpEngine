@@ -69,8 +69,6 @@ void createPipeline() {
 }
 
 void bindPipeline(VkCommandBuffer commandBuffer) {
-    VkSampleMask sampleMask = 0xFF;
-
     VkColorComponentFlags colorWriteMask =
         VK_COLOR_COMPONENT_A_BIT |
         VK_COLOR_COMPONENT_R_BIT |
@@ -107,11 +105,6 @@ void bindPipeline(VkCommandBuffer commandBuffer) {
     //cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_LINE);
     //vkCmdSetLineWidth(commandBuffer, 1.0f);
     //cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_POINT);
-
-    PFN_vkCmdSetRasterizationSamplesEXT cmdSetRasterizationSamples = loadDeviceFunction("vkCmdSetRasterizationSamplesEXT");
-    cmdSetRasterizationSamples(commandBuffer, framebufferSet.sampleCount);
-    PFN_vkCmdSetSampleMaskEXT cmdSetSampleMask = loadDeviceFunction("vkCmdSetSampleMaskEXT");
-    cmdSetSampleMask(commandBuffer, framebufferSet.sampleCount, &sampleMask);
 
     PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadDeviceFunction("vkCmdSetColorWriteMaskEXT");
     cmdSetColorWriteMask(commandBuffer, 0, 1, &colorWriteMask);
