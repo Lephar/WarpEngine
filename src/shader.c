@@ -2,6 +2,7 @@
 
 #include "device.h"
 #include "pipeline.h"
+#include "framebuffer.h"
 
 #include "file.h"
 #include "logger.h"
@@ -139,7 +140,10 @@ void createModules() {
     debug("Shader modules created");
 }
 
-void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertex, ShaderModule *fragment) {
+void bindShaders(uint32_t framebufferSetIndex, uint32_t framebufferIndex, ShaderModule *vertex, ShaderModule *fragment) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     assert(vertex->stage == VK_SHADER_STAGE_VERTEX_BIT && fragment->stage == VK_SHADER_STAGE_FRAGMENT_BIT);
 
     VkShaderStageFlagBits stages[] = {
@@ -155,7 +159,7 @@ void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertex, ShaderModu
     uint32_t stageCount = sizeof(stages) / sizeof(VkShaderStageFlags);
 
     PFN_vkCmdBindShadersEXT cmdBindShaders = loadDeviceFunction("vkCmdBindShadersEXT");
-    cmdBindShaders(commandBuffer, stageCount, stages, modules);
+    cmdBindShaders(framebuffer->renderCommandBuffer, stageCount, stages, modules);
 }
 
 void destroyModules() {

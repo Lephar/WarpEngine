@@ -8,5 +8,5 @@ extern VkPipelineLayout pipelineLayout;
 
 void setPipelineDetails();
 void createPipeline();
-void bindPipeline(VkCommandBuffer commandBuffer);
+void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 void destroyPipeline();

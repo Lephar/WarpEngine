@@ -69,40 +69,43 @@ void createPipeline() {
     createPipelineLayout();
 }
 
-void bindPipeline(VkCommandBuffer commandBuffer) {
+void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     VkColorComponentFlags colorWriteMask =
         VK_COLOR_COMPONENT_A_BIT |
         VK_COLOR_COMPONENT_R_BIT |
         VK_COLOR_COMPONENT_G_BIT |
         VK_COLOR_COMPONENT_B_BIT ;
 
-    vkCmdSetRasterizerDiscardEnable(commandBuffer, VK_FALSE);
+    vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    vkCmdSetCullMode(commandBuffer, VK_CULL_MODE_BACK_BIT);
-    vkCmdSetFrontFace(commandBuffer, VK_FRONT_FACE_COUNTER_CLOCKWISE);
+    vkCmdSetCullMode(framebuffer->renderCommandBuffer, VK_CULL_MODE_BACK_BIT);
+    vkCmdSetFrontFace(framebuffer->renderCommandBuffer, VK_FRONT_FACE_COUNTER_CLOCKWISE);
 
-    vkCmdSetDepthTestEnable(commandBuffer, VK_TRUE);
-    vkCmdSetDepthWriteEnable(commandBuffer, VK_TRUE);
-    vkCmdSetDepthBiasEnable(commandBuffer, VK_FALSE);
-    vkCmdSetDepthCompareOp(commandBuffer, VK_COMPARE_OP_LESS);
+    vkCmdSetDepthTestEnable(framebuffer->renderCommandBuffer, VK_TRUE);
+    vkCmdSetDepthWriteEnable(framebuffer->renderCommandBuffer, VK_TRUE);
+    vkCmdSetDepthBiasEnable(framebuffer->renderCommandBuffer, VK_FALSE);
+    vkCmdSetDepthCompareOp(framebuffer->renderCommandBuffer, VK_COMPARE_OP_LESS);
 
-    vkCmdSetStencilTestEnable(commandBuffer, VK_FALSE);
+    vkCmdSetStencilTestEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    vkCmdSetPrimitiveRestartEnable(commandBuffer, VK_FALSE);
-    vkCmdSetPrimitiveTopology(commandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+    vkCmdSetPrimitiveRestartEnable(framebuffer->renderCommandBuffer, VK_FALSE);
+    vkCmdSetPrimitiveTopology(framebuffer->renderCommandBuffer, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     PFN_vkCmdSetPolygonModeEXT cmdSetPolygonMode = loadDeviceFunction("vkCmdSetPolygonModeEXT");
-    cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_FILL);
-    //cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_LINE);
-    //vkCmdSetLineWidth(commandBuffer, 1.0f);
-    //cmdSetPolygonMode(commandBuffer, VK_POLYGON_MODE_POINT);
+    cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_FILL);
+    //cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_LINE);
+    //vkCmdSetLineWidth(framebuffer->renderCommandBuffer, 1.0f);
+    //cmdSetPolygonMode(framebuffer->renderCommandBuffer, VK_POLYGON_MODE_POINT);
 
     PFN_vkCmdSetColorWriteMaskEXT cmdSetColorWriteMask = loadDeviceFunction("vkCmdSetColorWriteMaskEXT");
-    cmdSetColorWriteMask(commandBuffer, 0, 1, &colorWriteMask);
+    cmdSetColorWriteMask(framebuffer->renderCommandBuffer, 0, 1, &colorWriteMask);
 
     PFN_vkCmdSetAlphaToOneEnableEXT cmdSetAlphaToOneEnable = loadDeviceFunction("vkCmdSetAlphaToOneEnableEXT");
-    cmdSetAlphaToOneEnable(commandBuffer, VK_FALSE);
+    cmdSetAlphaToOneEnable(framebuffer->renderCommandBuffer, VK_FALSE);
     PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadDeviceFunction("vkCmdSetAlphaToCoverageEnableEXT");
-    cmdSetAlphaToCoverageEnable(commandBuffer, VK_FALSE);
+    cmdSetAlphaToCoverageEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 }
 
 void destroyPipeline() {

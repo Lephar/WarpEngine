@@ -38,10 +38,10 @@ void render() {
     beginFramebuffer(framebufferSetIndex, framebufferIndex);
     bindFramebuffer(framebufferSetIndex, framebufferIndex);
 
-    bindContentBuffers(framebuffer->renderCommandBuffer);
-    bindPipeline(framebuffer->renderCommandBuffer);
-    bindShaders(framebuffer->renderCommandBuffer, vertexShaderModule, fragmentShaderModule);
-    bindScene(framebuffer->renderCommandBuffer, framebuffer->cameraDescriptorSet);
+    bindContentBuffers(framebufferSetIndex, framebufferIndex);
+    bindPipeline(framebufferSetIndex, framebufferIndex);
+    bindShaders(framebufferSetIndex, framebufferIndex, vertexShaderModule, fragmentShaderModule);
+    bindScene(framebufferSetIndex, framebufferIndex);
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         Material *material = &materials[materialIndex];

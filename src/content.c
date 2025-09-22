@@ -7,7 +7,7 @@
 #include "material.h"
 #include "scene.h"
 #include "primitive.h"
-#include "descriptor.h"
+#include "framebuffer.h"
 
 #include "file.h"
 #include "logger.h"
@@ -167,7 +167,10 @@ void updateUniforms(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     }
 }
 
-void bindContentBuffers(VkCommandBuffer commandBuffer) {
+void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+
     VkVertexInputBindingDescription2EXT vertexBinding = {
         .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
         .pNext = nullptr,
@@ -220,11 +223,11 @@ void bindContentBuffers(VkCommandBuffer commandBuffer) {
 
     const VkDeviceSize vertexBufferOffset = indexCount * sizeof(Index);
 
-    vkCmdBindIndexBuffer(commandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-    vkCmdBindVertexBuffers(commandBuffer, 0, 1, &deviceBuffer.buffer, &vertexBufferOffset);
+    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &vertexBufferOffset);
 
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
-    cmdSetVertexInput(commandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
+    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
 }
 
 void freeContent() {

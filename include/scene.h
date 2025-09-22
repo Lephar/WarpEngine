@@ -22,4 +22,4 @@ void initializeCamera(float fieldOfView, float nearPlane, float farPlane);
 void updatePlayer();
 void updateCamera();
 
-void bindScene(VkCommandBuffer commandBuffer, VkDescriptorSet sceneDescriptorSet);
+void bindScene(uint32_t framebufferSetIndex, uint32_t framebufferIndex);

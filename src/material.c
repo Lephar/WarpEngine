@@ -156,17 +156,17 @@ void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Mater
         .alphaBlendOp = VK_BLEND_OP_ADD
     };
 
+    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
+    cmdSetColorBlendEnable(framebuffer->renderCommandBuffer, 0, 1, &material->isTransparent);
+    PFN_vkCmdSetColorBlendEquationEXT cmdSetColorBlendEquation = loadDeviceFunction("vkCmdSetColorBlendEquationEXT");
+    cmdSetColorBlendEquation(framebuffer->renderCommandBuffer, 0, 1, &colorBlendEquations);
+
     VkDescriptorSet descriptorSets[] = {
         framebuffer->materialDescriptorSet,
         material->samplerDescriptorSet,
     };
 
     uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
-
-    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
-    cmdSetColorBlendEnable(framebuffer->renderCommandBuffer, 0, 1, &material->isTransparent);
-    PFN_vkCmdSetColorBlendEquationEXT cmdSetColorBlendEquation = loadDeviceFunction("vkCmdSetColorBlendEquationEXT");
-    cmdSetColorBlendEquation(framebuffer->renderCommandBuffer, 0, 1, &colorBlendEquations);
 
     vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, descriptorSetCount, descriptorSets, 1, &material->factorOffset);
 }

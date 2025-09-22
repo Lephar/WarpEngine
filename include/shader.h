@@ -24,5 +24,5 @@ extern ShaderModule *vertexShaderModule;
 extern ShaderModule *fragmentShaderModule;
 
 void createModules();
-void bindShaders(VkCommandBuffer commandBuffer, ShaderModule *vertexShader, ShaderModule *fragmentShader);
+void bindShaders(uint32_t framebufferSetIndex, uint32_t framebufferIndex, ShaderModule *vertexShader, ShaderModule *fragmentShader);
 void destroyModules();
