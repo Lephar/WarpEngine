@@ -150,13 +150,17 @@ void updateUniforms(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     updatePlayer();
     updateCamera();
 
-    const VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
+    VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
 
     memcpy(mappedSharedMemory + uniformBufferOffset, &cameraUniform, cameraUniformAlignment);
+
+    uniformBufferOffset += cameraUniformAlignment;
 
     for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
         memcpy(mappedSharedMemory + uniformBufferOffset + primitiveIndex * primitiveUniformAlignment, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
     }
+
+    uniformBufferOffset += primitiveCountLimit * primitiveUniformAlignment;
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         memcpy(mappedSharedMemory + uniformBufferOffset + materialIndex * materialUniformAlignment, &materialUniforms[materialIndex], sizeof(MaterialUniform));
