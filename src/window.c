@@ -1,10 +1,8 @@
 #include "window.h"
 
-#include "file.h"
+#include "system.h"
 #include "numerics.h"
 #include "logger.h"
-
-PFN_vkGetInstanceProcAddr systemFunctionLoader;
 
 SDL_Window *window;
 
@@ -43,19 +41,8 @@ uint32_t timerCallback(void *userData, uint32_t id, uint32_t interval) {
 }
 #endif
 
-void initializeSystem() {
-    // NOTICE: RenderDoc doesn't support Wayland yet
-    SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
-    SDL_Init(SDL_INIT_VIDEO);
-
-    SDL_Vulkan_LoadLibrary(nullptr);
-    systemFunctionLoader = (PFN_vkGetInstanceProcAddr) SDL_Vulkan_GetVkGetInstanceProcAddr();
-
-    debug("System initialized with %s driver", SDL_GetCurrentVideoDriver());
-}
-
 void createWindow() {
-    window = SDL_CreateWindow(executableName, windowWidth, windowHeight, SDL_WINDOW_VULKAN);
+    window = SDL_CreateWindow(applicationName, windowWidth, windowHeight, SDL_WINDOW_VULKAN);
     SDL_GetWindowSizeInPixels(window, &windowWidth, &windowHeight);
 
     debug("Window created: %dx%d", windowWidth, windowHeight);
@@ -139,10 +126,4 @@ void destroyWindow() {
     SDL_DestroyWindow(window);
 
     debug("Window destroyed");
-}
-
-void quitSystem() {
-    SDL_Quit();
-
-    debug("System quit");
 }

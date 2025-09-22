@@ -25,14 +25,11 @@ void createDevice() {
 
     uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
 
-    uint32_t surfaceExtensionCount = 0;
-    const char **surfaceExtensions = getSurfaceDeviceExtensions(&surfaceExtensionCount);
-
-    uint32_t extensionCount = baseExtensionCount + surfaceExtensionCount;
+    uint32_t extensionCount = baseExtensionCount + surfaceDeviceExtensionCount;
     const char **extensions = malloc(extensionCount * sizeof(const char *));
 
     memcpy(extensions, baseExtensions, baseExtensionCount * sizeof(const char *));
-    memcpy(extensions + baseExtensionCount, surfaceExtensions, surfaceExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount, surfaceDeviceExtensions, surfaceDeviceExtensionCount * sizeof(const char *));
 
     debug("Device extensions (count = %d):", extensionCount);
     for(uint32_t index = 0; index < extensionCount; index++) {
@@ -66,7 +63,7 @@ void createDevice() {
 
     VkPhysicalDeviceShaderObjectFeaturesEXT shaderObjectFeatures = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT,
-        .pNext = getSurfaceDeviceFeatures(),
+        .pNext = surfaceDeviceFeatures,
         .shaderObject = VK_TRUE,
     };
 

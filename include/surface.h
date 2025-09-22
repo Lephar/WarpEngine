@@ -2,6 +2,14 @@
 
 #include "pch.h"
 
+extern uint32_t surfaceInstanceExtensionCount;
+extern char const **surfaceInstanceExtensions;
+
+extern uint32_t surfaceDeviceExtensionCount;
+extern char const **surfaceDeviceExtensions;
+
+extern void *surfaceDeviceFeatures;
+
 extern VkSurfaceKHR surface;
 
 extern VkPresentModeKHR presentMode;
@@ -11,10 +19,7 @@ extern VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
 extern VkExtent2D surfaceExtent;
 
-char const **getSurfaceInstanceExtensions(uint32_t *count);
 void createSurface();
 VkBool32 getSurfaceSupport(VkPhysicalDevice physicalDeviceCandidate);
 void setSurfaceDetails();
-char const **getSurfaceDeviceExtensions(uint32_t *count);
-void *getSurfaceDeviceFeatures();
 void destroySurface();

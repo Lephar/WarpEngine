@@ -1,16 +1,14 @@
 #include "file.h"
 
-char rootPath[PATH_MAX];
-char executableName[PATH_MAX];
-const char *dataDirectory = "data";
+#include "system.h"
 
 void makeFullPath(const char *subdirectory, const char *filename, char outFullPath[]) {
     int length = 0;
 
     if(subdirectory == nullptr || strncmp(subdirectory, "", PATH_MAX) == 0) {
-        length = snprintf(outFullPath, PATH_MAX, "%s/%s/%s",    rootPath, dataDirectory, filename);
+        length = snprintf(outFullPath, PATH_MAX, "%s/%s",    dataPath, filename);
     } else {
-        length = snprintf(outFullPath, PATH_MAX, "%s/%s/%s/%s", rootPath, dataDirectory, subdirectory, filename);
+        length = snprintf(outFullPath, PATH_MAX, "%s/%s/%s", dataPath, subdirectory, filename);
     }
 
     assert(length < PATH_MAX);

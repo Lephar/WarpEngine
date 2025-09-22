@@ -1,9 +1,9 @@
 #include "instance.h"
 
-#include "file.h"
-#include "logger.h"
+#include "system.h"
 #include "surface.h"
-#include "window.h"
+
+#include "logger.h"
 
 VkInstance instance;
 PFN_vkGetInstanceProcAddr instanceFunctionLoader;
@@ -49,14 +49,11 @@ void createInstance() {
 
     const uint32_t baseExtensionCount = sizeof(baseExtensions) / sizeof(const char *);
 
-    uint32_t surfaceExtensionCount = 0;
-    const char **surfaceExtensions = getSurfaceInstanceExtensions(&surfaceExtensionCount);
-
-    const uint32_t extensionCount = baseExtensionCount + surfaceExtensionCount;
+    const uint32_t extensionCount = baseExtensionCount + surfaceInstanceExtensionCount;
     const char **extensions = malloc(extensionCount * sizeof(const char *));
 
     memcpy(extensions, baseExtensions, baseExtensionCount * sizeof(const char *));
-    memcpy(extensions + baseExtensionCount, surfaceExtensions, surfaceExtensionCount * sizeof(const char *));
+    memcpy(extensions + baseExtensionCount, surfaceInstanceExtensions, surfaceInstanceExtensionCount * sizeof(const char *));
 
     debug("Instance layers (count = %d):", layerCount);
     for(uint32_t index = 0; index < layerCount; index++) {
@@ -138,9 +135,9 @@ void createInstance() {
     VkApplicationInfo applicationInfo = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pNext = nullptr,
-        .pApplicationName = executableName,
+        .pApplicationName = applicationName,
         .applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
-        .pEngineName = executableName,
+        .pEngineName = applicationName,
         .engineVersion = VK_MAKE_API_VERSION(0, 0, 0, 1),
         .apiVersion = VK_API_VERSION_1_4
     };

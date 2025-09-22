@@ -6,13 +6,13 @@
 
 #include "logger.h"
 
-uint32_t surfaceInstanceExtensionCount = 0;
-char const **surfaceInstanceExtensions = nullptr;
+uint32_t surfaceInstanceExtensionCount;
+char const **surfaceInstanceExtensions;
 
-uint32_t surfaceDeviceExtensionCount = 0;
-char const **surfaceDeviceExtensions = nullptr;
+uint32_t surfaceDeviceExtensionCount;
+char const **surfaceDeviceExtensions;
 
-void *surfaceDeviceFeatures = nullptr;
+void *surfaceDeviceFeatures;
 
 VkSurfaceKHR surface;
 
@@ -22,30 +22,6 @@ VkSurfaceFormatKHR surfaceFormat;
 VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
 VkExtent2D surfaceExtent;
-
-char const **getSurfaceInstanceExtensions(uint32_t *count) {
-    uint32_t requiredExtensionCount = 0;
-    char const *const *requiredExtensions = SDL_Vulkan_GetInstanceExtensions(&requiredExtensionCount);
-
-    char const *optionalExtensions[] = {
-        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
-        VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME,
-        VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME,
-    };
-
-    const uint32_t optionalExtensionCount = sizeof(optionalExtensions) / sizeof(char const *);
-
-    if(surfaceInstanceExtensionCount == 0) {
-        surfaceInstanceExtensionCount = requiredExtensionCount + optionalExtensionCount;
-        surfaceInstanceExtensions = malloc(surfaceInstanceExtensionCount * sizeof(char const *));
-
-        memcpy(surfaceInstanceExtensions, requiredExtensions, requiredExtensionCount * sizeof(char const *));
-        memcpy(surfaceInstanceExtensions + requiredExtensionCount, optionalExtensions, optionalExtensionCount * sizeof(char const *));
-    }
-
-    *count = surfaceInstanceExtensionCount;
-    return surfaceInstanceExtensions;
-}
 
 void createSurface() {
     VkBool32 result = SDL_Vulkan_CreateSurface(window, instance, nullptr, &surface);
@@ -237,71 +213,8 @@ void setSurfaceDetails() {
     setSurfaceExtent();
 }
 
-char const **getSurfaceDeviceExtensions(uint32_t *count) {
-    char const *requiredExtensions[] = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-    };
-    uint32_t requiredExtensionCount = sizeof(requiredExtensions) / sizeof(char const *);
-
-    char const *optionalExtensions[] = {
-        VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME,
-        VK_EXT_PRESENT_MODE_FIFO_LATEST_READY_EXTENSION_NAME,
-    };
-
-    const uint32_t optionalExtensionCount = sizeof(optionalExtensions) / sizeof(char const *);
-
-    if(surfaceDeviceExtensionCount == 0) {
-        surfaceDeviceExtensionCount = requiredExtensionCount + optionalExtensionCount;
-        surfaceDeviceExtensions = malloc(surfaceDeviceExtensionCount * sizeof(char const *));
-
-        memcpy(surfaceDeviceExtensions, requiredExtensions, requiredExtensionCount * sizeof(char const *));
-        memcpy(surfaceDeviceExtensions + requiredExtensionCount, optionalExtensions, optionalExtensionCount * sizeof(char const *));
-    }
-
-    *count = surfaceDeviceExtensionCount;
-    return surfaceDeviceExtensions;
-}
-
-void *getSurfaceDeviceFeatures() {
-    if(surfaceDeviceFeatures == nullptr) {
-        VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT *presentModeFifoLatestReadyFeatures = malloc(sizeof(VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT));
-        presentModeFifoLatestReadyFeatures->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_MODE_FIFO_LATEST_READY_FEATURES_EXT;
-        presentModeFifoLatestReadyFeatures->pNext = nullptr;
-        presentModeFifoLatestReadyFeatures->presentModeFifoLatestReady = VK_TRUE;
-
-        VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT *swapchainMaintenance1Features = malloc(sizeof(VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT));
-        swapchainMaintenance1Features->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT;
-        swapchainMaintenance1Features->pNext = presentModeFifoLatestReadyFeatures;
-        swapchainMaintenance1Features->swapchainMaintenance1 = VK_TRUE;
-
-        surfaceDeviceFeatures = swapchainMaintenance1Features;
-    }
-
-    return surfaceDeviceFeatures;
-}
-
 void destroySurface() {
-    if(surfaceDeviceFeatures != nullptr) {
-        VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT *swapchainMaintenance1Features = surfaceDeviceFeatures;
-        VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT *presentModeFifoLatestReadyFeatures = swapchainMaintenance1Features->pNext;
-        assert(presentModeFifoLatestReadyFeatures->pNext == nullptr);
-
-        free(presentModeFifoLatestReadyFeatures);
-        free(swapchainMaintenance1Features);
-        surfaceDeviceFeatures = nullptr;
-    }
-
-    if(surfaceDeviceExtensionCount != 0) {
-        surfaceDeviceExtensionCount = 0;
-        free(surfaceDeviceExtensions);
-    }
-
     // NOTICE: I contributed this function to SDL :)
     SDL_Vulkan_DestroySurface(instance, surface, nullptr);
     debug("Surface destroyed");
-
-    if(surfaceInstanceExtensionCount != 0) {
-        surfaceInstanceExtensionCount = 0;
-        free(surfaceInstanceExtensions);
-    }
 }
