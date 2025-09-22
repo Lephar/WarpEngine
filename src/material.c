@@ -1,5 +1,6 @@
 #include "material.h"
 
+#include "device.h"
 #include "image.h"
 #include "pipeline.h"
 #include "descriptor.h"
@@ -144,12 +145,26 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
 
 // NOTICE: This doesn't account for shader binding, use bindShader() beforehand
 void bindMaterial(VkCommandBuffer commandBuffer, Material *material) {
+    VkColorBlendEquationEXT colorBlendEquations = {
+        .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
+        .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        .colorBlendOp = VK_BLEND_OP_ADD,
+        .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
+        .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+        .alphaBlendOp = VK_BLEND_OP_ADD
+    };
+
     VkDescriptorSet descriptorSets[] = {
         material->materialDescriptorSet,
         factorDescriptorSet
     };
 
     uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
+
+    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
+    cmdSetColorBlendEnable(commandBuffer, 0, 1, &material->isTransparent);
+    PFN_vkCmdSetColorBlendEquationEXT cmdSetColorBlendEquation = loadDeviceFunction("vkCmdSetColorBlendEquationEXT");
+    cmdSetColorBlendEquation(commandBuffer, 0, 1, &colorBlendEquations);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, descriptorSetCount, descriptorSets, 1, &material->factorOffset);
 }
