@@ -65,7 +65,7 @@ void updateProjection(uint32_t framebufferSetIndex) {
     PCamera camera = &cameras[framebufferSetIndex];
     PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
 
-    camera->properties[3] = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
+    camera->properties[1] = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
     glmc_perspective_rh_zo(camera->properties[0], camera->properties[1], camera->properties[2], camera->properties[3], camera->projection);
 }
 
