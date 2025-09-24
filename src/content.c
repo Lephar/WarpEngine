@@ -4,12 +4,12 @@
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
-#include "material.h"
 #include "scene.h"
+#include "material.h"
 #include "primitive.h"
+#include "asset.h"
 #include "framebuffer.h"
 
-#include "file.h"
 #include "logger.h"
 
 uint32_t indexCount;
@@ -28,63 +28,6 @@ VkDeviceSize materialUniformBufferRange;
 VkDeviceSize framebufferUniformBufferSize;
 VkDeviceSize framebufferSetUniformBufferSize;
 
-void loadAsset(const char *subdirectory, const char *filename) {
-    char fullPath[PATH_MAX];
-    makeFullPath(subdirectory, filename, fullPath);
-
-    cgltf_data *data = nullptr;
-    cgltf_options assetOptions = {};
-    cgltf_result result = cgltf_parse_file(&assetOptions, fullPath, &data);
-
-    if(result != cgltf_result_success) {
-        debug("Failed to read %s: %d", filename, result);
-        assert(result == cgltf_result_success);
-    }
-
-    result = cgltf_validate(data);
-
-    if(result != cgltf_result_success) {
-        debug("Failed to validate %s: %d", filename, result);
-        assert(result == cgltf_result_success);
-    }
-
-    result = cgltf_load_buffers(&assetOptions, data, fullPath);
-
-    if(result != cgltf_result_success) {
-        debug("Failed to load buffers %s: %d", filename, result);
-        cgltf_free(data);
-        assert(result == cgltf_result_success);
-    }
-
-    for(cgltf_size materialIndex = 0; materialIndex < data->materials_count; materialIndex++) {
-        cgltf_material *materialData = &data->materials[materialIndex];
-
-        if(findMaterial(materialData) < materialCount) {
-            debug("Material already found, skipping...");
-            continue;
-        }
-
-        loadMaterial(subdirectory, materialData);
-    }
-
-    for(cgltf_size nodeIndex = 0; nodeIndex < data->nodes_count; nodeIndex++) {
-        cgltf_node *nodeData = &data->nodes[nodeIndex];
-
-        if(nodeData->mesh) {
-            mat4 transform;
-            cgltf_node_transform_world(nodeData, (cgltf_float *) transform);
-
-            cgltf_mesh *meshData = nodeData->mesh;
-
-            for(cgltf_size primitiveIndex = 0; primitiveIndex < meshData->primitives_count; primitiveIndex++) {
-                loadPrimitive(&meshData->primitives[primitiveIndex], transform);
-            }
-        }
-    }
-
-    cgltf_free(data);
-}
-
 void createContentBuffers() {
     const VkDeviceSize indexBufferSizeLimit  =     deviceBuffer.size / 4;
     const VkDeviceSize vertexBufferSizeLimit = 3 * deviceBuffer.size / 4;
@@ -92,11 +35,17 @@ void createContentBuffers() {
     indexBuffer  = malloc(indexBufferSizeLimit);
     vertexBuffer = malloc(vertexBufferSizeLimit);
 
-    materials  = malloc(primitiveCountLimit * sizeof(Material));
+    nodes        = malloc(nodeCountLimit * sizeof(Node));
+    scenes = malloc(nodeCountLimit * sizeof(uint32_t));
+
+    materials  = malloc(materialCountLimit  * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
-    materialUniforms  = malloc(primitiveCountLimit * sizeof(MaterialUniform));
+    materialUniforms  = malloc(materialCountLimit  * sizeof(MaterialUniform));
     primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
+
+    nodeCount      = 0;
+    sceneCount     = 0;
 
     materialCount  = 0;
     primitiveCount = 0;

@@ -4,6 +4,7 @@
 #include "device.h"
 #include "content.h"
 #include "scene.h"
+#include "asset.h"
 #include "primitive.h"
 #include "material.h"
 #include "descriptor.h"
@@ -52,6 +53,8 @@ void setPipelineDetails() {
 
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
+
+    nodeCountLimit = umax(primitiveCountLimit, materialCountLimit);
 
     framebufferUniformBufferSize = cameraUniformAlignment + primitiveUniformBufferRange + materialUniformBufferRange;
     framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;

@@ -21,5 +21,5 @@ extern uint32_t primitiveCount;
 extern Primitive *primitives;
 extern PrimitiveUniform *primitiveUniforms;
 
-void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform);
+uint32_t loadPrimitive(cgltf_primitive *primitiveData);
 void drawPrimitive(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Primitive *primitive);

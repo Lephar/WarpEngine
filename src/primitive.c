@@ -12,7 +12,7 @@ uint32_t primitiveCount;
 Primitive *primitives;
 PrimitiveUniform *primitiveUniforms;
 
-void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
+uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
     assert(primitiveCount < primitiveCountLimit);
     const uint32_t primitiveIndex = primitiveCount;
 
@@ -25,8 +25,11 @@ void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
     uint32_t materialIndex = findMaterial(primitiveData->material);
 
     if(materialIndex >= materialCount) {
+        // TODO: Use default materials in this case
         debug("\tNo material found for the primitive, skipping...");
-        return;
+        return UINT32_MAX;
+    } else {
+        primitiveCount++;
     }
 
     primitive->material = &materials[materialIndex];
@@ -41,7 +44,7 @@ void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
     primitive->indexBegin    = indexCount;
     primitive->indexCount    = accessor->count;
     primitive->vertexOffset  = (int32_t) vertexCount;
-    primitive->uniformOffset = primitiveCount * sizeof(PrimitiveUniform);
+    primitive->uniformOffset = primitiveIndex * sizeof(PrimitiveUniform);
 
     debug("\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
@@ -113,19 +116,18 @@ void loadPrimitive(cgltf_primitive *primitiveData, mat4 transform) {
         } // TODO: Load color and weight if not too redundant
     }
 
-    memcpy(primitiveUniform->model, transform, sizeof(primitiveUniform->model));
-
     debug("\tIndex begin:    %lu", primitive->indexBegin);
     debug("\tIndex count:    %lu", primitive->indexCount);
     debug("\tVertex offset:  %lu", primitive->vertexOffset);
     debug("\tUniform offset: %lu", primitive->uniformOffset);
 
+    glmc_mat4_identity(primitiveUniform->model);
+
     indexCount  += accessor->count;
     vertexCount += primitiveVertexCount;
 
     debug("\tBuffer offsets set and primitive created");
-
-    primitiveCount++;
+    return primitiveIndex;
 }
 
 // NOTICE: This doesn't account for material binding, use bindMaterial() beforehand
