@@ -22,6 +22,7 @@ typedef struct material {
     VkDescriptorSet samplerDescriptorSet;
 } Material, *PMaterial;
 
+extern const char *defaultMaterialName;
 extern Image *defaultBlackTexture;
 extern Image *defaultWhiteTexture;
 
@@ -31,7 +32,8 @@ extern uint32_t materialCount;
 extern Material *materials;
 extern MaterialUniform *materialUniforms;
 
-uint32_t findMaterial(cgltf_material *materialData);
+void loadDefaultMaterial();
+uint32_t findMaterial(const char *name);
 void loadMaterial(const char *subdirectory, cgltf_material *materialData);
 void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Material *material);
 void destroyMaterial(Material *material);

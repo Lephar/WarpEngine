@@ -10,6 +10,7 @@
 
 #include "logger.h"
 
+const char *defaultMaterialName = "Default Material";
 Image *defaultBlackTexture = nullptr;
 Image *defaultWhiteTexture = nullptr;
 
@@ -19,9 +20,9 @@ uint32_t materialCount;
 Material *materials;
 MaterialUniform *materialUniforms;
 
-uint32_t findMaterial(cgltf_material *materialData) {
+uint32_t findMaterial(const char *name) {
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        if(strncmp(materialData->name, materials[materialIndex].name, UINT8_MAX) == 0) {
+        if(strncmp(name, materials[materialIndex].name, UINT8_MAX) == 0) {
             return materialIndex;
         }
     }
@@ -55,7 +56,39 @@ Image *loadTexture(const char *subdirectory, const char *filename, bool isColor)
     return image;
 }
 
-void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
+void loadDefaultMaterial() {
+    assert(materialCount < materialCountLimit);
+    const uint32_t materialIndex = materialCount;
+
+    Material        *material        = &materials[materialIndex];
+    MaterialUniform *materialUniform = &materialUniforms[materialIndex];
+
+    debug("Material Name: %s", defaultMaterialName);
+    strncpy(material->name, defaultMaterialName, UINT8_MAX);
+
+    if(defaultWhiteTexture == nullptr) {
+        defaultWhiteTexture = loadTexture("assets/default/textures", "white.ktx2", true);
+    }
+
+    if(defaultBlackTexture == nullptr) {
+        defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", false);
+    }
+
+    material->baseColor         = defaultWhiteTexture;
+    material->metallicRoughness = defaultBlackTexture;
+    material->normal            = defaultBlackTexture;
+
+    material->isTransparent = false;
+    material->isDoubleSided = false;
+
+    glmc_vec4_one(materialUniform->baseColorFactor);
+    glmc_vec2_one(materialUniform->metallicRoughnessFactor);
+    glmc_vec3_one(materialUniform->emissiveFactor);
+
+    materialUniform->normalScale = 1.0f;
+}
+
+void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
     assert(materialCount < materialCountLimit);
     const uint32_t materialIndex = materialCount;
 
@@ -107,7 +140,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
             }
         } else {
             if(defaultBlackTexture == nullptr) {
-                defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
+                defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", false);
             }
 
             material->metallicRoughness = defaultBlackTexture;
@@ -125,7 +158,7 @@ void loadMaterial(const char *subdirectory,cgltf_material *materialData) {
         }
     } else {
         if(defaultBlackTexture == nullptr) {
-            defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
+            defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", false);
         }
 
         material->normal = defaultBlackTexture;

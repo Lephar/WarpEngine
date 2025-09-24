@@ -118,7 +118,7 @@ void loadAsset(const char *subdirectory, const char *filename) {
     for(cgltf_size materialIndex = 0; materialIndex < assetData->materials_count; materialIndex++) {
         cgltf_material *materialData = &assetData->materials[materialIndex];
 
-        if(findMaterial(materialData) < materialCount) {
+        if(findMaterial(materialData->name) < materialCount) {
             debug("Material already found, skipping...");
             continue;
         }

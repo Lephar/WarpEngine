@@ -15,6 +15,7 @@ PrimitiveUniform *primitiveUniforms;
 uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
     assert(primitiveCount < primitiveCountLimit);
     const uint32_t primitiveIndex = primitiveCount;
+    primitiveCount++;
 
     Primitive *primitive = &primitives[primitiveIndex];
     PrimitiveUniform *primitiveUniform = &primitiveUniforms[primitiveIndex];
@@ -22,14 +23,19 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
     debug("Primitive Index: %d", primitiveIndex);
     debug("\tType: %d", primitiveData->type);
 
-    uint32_t materialIndex = findMaterial(primitiveData->material);
+    uint32_t materialIndex = findMaterial(primitiveData->material->name);
 
     if(materialIndex >= materialCount) {
-        // TODO: Use default materials in this case
-        debug("\tNo material found for the primitive, skipping...");
-        return UINT32_MAX;
-    } else {
-        primitiveCount++;
+        debug("\tNo material found for the primitive, using the default material...");
+        materialIndex = findMaterial(defaultMaterialName);
+
+        if(materialIndex >= materialCount) {
+            debug("\tThe default material is not loaded, loading now...");
+            loadDefaultMaterial();
+
+            materialIndex = findMaterial(defaultMaterialName);
+            assert(materialIndex < materialCount);
+        }
     }
 
     primitive->material = &materials[materialIndex];
@@ -113,7 +119,7 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
                     memcpy(vertexBuffer[vertexCount + texcoordIndex].texcoord1, texcoords[texcoordIndex], sizeof(vec2));
                 }
             }
-        } // TODO: Load color and weight if not too redundant
+        } // TODO: Load color and weight too if not too redundant
     }
 
     debug("\tIndex begin:    %lu", primitive->indexBegin);
