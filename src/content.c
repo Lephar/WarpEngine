@@ -36,7 +36,7 @@ void createContentBuffers() {
     indexBuffer  = malloc(indexBufferSizeLimit);
     vertexBuffer = malloc(vertexBufferSizeLimit);
 
-    nodes        = malloc(nodeCountLimit * sizeof(Node));
+    nodes  = malloc(nodeCountLimit * sizeof(Node));
     scenes = malloc(nodeCountLimit * sizeof(uint32_t));
 
     cameras    = malloc(cameraCountLimit    * sizeof(Camera));

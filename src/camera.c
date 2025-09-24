@@ -41,6 +41,11 @@ void loadCamera(cgltf_camera *cameraData) {
     camera->properties[2] = perspectiveData->znear;
     camera->properties[3] = perspectiveData->zfar; // TODO: Check if it has_zfar
 
+    debug("\tyfov:         %g", camera->properties[0]);
+    debug("\taspect_ratio: %g", camera->properties[1]);
+    debug("\tznear:        %g", camera->properties[2]);
+    debug("\tzfar:         %g", camera->properties[3]);
+
     debug("\tSuccessfully loaded");
 }
 
@@ -67,6 +72,8 @@ void updateProjection(uint32_t framebufferSetIndex) {
 
     camera->properties[1] = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
     glmc_perspective_rh_zo(camera->properties[0], camera->properties[1], camera->properties[2], camera->properties[3], camera->projection);
+
+    debug("Updated the perspective projection with the aspect ratio of %g", camera->properties[1]);
 }
 
 void generateProjectionView(uint32_t framebufferSetIndex) {

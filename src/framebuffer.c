@@ -84,8 +84,6 @@ void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
 void createFramebufferSet(uint32_t framebufferSetIndex) {
     FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
 
-    updateProjection(framebufferSetIndex);
-
     framebufferSet->extent = surfaceExtent;
     framebufferSet->framebufferCount = 2;
     framebufferSet->sampleCount = VK_SAMPLE_COUNT_4_BIT;
@@ -115,6 +113,8 @@ void createFramebufferSet(uint32_t framebufferSetIndex) {
         createFramebuffer(framebufferSetIndex, framebufferIndex);
         debug("\tSuccessfully created");
     }
+
+    updateProjection(framebufferSetIndex);
 }
 
 void createFramebufferSets() {
