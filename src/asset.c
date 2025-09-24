@@ -25,10 +25,8 @@ void initializeNode(PNode node) {
 }
 
 uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
-    debug("Node: %s", nodeData->name);
-
     assert(nodeCount < nodeCountLimit);
-    uint32_t nodeIndex = nodeCount;
+    const uint32_t nodeIndex = nodeCount;
     nodeCount++;
 
     PNode node = &nodes[nodeIndex];
@@ -38,7 +36,17 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
     node->childCount = nodeData->children_count;
     node->childrenIndices = malloc(node->childCount * sizeof(uint32_t)); // NOTICE: malloc(0) is completely safe
 
-    debug("\tChild Count: %u", node->childCount);
+    if(nodeData->has_translation) {
+        glmc_translate_make(node->translation, nodeData->translation);
+    }
+    if(nodeData->has_rotation) {
+        versor rotation;
+        glmc_quat_make(nodeData->rotation, rotation);
+        glmc_quat_mat4(rotation, node->rotation);
+    }
+    if(nodeData->has_scale) {
+        glmc_scale_make(node->scale, nodeData->scale);
+    }
 
     for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
         cgltf_node *childData = nodeData->children[childIndex];
@@ -51,8 +59,6 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
         node->meshCount = meshData->primitives_count;
         node->meshIndices = malloc(node->meshCount * sizeof(uint32_t));
 
-        debug("Mesh Count: %u", node->meshCount);
-
         for(cgltf_size primitiveIndex = 0; primitiveIndex < node->meshCount; primitiveIndex++) {
             cgltf_primitive *primitive = &meshData->primitives[primitiveIndex];
             node->meshIndices[primitiveIndex] = loadPrimitive(primitive);
@@ -64,7 +70,7 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
 
 uint32_t loadScene(cgltf_scene *sceneData) {
     assert(nodeCount < nodeCountLimit);
-    uint32_t nodeIndex = nodeCount;
+    const uint32_t nodeIndex = nodeCount;
     nodeCount++;
 
     PNode scene = &nodes[nodeIndex];
@@ -72,8 +78,6 @@ uint32_t loadScene(cgltf_scene *sceneData) {
 
     scene->childCount = sceneData->nodes_count;
     scene->childrenIndices = malloc(scene->childCount * sizeof(uint32_t));
-
-    debug("Node Count: %u", scene->childCount);
 
     for(uint32_t childIndex = 0; childIndex < scene->childCount; childIndex++) {
         cgltf_node *childData = sceneData->nodes[childIndex];
@@ -123,7 +127,7 @@ void loadAsset(const char *subdirectory, const char *filename) {
     }
 
     assert(sceneCount < nodeCountLimit);
-    uint32_t sceneIndex = sceneCount;
+    const uint32_t sceneIndex = sceneCount;
     sceneCount++;
 
     scenes[sceneIndex] = loadScene(assetData->scene);
