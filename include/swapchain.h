@@ -10,7 +10,8 @@ typedef struct swapchain {
     uint32_t imageCount;
     Image *images;
 
-    // NOTICE: There needs to be a spare because we dont know the index until we start the acquisition
+    // NOTICE: There needs to be a spare because we don't know the index until we start the acquisition
+    // TODO: When framebuffers has more images and swapchain images are out of order, we may need a fence
     VkSemaphore  acquireSemaphore;
     VkSemaphore *acquireSemaphores;
     VkSemaphore *presentSemaphores;
