@@ -22,6 +22,7 @@ extern VkDeviceSize cameraUniformAlignment;
 extern VkDeviceSize primitiveUniformAlignment;
 extern VkDeviceSize materialUniformAlignment;
 
+extern VkDeviceSize cameraUniformBufferRange;
 extern VkDeviceSize primitiveUniformBufferRange;
 extern VkDeviceSize materialUniformBufferRange;
 

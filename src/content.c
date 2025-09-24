@@ -4,7 +4,7 @@
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
-#include "scene.h"
+#include "camera.h"
 #include "material.h"
 #include "primitive.h"
 #include "asset.h"
@@ -22,6 +22,7 @@ VkDeviceSize cameraUniformAlignment;
 VkDeviceSize primitiveUniformAlignment;
 VkDeviceSize materialUniformAlignment;
 
+VkDeviceSize cameraUniformBufferRange;
 VkDeviceSize primitiveUniformBufferRange;
 VkDeviceSize materialUniformBufferRange;
 
@@ -38,6 +39,7 @@ void createContentBuffers() {
     nodes        = malloc(nodeCountLimit * sizeof(Node));
     scenes = malloc(nodeCountLimit * sizeof(uint32_t));
 
+    cameras    = malloc(cameraCountLimit    * sizeof(Camera));
     materials  = malloc(materialCountLimit  * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
@@ -47,6 +49,7 @@ void createContentBuffers() {
     nodeCount      = 0;
     sceneCount     = 0;
 
+    cameraCount    = 0;
     materialCount  = 0;
     primitiveCount = 0;
 
@@ -61,7 +64,11 @@ void loadContent() {
 
     debug("Assets successfully loaded");
 
-    initializeScene();
+    initializeWorld((vec3) {
+        0.0f,
+        1.0f,
+        0.0f
+    });
 
     initializePlayer((vec3) {
         0.0f,
@@ -74,8 +81,6 @@ void loadContent() {
         0.0f
     },
     10.0f);
-
-    initializeCamera(M_PI_4, 1.0f, 128.0f);
 
     debug("Scene successfully set");
 
@@ -113,7 +118,7 @@ void updateNodeUniformBuffer(PNode node, mat4 transform) {
 
 void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     updatePlayer();
-    updateCamera();
+    updateCamera(framebufferSetIndex);
 
     mat4 baseTransform;
     glmc_mat4_identity(baseTransform);
@@ -124,9 +129,10 @@ void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex
 
     VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
 
-    memcpy(mappedSharedMemory + uniformBufferOffset, &cameraUniform, cameraUniformAlignment);
+    PCamera camera = &cameras[framebufferSetIndex];
+    memcpy(mappedSharedMemory + uniformBufferOffset, camera, sizeof(Camera));
 
-    uniformBufferOffset += cameraUniformAlignment;
+    uniformBufferOffset += cameraUniformBufferRange;
 
     for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
         memcpy(mappedSharedMemory + uniformBufferOffset + primitiveIndex * primitiveUniformAlignment, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));

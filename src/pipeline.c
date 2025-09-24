@@ -3,7 +3,7 @@
 #include "physicalDevice.h"
 #include "device.h"
 #include "content.h"
-#include "scene.h"
+#include "camera.h"
 #include "asset.h"
 #include "primitive.h"
 #include "material.h"
@@ -44,19 +44,22 @@ void setPipelineDetails() {
     const uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
     const uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
 
-    cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
+    cameraUniformAlignment    = align(sizeof(Camera),           minUniformBufferOffsetAlignment);
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
 
+    cameraUniformBufferRange    = cameraUniformAlignment;
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
+
+    cameraCountLimit = framebufferSetCountLimit;
 
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
 
     nodeCountLimit = umax(primitiveCountLimit, materialCountLimit);
 
-    framebufferUniformBufferSize = cameraUniformAlignment + primitiveUniformBufferRange + materialUniformBufferRange;
+    framebufferUniformBufferSize    = cameraUniformBufferRange + primitiveUniformBufferRange + materialUniformBufferRange;
     framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;
 }
 

@@ -10,7 +10,7 @@ layout(location = 4) in  vec2 inputTexcoord1;
 
 layout(location = 0) out vec4 outputColor;
 
-layout(set = 0, binding = 0) uniform Scene {
+layout(set = 0, binding = 0) uniform Camera {
     mat4 view;
     mat4 projection;
     mat4 projectionView;
@@ -29,8 +29,8 @@ layout(set = 3, binding = 1) uniform sampler2D metallicRoughnessSampler;
 layout(set = 3, binding = 2) uniform sampler2D normalSampler;
 
 vec4 depth() {
-    float nearPlane = cameraProperties[1];
-    float farPlane  = cameraProperties[2];
+    float nearPlane = cameraProperties[2];
+    float farPlane  = cameraProperties[3];
 
     float linearisedDepthValue = farPlane * nearPlane / (farPlane - gl_FragCoord.z * (farPlane - nearPlane));
     float normalisedDepthValue = linearisedDepthValue / farPlane;

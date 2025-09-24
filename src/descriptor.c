@@ -223,15 +223,15 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, Materia
 }
 
 VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&cameraDescriptorPool,    sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize, cameraUniformAlignment);
+    return createBufferDescriptorSet(&cameraDescriptorPool,    sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize, cameraUniformBufferRange);
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + cameraUniformAlignment, primitiveUniformBufferRange);
+    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + cameraUniformBufferRange, primitiveUniformBufferRange);
 }
 
 VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + cameraUniformAlignment + primitiveUniformBufferRange, materialUniformBufferRange);
+    return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + cameraUniformBufferRange + primitiveUniformBufferRange, materialUniformBufferRange);
 }
 
 VkDescriptorSet getSamplerDescriptorSet(Material *material) {

@@ -11,15 +11,12 @@
 #include "content.h"
 #include "shader.h"
 #include "material.h"
-#include "scene.h"
 #include "primitive.h"
 
 #include "logger.h"
 
 void initializeDraw() {
     vkDeviceWaitIdle(device);
-
-    updateProjection();
 
     debug("Draw loop started");
 }

@@ -8,6 +8,7 @@
 #include "image.h"
 #include "descriptor.h"
 #include "pipeline.h"
+#include "camera.h"
 
 #include "logger.h"
 
@@ -82,6 +83,8 @@ void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
 
 void createFramebufferSet(uint32_t framebufferSetIndex) {
     FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+
+    updateProjection(framebufferSetIndex);
 
     framebufferSet->extent = surfaceExtent;
     framebufferSet->framebufferCount = 2;

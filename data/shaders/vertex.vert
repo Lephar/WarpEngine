@@ -14,7 +14,7 @@ layout(location = 2) out vec4 outputNormal;
 layout(location = 3) out vec2 outputTexcoord0;
 layout(location = 4) out vec2 outputTexcoord1;
 
-layout(set = 0, binding = 0) uniform Scene {
+layout(set = 0, binding = 0) uniform Camera {
     mat4 view;
     mat4 projection;
     mat4 projectionView;

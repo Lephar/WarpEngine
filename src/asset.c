@@ -1,5 +1,6 @@
 #include "asset.h"
 
+#include "camera.h"
 #include "material.h"
 #include "primitive.h"
 
@@ -51,6 +52,12 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
     for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
         cgltf_node *childData = nodeData->children[childIndex];
         node->childrenIndices[childIndex] = loadNode(childIndex, childData);
+    }
+
+    if(nodeData->camera) {
+        cgltf_camera *cameraData = nodeData->camera;
+
+        loadCamera(cameraData);
     }
 
     if(nodeData->mesh) {
@@ -133,12 +140,4 @@ void loadAsset(const char *subdirectory, const char *filename) {
     scenes[sceneIndex] = loadScene(assetData->scene);
 
     cgltf_free(assetData);
-}
-
-void drawNode(uint32_t nodeIndex) {
-
-}
-
-void drawScene(uint32_t sceneIndex) {
-
 }
