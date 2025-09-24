@@ -77,10 +77,3 @@ void updateCamera() {
     updateView();
     generateProjectionView();
 }
-
-void bindScene(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
-
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &framebuffer->cameraDescriptorSet, 0, nullptr);
-}

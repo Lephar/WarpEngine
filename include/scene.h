@@ -21,5 +21,3 @@ void initializeCamera(float fieldOfView, float nearPlane, float farPlane);
 
 void updatePlayer();
 void updateCamera();
-
-void bindScene(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
