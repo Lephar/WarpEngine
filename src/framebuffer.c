@@ -85,6 +85,7 @@ void createFramebufferSet(uint32_t framebufferSetIndex) {
     framebufferSet->extent = surfaceExtent;
     framebufferSet->framebufferCount = 2;
     framebufferSet->sampleCount = VK_SAMPLE_COUNT_4_BIT;
+
     assert(framebufferSet->sampleCount & physicalDeviceProperties.limits.framebufferDepthSampleCounts);
     assert(framebufferSet->sampleCount & physicalDeviceProperties.limits.framebufferColorSampleCounts);
 
@@ -113,7 +114,7 @@ void createFramebufferSet(uint32_t framebufferSetIndex) {
 }
 
 void createFramebufferSets() {
-    framebufferSetCount = 1; // TODO: This is arbitrary
+    framebufferSetCount = 3; // TODO: This is arbitrary
     framebufferSets = malloc(framebufferSetCount * sizeof(FramebufferSet));
 
     for(uint32_t framebufferSetIndex = 0; framebufferSetIndex < framebufferSetCount; framebufferSetIndex++) {
@@ -279,6 +280,7 @@ void destroyFramebufferSet(uint32_t framebufferSetIndex) {
     destroyImage(framebufferSet->color);
     destroyImage(framebufferSet->depthStencil);
 
+    resetDescriptorPool(&materialDescriptorPool);
     resetDescriptorPool(&primitiveDescriptorPool);
     resetDescriptorPool(&cameraDescriptorPool);
 

@@ -44,7 +44,7 @@ void createSampler() {
 }
 
 void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
-    debug("%s buffer descriptor pool:", descriptorPool->type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ? "Dynamic uniform" : "Uniform");
+    debug("%s buffer descriptor pool:", type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ? "Dynamic uniform" : "Uniform");
 
     descriptorPool->type  = type;
     descriptorPool->count = count;
