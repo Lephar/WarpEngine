@@ -37,16 +37,26 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
     node->childCount = nodeData->children_count;
     node->childrenIndices = malloc(node->childCount * sizeof(uint32_t)); // NOTICE: malloc(0) is completely safe
 
-    if(nodeData->has_translation) {
-        glmc_translate_make(node->translation, nodeData->translation);
-    }
-    if(nodeData->has_rotation) {
-        versor rotation;
-        glmc_quat_make(nodeData->rotation, rotation);
-        glmc_quat_mat4(rotation, node->rotation);
-    }
-    if(nodeData->has_scale) {
-        glmc_scale_make(node->scale, nodeData->scale);
+    if(nodeData->has_matrix) {
+        vec4 translation; // TODO: What is the 4th component here?
+        vec3 scale;
+
+        glmc_decompose((vec4 *) nodeData->matrix, translation, node->rotation, scale);
+
+        glmc_translate_make(node->translation, translation); // TODO: Even they don't use it themselves!
+        glmc_scale_make(node->scale, scale);
+    } else {
+        if(nodeData->has_translation) {
+            glmc_translate_make(node->translation, nodeData->translation);
+        }
+        if(nodeData->has_rotation) {
+            versor rotation;
+            glmc_quat_make(nodeData->rotation, rotation);
+            glmc_quat_mat4(rotation, node->rotation);
+        }
+        if(nodeData->has_scale) {
+            glmc_scale_make(node->scale, nodeData->scale);
+        }
     }
 
     for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
