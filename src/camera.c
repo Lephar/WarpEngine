@@ -41,10 +41,10 @@ void loadCamera(cgltf_camera *cameraData) {
     camera->properties[2] = perspectiveData->znear;
     camera->properties[3] = perspectiveData->zfar; // TODO: Check if it has_zfar
 
-    debug("\tyfov:         %g", camera->properties[0]);
-    debug("\taspect_ratio: %g", camera->properties[1]);
-    debug("\tznear:        %g", camera->properties[2]);
-    debug("\tzfar:         %g", camera->properties[3]);
+    debug("\tyfov:  %g", camera->properties[0]);
+    //debug("\taspect_ratio: %g", camera->properties[1]);
+    debug("\tznear: %g", camera->properties[2]);
+    debug("\tzfar:  %g", camera->properties[3]);
 
     debug("\tSuccessfully loaded");
 }
@@ -85,7 +85,7 @@ void generateProjectionView(uint32_t framebufferSetIndex) {
     glmc_mat4_mul(camera->projection, camera->view, camera->projectionView);
 }
 
-void initializeWorld(vec3 up) {
+void initializeWorld(const vec3 up) {
     worldUp[0] = up[0];
     worldUp[1] = up[1];
     worldUp[2] = up[2];

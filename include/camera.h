@@ -19,7 +19,7 @@ void updateView(uint32_t framebufferSetIndex);
 void updateProjection(uint32_t framebufferSetIndex);
 void generateProjectionView(uint32_t framebufferSetIndex);
 
-void initializeWorld(vec3 up);
+void initializeWorld(const vec3 up);
 void initializePlayer(vec3 position, vec3 direction, float speed);
 
 void updatePlayer();
