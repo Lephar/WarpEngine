@@ -7,6 +7,7 @@ typedef struct node {
     mat4 scale;
     mat4 rotation;
     mat4 translation;
+    uint32_t cameraIndex;
     uint32_t meshCount;
     uint32_t *meshIndices;
     uint32_t childCount;

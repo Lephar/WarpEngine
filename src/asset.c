@@ -16,6 +16,7 @@ uint32_t *scenes;
 
 void initializeNode(PNode node) {
     node->parentIndex = UINT32_MAX;
+    node->cameraIndex = UINT32_MAX;
     node->meshCount = 0;
     node->meshIndices = nullptr;
     node->childCount = 0;
@@ -66,8 +67,7 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
 
     if(nodeData->camera) {
         cgltf_camera *cameraData = nodeData->camera;
-
-        loadCamera(cameraData);
+        node->cameraIndex = loadCamera(cameraData);
     }
 
     if(nodeData->mesh) {

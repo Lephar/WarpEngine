@@ -16,19 +16,19 @@ uint32_t cameraCountLimit;
 uint32_t cameraCount;
 PCamera  cameras;
 
-void loadCamera(cgltf_camera *cameraData) {
+uint32_t loadCamera(cgltf_camera *cameraData) {
     debug("Camera: %s", cameraData->name);
 
     if(cameraData->type != cgltf_camera_type_perspective) {
         debug("\tOnly perspective cameras are supported right now, skipping...");
-        return;
+        return UINT32_MAX;
     }
 
     cgltf_camera_perspective *perspectiveData = &cameraData->data.perspective;
 
     if(cameraCount >= cameraCountLimit) {
         debug("\tCamera count limit reached, skipping...");
-        return;
+        return UINT32_MAX;
     }
 
     const uint32_t cameraIndex = cameraCount;
@@ -47,6 +47,8 @@ void loadCamera(cgltf_camera *cameraData) {
     debug("\tzfar:  %g", camera->properties[3]);
 
     debug("\tSuccessfully loaded");
+
+    return cameraIndex;
 }
 
 // WARN: Do not bind a camera to multiple framebuffer sets!
