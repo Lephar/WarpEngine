@@ -1,5 +1,6 @@
 #include "camera.h"
 
+#include "content.h"
 #include "framebuffer.h"
 #include "window.h"
 
@@ -14,7 +15,8 @@ float playerSpeed;
 
 uint32_t cameraCountLimit;
 uint32_t cameraCount;
-PCamera  cameras;
+PCamera cameras;
+PCameraUniform cameraUniforms;
 
 uint32_t loadCamera(cgltf_camera *cameraData) {
     debug("Camera: %s", cameraData->name);
@@ -35,16 +37,24 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
     cameraCount++;
 
     PCamera camera = &cameras[cameraIndex];
+    PCameraUniform cameraUniform = &cameraUniforms[cameraIndex];
 
-    camera->properties[0] = perspectiveData->yfov;
-    camera->properties[1] = perspectiveData->aspect_ratio; // NOTICE: Will be discarded anyway when binding to framebuffer
-    camera->properties[2] = perspectiveData->znear;
-    camera->properties[3] = perspectiveData->zfar; // TODO: Check if it has_zfar
+    camera->uniformOffset = cameraIndex * cameraUniformAlignment;
 
-    debug("\tyfov:  %g", camera->properties[0]);
-    //debug("\taspect_ratio: %g", camera->properties[1]);
-    debug("\tznear: %g", camera->properties[2]);
-    debug("\tzfar:  %g", camera->properties[3]);
+    camera->fieldOfView = perspectiveData->yfov;
+    camera->aspectRatio = perspectiveData->aspect_ratio; // NOTICE: Will be discarded anyway when binding to framebuffer
+    camera->nearPlane   = perspectiveData->znear;
+    camera->farPlane    = perspectiveData->zfar; // TODO: Check if it has_zfar
+
+    cameraUniform->properties[0] = camera->fieldOfView;
+    cameraUniform->properties[1] = camera->aspectRatio;
+    cameraUniform->properties[2] = camera->nearPlane;
+    cameraUniform->properties[3] = camera->farPlane;
+
+    debug("\tyfov:  %g", camera->fieldOfView);
+    //debug("\taspect_ratio: %g", camera->aspectRatio);
+    debug("\tznear: %g", camera->nearPlane);
+    debug("\tzfar:  %g", camera->farPlane);
 
     debug("\tSuccessfully loaded");
 
@@ -53,40 +63,19 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
 
 // WARN: Do not bind a camera to multiple framebuffer sets!
 void bindCamera(uint32_t cameraIndex, uint32_t framebufferSetIndex) {
-    Camera *camera = &cameras[cameraIndex];
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    PCamera camera = &cameras[cameraIndex];
+    PCameraUniform cameraUniform = &cameraUniforms[cameraIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
 
+    camera->framebufferSetIndex = framebufferSetIndex;
     framebufferSet->cameraIndex = cameraIndex;
 
-    camera->properties[1] = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
-    glmc_perspective_rh_zo(camera->properties[0], camera->properties[1], camera->properties[2], camera->properties[3], camera->projection);
+    camera->aspectRatio = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
+    cameraUniform->properties[1] = camera->aspectRatio;
 
-    debug("Bound camera %u to framebuffer set %u with the aspect ratio of %g", cameraIndex, framebufferSetIndex, camera->properties[1]);
-}
+    glmc_perspective_rh_zo(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
 
-void updateView(uint32_t cameraIndex) {
-    assert(cameraIndex < cameraCount);
-
-    PCamera camera = &cameras[cameraIndex];
-
-    vec3 target;
-
-    glmc_vec3_add(playerPosition, playerDirection, target);
-    glmc_lookat_rh_zo(playerPosition, target, worldUp, camera->view);
-}
-
-void generateProjectionView(uint32_t cameraIndex) {
-    assert(cameraIndex < cameraCount);
-
-    PCamera camera = &cameras[cameraIndex];
-    glmc_mat4_mul(camera->projection, camera->view, camera->projectionView);
-}
-
-void updateCamera(uint32_t cameraIndex) {
-    assert(cameraIndex < cameraCount);
-
-    updateView(cameraIndex);
-    generateProjectionView(cameraIndex);
+    debug("Bound camera %u to framebuffer set %u with the aspect ratio of %g", cameraIndex, framebufferSetIndex, camera->aspectRatio);
 }
 
 // TODO: All the functions below will be moved to separate unit

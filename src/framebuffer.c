@@ -119,7 +119,7 @@ void createFramebufferSet(uint32_t framebufferSetIndex) {
 }
 
 void createFramebufferSets() {
-    framebufferSetCount = 3; // TODO: This is arbitrary
+    framebufferSetCount = 1; // TODO: This is arbitrary
     framebufferSets = malloc(framebufferSetCount * sizeof(FramebufferSet));
 
     for(uint32_t framebufferSetIndex = 0; framebufferSetIndex < framebufferSetCount; framebufferSetIndex++) {
@@ -248,7 +248,7 @@ void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount( framebuffer->renderCommandBuffer, 1, &scissor);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &framebuffer->cameraDescriptorSet, 0, nullptr);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &framebuffer->cameraDescriptorSet, 1, &cameras[framebufferSet->cameraIndex].uniformOffset);
 }
 
 void endFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {

@@ -43,6 +43,7 @@ void createContentBuffers() {
     materials  = malloc(materialCountLimit  * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
+    cameraUniforms    = malloc(cameraCountLimit    * sizeof(CameraUniform));
     materialUniforms  = malloc(materialCountLimit  * sizeof(MaterialUniform));
     primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
 
@@ -111,14 +112,20 @@ void updateNodeUniformBuffer(PNode node, mat4 transform) {
         updateNodeUniformBuffer(&nodes[node->childrenIndices[childIndex]], nodeTransform);
     }
 
+    if(node->cameraIndex != UINT32_MAX) {
+        PCameraUniform cameraUniform = &cameraUniforms[node->cameraIndex];
+
+        glmc_mat4_inv(nodeTransform, cameraUniform->view);
+        glmc_mat4_mul(cameraUniform->projection, cameraUniform->view, cameraUniform->projectionView);
+    }
+
     for(uint32_t meshIndex = 0; meshIndex < node->meshCount; meshIndex++) {
         glmc_mat4_copy(nodeTransform, primitiveUniforms[node->meshIndices[meshIndex]].model);
     }
 }
 
 void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    updatePlayer();
-    updateCamera(framebufferSetIndex);
+    //updatePlayer();
 
     mat4 baseTransform;
     glmc_mat4_identity(baseTransform);
@@ -129,8 +136,9 @@ void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex
 
     VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
 
-    PCamera camera = &cameras[framebufferSetIndex];
-    memcpy(mappedSharedMemory + uniformBufferOffset, camera, sizeof(Camera));
+    for(uint32_t cameraIndex = 0; cameraIndex < cameraCount; cameraIndex++) {
+        memcpy(mappedSharedMemory + uniformBufferOffset + cameraIndex * cameraUniformAlignment, &cameraUniforms[cameraIndex], sizeof(CameraUniform));
+    }
 
     uniformBufferOffset += cameraUniformBufferRange;
 
