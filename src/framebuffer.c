@@ -85,6 +85,7 @@ void createFramebufferSet(uint32_t framebufferSetIndex) {
     FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
 
     framebufferSet->extent = surfaceExtent;
+
     framebufferSet->framebufferCount = 2;
     framebufferSet->sampleCount = VK_SAMPLE_COUNT_4_BIT;
 
@@ -114,11 +115,11 @@ void createFramebufferSet(uint32_t framebufferSetIndex) {
         debug("\tSuccessfully created");
     }
 
-    updateProjection(framebufferSetIndex);
+    bindCamera(framebufferSetIndex, framebufferSetIndex);
 }
 
 void createFramebufferSets() {
-    framebufferSetCount = 1; // TODO: This is arbitrary
+    framebufferSetCount = 3; // TODO: This is arbitrary
     framebufferSets = malloc(framebufferSetCount * sizeof(FramebufferSet));
 
     for(uint32_t framebufferSetIndex = 0; framebufferSetIndex < framebufferSetCount; framebufferSetIndex++) {

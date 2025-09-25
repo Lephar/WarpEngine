@@ -49,12 +49,23 @@ void loadCamera(cgltf_camera *cameraData) {
     debug("\tSuccessfully loaded");
 }
 
-void updateView(uint32_t framebufferSetIndex) {
-    if(framebufferSetIndex >= cameraCount) {
-        return;
-    }
+// WARN: Do not bind a camera to multiple framebuffer sets!
+void bindCamera(uint32_t cameraIndex, uint32_t framebufferSetIndex) {
+    Camera *camera = &cameras[cameraIndex];
+    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
 
-    PCamera camera = &cameras[framebufferSetIndex];
+    framebufferSet->cameraIndex = cameraIndex;
+
+    camera->properties[1] = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
+    glmc_perspective_rh_zo(camera->properties[0], camera->properties[1], camera->properties[2], camera->properties[3], camera->projection);
+
+    debug("Bound camera %u to framebuffer set %u with the aspect ratio of %g", cameraIndex, framebufferSetIndex, camera->properties[1]);
+}
+
+void updateView(uint32_t cameraIndex) {
+    assert(cameraIndex < cameraCount);
+
+    PCamera camera = &cameras[cameraIndex];
 
     vec3 target;
 
@@ -62,29 +73,21 @@ void updateView(uint32_t framebufferSetIndex) {
     glmc_lookat_rh_zo(playerPosition, target, worldUp, camera->view);
 }
 
-void updateProjection(uint32_t framebufferSetIndex) {
-    if(framebufferSetIndex >= cameraCount) {
-        return;
-    }
+void generateProjectionView(uint32_t cameraIndex) {
+    assert(cameraIndex < cameraCount);
 
-    PCamera camera = &cameras[framebufferSetIndex];
-    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
-
-    camera->properties[1] = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
-    glmc_perspective_rh_zo(camera->properties[0], camera->properties[1], camera->properties[2], camera->properties[3], camera->projection);
-
-    debug("Updated the perspective projection with the aspect ratio of %g", camera->properties[1]);
-}
-
-void generateProjectionView(uint32_t framebufferSetIndex) {
-    if(framebufferSetIndex >= cameraCount) {
-        return;
-    }
-
-    PCamera camera = &cameras[framebufferSetIndex];
+    PCamera camera = &cameras[cameraIndex];
     glmc_mat4_mul(camera->projection, camera->view, camera->projectionView);
 }
 
+void updateCamera(uint32_t cameraIndex) {
+    assert(cameraIndex < cameraCount);
+
+    updateView(cameraIndex);
+    generateProjectionView(cameraIndex);
+}
+
+// TODO: All the functions below will be moved to separate unit
 void initializeWorld(const vec3 up) {
     worldUp[0] = up[0];
     worldUp[1] = up[1];
@@ -119,13 +122,4 @@ void updatePlayer() {
     glmc_vec3_muladds(left,            movement[0], playerPosition);
     glmc_vec3_muladds(up,              movement[1], playerPosition);
     glmc_vec3_muladds(playerDirection, movement[2], playerPosition);
-}
-
-void updateCamera(uint32_t framebufferSetIndex) {
-    if(framebufferSetIndex >= cameraCount) {
-        return;
-    }
-
-    updateView(framebufferSetIndex);
-    generateProjectionView(framebufferSetIndex);
 }
