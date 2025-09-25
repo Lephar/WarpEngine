@@ -52,12 +52,11 @@ void setPipelineDetails() {
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
 
-    cameraCountLimit = framebufferSetCountLimit;
 
-    primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
-
-    nodeCountLimit = umax(primitiveCountLimit, materialCountLimit);
+    primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
+    cameraCountLimit    = primitiveCountLimit;
+    nodeCountLimit      = primitiveCountLimit;
 
     framebufferUniformBufferSize    = cameraUniformBufferRange + primitiveUniformBufferRange + materialUniformBufferRange;
     framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;
