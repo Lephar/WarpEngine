@@ -27,6 +27,16 @@ void initializeNode(PNode node) {
     glmc_mat4_identity(node->translation);
 }
 
+uint32_t findNode(const char *name) {
+    for(uint32_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
+        if(strncmp(name, nodes[nodeIndex].name, UINT8_MAX) == 0) {
+            return nodeIndex;
+        }
+    }
+
+    return UINT32_MAX;
+}
+
 uint32_t loadNode(cgltf_node *nodeData) {
     assert(nodeCount < nodeCountLimit);
     const uint32_t nodeIndex = nodeCount;
