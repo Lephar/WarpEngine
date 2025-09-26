@@ -105,7 +105,7 @@ void updateSceneUniforms(PNode scene) {
     }
 }
 
-void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+void prepareUniforms() {
     for(uint32_t controlSetIndex = 0; controlSetIndex < controlSetCount; controlSetIndex++) {
         updateControlSet(&controlSets[controlSetIndex]);
     }
@@ -113,7 +113,9 @@ void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex
     for(uint32_t sceneIndex = 0; sceneIndex < sceneCount; sceneIndex++) {
         updateSceneUniforms(scenes[sceneIndex]);
     }
+}
 
+void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
 
     for(uint32_t cameraIndex = 0; cameraIndex < cameraCount; cameraIndex++) {

@@ -28,9 +28,9 @@ void render() {
     uint32_t framebufferIndex = frameIndex % framebufferSet->framebufferCount;
     Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
+    prepareUniforms();
     waitFramebufferDraw(framebufferSetIndex, framebufferIndex);
-
-    updateUniformBuffer(framebufferSetIndex, framebufferIndex);
+    loadUniformBuffer(framebufferSetIndex, framebufferIndex);
 
     beginFramebuffer(framebufferSetIndex, framebufferIndex);
     bindFramebuffer(framebufferSetIndex, framebufferIndex);
