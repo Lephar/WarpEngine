@@ -194,6 +194,15 @@ void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex)
 }
 
 void freeContent() {
+    for(uint32_t nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
+        destroyNode(&nodes[nodeIndex]);
+    }
+
+    free(nodes);
+
+    free(cameraUniforms);
+    free(cameras);
+
     free(primitiveUniforms);
     free(primitives);
 
