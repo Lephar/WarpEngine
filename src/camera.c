@@ -46,17 +46,19 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
     camera->nearPlane   = perspectiveData->znear;
     camera->farPlane    = perspectiveData->zfar; // TODO: Check if it has_zfar
 
+    debug("\tyfov:         %g", camera->fieldOfView);
+    debug("\taspect_ratio: %g", camera->aspectRatio);
+    debug("\tznear:        %g", camera->nearPlane);
+    debug("\tzfar:         %g", camera->farPlane);
+
+    glmc_perspective_rh_zo(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
+
     cameraUniform->properties[0] = camera->fieldOfView;
     cameraUniform->properties[1] = camera->aspectRatio;
     cameraUniform->properties[2] = camera->nearPlane;
     cameraUniform->properties[3] = camera->farPlane;
 
-    debug("\tyfov:  %g", camera->fieldOfView);
-    //debug("\taspect_ratio: %g", camera->aspectRatio);
-    debug("\tznear: %g", camera->nearPlane);
-    debug("\tzfar:  %g", camera->farPlane);
-
-    debug("\tSuccessfully loaded");
+    debug("\tCamera successfully loaded and perspective projection matrix generated");
 
     return cameraIndex;
 }
@@ -73,9 +75,14 @@ void bindCamera(uint32_t cameraIndex, uint32_t framebufferSetIndex) {
     camera->aspectRatio = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
     cameraUniform->properties[1] = camera->aspectRatio;
 
-    glmc_perspective_rh_zo(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
+    // NOTICE: Do not generate whole projection matrix, just resize according to the new aspect ratio
+    if(cameraUniform->projection[0][0] != 0.0f) { // TODO: Is the else condition an error?
+        cameraUniform->projection[0][0] = cameraUniform->projection[1][1] / camera->aspectRatio;
+    }
 
-    debug("Bound camera %u to framebuffer set %u with the aspect ratio of %g", cameraIndex, framebufferSetIndex, camera->aspectRatio);
+    //glmc_perspective_resize_rh_zo(camera->aspectRatio, cameraUniform->projection); // TODO: Use this function instead when they export
+
+    debug("Bound camera %u to framebuffer set %u and resized the perspective projection matrix with the aspect ratio of %g", cameraIndex, framebufferSetIndex, camera->aspectRatio);
 }
 
 // TODO: All the functions below will be moved to separate unit
