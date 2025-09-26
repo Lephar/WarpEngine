@@ -25,3 +25,4 @@ extern uint32_t *scenes; // Indices to the scene root nodes
 void loadAsset(const char *subdirectory, const char *filename);
 uint32_t findNode(const char *name);
 void updateNodeUniformBuffer(PNode node, mat4 transform);
+void destroyNode(PNode node);

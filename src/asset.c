@@ -197,3 +197,15 @@ void updateNodeUniformBuffer(PNode node, mat4 transform) {
         glmc_mat4_copy(nodeTransform, primitiveUniforms[node->meshIndices[meshIndex]].model);
     }
 }
+
+void destroyNode(PNode node) {
+    if(node->childCount > 0) {
+        free(node->childrenIndices);
+        node->childCount = 0;
+    }
+
+    if(node->meshCount > 0) {
+        free(node->meshIndices);
+        node->meshCount = 0;
+    }
+}
