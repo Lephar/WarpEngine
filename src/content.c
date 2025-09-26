@@ -101,14 +101,20 @@ void loadContent() {
     debug("Shared memory cleared and set for uniform buffer usage");
 }
 
+void updateSceneUniforms(PNode scene) {
+    mat4 identityTransform;
+    glmc_mat4_identity(identityTransform);
+
+    for(uint32_t childIndex = 0; childIndex < scene->childCount; childIndex++) {
+        updateNodeUniforms(&nodes[scene->childrenIndices[childIndex]], identityTransform);
+    }
+}
+
 void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     //updatePlayer();
 
-    mat4 baseTransform;
-    glmc_mat4_identity(baseTransform);
-
     for(uint32_t sceneIndex = 0; sceneIndex < sceneCount; sceneIndex++) {
-        updateNodeUniformBuffer(&nodes[scenes[sceneIndex]], baseTransform);
+        updateSceneUniforms(&nodes[scenes[sceneIndex]]);
     }
 
     VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;

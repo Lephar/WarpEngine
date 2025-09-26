@@ -175,16 +175,12 @@ void loadAsset(const char *subdirectory, const char *filename) {
     cgltf_free(assetData);
 }
 
-void updateNodeUniformBuffer(PNode node, mat4 transform) {
+void updateNodeUniforms(PNode node, mat4 transform) {
     mat4 nodeTransform;
 
     glmc_mul(node->rotation,    node->scale,   nodeTransform);
     glmc_mul(node->translation, nodeTransform, nodeTransform);
     glmc_mul(transform,         nodeTransform, nodeTransform);
-
-    for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
-        updateNodeUniformBuffer(&nodes[node->childrenIndices[childIndex]], nodeTransform);
-    }
 
     if(node->cameraIndex != UINT32_MAX) {
         PCameraUniform cameraUniform = &cameraUniforms[node->cameraIndex];
@@ -195,6 +191,10 @@ void updateNodeUniformBuffer(PNode node, mat4 transform) {
 
     for(uint32_t meshIndex = 0; meshIndex < node->meshCount; meshIndex++) {
         glmc_mat4_copy(nodeTransform, primitiveUniforms[node->meshIndices[meshIndex]].model);
+    }
+
+    for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
+        updateNodeUniforms(&nodes[node->childrenIndices[childIndex]], nodeTransform);
     }
 }
 
