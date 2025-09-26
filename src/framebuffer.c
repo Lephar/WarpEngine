@@ -16,11 +16,11 @@ const uint32_t framebufferSetCountLimit = 3;
 const uint32_t framebufferSetFramebufferCountLimit = 3;
 
 uint32_t framebufferSetCount;
-FramebufferSet *framebufferSets;
+PFramebufferSet framebufferSets;
 
 void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     framebuffer->resolve = createImage(framebufferSet->extent.width, framebufferSet->extent.height, 1, VK_SAMPLE_COUNT_1_BIT, framebufferSet->colorFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_TILING_OPTIMAL);
 
@@ -82,7 +82,7 @@ void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
 }
 
 void createFramebufferSet(uint32_t framebufferSetIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
 
     framebufferSet->extent = surfaceExtent;
 
@@ -128,24 +128,24 @@ void createFramebufferSets() {
 }
 
 void waitFramebufferDraw(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     vkWaitForFences(device, 1, &framebuffer->drawFence, VK_TRUE, UINT64_MAX);
     vkResetFences(  device, 1, &framebuffer->drawFence);
 }
 
 void waitFramebufferBlit(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     vkWaitForFences(device, 1, &framebuffer->blitFence, VK_TRUE, UINT64_MAX);
     vkResetFences(  device, 1, &framebuffer->blitFence);
 }
 
 void beginFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -218,8 +218,8 @@ void beginFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
 }
 
 void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     VkSampleMask sampleMask = 0xFF;
 
@@ -252,16 +252,16 @@ void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
 }
 
 void endFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     vkCmdEndRendering( framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);
 }
 
 void destroyFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     vkDestroyFence(device, framebuffer->blitFence, nullptr);
     vkDestroyFence(device, framebuffer->drawFence, nullptr);
@@ -274,7 +274,7 @@ void destroyFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex)
 }
 
 void destroyFramebufferSet(uint32_t framebufferSetIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
+    PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
 
     for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSet->framebufferCount; framebufferIndex++) {
         destroyFramebuffer(framebufferSetIndex, framebufferIndex);

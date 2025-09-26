@@ -2,7 +2,8 @@
 
 #include "pch.h"
 
-typedef struct image Image;
+typedef struct image *PImage;
+typedef struct camera *PCamera;
 
 typedef struct framebuffer {
     VkDescriptorSet cameraDescriptorSet;
@@ -18,7 +19,7 @@ typedef struct framebuffer {
     VkFence drawFence;
     VkFence blitFence;
 
-    Image *resolve;
+    PImage resolve;
 } Framebuffer, *PFramebuffer;
 
 typedef struct framebufferSet {
@@ -29,18 +30,18 @@ typedef struct framebufferSet {
     VkFormat depthStencilFormat;
     VkFormat colorFormat;
 
-    Image *depthStencil;
-    Image *color;
+    PImage depthStencil;
+    PImage color;
 
     uint32_t framebufferCount;
-    Framebuffer *framebuffers;
+    PFramebuffer framebuffers;
 } FramebufferSet, *PFramebufferSet;
 
 extern const uint32_t framebufferSetCountLimit;
 extern const uint32_t framebufferSetFramebufferCountLimit;
 
 extern uint32_t framebufferSetCount;
-extern FramebufferSet *framebufferSets;
+extern PFramebufferSet framebufferSets;
 
 void createFramebufferSets();
 void createFramebufferSet(uint32_t framebufferSetIndex);
