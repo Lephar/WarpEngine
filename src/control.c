@@ -1,47 +1,77 @@
 #include "control.h"
 
+#include "asset.h"
+#include "logger.h"
 #include "window.h"
 
-vec3 worldUp;
+vec4 worldLeft;
+vec4 worldUp;
+vec4 worldForward;
 
-vec3 playerPosition;
-vec3 playerDirection;
-
-float playerSpeed;
+uint32_t controlSetCount;
+PControlSet controlSets;
 
 // TODO: All the functions below will be moved to separate unit
-void initializeWorld(const vec3 up) {
-    worldUp[0] = up[0];
-    worldUp[1] = up[1];
-    worldUp[2] = up[2];
+void initializeWorld() {
+    worldLeft[0] = -1.0f;
+    worldLeft[1] =  0.0f;
+    worldLeft[2] =  0.0f;
+    worldLeft[3] =  0.0f;
+
+    worldUp[0] = 0.0f;
+    worldUp[1] = 1.0f;
+    worldUp[2] = 0.0f;
+    worldUp[3] = 0.0f;
+
+    worldForward[0] =  0.0f;
+    worldForward[1] =  0.0f;
+    worldForward[2] = -1.0f;
+    worldForward[3] =  0.0f;
 }
 
-void initializePlayer(vec3 position, vec3 direction, float speed) {
-    glmc_vec3_copy(position,  playerPosition);
-    glmc_vec3_copy(direction, playerDirection);
+uint32_t initializeControlSet(float turnSpeed, float moveSpeed, void (*controlFunction)(PControlSet)) {
+    assert(controlSetCount < nodeCountLimit);
+    const uint32_t controlSetIndex = controlSetCount;
+    controlSetCount++;
 
-    glmc_vec3_normalize(playerDirection);
+    PControlSet controlSet = &controlSets[controlSetIndex];
 
-    playerSpeed = speed;
+    controlSet->turnSpeed = turnSpeed;
+    controlSet->moveSpeed = moveSpeed;
+
+    glmc_mat4_identity(controlSet->rotation);
+    glmc_mat4_identity(controlSet->translation);
+
+    controlSet->controlFunction = controlFunction;
+
+    return controlSetIndex;
 }
 
-void updatePlayer() {
-    vec3 left;
-    vec3 up;
-    vec3 movement;
+void bindControlSet(uint32_t controlSetIndex, uint32_t nodeIndex) {
+    PControlSet controlSet = &controlSets[controlSetIndex];
+    PNode node = &nodes[nodeIndex];
 
-    glmc_vec3_rotate(playerDirection, mouseDelta[0], worldUp);
-    glmc_vec3_crossn(worldUp, playerDirection, left);
+    node->controlSet = controlSet;
+}
+
+void updateControlSet(PControlSet controlSet) {
+    if(controlSet->controlFunction) {
+        controlSet->controlFunction(controlSet);
+    }
+}
+
+void firstPersonControl(PControlSet controlSet) {
+    vec2 mouseMovement;
+    glmc_vec2_scale(mouseDelta, controlSet->moveSpeed, mouseMovement);
+
+    glmc_rotate(controlSet->rotation, mouseMovement[0], worldUp);
 
     // TODO: Limit vertical rotation on global up and down
-    glmc_vec3_rotate(playerDirection, mouseDelta[1], left);
-    glmc_vec3_crossn(playerDirection, left, up);
+    glmc_rotate(controlSet->rotation, mouseMovement[1], worldLeft);
 
-    glmc_vec3_normalize(playerDirection);
+    vec3 keyboardMovement;
+    glmc_vec3_scale(primaryKeyboardInput, controlSet->moveSpeed, keyboardMovement);
+    glmc_vec3_rotate_m4(controlSet->rotation, keyboardMovement, keyboardMovement);
 
-    glmc_vec3_scale(freeMovementInput, playerSpeed, movement);
-
-    glmc_vec3_muladds(left,            movement[0], playerPosition);
-    glmc_vec3_muladds(up,              movement[1], playerPosition);
-    glmc_vec3_muladds(playerDirection, movement[2], playerPosition);
+    glmc_translate(controlSet->translation, keyboardMovement);
 }

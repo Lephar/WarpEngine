@@ -8,6 +8,7 @@
 #include "material.h"
 #include "primitive.h"
 #include "asset.h"
+#include "control.h"
 #include "framebuffer.h"
 
 #include "logger.h"
@@ -47,6 +48,8 @@ void createContentBuffers() {
     materialUniforms  = malloc(materialCountLimit  * sizeof(MaterialUniform));
     primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
 
+    controlSets = malloc(nodeCountLimit * sizeof(ControlSet));
+
     indexCount  = 0;
     vertexCount = 0;
 
@@ -57,6 +60,8 @@ void createContentBuffers() {
     materialCount  = 0;
     primitiveCount = 0;
 
+    controlSetCount = 0;
+
     debug("Content buffers created");
 }
 
@@ -64,27 +69,17 @@ void loadContent() {
     loadAsset("assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
 
     debug("Assets successfully loaded");
-    /*
-    initializeWorld((vec3) {
-        0.0f,
-        1.0f,
-        0.0f
-    });
 
-    initializePlayer((vec3) {
-        0.0f,
-        2.0f,
-        0.0f
-    },
-    (vec3) {
-        1.0f,
-        0.0f,
-        0.0f
-    },
-    10.0f);
+    initializeWorld();
 
-    debug("Scene successfully set");
-    */
+    const uint32_t firstPersonControlSetIndex = initializeControlSet(1.0f, 10.0f, firstPersonControl);
+    const uint32_t mainCameraNodeIndex = findNode("PhysCamera001");
+    //const uint32_t mainCameraNodeIndex = findNode("1st_floor");
+
+    bindControlSet(firstPersonControlSetIndex, mainCameraNodeIndex);
+
+    debug("Control sets successfully set");
+
     const VkDeviceSize indexBufferSize  = indexCount  * sizeof(Index);
     const VkDeviceSize vertexBufferSize = vertexCount * sizeof(Vertex);
 
@@ -111,7 +106,9 @@ void updateSceneUniforms(PNode scene) {
 }
 
 void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    //updatePlayer();
+    for(uint32_t controlSetIndex = 0; controlSetIndex < controlSetCount; controlSetIndex++) {
+        updateControlSet(&controlSets[controlSetIndex]);
+    }
 
     for(uint32_t sceneIndex = 0; sceneIndex < sceneCount; sceneIndex++) {
         updateSceneUniforms(scenes[sceneIndex]);

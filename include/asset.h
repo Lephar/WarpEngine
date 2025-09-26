@@ -2,9 +2,11 @@
 
 #include "pch.h"
 
+typedef struct controlSet *PControlSet;
+
 typedef struct node {
     char name[UINT8_MAX];
-    uint32_t controlSetIndex;
+    PControlSet controlSet;
     mat4 scale;
     mat4 rotation;
     mat4 translation;

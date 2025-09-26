@@ -16,8 +16,8 @@ struct timespec timeCurrent;
 float timeDelta; // In microseconds
 
 vec2 mouseDelta;
-vec3 mainMovementInput;
-vec3 freeMovementInput;
+vec3 secondaryKeyboardInput;
+vec3 primaryKeyboardInput;
 
 bool resizeEvent;
 bool quitEvent;
@@ -32,7 +32,7 @@ uint32_t timerCallback(void *userData, uint32_t id, uint32_t interval) {
     uint32_t frameDifference = frameIndex - frameIndexCheckpoint;
     frameIndexCheckpoint = frameIndex;
 
-    char title[INT8_MAX];
+    char title[UINT8_MAX];
     sprintf(title, "Frame: %u\tFPS: %u", frameIndex, frameDifference);
 
     SDL_SetWindowTitle(window, title);
@@ -97,20 +97,20 @@ void pollEvents() {
     int keyCount = 0;
     const bool *states = SDL_GetKeyboardState(&keyCount);
 
-    freeMovementInput[0] = (float) (states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D]);
-    freeMovementInput[1] = (float) (states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F]);
-    freeMovementInput[2] = (float) (states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S]);
+    primaryKeyboardInput[0] = (float) (states[SDL_SCANCODE_A] - states[SDL_SCANCODE_D]);
+    primaryKeyboardInput[1] = (float) (states[SDL_SCANCODE_R] - states[SDL_SCANCODE_F]);
+    primaryKeyboardInput[2] = (float) (states[SDL_SCANCODE_W] - states[SDL_SCANCODE_S]);
 
-    mainMovementInput[0] = (float) (states[SDL_SCANCODE_LEFT]    - states[SDL_SCANCODE_RIGHT]);
-    mainMovementInput[1] = (float) (states[SDL_SCANCODE_KP_PLUS] - states[SDL_SCANCODE_KP_MINUS]);
-    mainMovementInput[2] = (float) (states[SDL_SCANCODE_UP]      - states[SDL_SCANCODE_DOWN]);
+    secondaryKeyboardInput[0] = (float) (states[SDL_SCANCODE_LEFT]    - states[SDL_SCANCODE_RIGHT]);
+    secondaryKeyboardInput[1] = (float) (states[SDL_SCANCODE_KP_PLUS] - states[SDL_SCANCODE_KP_MINUS]);
+    secondaryKeyboardInput[2] = (float) (states[SDL_SCANCODE_UP]      - states[SDL_SCANCODE_DOWN]);
 
-    if(compareFloat(glmc_vec3_norm2(freeMovementInput), 0.0f)) {
-        glmc_vec3_scale_as(freeMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), freeMovementInput);
+    if(compareFloat(glmc_vec3_norm2(primaryKeyboardInput), 0.0f)) {
+        glmc_vec3_scale_as(primaryKeyboardInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), primaryKeyboardInput);
     }
 
-    if(compareFloat(glmc_vec3_norm2(mainMovementInput), 0.0f)) {
-        glmc_vec3_scale_as(mainMovementInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), mainMovementInput);
+    if(compareFloat(glmc_vec3_norm2(secondaryKeyboardInput), 0.0f)) {
+        glmc_vec3_scale_as(secondaryKeyboardInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), secondaryKeyboardInput);
     }
 }
 
