@@ -61,8 +61,7 @@ void bindCamera(uint32_t cameraIndex, uint32_t framebufferSetIndex) {
     PCameraUniform cameraUniform = &cameraUniforms[cameraIndex];
     PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
 
-    camera->framebufferSetIndex = framebufferSetIndex;
-    framebufferSet->cameraIndex = cameraIndex;
+    framebufferSet->camera = camera;
 
     camera->aspectRatio = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
     cameraUniform->properties[1] = camera->aspectRatio;

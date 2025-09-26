@@ -23,7 +23,7 @@ typedef struct framebuffer {
 
 typedef struct framebufferSet {
     VkExtent2D extent;
-    uint32_t cameraIndex;
+    PCamera camera;
 
     VkSampleCountFlagBits sampleCount;
     VkFormat depthStencilFormat;
