@@ -12,7 +12,7 @@ typedef struct node {
     uint32_t meshCount;
     uint32_t *meshIndices;
     uint32_t childCount;
-    uint32_t *childrenIndices;
+    struct node **children;
 } Node, *PNode;
 
 extern uint32_t nodeCountLimit;
@@ -20,7 +20,7 @@ extern uint32_t nodeCount;
 extern PNode nodes;
 
 extern uint32_t sceneCount;
-extern uint32_t *scenes; // Indices to the scene root nodes
+extern PNode *scenes; // References to the scene root nodes
 
 void loadAsset(const char *subdirectory, const char *filename);
 uint32_t findNode(const char *name);

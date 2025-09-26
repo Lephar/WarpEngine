@@ -12,7 +12,7 @@ uint32_t nodeCount;
 PNode nodes;
 
 uint32_t sceneCount;
-uint32_t *scenes;
+PNode *scenes;
 
 void initializeNode(PNode node) {
     memset(node->name, 0, UINT8_MAX);
@@ -21,7 +21,7 @@ void initializeNode(PNode node) {
     node->meshCount = 0;
     node->meshIndices = nullptr;
     node->childCount = 0;
-    node->childrenIndices = nullptr;
+    node->children = nullptr;
     glmc_mat4_identity(node->scale);
     glmc_mat4_identity(node->rotation);
     glmc_mat4_identity(node->translation);
@@ -97,11 +97,12 @@ uint32_t loadNode(cgltf_node *nodeData) {
         debug("\tChild Node Count: %d", nodeData->children_count);
 
         node->childCount = nodeData->children_count;
-        node->childrenIndices = malloc(node->childCount * sizeof(uint32_t));
+        node->children = malloc(node->childCount * sizeof(PNode));
 
         for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
             cgltf_node *childData = nodeData->children[childIndex];
-            node->childrenIndices[childIndex] = loadNode(childData);
+            uint32_t childNodeIndex = loadNode(childData);
+            node->children[childIndex] = &nodes[childNodeIndex];
         }
     }
 
@@ -117,11 +118,12 @@ uint32_t loadScene(cgltf_scene *sceneData) {
     initializeNode(scene);
 
     scene->childCount = sceneData->nodes_count;
-    scene->childrenIndices = malloc(scene->childCount * sizeof(uint32_t));
+    scene->children = malloc(scene->childCount * sizeof(PNode));
 
     for(uint32_t childIndex = 0; childIndex < scene->childCount; childIndex++) {
         cgltf_node *childData = sceneData->nodes[childIndex];
-        scene->childrenIndices[childIndex] = loadNode(childData);
+        uint32_t childNodeIndex = loadNode(childData);
+        scene->children[childIndex] = &nodes[childNodeIndex];
     }
 
     return nodeIndex;
@@ -170,7 +172,8 @@ void loadAsset(const char *subdirectory, const char *filename) {
     const uint32_t sceneIndex = sceneCount;
     sceneCount++;
 
-    scenes[sceneIndex] = loadScene(assetData->scene);
+    uint32_t nodeIndex = loadScene(assetData->scene);
+    scenes[sceneIndex] = &nodes[nodeIndex];
 
     cgltf_free(assetData);
 }
@@ -194,13 +197,13 @@ void updateNodeUniforms(PNode node, mat4 transform) {
     }
 
     for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
-        updateNodeUniforms(&nodes[node->childrenIndices[childIndex]], nodeTransform);
+        updateNodeUniforms(node->children[childIndex], nodeTransform);
     }
 }
 
 void destroyNode(PNode node) {
     if(node->childCount > 0) {
-        free(node->childrenIndices);
+        free(node->children);
         node->childCount = 0;
     }
 

@@ -37,7 +37,7 @@ void createContentBuffers() {
     vertexBuffer = malloc(vertexBufferSizeLimit);
 
     nodes  = malloc(nodeCountLimit * sizeof(Node));
-    scenes = malloc(nodeCountLimit * sizeof(uint32_t));
+    scenes = malloc(nodeCountLimit * sizeof(PNode));
 
     cameras    = malloc(cameraCountLimit    * sizeof(Camera));
     materials  = malloc(materialCountLimit  * sizeof(Material));
@@ -47,15 +47,15 @@ void createContentBuffers() {
     materialUniforms  = malloc(materialCountLimit  * sizeof(MaterialUniform));
     primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
 
-    nodeCount      = 0;
-    sceneCount     = 0;
+    indexCount  = 0;
+    vertexCount = 0;
+
+    nodeCount  = 0;
+    sceneCount = 0;
 
     cameraCount    = 0;
     materialCount  = 0;
     primitiveCount = 0;
-
-    indexCount  = 0;
-    vertexCount = 0;
 
     debug("Content buffers created");
 }
@@ -106,7 +106,7 @@ void updateSceneUniforms(PNode scene) {
     glmc_mat4_identity(identityTransform);
 
     for(uint32_t childIndex = 0; childIndex < scene->childCount; childIndex++) {
-        updateNodeUniforms(&nodes[scene->childrenIndices[childIndex]], identityTransform);
+        updateNodeUniforms(scene->children[childIndex], identityTransform);
     }
 }
 
@@ -114,7 +114,7 @@ void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex
     //updatePlayer();
 
     for(uint32_t sceneIndex = 0; sceneIndex < sceneCount; sceneIndex++) {
-        updateSceneUniforms(&nodes[scenes[sceneIndex]]);
+        updateSceneUniforms(scenes[sceneIndex]);
     }
 
     VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
