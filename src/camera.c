@@ -34,14 +34,14 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
     camera->uniformOffset = cameraIndex * cameraUniformAlignment;
 
     camera->fieldOfView = perspectiveData->yfov;
-    camera->aspectRatio = perspectiveData->aspect_ratio; // NOTICE: Will be discarded anyway when binding to framebuffer
+    camera->aspectRatio = perspectiveData->aspect_ratio; // NOTICE: Will be discarded anyway when binding to framebuffer set
     camera->nearPlane   = perspectiveData->znear;
     camera->farPlane    = perspectiveData->zfar; // TODO: Check if it has_zfar
 
-    debug("\tyfov:         %g", camera->fieldOfView);
-    debug("\taspect_ratio: %g", camera->aspectRatio);
-    debug("\tznear:        %g", camera->nearPlane);
-    debug("\tzfar:         %g", camera->farPlane);
+    debug("\tVertical Field Of View: %g", camera->fieldOfView);
+    debug("\tAspect Ratio:           %g", camera->aspectRatio);
+    debug("\tNear Frustum Plane:     %g", camera->nearPlane);
+    debug("\tFar Frustum Plane:      %g", camera->farPlane);
 
     glmc_perspective_rh_zo(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
 

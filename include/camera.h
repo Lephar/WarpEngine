@@ -3,13 +3,12 @@
 #include "pch.h"
 
 typedef struct camera {
-    uint32_t framebufferSetIndex;
-    uint32_t uniformOffset;
-
     float fieldOfView;
     float aspectRatio;
     float nearPlane;
     float farPlane;
+
+    uint32_t uniformOffset;
 } Camera, *PCamera;
 
 typedef struct cameraUniform {
