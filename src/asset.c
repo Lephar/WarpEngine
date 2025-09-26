@@ -15,7 +15,8 @@ uint32_t sceneCount;
 uint32_t *scenes;
 
 void initializeNode(PNode node) {
-    node->parentIndex = UINT32_MAX;
+    memset(node->name, 0, UINT8_MAX);
+    node->controlSetIndex = UINT32_MAX;
     node->cameraIndex = UINT32_MAX;
     node->meshCount = 0;
     node->meshIndices = nullptr;
@@ -26,7 +27,7 @@ void initializeNode(PNode node) {
     glmc_mat4_identity(node->translation);
 }
 
-uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
+uint32_t loadNode(cgltf_node *nodeData) {
     assert(nodeCount < nodeCountLimit);
     const uint32_t nodeIndex = nodeCount;
     nodeCount++;
@@ -34,9 +35,8 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
     PNode node = &nodes[nodeIndex];
     initializeNode(node);
 
-    node->parentIndex = parentIndex;
-    node->childCount = nodeData->children_count;
-    node->childrenIndices = malloc(node->childCount * sizeof(uint32_t)); // NOTICE: malloc(0) is completely safe
+    debug("Node Name: %s", nodeData->name);
+    strncpy(node->name, nodeData->name, UINT8_MAX);
 
     if(nodeData->has_matrix) {
         vec4 translation; // TODO: What is the 4th component here?
@@ -60,18 +60,19 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
         }
     }
 
-    for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
-        cgltf_node *childData = nodeData->children[childIndex];
-        node->childrenIndices[childIndex] = loadNode(childIndex, childData);
-    }
-
     if(nodeData->camera) {
         cgltf_camera *cameraData = nodeData->camera;
+
+        debug("\tCamera Name: %s", cameraData->name);
+
         node->cameraIndex = loadCamera(cameraData);
     }
 
     if(nodeData->mesh) {
         cgltf_mesh *meshData = nodeData->mesh;
+
+        debug("\tMesh Name: %s", meshData->name);
+        debug("\t\tPrimitive Count: %d", meshData->primitives_count);
 
         node->meshCount = meshData->primitives_count;
         node->meshIndices = malloc(node->meshCount * sizeof(uint32_t));
@@ -79,6 +80,18 @@ uint32_t loadNode(uint32_t parentIndex, cgltf_node *nodeData) {
         for(cgltf_size primitiveIndex = 0; primitiveIndex < node->meshCount; primitiveIndex++) {
             cgltf_primitive *primitive = &meshData->primitives[primitiveIndex];
             node->meshIndices[primitiveIndex] = loadPrimitive(primitive);
+        }
+    }
+
+    if(nodeData->children_count != 0) {
+        debug("\tChild Node Count: %d", nodeData->children_count);
+
+        node->childCount = nodeData->children_count;
+        node->childrenIndices = malloc(node->childCount * sizeof(uint32_t));
+
+        for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
+            cgltf_node *childData = nodeData->children[childIndex];
+            node->childrenIndices[childIndex] = loadNode(childData);
         }
     }
 
@@ -98,7 +111,7 @@ uint32_t loadScene(cgltf_scene *sceneData) {
 
     for(uint32_t childIndex = 0; childIndex < scene->childCount; childIndex++) {
         cgltf_node *childData = sceneData->nodes[childIndex];
-        scene->childrenIndices[childIndex] = loadNode(nodeIndex, childData);
+        scene->childrenIndices[childIndex] = loadNode(childData);
     }
 
     return nodeIndex;

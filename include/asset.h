@@ -3,7 +3,8 @@
 #include "pch.h"
 
 typedef struct node {
-    uint32_t parentIndex;
+    char name[UINT8_MAX];
+    uint32_t controlSetIndex;
     mat4 scale;
     mat4 rotation;
     mat4 translation;
