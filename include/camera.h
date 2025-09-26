@@ -26,12 +26,3 @@ extern PCameraUniform cameraUniforms;
 
 uint32_t loadCamera(cgltf_camera *cameraData);
 void bindCamera(uint32_t cameraIndex, uint32_t framebufferSetIndex);
-
-void updateView(uint32_t cameraIndex);
-void generateProjectionView(uint32_t cameraIndex);
-void updateCamera(uint32_t cameraIndex);
-
-void initializeWorld(const vec3 up);
-void initializePlayer(vec3 position, vec3 direction, float speed);
-
-void updatePlayer();

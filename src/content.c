@@ -64,7 +64,7 @@ void loadContent() {
     loadAsset("assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
 
     debug("Assets successfully loaded");
-
+    /*
     initializeWorld((vec3) {
         0.0f,
         1.0f,
@@ -84,7 +84,7 @@ void loadContent() {
     10.0f);
 
     debug("Scene successfully set");
-
+    */
     const VkDeviceSize indexBufferSize  = indexCount  * sizeof(Index);
     const VkDeviceSize vertexBufferSize = vertexCount * sizeof(Vertex);
 
