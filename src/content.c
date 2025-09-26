@@ -101,29 +101,6 @@ void loadContent() {
     debug("Shared memory cleared and set for uniform buffer usage");
 }
 
-void updateNodeUniformBuffer(PNode node, mat4 transform) {
-    mat4 nodeTransform;
-
-    glmc_mul(node->rotation,    node->scale,   nodeTransform);
-    glmc_mul(node->translation, nodeTransform, nodeTransform);
-    glmc_mul(transform,         nodeTransform, nodeTransform);
-
-    for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {
-        updateNodeUniformBuffer(&nodes[node->childrenIndices[childIndex]], nodeTransform);
-    }
-
-    if(node->cameraIndex != UINT32_MAX) {
-        PCameraUniform cameraUniform = &cameraUniforms[node->cameraIndex];
-
-        glmc_mat4_inv(nodeTransform, cameraUniform->view);
-        glmc_mat4_mul(cameraUniform->projection, cameraUniform->view, cameraUniform->projectionView);
-    }
-
-    for(uint32_t meshIndex = 0; meshIndex < node->meshCount; meshIndex++) {
-        glmc_mat4_copy(nodeTransform, primitiveUniforms[node->meshIndices[meshIndex]].model);
-    }
-}
-
 void updateUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     //updatePlayer();
 

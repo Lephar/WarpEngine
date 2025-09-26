@@ -22,3 +22,4 @@ extern uint32_t sceneCount;
 extern uint32_t *scenes; // Indices to the scene root nodes
 
 void loadAsset(const char *subdirectory, const char *filename);
+void updateNodeUniformBuffer(PNode node, mat4 transform);
