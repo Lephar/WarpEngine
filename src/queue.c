@@ -19,7 +19,6 @@ Queue *queueReferences[] = {
     &transferQueue
 };
 
-// TODO: Check surface presentation support for queues
 void generateQueueDetails() {
     queueCount = sizeof(queueReferences) / sizeof(Queue *);
     debug("Queue count: %d",  queueCount);

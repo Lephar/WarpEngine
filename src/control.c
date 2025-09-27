@@ -1,8 +1,7 @@
 #include "control.h"
 
-#include "asset.h"
-#include "logger.h"
 #include "window.h"
+#include "asset.h"
 
 vec4 worldLeft;
 vec4 worldUp;
@@ -11,7 +10,6 @@ vec4 worldForward;
 uint32_t controlSetCount;
 PControlSet controlSets;
 
-// TODO: All the functions below will be moved to separate unit
 void initializeWorld() {
     worldLeft[0] = -1.0f;
     worldLeft[1] =  0.0f;
@@ -60,6 +58,7 @@ void updateControlSet(PControlSet controlSet) {
     }
 }
 
+// TODO: Free movement is a bit janky
 void firstPersonControl(PControlSet controlSet) {
     vec2 mouseMovement;
     glmc_vec2_scale(mouseDelta, controlSet->moveSpeed, mouseMovement);
