@@ -181,18 +181,15 @@ void loadAsset(const char *subdirectory, const char *filename) {
 
 void updateNodeUniforms(PNode node, mat4 transform) {
     mat4 nodeTransform;
-    glmc_mat4_copy(node->scale, nodeTransform);
+    glmc_mat4_identity(nodeTransform);
 
     if(node->controlSet != nullptr) {
-        glmc_mul(node->controlSet->rotation, nodeTransform, nodeTransform);
-    }
-
-    glmc_mul(node->rotation, nodeTransform, nodeTransform);
-
-    if(node->controlSet != nullptr) {
+        glmc_mul(node->controlSet->rotation,    nodeTransform, nodeTransform);
         glmc_mul(node->controlSet->translation, nodeTransform, nodeTransform);
     }
 
+    glmc_mul(node->scale,       nodeTransform, nodeTransform);
+    glmc_mul(node->rotation,    nodeTransform, nodeTransform);
     glmc_mul(node->translation, nodeTransform, nodeTransform);
 
     glmc_mul(transform, nodeTransform, nodeTransform);

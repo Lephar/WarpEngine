@@ -10,6 +10,7 @@ vec4 worldForward;
 uint32_t controlSetCount;
 PControlSet controlSets;
 
+// TODO: Are we sure that these directions are correct?
 void initializeWorld() {
     worldLeft[0] = -1.0f;
     worldLeft[1] =  0.0f;
