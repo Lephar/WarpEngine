@@ -50,7 +50,7 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
     primitive->indexBegin    = indexCount;
     primitive->indexCount    = accessor->count;
     primitive->vertexOffset  = (int32_t) vertexCount;
-    primitive->uniformOffset = primitiveIndex * sizeof(PrimitiveUniform);
+    primitive->uniformOffset = primitiveIndex * primitiveUniformAlignment;
 
     debug("\tIndices: %lu elements of type %lu, total of %lu bytes in size", accessor->count, accessor->type, view->size);
 
