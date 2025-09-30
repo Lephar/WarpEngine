@@ -68,7 +68,7 @@ void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
     };
 
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, semaphoreSignalFence);
-    vkWaitForFences(device, 1, &semaphoreSignalFence, true, UINT64_MAX);
+    vkWaitForFences(device, 1, &semaphoreSignalFence, VK_TRUE, UINT64_MAX);
     vkDestroyFence(device, semaphoreSignalFence, nullptr);
 
     VkFenceCreateInfo signaledFenceInfo = {
