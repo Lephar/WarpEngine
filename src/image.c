@@ -223,6 +223,35 @@ void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, 
     endSingleTransferCommand(commandBuffer);
 }
 
+void copyImageToBuffer(Image *image, uint32_t mipLevel, Buffer *buffer, VkDeviceSize bufferOffset) {
+    VkCommandBuffer commandBuffer = beginSingleTransferCommand();
+
+    VkBufferImageCopy copyInfo = {
+        .bufferOffset = bufferOffset,
+        .bufferRowLength = 0,
+        .bufferImageHeight = 0,
+        .imageSubresource = {
+            .aspectMask = image->aspect,
+            .mipLevel = mipLevel,
+            .baseArrayLayer = 0,
+            .layerCount = 1
+        },
+        .imageOffset = {
+            .x = 0,
+            .y = 0,
+            .z = 0
+        },
+        .imageExtent = {
+            .width  = umax(1, image->extent.width  >> mipLevel),
+            .height = umax(1, image->extent.height >> mipLevel),
+            .depth  = 1
+        }
+    };
+
+    vkCmdCopyImageToBuffer(commandBuffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer->buffer, 1, &copyInfo);
+    endSingleTransferCommand(commandBuffer);
+}
+
 void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, VkImageLayout layout) {
     VkPipelineStageFlags sourceStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     VkPipelineStageFlags targetStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
