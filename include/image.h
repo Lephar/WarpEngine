@@ -26,7 +26,9 @@ Image *createImage(uint32_t width, uint32_t height, uint32_t mips, VkSampleCount
 void bindImageMemory(Image *image, Memory *memory);
 void createImageView(Image *image);
 void generateMipmaps(Image *image);
+void recordCopyBufferToImage(VkCommandBuffer *commandBuffer, Buffer *buffer, VkDeviceSize bufferOffset, Image *image, uint32_t mipLevel);
 void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, uint32_t mipLevel);
+void recordCopyImageToBuffer(VkCommandBuffer *commandBuffer, Image *image, uint32_t mipLevel, Buffer *buffer, VkDeviceSize bufferOffset);
 void copyImageToBuffer(Image *image, uint32_t mipLevel, Buffer *buffer, VkDeviceSize bufferOffset);
 void recordTransitionImageLayout(VkCommandBuffer *commandBuffer, Image *image, VkImageLayout layout);
 void transitionImageLayout(Image *image, VkImageLayout layout);

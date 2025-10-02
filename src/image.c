@@ -194,9 +194,7 @@ void generateMipmaps(Image *image) {
     image->layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 }
 
-void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, uint32_t mipLevel) {
-    VkCommandBuffer commandBuffer = beginSingleTransferCommand();
-
+VkBufferImageCopy generateBufferImageCopyInfo(VkDeviceSize bufferOffset, Image *image, uint32_t mipLevel) {
     VkBufferImageCopy copyInfo = {
         .bufferOffset = bufferOffset,
         .bufferRowLength = 0,
@@ -219,36 +217,27 @@ void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, 
         }
     };
 
-    vkCmdCopyBufferToImage(commandBuffer, buffer->buffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyInfo);
+    return copyInfo;
+}
+void recordCopyBufferToImage(VkCommandBuffer *commandBuffer, Buffer *buffer, VkDeviceSize bufferOffset, Image *image, uint32_t mipLevel) {
+    VkBufferImageCopy copyInfo = generateBufferImageCopyInfo(bufferOffset, image, mipLevel);
+    vkCmdCopyBufferToImage(*commandBuffer, buffer->buffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyInfo);
+}
+
+void copyBufferToImage(Buffer *buffer, VkDeviceSize bufferOffset, Image *image, uint32_t mipLevel) {
+    VkCommandBuffer commandBuffer = beginSingleTransferCommand();
+    recordCopyBufferToImage(&commandBuffer, buffer, bufferOffset, image, mipLevel);
     endSingleTransferCommand(commandBuffer);
+}
+
+void recordCopyImageToBuffer(VkCommandBuffer *commandBuffer, Image *image, uint32_t mipLevel, Buffer *buffer, VkDeviceSize bufferOffset) {
+    VkBufferImageCopy copyInfo = generateBufferImageCopyInfo(bufferOffset, image, mipLevel);
+    vkCmdCopyImageToBuffer(*commandBuffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer->buffer, 1, &copyInfo);
 }
 
 void copyImageToBuffer(Image *image, uint32_t mipLevel, Buffer *buffer, VkDeviceSize bufferOffset) {
     VkCommandBuffer commandBuffer = beginSingleTransferCommand();
-
-    VkBufferImageCopy copyInfo = {
-        .bufferOffset = bufferOffset,
-        .bufferRowLength = 0,
-        .bufferImageHeight = 0,
-        .imageSubresource = {
-            .aspectMask = image->aspect,
-            .mipLevel = mipLevel,
-            .baseArrayLayer = 0,
-            .layerCount = 1
-        },
-        .imageOffset = {
-            .x = 0,
-            .y = 0,
-            .z = 0
-        },
-        .imageExtent = {
-            .width  = umax(1, image->extent.width  >> mipLevel),
-            .height = umax(1, image->extent.height >> mipLevel),
-            .depth  = 1
-        }
-    };
-
-    vkCmdCopyImageToBuffer(commandBuffer, image->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer->buffer, 1, &copyInfo);
+    recordCopyImageToBuffer(&commandBuffer, image, mipLevel, buffer, bufferOffset);
     endSingleTransferCommand(commandBuffer);
 }
 
