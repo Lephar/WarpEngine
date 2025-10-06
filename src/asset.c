@@ -23,9 +23,7 @@ void initializeNode(PNode node) {
     node->meshIndices = nullptr;
     node->childCount = 0;
     node->children = nullptr;
-    glmc_mat4_identity(node->scale);
-    glmc_mat4_identity(node->rotation);
-    glmc_mat4_identity(node->translation);
+    glmc_mat4_identity(node->transform);
 }
 
 uint32_t findNode(const char *name) {
@@ -49,27 +47,7 @@ uint32_t loadNode(cgltf_node *nodeData) {
     debug("Node Name: %s", nodeData->name);
     strncpy(node->name, nodeData->name, UINT8_MAX);
 
-    if(nodeData->has_matrix) {
-        vec4 translation; // TODO: What is the 4th component here?
-        vec3 scale;
-
-        glmc_decompose((vec4 *) nodeData->matrix, translation, node->rotation, scale);
-
-        glmc_translate_make(node->translation, translation); // TODO: Even they don't use it themselves!
-        glmc_scale_make(node->scale, scale);
-    } else {
-        if(nodeData->has_translation) {
-            glmc_translate_make(node->translation, nodeData->translation);
-        }
-        if(nodeData->has_rotation) {
-            versor rotation;
-            glmc_quat_make(nodeData->rotation, rotation);
-            glmc_quat_mat4(rotation, node->rotation);
-        }
-        if(nodeData->has_scale) {
-            glmc_scale_make(node->scale, nodeData->scale);
-        }
-    }
+    cgltf_node_transform_local(nodeData, (cgltf_float *) node->transform);
 
     if(nodeData->camera) {
         cgltf_camera *cameraData = nodeData->camera;
@@ -184,14 +162,10 @@ void updateNodeUniforms(PNode node, mat4 transform) {
     glmc_mat4_identity(nodeTransform);
 
     if(node->controlSet != nullptr) {
-        glmc_mul(node->controlSet->rotation,    nodeTransform, nodeTransform);
-        glmc_mul(node->controlSet->translation, nodeTransform, nodeTransform);
+        glmc_mul(node->controlSet->transform, nodeTransform, nodeTransform);
     }
 
-    glmc_mul(node->scale,       nodeTransform, nodeTransform);
-    glmc_mul(node->rotation,    nodeTransform, nodeTransform);
-    glmc_mul(node->translation, nodeTransform, nodeTransform);
-
+    glmc_mul(node->transform, nodeTransform, nodeTransform);
     glmc_mul(transform, nodeTransform, nodeTransform);
 
     if(node->cameraIndex != UINT32_MAX) {

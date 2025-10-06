@@ -6,9 +6,7 @@ typedef struct controlSet {
     float moveSpeed;
     float turnSpeed;
 
-    // NOTICE: No scale, that's for animation
-    mat4 rotation;
-    mat4 translation;
+    mat4 transform;
 
     void (*controlFunction)(struct controlSet *);
 } ControlSet, *PControlSet;

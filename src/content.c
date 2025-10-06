@@ -74,7 +74,6 @@ void loadContent() {
 
     const uint32_t firstPersonControlSetIndex = initializeControlSet(1.0f, 10.0f, firstPersonControl);
     const uint32_t mainCameraNodeIndex = findNode("PhysCamera001");
-    //const uint32_t mainCameraNodeIndex = findNode("1st_floor");
 
     bindControlSet(firstPersonControlSetIndex, mainCameraNodeIndex);
 

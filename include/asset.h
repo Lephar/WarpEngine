@@ -6,13 +6,16 @@ typedef struct controlSet *PControlSet;
 
 typedef struct node {
     char name[UINT8_MAX];
+
     PControlSet controlSet;
-    mat4 scale;
-    mat4 rotation;
-    mat4 translation;
+
+    mat4 transform;
+
     uint32_t cameraIndex;
+
     uint32_t meshCount;
     uint32_t *meshIndices;
+
     uint32_t childCount;
     struct node **children;
 } Node, *PNode;

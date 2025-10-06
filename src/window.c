@@ -92,7 +92,7 @@ void pollEvents() {
     SDL_WarpMouseInWindow(window, (float) windowWidth / 2.0f, (float) windowHeight / 2.0f);
 
     mouseDelta[0] = -2.0f * mouseX / (float) windowWidth;
-    mouseDelta[1] =  2.0f * mouseY / (float) windowHeight;
+    mouseDelta[1] = -2.0f * mouseY / (float) windowHeight;
 
     int keyCount = 0;
     const bool *states = SDL_GetKeyboardState(&keyCount);
