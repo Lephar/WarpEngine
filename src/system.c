@@ -23,7 +23,9 @@ void initializeSystem() {
 
     // NOTICE: RenderDoc doesn't support Wayland yet
     SDL_SetHint(SDL_HINT_VIDEO_DRIVER, "wayland");
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
     debug("Video system initialized with %s driver", SDL_GetCurrentVideoDriver());
 
     char const *basePath = SDL_GetBasePath(); // NOTICE: Already ends with /
