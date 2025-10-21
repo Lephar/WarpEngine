@@ -13,12 +13,13 @@ uint32_t frameIndex;
 uint32_t frameIndexCheckpoint;
 
 struct timespec timeCurrent;
-float timeDelta; // In microseconds
+float timeDelta; // In seconds
 
 vec2 mouseDelta;
-vec3 joystickDelta;
-vec3 secondaryKeyboardInput;
 vec3 primaryKeyboardInput;
+vec3 secondaryKeyboardInput;
+vec3 joystickRotation;
+vec3 joystickMovement;
 
 SDL_Joystick *joystick = nullptr;
 
@@ -38,8 +39,8 @@ uint32_t timerCallback(void *userData, uint32_t id, uint32_t interval) {
     char title[UINT8_MAX];
     sprintf(title, "Frame: %u\tFPS: %u", frameIndex, frameDifference);
 
-    //SDL_SetWindowTitle(window, title);
-    debug("%s\tHas joystick: %u", title, SDL_HasJoystick());
+    //SDL_SetWindowTitle(window, title); // TODO: Causes segfault on Ubuntu
+    debug("%s", title);
 
     return interval;
 }
@@ -64,8 +65,10 @@ void initializeMainLoop() {
         assert(joystickCount > 0);
         debug("%d joysticks found", joystickCount);
 
-        joystick = SDL_OpenJoystick(joysticks[0]);
+        joystick = SDL_OpenJoystick(*joysticks);
         SDL_free(joysticks);
+
+        debug("Joystick connected", joystickCount);
     }
 
     SDL_HideCursor();
@@ -76,7 +79,8 @@ void initializeMainLoop() {
     SDL_GetRelativeMouseState(&discard, &discard);
     glmc_vec2_zero(mouseDelta);
 
-    glmc_vec3_zero(joystickDelta);
+    glmc_vec3_zero(joystickRotation);
+    glmc_vec3_zero(joystickMovement);
 
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
 
@@ -101,7 +105,7 @@ void pollEvents() {
 
     struct timespec timePrevious = timeCurrent;
     clock_gettime(CLOCK_MONOTONIC, &timeCurrent);
-    timeDelta = SEC_TO_MSEC * MSEC_TO_USEC * (float) (timeCurrent.tv_sec - timePrevious.tv_sec) + (float) (timeCurrent.tv_nsec - timePrevious.tv_nsec) / USEC_TO_NSEC;
+    timeDelta = (float) (timeCurrent.tv_sec - timePrevious.tv_sec) + (float) (timeCurrent.tv_nsec - timePrevious.tv_nsec) / (SEC_TO_MSEC * MSEC_TO_USEC * USEC_TO_NSEC);
 
     float mouseX;
     float mouseY;
@@ -112,28 +116,17 @@ void pollEvents() {
     mouseDelta[1] = -2.0f * mouseY / (float) windowHeight;
 
     if(joystick != nullptr) {
-        const float joystickCoefficient = 0.03125f;
+        const int32_t joystickAxesCount = 3;
+        assert(joystickAxesCount <= SDL_GetNumJoystickAxes(joystick));
 
-        mouseDelta[0] = joystickCoefficient * (float) SDL_GetJoystickAxis(joystick, 0) / (float) SHRT_MAX;
-        mouseDelta[1] = joystickCoefficient * (float) SDL_GetJoystickAxis(joystick, 1) / (float) SHRT_MAX;
-
-        primaryKeyboardInput[2] = timeDelta * (float) SDL_GetJoystickAxis(joystick, 2) / (float) SHRT_MAX / (SEC_TO_MSEC * MSEC_TO_USEC);
-
-        const float joystickEpsilon = 0.000976562f;
-
-        if(fabsf(mouseDelta[0]) < joystickEpsilon) {
-            mouseDelta[0] = 0.0f;
-        }
-
-        if(fabsf(mouseDelta[1]) < joystickEpsilon) {
-            mouseDelta[1] = 0.0f;
-        }
-
-        if(fabsf(primaryKeyboardInput[2]) < joystickEpsilon * timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC)) {
-            primaryKeyboardInput[2] = 0.0f;
+        for(int32_t joystickAxisIndex = 0; joystickAxisIndex < joystickAxesCount; joystickAxisIndex++) {
+            const int16_t joystickEpsilon = 1024;
+            int16_t joystickAxisValue = SDL_GetJoystickAxis(joystick, joystickAxisIndex);
+            joystickRotation[joystickAxisIndex] = abs(joystickAxisValue) < joystickEpsilon ? 0.0f : timeDelta * (float) joystickAxisValue / -SHRT_MIN;
+            debug("\tAxis %u: %g", joystickAxisIndex, joystickRotation[joystickAxisIndex]);
         }
     }
-    /*
+
     int keyCount = 0;
     const bool *states = SDL_GetKeyboardState(&keyCount);
 
@@ -146,13 +139,12 @@ void pollEvents() {
     secondaryKeyboardInput[2] = (float) (states[SDL_SCANCODE_UP]      - states[SDL_SCANCODE_DOWN]);
 
     if(compareFloat(glmc_vec3_norm2(primaryKeyboardInput), 0.0f)) {
-        glmc_vec3_scale_as(primaryKeyboardInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), primaryKeyboardInput);
+        glmc_vec3_scale_as(primaryKeyboardInput, timeDelta, primaryKeyboardInput);
     }
 
     if(compareFloat(glmc_vec3_norm2(secondaryKeyboardInput), 0.0f)) {
-        glmc_vec3_scale_as(secondaryKeyboardInput, timeDelta / (SEC_TO_MSEC * MSEC_TO_USEC), secondaryKeyboardInput);
+        glmc_vec3_scale_as(secondaryKeyboardInput, timeDelta, secondaryKeyboardInput);
     }
-    */
 }
 
 void finalizeMainLoop() {

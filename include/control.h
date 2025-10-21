@@ -21,3 +21,4 @@ void updateControlSet(PControlSet controlSet);
 
 // NOTICE: Declare your control functions here
 void firstPersonControl(PControlSet controlSet);
+void joystickControl(PControlSet controlSet);
