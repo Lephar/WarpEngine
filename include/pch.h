@@ -13,7 +13,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include <stdbit.h>
 #include <string.h>
 #include <syslog.h>
 #include <limits.h>
@@ -30,6 +29,12 @@
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 #include <sys/sysinfo.h>
+
+#if __STDC_VERSION__ < 202311L
+#define nullptr NULL
+#else
+#include <stdbit.h>
+#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
