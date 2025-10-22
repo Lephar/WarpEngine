@@ -33,7 +33,7 @@
 #if __STDC_VERSION__ < 202311L
 #define nullptr NULL
 #else
-#include <stdbit.h>
+#include <stdbit.h> // TODO: Will be used later for stdc_count_ones
 #endif
 
 #ifndef PATH_MAX

@@ -3,6 +3,7 @@
 #include "physicalDevice.h"
 #include "device.h"
 
+#include "numerics.h"
 #include "logger.h"
 
 uint32_t distinctQueueFamilyCount;
@@ -36,7 +37,7 @@ void generateQueueDetails() {
             VkQueueFlags satisfiedFlags = supportedFlags &  queueReferences[queueIndex]->requiredFlags;
             VkQueueFlags redundantFlags = supportedFlags & ~queueReferences[queueIndex]->requiredFlags;
 
-            uint32_t queueFamilyScore = stdc_count_zeros_ui(redundantFlags);
+            uint32_t queueFamilyScore = CHAR_BIT * sizeof(uint32_t) - popcount(redundantFlags);
 
             if(queueReferences[queueIndex]->requiredFlags == satisfiedFlags && mostSuitedScore < queueFamilyScore) {
                 mostSuitedScore = queueFamilyScore;

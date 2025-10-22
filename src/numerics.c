@@ -29,6 +29,18 @@ int32_t compareFloat(float first, float second) {
     return (difference > EPSILON) - (difference < -EPSILON);
 }
 
+// TODO: Change to stdc_count_ones when ready
+uint32_t popcount(uint32_t value) {
+    uint32_t count = 0;
+
+    while(value) {
+        count += (value & 1);
+        value >>= 1;
+    }
+
+    return count;
+}
+
 uint64_t align(uint64_t value, uint64_t alignment) {
     return (value + alignment - 1) / alignment * alignment;
 }

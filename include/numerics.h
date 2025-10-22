@@ -11,6 +11,7 @@
 float radians(float degrees);
 
 int32_t compareFloat(float first, float second);
+uint32_t popcount(uint32_t value);
 
 uint64_t align(uint64_t value, uint64_t alignment);
 uint64_t alignBack(uint64_t value, uint64_t alignment);
