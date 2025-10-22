@@ -76,7 +76,7 @@ void firstPersonControl(PControlSet controlSet) {
     glmc_translate(controlSet->transform, keyboardMovement);
 }
 
-void joystickControl(PControlSet controlSet) {
+void fixedWingControl(PControlSet controlSet) {
     vec3 scaledJoystickRotation;
     glmc_vec3_scale(joystickRotation, controlSet->turnSpeed, scaledJoystickRotation);
 
@@ -84,15 +84,13 @@ void joystickControl(PControlSet controlSet) {
     scaledJoystickRotation[2] *= -1;
 
     // TODO: Limit vertical rotation on global up and down
-    glmc_rotate(controlSet->transform, scaledJoystickRotation[2], worldUp);
-    glmc_rotate(controlSet->transform, scaledJoystickRotation[1], worldLeft);
     glmc_rotate(controlSet->transform, scaledJoystickRotation[0], worldForward);
+    glmc_rotate(controlSet->transform, scaledJoystickRotation[1], worldLeft);
+    glmc_rotate(controlSet->transform, scaledJoystickRotation[2], worldUp);
 
-    vec3 keyboardMovement;
-    glmc_vec3_scale(primaryKeyboardInput, controlSet->moveSpeed, keyboardMovement);
+    vec3 scaledJoystickMovement;
+    glmc_vec3_scale(joystickMovement, controlSet->moveSpeed, scaledJoystickMovement);
+    scaledJoystickMovement[2] -= 2 * timeDelta * controlSet->moveSpeed;
 
-    keyboardMovement[0] *= -1;
-    keyboardMovement[2] *= -1;
-
-    glmc_translate(controlSet->transform, keyboardMovement);
+    glmc_translate(controlSet->transform, scaledJoystickMovement);
 }

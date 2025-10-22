@@ -68,7 +68,7 @@ void initializeMainLoop() {
         joystick = SDL_OpenJoystick(*joysticks);
         SDL_free(joysticks);
 
-        debug("Joystick connected", joystickCount);
+        debug("Joystick connected with %d axes", SDL_GetNumJoystickAxes(joystick));
     }
 
     SDL_HideCursor();
@@ -117,13 +117,17 @@ void pollEvents() {
 
     if(joystick != nullptr) {
         const int32_t joystickAxesCount = 3;
-        assert(joystickAxesCount <= SDL_GetNumJoystickAxes(joystick));
+        assert(joystickAxesCount < SDL_GetNumJoystickAxes(joystick));
+
+        joystickMovement[0] = 0.0f;
+        joystickMovement[1] = 0.0f;
+        joystickMovement[2] = timeDelta * (float) SDL_GetJoystickAxis(joystick, joystickAxesCount) / -SHRT_MIN;
 
         for(int32_t joystickAxisIndex = 0; joystickAxisIndex < joystickAxesCount; joystickAxisIndex++) {
-            const int16_t joystickEpsilon = 1024;
-            int16_t joystickAxisValue = SDL_GetJoystickAxis(joystick, joystickAxisIndex);
+            const int16_t joystickEpsilon = 4096;
+            const int16_t joystickAxisValue = SDL_GetJoystickAxis(joystick, joystickAxisIndex);
+
             joystickRotation[joystickAxisIndex] = abs(joystickAxisValue) < joystickEpsilon ? 0.0f : timeDelta * (float) joystickAxisValue / -SHRT_MIN;
-            debug("\tAxis %u: %g", joystickAxisIndex, joystickRotation[joystickAxisIndex]);
         }
     }
 
