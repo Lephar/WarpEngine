@@ -50,6 +50,7 @@ void setPipelineDetails() {
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
 
+    lightUniformBufferRange     = alignBack(maxUniformBufferRange, lightUniformAlignment);
     cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
