@@ -53,17 +53,11 @@ uint32_t loadNode(cgltf_node *nodeData) {
 
     if(nodeData->light) {
         cgltf_light *lightData = nodeData->light;
-
-        debug("\tLight Name: %s", lightData->name);
-
         node->lightIndex = loadLight(lightData);
     }
 
     if(nodeData->camera) {
         cgltf_camera *cameraData = nodeData->camera;
-
-        debug("\tCamera Name: %s", cameraData->name);
-
         node->cameraIndex = loadCamera(cameraData);
     }
 

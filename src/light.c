@@ -10,15 +10,15 @@ PLight lights;
 PLightUniform lightUniforms;
 
 uint32_t loadLight(cgltf_light *lightData) {
-    debug("Light: %s", lightData->name);
+    debug("\tLight: %s", lightData->name);
 
     if(lightData->type != cgltf_light_type_point) {
-        debug("\tOnly point lights are supported right now, skipping...");
+        debug("\t\tOnly point lights are supported right now, skipping...");
         return UINT32_MAX;
     }
 
     if(lightCount >= lightCountLimit) {
-        debug("\tLight count limit reached, skipping...");
+        debug("\t\tLight count limit reached, skipping...");
         return UINT32_MAX;
     }
 
@@ -33,13 +33,13 @@ uint32_t loadLight(cgltf_light *lightData) {
     glmc_vec3_copy(lightData->color, light->color);
     light->intensity = lightData->intensity;
 
-    debug("\tColor: [%g, %g, %g]", light->color[0], light->color[1], light->color[2]);
-    debug("\tIntensity: %g", light->intensity);
+    debug("\t\tColor: [%g, %g, %g]", light->color[0], light->color[1], light->color[2]);
+    debug("\t\tIntensity: %g", light->intensity);
 
     glmc_vec3_copy(light->color, lightUniform->color);
     lightUniform->color[3] = light->intensity;
 
-    debug("\tLight successfully loaded");
+    debug("\t\tLight successfully loaded");
 
     return lightIndex;
 }

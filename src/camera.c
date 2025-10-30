@@ -11,17 +11,17 @@ PCamera cameras;
 PCameraUniform cameraUniforms;
 
 uint32_t loadCamera(cgltf_camera *cameraData) {
-    debug("Camera: %s", cameraData->name);
+    debug("\tCamera: %s", cameraData->name);
 
     if(cameraData->type != cgltf_camera_type_perspective) {
-        debug("\tOnly perspective cameras are supported right now, skipping...");
+        debug("\t\tOnly perspective cameras are supported right now, skipping...");
         return UINT32_MAX;
     }
 
     cgltf_camera_perspective *perspectiveData = &cameraData->data.perspective;
 
     if(cameraCount >= cameraCountLimit) {
-        debug("\tCamera count limit reached, skipping...");
+        debug("\t\tCamera count limit reached, skipping...");
         return UINT32_MAX;
     }
 
@@ -38,10 +38,10 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
     camera->nearPlane   = perspectiveData->znear;
     camera->farPlane    = perspectiveData->zfar; // TODO: Check if it has_zfar
 
-    debug("\tVertical Field Of View: %g", camera->fieldOfView);
-    debug("\tAspect Ratio:           %g", camera->aspectRatio);
-    debug("\tNear Frustum Plane:     %g", camera->nearPlane);
-    debug("\tFar Frustum Plane:      %g", camera->farPlane);
+    debug("\t\tVertical Field Of View: %g", camera->fieldOfView);
+    debug("\t\tAspect Ratio:           %g", camera->aspectRatio);
+    debug("\t\tNear Frustum Plane:     %g", camera->nearPlane);
+    debug("\t\tFar Frustum Plane:      %g", camera->farPlane);
 
     glmc_perspective_rh_zo(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
 
@@ -50,7 +50,7 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
     cameraUniform->properties[2] = camera->nearPlane;
     cameraUniform->properties[3] = camera->farPlane;
 
-    debug("\tCamera successfully loaded and perspective projection matrix generated");
+    debug("\t\tCamera successfully loaded and perspective projection matrix generated");
 
     return cameraIndex;
 }
