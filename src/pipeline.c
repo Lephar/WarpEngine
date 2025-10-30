@@ -3,6 +3,7 @@
 #include "physicalDevice.h"
 #include "device.h"
 #include "content.h"
+#include "light.h"
 #include "camera.h"
 #include "asset.h"
 #include "primitive.h"
@@ -44,6 +45,7 @@ void setPipelineDetails() {
     const uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
     const uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
 
+    lightUniformAlignment     = align(sizeof(LightUniform),     minUniformBufferOffsetAlignment);
     cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
@@ -52,6 +54,7 @@ void setPipelineDetails() {
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
 
+    lightCountLimit     = lightUniformBufferRange     / lightUniformAlignment;
     cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;

@@ -18,10 +18,12 @@ extern uint32_t vertexCount;
 extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 
+extern VkDeviceSize lightUniformAlignment;
 extern VkDeviceSize cameraUniformAlignment;
 extern VkDeviceSize primitiveUniformAlignment;
 extern VkDeviceSize materialUniformAlignment;
 
+extern VkDeviceSize lightUniformBufferRange; // TODO: Check if this is necessary without dynamic uniform buffer
 extern VkDeviceSize cameraUniformBufferRange;
 extern VkDeviceSize primitiveUniformBufferRange;
 extern VkDeviceSize materialUniformBufferRange;

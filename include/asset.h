@@ -11,6 +11,7 @@ typedef struct node {
 
     mat4 transform;
 
+    uint32_t lightIndex;
     uint32_t cameraIndex;
 
     uint32_t meshCount;

@@ -1,5 +1,6 @@
 #include "asset.h"
 
+#include "light.h"
 #include "camera.h"
 #include "control.h"
 #include "material.h"
@@ -18,6 +19,7 @@ PNode *scenes;
 void initializeNode(PNode node) {
     memset(node->name, 0, UINT8_MAX);
     node->controlSet = nullptr;
+    node->lightIndex = UINT32_MAX;
     node->cameraIndex = UINT32_MAX;
     node->meshCount = 0;
     node->meshIndices = nullptr;
@@ -48,6 +50,14 @@ uint32_t loadNode(cgltf_node *nodeData) {
     strncpy(node->name, nodeData->name, UINT8_MAX);
 
     cgltf_node_transform_local(nodeData, (cgltf_float *) node->transform);
+
+    if(nodeData->light) {
+        cgltf_light *lightData = nodeData->light;
+
+        debug("\tLight Name: %s", lightData->name);
+
+        node->lightIndex = loadLight(lightData);
+    }
 
     if(nodeData->camera) {
         cgltf_camera *cameraData = nodeData->camera;
@@ -167,6 +177,12 @@ void updateNodeUniforms(PNode node, mat4 transform) {
 
     glmc_mul(node->transform, nodeTransform, nodeTransform);
     glmc_mul(transform, nodeTransform, nodeTransform);
+
+    if(node->lightIndex != UINT32_MAX) {
+        PLightUniform lightUniform = &lightUniforms[node->lightIndex];
+
+        glmc_mat4_copy(nodeTransform, lightUniform->transform);
+    }
 
     if(node->cameraIndex != UINT32_MAX) {
         PCameraUniform cameraUniform = &cameraUniforms[node->cameraIndex];

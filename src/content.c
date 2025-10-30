@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
+#include "light.h"
 #include "camera.h"
 #include "material.h"
 #include "primitive.h"
@@ -19,10 +20,12 @@ uint32_t vertexCount;
 Index  *indexBuffer;
 Vertex *vertexBuffer;
 
+VkDeviceSize lightUniformAlignment;
 VkDeviceSize cameraUniformAlignment;
 VkDeviceSize primitiveUniformAlignment;
 VkDeviceSize materialUniformAlignment;
 
+VkDeviceSize lightUniformBufferRange;
 VkDeviceSize cameraUniformBufferRange;
 VkDeviceSize primitiveUniformBufferRange;
 VkDeviceSize materialUniformBufferRange;
@@ -40,10 +43,12 @@ void createContentBuffers() {
     nodes  = malloc(nodeCountLimit * sizeof(Node));
     scenes = malloc(nodeCountLimit * sizeof(PNode));
 
+    lights     = malloc(lightCountLimit     * sizeof(Light));
     cameras    = malloc(cameraCountLimit    * sizeof(Camera));
     materials  = malloc(materialCountLimit  * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
+    lightUniforms     = malloc(lightCountLimit     * sizeof(LightUniform));
     cameraUniforms    = malloc(cameraCountLimit    * sizeof(CameraUniform));
     materialUniforms  = malloc(materialCountLimit  * sizeof(MaterialUniform));
     primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
@@ -56,6 +61,7 @@ void createContentBuffers() {
     nodeCount  = 0;
     sceneCount = 0;
 
+    lightCount     = 0;
     cameraCount    = 0;
     materialCount  = 0;
     primitiveCount = 0;
