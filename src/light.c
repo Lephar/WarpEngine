@@ -4,6 +4,7 @@
 
 #include "logger.h"
 
+vec3 ambientLight;
 uint32_t lightCountLimit;
 uint32_t lightCount;
 PLight lights;

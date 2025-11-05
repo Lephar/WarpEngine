@@ -16,6 +16,8 @@ typedef struct cameraUniform {
     mat4 projection;
     mat4 projectionView;
     vec4 properties; // NOTICE: field of view, aspect ratio, near plane, far plane
+    vec3 ambientLight;
+    uint32_t pointLightCount;
 } CameraUniform, *PCameraUniform;
 
 extern uint32_t cameraCountLimit;

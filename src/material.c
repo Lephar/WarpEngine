@@ -201,7 +201,7 @@ void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Mater
 
     uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, descriptorSetCount, descriptorSets, 1, &material->factorOffset);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3 , descriptorSetCount, descriptorSets, 1, &material->factorOffset);
 }
 
 void destroyMaterial(Material *material) {

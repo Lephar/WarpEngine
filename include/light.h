@@ -14,6 +14,7 @@ typedef struct lightUniform {
     vec4 color; // NOTICE: Fourth element is intensity
 } LightUniform, *PLightUniform;
 
+extern vec3 ambientLight;
 extern uint32_t lightCountLimit;
 extern uint32_t lightCount;
 extern PLight lights;

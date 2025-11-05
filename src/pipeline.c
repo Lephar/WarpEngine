@@ -19,13 +19,14 @@ VkDescriptorSetLayout *descriptorSetLayouts;
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
-    descriptorSetLayoutCount = 4;
+    descriptorSetLayoutCount = 5;
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
 
     descriptorSetLayouts[0] = cameraDescriptorPool.layout;
-    descriptorSetLayouts[1] = primitiveDescriptorPool.layout;
-    descriptorSetLayouts[2] = materialDescriptorPool.layout;
-    descriptorSetLayouts[3] = samplerDescriptorPool.layout;
+    descriptorSetLayouts[1] = lightDescriptorPool.layout;
+    descriptorSetLayouts[2] = primitiveDescriptorPool.layout;
+    descriptorSetLayouts[3] = materialDescriptorPool.layout;
+    descriptorSetLayouts[4] = samplerDescriptorPool.layout;
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -45,18 +46,18 @@ void setPipelineDetails() {
     const uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
     const uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
 
-    lightUniformAlignment     = align(sizeof(LightUniform),     minUniformBufferOffsetAlignment);
     cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
+    lightUniformAlignment     = align(sizeof(LightUniform),     minUniformBufferOffsetAlignment);
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
 
-    lightUniformBufferRange     = alignBack(maxUniformBufferRange, lightUniformAlignment);
     cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
+    lightUniformBufferRange     = alignBack(maxUniformBufferRange, lightUniformAlignment);
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
 
-    lightCountLimit     = lightUniformBufferRange     / lightUniformAlignment;
     cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
+    lightCountLimit     = lightUniformBufferRange     / lightUniformAlignment;
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
     nodeCountLimit      = primitiveCountLimit;
@@ -69,9 +70,9 @@ void createPipeline() {
     createSampler();
 
     createBufferDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
+    createBufferDescriptorPool(&lightDescriptorPool,     VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
     createBufferDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
     createBufferDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
-
     createSamplerDescriptorPool(&samplerDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
 
     createPipelineLayout();
@@ -118,9 +119,10 @@ void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
 
 void destroyPipeline() {
     destroyDescriptorPool(&samplerDescriptorPool);
-    destroyDescriptorPool(&cameraDescriptorPool);
-    destroyDescriptorPool(&primitiveDescriptorPool);
     destroyDescriptorPool(&materialDescriptorPool);
+    destroyDescriptorPool(&primitiveDescriptorPool);
+    destroyDescriptorPool(&lightDescriptorPool);
+    destroyDescriptorPool(&cameraDescriptorPool);
     debug("Descriptor pools destroyed");
 
     vkDestroySampler(device, sampler, nullptr);

@@ -12,6 +12,7 @@
 VkSampler sampler;
 
 DescriptorPool cameraDescriptorPool;
+DescriptorPool lightDescriptorPool;
 DescriptorPool primitiveDescriptorPool;
 DescriptorPool materialDescriptorPool;
 DescriptorPool samplerDescriptorPool;

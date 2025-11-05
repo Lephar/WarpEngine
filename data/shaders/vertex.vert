@@ -19,9 +19,16 @@ layout(set = 0, binding = 0) uniform Camera {
     mat4 projection;
     mat4 projectionView;
     vec4 cameraProperties;
+    vec3 ambientLight;
+    uint pointLightCount;
 };
 
-layout(set = 1, binding = 0) uniform Primitive {
+layout(set = 1, binding = 0) uniform Light {
+    mat4 transform;
+    vec4 lightColor;
+};
+
+layout(set = 2, binding = 0) uniform Primitive {
     mat4 model;
 };
 

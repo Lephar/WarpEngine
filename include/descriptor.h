@@ -15,6 +15,7 @@ typedef struct descriptorPool {
 extern VkSampler sampler;
 
 extern DescriptorPool cameraDescriptorPool;
+extern DescriptorPool lightDescriptorPool;
 extern DescriptorPool primitiveDescriptorPool;
 extern DescriptorPool materialDescriptorPool;
 extern DescriptorPool samplerDescriptorPool;

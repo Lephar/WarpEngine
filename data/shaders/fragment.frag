@@ -15,18 +15,25 @@ layout(set = 0, binding = 0) uniform Camera {
     mat4 projection;
     mat4 projectionView;
     vec4 cameraProperties;
+    vec3 ambientLight;
+    uint pointLightCount;
 };
 
-layout(set = 2, binding = 0) uniform Material {
+layout(set = 1, binding = 0) uniform Light {
+    mat4 transform;
+    vec4 lightColor;
+};
+
+layout(set = 3, binding = 0) uniform Material {
     vec4 baseColorFactor;
     vec2 metallicRoughnessFactor;
     vec3 emissiveFactor;
     float normalScale;
 };
 
-layout(set = 3, binding = 0) uniform sampler2D baseColorSampler;
-layout(set = 3, binding = 1) uniform sampler2D metallicRoughnessSampler;
-layout(set = 3, binding = 2) uniform sampler2D normalSampler;
+layout(set = 4, binding = 0) uniform sampler2D baseColorSampler;
+layout(set = 4, binding = 1) uniform sampler2D metallicRoughnessSampler;
+layout(set = 4, binding = 2) uniform sampler2D normalSampler;
 
 vec4 depth() {
     float nearPlane = cameraProperties[2];
