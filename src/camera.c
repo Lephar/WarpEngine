@@ -43,7 +43,7 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
     debug("\t\tNear Frustum Plane:     %g", camera->nearPlane);
     debug("\t\tFar Frustum Plane:      %g", camera->farPlane);
 
-    glmc_perspective_rh_zo(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
+    glmc_perspective(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
 
     cameraUniform->properties[0] = camera->fieldOfView;
     cameraUniform->properties[1] = camera->aspectRatio;
@@ -66,12 +66,7 @@ void bindCamera(uint32_t cameraIndex, uint32_t framebufferSetIndex) {
     camera->aspectRatio = (float) framebufferSet->extent.width / (float) framebufferSet->extent.height;
     cameraUniform->properties[1] = camera->aspectRatio;
 
-    // NOTICE: Do not generate whole projection matrix, just resize according to the new aspect ratio
-    if(cameraUniform->projection[0][0] != 0.0f) { // TODO: Is the else condition an error?
-        cameraUniform->projection[0][0] = cameraUniform->projection[1][1] / camera->aspectRatio;
-    }
-
-    //glmc_perspective_resize_rh_zo(camera->aspectRatio, cameraUniform->projection); // TODO: Use this function instead when they export
+    glmc_perspective_resize(camera->aspectRatio, cameraUniform->projection);
 
     debug("Bound camera %u to framebuffer set %u and resized the perspective projection matrix with the aspect ratio of %g", cameraIndex, framebufferSetIndex, camera->aspectRatio);
 }
