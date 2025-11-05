@@ -72,6 +72,7 @@ void createContentBuffers() {
 }
 
 void loadContent() {
+    loadAsset("assets/skybox", "Skybox.gltf");
     loadAsset("assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
 
     debug("Assets successfully loaded");
