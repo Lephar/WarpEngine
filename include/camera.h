@@ -14,10 +14,8 @@ typedef struct camera {
 typedef struct cameraUniform {
     mat4 view;
     mat4 projection;
-    mat4 projectionView;
+    mat4 projectionView; // NOTICE: Premultiplied to save redundant multiplications on all shader units
     vec4 properties; // NOTICE: field of view, aspect ratio, near plane, far plane
-    vec3 ambientLight;
-    uint32_t pointLightCount;
 } CameraUniform, *PCameraUniform;
 
 extern uint32_t cameraCountLimit;

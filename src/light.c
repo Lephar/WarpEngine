@@ -9,6 +9,7 @@ uint32_t lightCountLimit;
 uint32_t lightCount;
 PLight lights;
 PLightUniform lightUniforms;
+SceneLightingUniform sceneLightingUniform;
 
 uint32_t loadLight(cgltf_light *lightData) {
     debug("\tLight: %s", lightData->name);
