@@ -20,13 +20,13 @@ uint32_t vertexCount;
 Index  *indexBuffer;
 Vertex *vertexBuffer;
 
+VkDeviceSize lightingUniformAlignment;
 VkDeviceSize cameraUniformAlignment;
-VkDeviceSize lightUniformAlignment;
 VkDeviceSize primitiveUniformAlignment;
 VkDeviceSize materialUniformAlignment;
 
+VkDeviceSize lightingUniformBufferRange;
 VkDeviceSize cameraUniformBufferRange;
-VkDeviceSize lightUniformBufferRange;
 VkDeviceSize primitiveUniformBufferRange;
 VkDeviceSize materialUniformBufferRange;
 
@@ -43,15 +43,15 @@ void createContentBuffers() {
     nodes  = malloc(nodeCountLimit * sizeof(Node));
     scenes = malloc(nodeCountLimit * sizeof(PNode));
 
-    lights     = malloc(lightCountLimit     * sizeof(Light));
     cameras    = malloc(cameraCountLimit    * sizeof(Camera));
     materials  = malloc(materialCountLimit  * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
 
-    lightUniforms     = malloc(lightCountLimit     * sizeof(LightUniform));
+    pointLightUniforms = malloc(pointLightCountLimit * sizeof(PointLightUniform));
+
     cameraUniforms    = malloc(cameraCountLimit    * sizeof(CameraUniform));
-    materialUniforms  = malloc(materialCountLimit  * sizeof(MaterialUniform));
     primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
+    materialUniforms  = malloc(materialCountLimit  * sizeof(MaterialUniform));
 
     controlSets = malloc(nodeCountLimit * sizeof(ControlSet));
 
@@ -61,7 +61,8 @@ void createContentBuffers() {
     nodeCount  = 0;
     sceneCount = 0;
 
-    lightCount     = 0;
+    lightingUniform.pointLightCount = 0;
+
     cameraCount    = 0;
     materialCount  = 0;
     primitiveCount = 0;
@@ -76,6 +77,12 @@ void loadContent() {
     loadAsset("assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
 
     debug("Assets successfully loaded");
+
+    lightingUniform.ambientLight[0] = 1.0f;
+    lightingUniform.ambientLight[1] = 0.4f;
+    lightingUniform.ambientLight[2] = 0.4f;
+
+    debug("Ambient light set");
 
     initializeWorld();
 
@@ -125,19 +132,19 @@ void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
     VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
 
     for(uint32_t cameraIndex = 0; cameraIndex < cameraCount; cameraIndex++) {
-        memcpy(mappedSharedMemory + uniformBufferOffset + cameraIndex * cameraUniformAlignment, &cameraUniforms[cameraIndex], sizeof(CameraUniform));
+        memcpy(mappedSharedMemory + uniformBufferOffset + cameras[cameraIndex].uniformOffset, &cameraUniforms[cameraIndex], sizeof(CameraUniform));
     }
 
     uniformBufferOffset += cameraUniformBufferRange;
 
     for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
-        memcpy(mappedSharedMemory + uniformBufferOffset + primitiveIndex * primitiveUniformAlignment, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
+        memcpy(mappedSharedMemory + uniformBufferOffset + primitives[primitiveIndex].uniformOffset, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
     }
 
     uniformBufferOffset += primitiveUniformBufferRange;
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        memcpy(mappedSharedMemory + uniformBufferOffset + materialIndex * materialUniformAlignment, &materialUniforms[materialIndex], sizeof(MaterialUniform));
+        memcpy(mappedSharedMemory + uniformBufferOffset + materials[materialIndex].factorOffset, &materialUniforms[materialIndex], sizeof(MaterialUniform));
     }
 }
 
