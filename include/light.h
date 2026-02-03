@@ -2,30 +2,20 @@
 
 #include "pch.h"
 
-typedef struct light {
-    vec3 color;
-    float intensity;
-
-    uint32_t uniformOffset;
-} Light, *PLight;
-
-typedef struct lightUniform {
+typedef struct pointLightUniform {
     mat4 transform;
-    vec4 color; // NOTICE: Fourth element is intensity
-} LightUniform, *PLightUniform;
+    vec4 color; // NOTICE: 4th element is the intensity
+} PointLightUniform, *PPointLightUniform;
 
-typedef struct sceneLightingUniform {
+typedef struct lightingUniform {
     vec3 ambientLight;
     uint32_t pointLightCount;
     // NOTICE: Lights array will be copied to this location in uniform buffer as if it was stack-allocated
     // LightUniform lightUniforms[lightCountLimit];
-} SceneLightingUniform, *PSceneLightingUniform;
+} LightingUniform, *PLightingUniform;
 
-extern vec3 ambientLight;
-extern uint32_t lightCountLimit;
-extern uint32_t lightCount;
-extern PLight lights;
-extern PLightUniform lightUniforms;
-extern SceneLightingUniform sceneLightingUniform;
+extern uint32_t pointLightCountLimit;
+extern LightingUniform lightingUniform;
+extern PPointLightUniform pointLightUniforms;
 
 uint32_t loadLight(cgltf_light *lightData);

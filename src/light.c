@@ -1,15 +1,10 @@
 #include "light.h"
 
-#include "content.h"
-
 #include "logger.h"
 
-vec3 ambientLight;
-uint32_t lightCountLimit;
-uint32_t lightCount;
-PLight lights;
-PLightUniform lightUniforms;
-SceneLightingUniform sceneLightingUniform;
+uint32_t pointLightCountLimit;
+LightingUniform lightingUniform;
+PPointLightUniform pointLightUniforms;
 
 uint32_t loadLight(cgltf_light *lightData) {
     debug("\tLight: %s", lightData->name);
@@ -19,29 +14,22 @@ uint32_t loadLight(cgltf_light *lightData) {
         return UINT32_MAX;
     }
 
-    if(lightCount >= lightCountLimit) {
+    if(lightingUniform.pointLightCount >= pointLightCountLimit) {
         debug("\t\tLight count limit reached, skipping...");
         return UINT32_MAX;
     }
 
-    const uint32_t lightIndex = lightCount;
-    lightCount++;
+    const uint32_t lightIndex = lightingUniform.pointLightCount;
+    lightingUniform.pointLightCount++;
 
-    PLight light = &lights[lightIndex];
-    PLightUniform lightUniform = &lightUniforms[lightIndex];
-
-    light->uniformOffset = lightIndex * lightUniformAlignment;
+    PPointLightUniform light = &pointLightUniforms[lightIndex];
 
     glmc_vec3_copy(lightData->color, light->color);
-    light->intensity = lightData->intensity;
+    light->color[3] = lightData->intensity;
 
-    debug("\t\tColor: [%g, %g, %g]", light->color[0], light->color[1], light->color[2]);
-    debug("\t\tIntensity: %g", light->intensity);
-
-    glmc_vec3_copy(light->color, lightUniform->color);
-    lightUniform->color[3] = light->intensity;
-
-    debug("\t\tLight successfully loaded");
+    debug("\t\tLight successfully loaded:");
+    debug("\t\t\tColor: [%g, %g, %g]", light->color[0], light->color[1], light->color[2]);
+    debug("\t\t\tIntensity: %g", light->color[3]);
 
     return lightIndex;
 }
