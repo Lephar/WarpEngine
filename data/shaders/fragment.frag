@@ -10,18 +10,22 @@ layout(location = 4) in  vec2 inputTexcoord1;
 
 layout(location = 0) out vec4 outputColor;
 
-layout(set = 0, binding = 0) uniform Camera {
+struct Light {
+    mat4 transform;
+    vec4 lightColor;
+};
+
+layout(set = 0, binding = 0) uniform Scene {
+    vec3 ambientLight;
+    uint pointLightCount;
+    Light lights[];
+};
+
+layout(set = 1, binding = 0) uniform Camera {
     mat4 view;
     mat4 projection;
     mat4 projectionView;
     vec4 cameraProperties;
-    vec3 ambientLight;
-    uint pointLightCount;
-};
-
-layout(set = 1, binding = 0) uniform Light {
-    mat4 transform;
-    vec4 lightColor;
 };
 
 layout(set = 3, binding = 0) uniform Material {
@@ -60,5 +64,5 @@ vec4 normal() {
 }
 
 void main() {
-    outputColor = color();
+    outputColor = vec4(ambientLight, 1.0f) * color();
 }

@@ -14,18 +14,22 @@ layout(location = 2) out vec4 outputNormal;
 layout(location = 3) out vec2 outputTexcoord0;
 layout(location = 4) out vec2 outputTexcoord1;
 
-layout(set = 0, binding = 0) uniform Camera {
+struct Light {
+    mat4 transform;
+    vec4 lightColor;
+};
+
+layout(set = 0, binding = 0) uniform Scene {
+    vec3 ambientLight;
+    uint pointLightCount;
+    Light lights[];
+};
+
+layout(set = 1, binding = 0) uniform Camera {
     mat4 view;
     mat4 projection;
     mat4 projectionView;
     vec4 cameraProperties;
-    vec3 ambientLight;
-    uint pointLightCount;
-};
-
-layout(set = 1, binding = 0) uniform Light {
-    mat4 transform;
-    vec4 lightColor;
 };
 
 layout(set = 2, binding = 0) uniform Primitive {
@@ -40,5 +44,5 @@ void main() {
     outputTexcoord1 = inputTexcoord1;
 
     gl_PointSize = 1.0f;
-    gl_Position = projectionView * outputPosition;
+    gl_Position  = projectionView * outputPosition;
 }

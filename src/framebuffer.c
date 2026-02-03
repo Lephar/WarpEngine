@@ -248,7 +248,7 @@ void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     vkCmdSetViewportWithCount(framebuffer->renderCommandBuffer, 1, &viewport);
     vkCmdSetScissorWithCount( framebuffer->renderCommandBuffer, 1, &scissor);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &framebuffer->cameraDescriptorSet, 1, &framebufferSet->camera->uniformOffset);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &framebuffer->cameraDescriptorSet, 1, &framebufferSet->camera->uniformOffset);
 }
 
 void endFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
