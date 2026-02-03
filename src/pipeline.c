@@ -51,11 +51,25 @@ void setPipelineDetails() {
     cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
+
+    debug("Uniform Alignments:");
+    debug("\tLighting:  %u", lightingUniformAlignment);
+    debug("\tCamera:    %u", cameraUniformAlignment);
+    debug("\tPrimitive: %u", primitiveUniformAlignment);
+    debug("\tMaterial:  %u", materialUniformAlignment);
+
     lightingUniformBufferRange = maxUniformBufferRange;
 
     cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
+
+    debug("Uniform Buffer Ranges:");
+    debug("\tLighting:  %u", lightingUniformBufferRange);
+    debug("\tCamera:    %u", cameraUniformBufferRange);
+    debug("\tPrimitive: %u", primitiveUniformBufferRange);
+    debug("\tMaterial:  %u", materialUniformBufferRange);
+
     pointLightCountLimit = (lightingUniformBufferRange - lightingUniformAlignment) / sizeof(PointLightUniform);
 
     cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
@@ -64,7 +78,14 @@ void setPipelineDetails() {
 
     nodeCountLimit = primitiveCountLimit;
 
-    framebufferUniformBufferSize    = cameraUniformBufferRange + primitiveUniformBufferRange + materialUniformBufferRange;
+    debug("Count Limits:");
+    debug("\tPoint Lights: %u", pointLightCountLimit);
+    debug("\tCameras:      %u", cameraCountLimit);
+    debug("\tPrimitives:   %u", primitiveCountLimit);
+    debug("\tMaterials:    %u", materialCountLimit);
+    debug("\tNodes:        %u", nodeCountLimit);
+
+    framebufferUniformBufferSize    = lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange + materialUniformBufferRange;
     framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;
 }
 
