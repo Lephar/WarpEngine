@@ -34,8 +34,8 @@ VkDeviceSize framebufferUniformBufferSize;
 VkDeviceSize framebufferSetUniformBufferSize;
 
 void createContentBuffers() {
-    const VkDeviceSize indexBufferSizeLimit  =     deviceBuffer.size / 4;
-    const VkDeviceSize vertexBufferSizeLimit = 3 * deviceBuffer.size / 4;
+    const VkDeviceSize indexBufferSizeLimit  = deviceBuffer.size / 4;
+    const VkDeviceSize vertexBufferSizeLimit = deviceBuffer.size - indexBufferSizeLimit;
 
     indexBuffer  = malloc(indexBufferSizeLimit);
     vertexBuffer = malloc(vertexBufferSizeLimit);
