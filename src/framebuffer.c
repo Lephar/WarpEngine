@@ -29,6 +29,7 @@ void createFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
 
     transitionImageLayout(framebuffer->resolve, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
+    framebuffer->lightingDescriptorSet  = getLightingDescriptorSet( framebufferSetIndex, framebufferIndex);
     framebuffer->cameraDescriptorSet    = getCameraDescriptorSet(   framebufferSetIndex, framebufferIndex);
     framebuffer->primitiveDescriptorSet = getPrimitiveDescriptorSet(framebufferSetIndex, framebufferIndex);
     framebuffer->materialDescriptorSet  = getMaterialDescriptorSet( framebufferSetIndex, framebufferIndex);

@@ -6,6 +6,7 @@ typedef struct image *PImage;
 typedef struct camera *PCamera;
 
 typedef struct framebuffer {
+    VkDescriptorSet lightingDescriptorSet;
     VkDescriptorSet cameraDescriptorSet;
     VkDescriptorSet primitiveDescriptorSet;
     VkDescriptorSet materialDescriptorSet;
