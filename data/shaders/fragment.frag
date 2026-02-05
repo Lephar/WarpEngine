@@ -2,6 +2,8 @@
 
 #extension GL_ARB_separate_shader_objects : enable
 
+#define POINT_LIGHT_COUNT_LIMIT 1024
+
 layout(location = 0) in  vec4 inputPosition;
 layout(location = 1) in  vec4 inputTangent;
 layout(location = 2) in  vec4 inputNormal;
@@ -10,15 +12,15 @@ layout(location = 4) in  vec2 inputTexcoord1;
 
 layout(location = 0) out vec4 outputColor;
 
-struct Light {
-    mat4 transform;
+struct PointLight {
+    mat4 lightTransform;
     vec4 lightColor;
 };
 
-layout(set = 0, binding = 0) uniform Scene {
+layout(set = 0, binding = 0) uniform Lighting {
     vec3 ambientLight;
     uint pointLightCount;
-    Light lights[];
+    PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };
 
 layout(set = 1, binding = 0) uniform Camera {
@@ -64,5 +66,18 @@ vec4 normal() {
 }
 
 void main() {
-    outputColor = vec4(ambientLight, 1.0f) * color();
+    vec3 diffuse = vec3(0.0f, 0.0f, 0.0f);
+
+    for(int pointLightIndex = 0; pointLightIndex < pointLightCount; pointLightIndex++) {
+        vec4  lightPosition  = pointLights[pointLightIndex].lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        vec4  lightVector    = lightPosition - inputPosition;
+        vec4  lightDirection = normalize(lightVector);
+        float lightDistance  = length(lightVector);
+        float lightIntensity = 1.0f;//pointLights[i].lightColor[3];
+        float lightImpact    = lightIntensity / pow(lightDistance, 2.0f);
+
+        diffuse += lightImpact * max(dot(vec3(inputNormal), vec3(lightDirection)), 0.0f) * vec3(pointLights[pointLightIndex].lightColor);
+    }
+
+    outputColor = vec4(ambientLight + diffuse, 1.0f) * color();
 }

@@ -2,6 +2,8 @@
 
 #extension GL_ARB_separate_shader_objects : enable
 
+#define POINT_LIGHT_COUNT_LIMIT 1024
+
 layout(location = 0) in  vec3 inputPosition;
 layout(location = 1) in  vec4 inputTangent;
 layout(location = 2) in  vec3 inputNormal;
@@ -14,15 +16,15 @@ layout(location = 2) out vec4 outputNormal;
 layout(location = 3) out vec2 outputTexcoord0;
 layout(location = 4) out vec2 outputTexcoord1;
 
-struct Light {
-    mat4 transform;
+struct PointLight {
+    mat4 lightTransform;
     vec4 lightColor;
 };
 
-layout(set = 0, binding = 0) uniform Scene {
+layout(set = 0, binding = 0) uniform Lighting {
     vec3 ambientLight;
     uint pointLightCount;
-    Light lights[];
+    PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };
 
 layout(set = 1, binding = 0) uniform Camera {
@@ -39,7 +41,7 @@ layout(set = 2, binding = 0) uniform Primitive {
 void main() {
     outputPosition  = model * vec4(inputPosition, 1.0f);
     outputTangent   = inputTangent;
-    outputNormal    = vec4(inputNormal, 0.0f);
+    outputNormal    = normalize(model * vec4(inputNormal, 0.0f));
     outputTexcoord0 = inputTexcoord0;
     outputTexcoord1 = inputTexcoord1;
 

@@ -75,9 +75,9 @@ void loadContent() {
 
     debug("Assets successfully loaded");
 
-    lightingUniform.ambientLight[0] = 1.0f;
-    lightingUniform.ambientLight[1] = 0.4f;
-    lightingUniform.ambientLight[2] = 0.4f;
+    lightingUniform.ambientLight[0] = 0.0f;
+    lightingUniform.ambientLight[1] = 0.0f;
+    lightingUniform.ambientLight[2] = 0.0f;
 
     debug("Ambient light set");
 
