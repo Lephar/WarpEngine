@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+#define POINT_LIGHT_COUNT_HARD_LIMIT 1U<<10U
+
 typedef struct pointLightUniform {
     mat4 transform;
     vec4 color; // NOTICE: 4th element is the intensity
@@ -10,12 +12,10 @@ typedef struct pointLightUniform {
 typedef struct lightingUniform {
     vec3 ambientLight;
     uint32_t pointLightCount;
-    // NOTICE: Lights array will be copied to this location in uniform buffer as if it was stack-allocated
-    // LightUniform lightUniforms[lightCountLimit];
+    PointLightUniform pointLightUniforms[POINT_LIGHT_COUNT_HARD_LIMIT];
 } LightingUniform, *PLightingUniform;
 
 extern uint32_t pointLightCountLimit;
 extern LightingUniform lightingUniform;
-extern PPointLightUniform pointLightUniforms;
 
 uint32_t loadLight(cgltf_light *lightData);

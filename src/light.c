@@ -4,7 +4,6 @@
 
 uint32_t pointLightCountLimit;
 LightingUniform lightingUniform;
-PPointLightUniform pointLightUniforms;
 
 uint32_t loadLight(cgltf_light *lightData) {
     debug("\tLight: %s", lightData->name);
@@ -22,7 +21,7 @@ uint32_t loadLight(cgltf_light *lightData) {
     const uint32_t lightIndex = lightingUniform.pointLightCount;
     lightingUniform.pointLightCount++;
 
-    PPointLightUniform light = &pointLightUniforms[lightIndex];
+    PPointLightUniform light = &lightingUniform.pointLightUniforms[lightIndex];
 
     glmc_vec3_copy(lightData->color, light->color);
     light->color[3] = lightData->intensity;

@@ -46,19 +46,16 @@ void setPipelineDetails() {
     const uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
     const uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
 
-    lightingUniformAlignment  = sizeof(LightingUniform);
-
     cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
 
     debug("Uniform Alignments:");
-    debug("\tLighting:  %u", lightingUniformAlignment);
     debug("\tCamera:    %u", cameraUniformAlignment);
     debug("\tPrimitive: %u", primitiveUniformAlignment);
     debug("\tMaterial:  %u", materialUniformAlignment);
 
-    lightingUniformBufferRange = maxUniformBufferRange;
+    lightingUniformBufferRange = ulmin(sizeof(LightingUniform), maxUniformBufferRange);
 
     cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
@@ -70,7 +67,7 @@ void setPipelineDetails() {
     debug("\tPrimitive: %u", primitiveUniformBufferRange);
     debug("\tMaterial:  %u", materialUniformBufferRange);
 
-    pointLightCountLimit = (lightingUniformBufferRange - lightingUniformAlignment) / sizeof(PointLightUniform);
+    pointLightCountLimit = umin(POINT_LIGHT_COUNT_HARD_LIMIT, lightingUniformBufferRange / sizeof(PointLightUniform));
 
     cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
@@ -79,7 +76,9 @@ void setPipelineDetails() {
     nodeCountLimit = primitiveCountLimit;
 
     debug("Count Limits:");
-    debug("\tPoint Lights: %u", pointLightCountLimit);
+    debug("\tPoint Lights:");
+    debug("\t\tHard Limit: %u", POINT_LIGHT_COUNT_HARD_LIMIT);
+    debug("\t\tSoft Limit: %u", pointLightCountLimit);
     debug("\tCameras:      %u", cameraCountLimit);
     debug("\tPrimitives:   %u", primitiveCountLimit);
     debug("\tMaterials:    %u", materialCountLimit);

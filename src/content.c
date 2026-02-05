@@ -20,7 +20,6 @@ uint32_t vertexCount;
 Index  *indexBuffer;
 Vertex *vertexBuffer;
 
-VkDeviceSize lightingUniformAlignment;
 VkDeviceSize cameraUniformAlignment;
 VkDeviceSize primitiveUniformAlignment;
 VkDeviceSize materialUniformAlignment;
@@ -46,8 +45,6 @@ void createContentBuffers() {
     cameras    = malloc(cameraCountLimit    * sizeof(Camera));
     materials  = malloc(materialCountLimit  * sizeof(Material));
     primitives = malloc(primitiveCountLimit * sizeof(Primitive));
-
-    pointLightUniforms = malloc(pointLightCountLimit * sizeof(PointLightUniform));
 
     cameraUniforms    = malloc(cameraCountLimit    * sizeof(CameraUniform));
     primitiveUniforms = malloc(primitiveCountLimit * sizeof(PrimitiveUniform));
@@ -131,13 +128,7 @@ void prepareUniforms() {
 void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
 
-    memcpy(mappedSharedMemory + uniformBufferOffset, &lightingUniform, sizeof(LightingUniform));
-
-    for(uint32_t pointLightIndex = 0; pointLightIndex < lightingUniform.pointLightCount; pointLightIndex++) {
-        const VkDeviceSize pointLightOffset = sizeof(LightingUniform) + pointLightIndex * sizeof(PointLightUniform);
-
-        memcpy(mappedSharedMemory + uniformBufferOffset + pointLightOffset, &pointLightUniforms[pointLightIndex], sizeof(PointLightUniform));
-    }
+    memcpy(mappedSharedMemory + uniformBufferOffset, &lightingUniform, lightingUniformBufferRange);
 
     uniformBufferOffset += lightingUniformBufferRange;
 

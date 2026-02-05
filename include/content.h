@@ -18,7 +18,6 @@ extern uint32_t vertexCount;
 extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 
-extern VkDeviceSize lightingUniformAlignment;
 extern VkDeviceSize cameraUniformAlignment;
 extern VkDeviceSize primitiveUniformAlignment;
 extern VkDeviceSize materialUniformAlignment;
