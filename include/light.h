@@ -18,4 +18,5 @@ typedef struct lightingUniform {
 extern uint32_t pointLightCountLimit;
 extern LightingUniform lightingUniform;
 
+void initializeLighting();
 uint32_t loadLight(cgltf_light *lightData);

@@ -5,6 +5,12 @@
 uint32_t pointLightCountLimit;
 LightingUniform lightingUniform;
 
+void initializeLighting() {
+    lightingUniform.ambientLight[0] = 0.0f;
+    lightingUniform.ambientLight[1] = 0.0f;
+    lightingUniform.ambientLight[2] = 0.0f;
+}
+
 uint32_t loadLight(cgltf_light *lightData) {
     debug("\tLight: %s", lightData->name);
 
