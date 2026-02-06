@@ -14,7 +14,7 @@ typedef struct controlSet {
 extern uint32_t controlSetCount;
 extern PControlSet controlSets;
 
-void initializeWorld();
+void initializeCoordinateSystem();
 uint32_t initializeControlSet(float turnSpeed, float moveSpeed, void (*controlFunction)(PControlSet));
 void bindControlSet(uint32_t controlSetIndex, uint32_t nodeIndex);
 void updateControlSet(PControlSet controlSet);
