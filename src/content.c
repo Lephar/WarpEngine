@@ -70,18 +70,16 @@ void createContentBuffers() {
 }
 
 void loadContent() {
+    initializeCoordinateSystem();
+    debug("Coordinate system set");
+
+    initializeLighting();
+    debug("Ambient lighting set");
+
     loadAsset("assets/skybox", "Skybox.gltf");
     loadAsset("assets/main_sponza", "NewSponza_Main_glTF_003.gltf");
 
     debug("Assets successfully loaded");
-
-    lightingUniform.ambientLight[0] = 0.0f;
-    lightingUniform.ambientLight[1] = 0.0f;
-    lightingUniform.ambientLight[2] = 0.0f;
-
-    debug("Ambient light set");
-
-    initializeWorld();
 
     const uint32_t firstPersonControlSetIndex = initializeControlSet(1.0f, 10.0f, firstPersonControl);
     const uint32_t mainCameraNodeIndex = findNode("PhysCamera001");
