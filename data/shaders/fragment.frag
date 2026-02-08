@@ -78,12 +78,34 @@ vec3 pointLightDiffuse(uint pointLightIndex) {
     return lightImpact * lightDiffuse * lightColor;
 }
 
-void main() {
-    vec3 diffuse = vec3(0.0f, 0.0f, 0.0f);
+vec3 pointLightSpecular(uint pointLightIndex) {
+    vec4  viewPosition   = view * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec4  viewVector     = inputPosition - viewPosition;
+    vec4  viewDirection  = normalize(viewVector);
 
-    for(int pointLightIndex = 0; pointLightIndex < pointLightCount; pointLightIndex++) {
-        diffuse += pointLightDiffuse(pointLightIndex);
+    float lightIntensity = 1.0f;//pointLights[pointLightIndex].lightColor[3];
+    vec3  lightColor     = vec3(pointLights[pointLightIndex].lightColor);
+    vec4  lightPosition  = pointLights[pointLightIndex].lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec4  lightVector    = inputPosition - lightPosition;
+    vec4  lightDirection = normalize(lightVector);
+    float lightDistance  = length(lightVector);
+    float lightImpact    = lightIntensity / pow(lightDistance, 2.0f);
+
+    vec4  reflectDirection = reflect(-lightDirection, inputNormal);
+    float lightSpecular = pow(max(dot(viewDirection, reflectDirection), 0.0f), 32.0f) / 2.0f;
+
+    return lightImpact * lightSpecular * lightColor;
+}
+
+void main() {
+    vec3 diffuse  = vec3(0.0f, 0.0f, 0.0f);
+    vec3 specular = vec3(0.0f, 0.0f, 0.0f);
+
+    for(int pointLightIndex = 1; pointLightIndex < pointLightCount; pointLightIndex++) {
+        diffuse  += pointLightDiffuse(pointLightIndex);
+        specular += pointLightSpecular(pointLightIndex);
     }
 
-    outputColor = vec4(ambientLight + diffuse, 1.0f) * color();
+    outputColor = vec4(ambientLight + diffuse + specular, 1.0f) * color();
+    //outputColor = (inputNormal + 1.0f) / 2.0f;
 }
