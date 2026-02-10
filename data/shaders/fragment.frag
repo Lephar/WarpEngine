@@ -18,7 +18,7 @@ struct PointLight {
 };
 
 layout(set = 0, binding = 0) uniform Lighting {
-    vec3 ambientLight;
+    vec4 ambientLight;
     uint pointLightCount;
     PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };
@@ -106,7 +106,7 @@ void main() {
         specular += pointLightSpecular(pointLightIndex);
     }
 
-    outputColor = vec4(ambientLight + diffuse + specular, 1.0f) * color();
+    outputColor = vec4(vec3(ambientLight) + diffuse + specular, 1.0f) * color();
     //outputColor = (inputNormal + 1.0f) / 2.0f;
     //outputColor = vec4(specular, 1.0f);
 }

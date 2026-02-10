@@ -10,7 +10,7 @@ typedef struct pointLightUniform {
 } PointLightUniform, *PPointLightUniform;
 
 typedef struct lightingUniform {
-    vec3 ambientLight;
+    vec4 ambientLight; // R,G,B,Intensity
     uint32_t pointLightCount;
     PointLightUniform pointLightUniforms[POINT_LIGHT_COUNT_HARD_LIMIT];
 } LightingUniform, *PLightingUniform;

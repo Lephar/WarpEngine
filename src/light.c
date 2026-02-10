@@ -9,6 +9,7 @@ void initializeLighting() {
     lightingUniform.ambientLight[0] = 0.0f;
     lightingUniform.ambientLight[1] = 0.0f;
     lightingUniform.ambientLight[2] = 0.0f;
+    lightingUniform.ambientLight[3] = 0.0f;
 }
 
 uint32_t loadLight(cgltf_light *lightData) {
