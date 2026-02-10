@@ -66,7 +66,6 @@ vec4 normal() {
 }
 
 vec3 pointLightDiffuse(uint pointLightIndex) {
-    float lightIntensity = 1.0f;//pointLights[pointLightIndex].lightColor[3];
     vec3  lightColor     = vec3(pointLights[pointLightIndex].lightColor);
     vec4  lightPosition  = pointLights[pointLightIndex].lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
     vec4  lightVector    = lightPosition - inputPosition;
@@ -74,6 +73,7 @@ vec3 pointLightDiffuse(uint pointLightIndex) {
     float lightDistance  = length(lightVector);
     float lightImpact    = lightIntensity / pow(lightDistance, 2.0f);
     float lightDiffuse   = max(dot(vec3(normalize(inputNormal)), vec3(lightDirection)), 0.0f);
+    float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
 
     return lightImpact * lightDiffuse * lightColor;
 }
@@ -83,13 +83,13 @@ vec3 pointLightSpecular(uint pointLightIndex) {
     vec4  viewVector     = viewPosition - inputPosition;
     vec4  viewDirection  = normalize(viewVector);
 
-    float lightIntensity = 1.0f;//pointLights[pointLightIndex].lightColor[3];
     vec3  lightColor     = vec3(pointLights[pointLightIndex].lightColor);
     vec4  lightPosition  = pointLights[pointLightIndex].lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
     vec4  lightVector    = lightPosition - inputPosition;
     vec4  lightDirection = normalize(lightVector);
     float lightDistance  = length(lightVector);
     float lightImpact    = lightIntensity / pow(lightDistance, 2.0f);
+    float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
 
     vec4  reflectDirection = reflect(-lightDirection, normalize(inputNormal));
     float lightSpecular = pow(max(dot(viewDirection, reflectDirection), 0.0f), 32.0f);

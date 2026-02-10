@@ -6,11 +6,12 @@
 
 typedef struct pointLightUniform {
     mat4 transform;
-    vec4 color; // NOTICE: 4th element is the intensity
+    vec4 color; // R,G,B,Intensity
 } PointLightUniform, *PPointLightUniform;
 
 typedef struct lightingUniform {
     vec4 ambientLight; // R,G,B,Intensity
+    vec3 attenuationCoefficients; // Constant, Linear, Quadratic
     uint32_t pointLightCount;
     PointLightUniform pointLightUniforms[POINT_LIGHT_COUNT_HARD_LIMIT];
 } LightingUniform, *PLightingUniform;
