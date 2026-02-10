@@ -19,7 +19,7 @@ struct PointLight {
 
 layout(set = 0, binding = 0) uniform Lighting {
     vec4 ambientLight;
-    vec3 attenuationCoefficients;
+    vec4 attenuationCoefficients;
     uint pointLightCount;
     PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };
@@ -105,8 +105,9 @@ vec3 pointLightSpecular(uint pointLightIndex) {
     float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
     float lightImpact      = lightIntensity * lightAttenuation;
 
+    float specularFalloff = attenuationCoefficients[3];
     vec4  reflectDirection = reflect(-lightDirection, normalize(inputNormal));
-    float lightSpecular = pow(max(dot(viewDirection, reflectDirection), 0.0f), 32.0f);
+    float lightSpecular = pow(max(dot(viewDirection, reflectDirection), 0.0f), specularFalloff);
 
     return lightImpact * lightSpecular * lightColor;
 }
@@ -121,6 +122,4 @@ void main() {
     }
 
     outputColor = vec4(vec3(ambientLight) + diffuse + specular, 1.0f) * color();
-    //outputColor = (inputNormal + 1.0f) / 2.0f;
-    //outputColor = vec4(specular, 1.0f);
 }

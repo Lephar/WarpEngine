@@ -11,7 +11,7 @@ typedef struct pointLightUniform {
 
 typedef struct lightingUniform {
     vec4 ambientLight; // R,G,B,Intensity
-    vec3 attenuationCoefficients; // Constant, Linear, Quadratic
+    vec4 attenuationCoefficients; // Constant, Linear, Quadratic, Specular Falloff
     uint32_t pointLightCount;
     PointLightUniform pointLightUniforms[POINT_LIGHT_COUNT_HARD_LIMIT];
 } LightingUniform, *PLightingUniform;
