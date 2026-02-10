@@ -46,57 +46,19 @@ unset(_cmake_targets_not_defined)
 unset(_cmake_expected_targets)
 
 
-# Compute the installation prefix relative to this file.
-get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
-get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
-get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
-get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
-if(_IMPORT_PREFIX STREQUAL "/")
-  set(_IMPORT_PREFIX "")
-endif()
-
 # Create imported target cglm::cglm
 add_library(cglm::cglm SHARED IMPORTED)
 
 set_target_properties(cglm::cglm PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+  INTERFACE_INCLUDE_DIRECTORIES "/home/db21004/Graphics/cglm/include"
 )
 
-# Load information for each installed configuration.
-file(GLOB _cmake_config_files "${CMAKE_CURRENT_LIST_DIR}/cglmConfig-*.cmake")
-foreach(_cmake_config_file IN LISTS _cmake_config_files)
-  include("${_cmake_config_file}")
-endforeach()
-unset(_cmake_config_file)
-unset(_cmake_config_files)
-
-# Cleanup temporary variables.
-set(_IMPORT_PREFIX)
-
-# Loop over all imported files and verify that they actually exist
-foreach(_cmake_target IN LISTS _cmake_import_check_targets)
-  if(CMAKE_VERSION VERSION_LESS "3.28"
-      OR NOT DEFINED _cmake_import_check_xcframework_for_${_cmake_target}
-      OR NOT IS_DIRECTORY "${_cmake_import_check_xcframework_for_${_cmake_target}}")
-    foreach(_cmake_file IN LISTS "_cmake_import_check_files_for_${_cmake_target}")
-      if(NOT EXISTS "${_cmake_file}")
-        message(FATAL_ERROR "The imported target \"${_cmake_target}\" references the file
-   \"${_cmake_file}\"
-but this file does not exist.  Possible reasons include:
-* The file was deleted, renamed, or moved to another location.
-* An install or uninstall procedure did not complete successfully.
-* The installation package was faulty and contained
-   \"${CMAKE_CURRENT_LIST_FILE}\"
-but not all the files it references.
-")
-      endif()
-    endforeach()
-  endif()
-  unset(_cmake_file)
-  unset("_cmake_import_check_files_for_${_cmake_target}")
-endforeach()
-unset(_cmake_target)
-unset(_cmake_import_check_targets)
+# Import target "cglm::cglm" for configuration "Release"
+set_property(TARGET cglm::cglm APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(cglm::cglm PROPERTIES
+  IMPORTED_LOCATION_RELEASE "/home/db21004/Graphics/cglm/build/libcglm.so.0.9.6"
+  IMPORTED_SONAME_RELEASE "libcglm.so.0"
+  )
 
 # This file does not depend on other imported targets which have
 # been exported from the same project but in a separate export set.
