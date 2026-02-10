@@ -41,7 +41,7 @@ layout(set = 2, binding = 0) uniform Primitive {
 void main() {
     outputPosition  = model * vec4(inputPosition, 1.0f);
     outputTangent   = inputTangent;
-    outputNormal    = normalize(model * vec4(inputNormal, 0.0f));
+    outputNormal    = model * vec4(inputNormal,   0.0f); // NOTICE: DO NOT normalize here! Fragment interpolation changes its length. Normalize it there instead.
     outputTexcoord0 = inputTexcoord0;
     outputTexcoord1 = inputTexcoord1;
 
