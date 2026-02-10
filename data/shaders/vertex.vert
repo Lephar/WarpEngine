@@ -23,6 +23,7 @@ struct PointLight {
 
 layout(set = 0, binding = 0) uniform Lighting {
     vec4 ambientLight;
+    vec3 attenuationCoefficients;
     uint pointLightCount;
     PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };

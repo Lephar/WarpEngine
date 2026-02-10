@@ -19,6 +19,7 @@ struct PointLight {
 
 layout(set = 0, binding = 0) uniform Lighting {
     vec4 ambientLight;
+    vec3 attenuationCoefficients;
     uint pointLightCount;
     PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };
@@ -71,9 +72,16 @@ vec3 pointLightDiffuse(uint pointLightIndex) {
     vec4  lightVector    = lightPosition - inputPosition;
     vec4  lightDirection = normalize(lightVector);
     float lightDistance  = length(lightVector);
-    float lightImpact    = lightIntensity / pow(lightDistance, 2.0f);
-    float lightDiffuse   = max(dot(vec3(normalize(inputNormal)), vec3(lightDirection)), 0.0f);
+
+    float Kc = attenuationCoefficients[0];
+    float Kl = attenuationCoefficients[1];
+    float Kq = attenuationCoefficients[2];
+
+    float lightAttenuation = 1.0f / (Kc + Kl * lightDistance + Kq * lightDistance * lightDistance);
     float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
+    float lightImpact      = lightIntensity * lightAttenuation;
+
+    float lightDiffuse = max(dot(vec3(normalize(inputNormal)), vec3(lightDirection)), 0.0f);
 
     return lightImpact * lightDiffuse * lightColor;
 }
@@ -88,8 +96,14 @@ vec3 pointLightSpecular(uint pointLightIndex) {
     vec4  lightVector    = lightPosition - inputPosition;
     vec4  lightDirection = normalize(lightVector);
     float lightDistance  = length(lightVector);
-    float lightImpact    = lightIntensity / pow(lightDistance, 2.0f);
+
+    float Kc = attenuationCoefficients[0];
+    float Kl = attenuationCoefficients[1];
+    float Kq = attenuationCoefficients[2];
+
+    float lightAttenuation = 1.0f / (Kc + Kl * lightDistance + Kq * lightDistance * lightDistance);
     float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
+    float lightImpact      = lightIntensity * lightAttenuation;
 
     vec4  reflectDirection = reflect(-lightDirection, normalize(inputNormal));
     float lightSpecular = pow(max(dot(viewDirection, reflectDirection), 0.0f), 32.0f);

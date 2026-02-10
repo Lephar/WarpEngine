@@ -11,6 +11,10 @@ void initializeLighting() {
     lightingUniform.ambientLight[1] = 0.0f;
     lightingUniform.ambientLight[2] = 0.0f;
     lightingUniform.ambientLight[3] = 0.0f;
+
+    lightingUniform.attenuationCoefficients[0] = 1.0f;
+    lightingUniform.attenuationCoefficients[1] = 0.7f;
+    lightingUniform.attenuationCoefficients[2] = 1.8f;
 }
 
 uint32_t loadLight(cgltf_light *lightData) {
