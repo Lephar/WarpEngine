@@ -40,8 +40,8 @@ uint32_t loadLight(cgltf_light *lightData) {
     light->color[3] = compareFloat(lightData->intensity, 0.0f) > 0 ? lightData->intensity : 1.0f;
 
     debug("\t\tLight successfully loaded:");
-    debug("\t\t\tColor: [%g, %g, %g]", light->color[0], light->color[1], light->color[2]);
-    debug("\t\t\tIntensity: %g", light->color[3]);
+    debug("\t\t\tColor: [%0.4f, %0.4f, %0.4f]", light->color[0], light->color[1], light->color[2]);
+    debug("\t\t\tIntensity: %0.4f", light->color[3]);
 
     return lightIndex;
 }
