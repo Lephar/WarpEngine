@@ -261,7 +261,7 @@ void destroyMaterial(Material *material) {
         destroyImage(material->metallicRoughness);
     }
 
-    if(material->baseColor != defaultWhiteTexture) {
+    if(material->baseColor && material->baseColor != defaultWhiteTexture) {
         destroyImageView(material->baseColor);
         destroyImage(material->baseColor);
     }
