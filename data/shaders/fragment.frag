@@ -33,14 +33,17 @@ layout(set = 1, binding = 0) uniform Camera {
 
 layout(set = 3, binding = 0) uniform Material {
     vec4 baseColorFactor;
-    vec2 metallicRoughnessFactor;
-    vec3 emissiveFactor;
+    vec4 metallicRoughnessFactor;
+    vec4 emissiveFactor;
+    float occlusionScale;
     float normalScale;
 };
 
 layout(set = 4, binding = 0) uniform sampler2D baseColorSampler;
 layout(set = 4, binding = 1) uniform sampler2D metallicRoughnessSampler;
-layout(set = 4, binding = 2) uniform sampler2D normalSampler;
+layout(set = 4, binding = 2) uniform sampler2D emissiveSampler;
+layout(set = 4, binding = 3) uniform sampler2D occlusionSampler;
+layout(set = 4, binding = 4) uniform sampler2D normalSampler;
 
 vec4 depth() {
     float nearPlane = cameraProperties[2];
@@ -64,6 +67,14 @@ vec4 metallicRoughness() {
 
 vec4 normal() {
     return texture(normalSampler, inputTexcoord0);
+vec3 emissive() {
+    return emissiveFactor.rgb;// * texture(emissiveSampler, inputTexcoord0).rgb;
+}
+
+vec3 occlusion() {
+    return vec3(occlusionScale * texture(occlusionSampler, inputTexcoord0).r);
+}
+
 }
 
 vec3 pointLightDiffuse(uint pointLightIndex) {
