@@ -124,6 +124,7 @@ vec3 pointLightSpecular(uint pointLightIndex) {
 }
 
 void main() {
+    vec3 ambient  = ambientLight.a * ambientLight.rgb;
     vec3 diffuse  = vec3(0.0f, 0.0f, 0.0f);
     vec3 specular = vec3(0.0f, 0.0f, 0.0f);
 
@@ -132,5 +133,12 @@ void main() {
         specular += pointLightSpecular(pointLightIndex);
     }
 
-    outputColor = vec4(vec3(ambientLight) + diffuse + specular, 1.0f) * color();
+    vec3 emissive = emissive();
+
+    vec4 color = color();
+
+    vec3 rgb = color.rgb;
+    float a = color.a;
+
+    outputColor = vec4((ambient + diffuse + specular + emissive) * rgb, a);
 }
