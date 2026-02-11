@@ -105,9 +105,9 @@ vec3 pointLightSpecular(uint pointLightIndex) {
     float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
     float lightImpact      = lightIntensity * lightAttenuation;
 
-    float specularFalloff = attenuationCoefficients[3];
-    vec4  reflectDirection = reflect(-lightDirection, normalize(inputNormal));
-    float lightSpecular = pow(max(dot(viewDirection, reflectDirection), 0.0f), specularFalloff);
+    float specularFalloff  = attenuationCoefficients[3];
+    vec4  halfwayDirection = normalize(viewDirection + lightDirection);
+    float lightSpecular    = pow(max(dot(normalize(inputNormal), halfwayDirection), 0.0f), specularFalloff);
 
     return lightImpact * lightSpecular * lightColor;
 }
