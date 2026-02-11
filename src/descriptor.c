@@ -195,6 +195,14 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, Materia
             .imageLayout = material->metallicRoughness->layout
         }, {
             .sampler     = sampler,
+            .imageView   = material->emissive->view,
+            .imageLayout = material->emissive->layout
+        }, {
+            .sampler     = sampler,
+            .imageView   = material->occlusion->view,
+            .imageLayout = material->occlusion->layout
+        }, {
+            .sampler     = sampler,
             .imageView   = material->normal->view,
             .imageLayout = material->normal->layout
         }

@@ -6,8 +6,9 @@ typedef struct image Image;
 
 typedef struct materialUniform {
     vec4 baseColorFactor;
-    vec2 metallicRoughnessFactor;
-    vec3 emissiveFactor;
+    vec4 metallicRoughnessFactor;
+    vec4 emissiveFactor;
+    float occlusionScale;
     float normalScale;
 } MaterialUniform, *PMaterialUniform;
 
@@ -17,6 +18,8 @@ typedef struct material {
     uint32_t isDoubleSided;
     Image *baseColor;
     Image *metallicRoughness;
+    Image *emissive;
+    Image *occlusion;
     Image *normal;
     uint32_t factorOffset;
     VkDescriptorSet samplerDescriptorSet;

@@ -14,7 +14,7 @@ const char *defaultMaterialName = "Default Material";
 Image *defaultBlackTexture = nullptr;
 Image *defaultWhiteTexture = nullptr;
 
-const uint32_t materialTextureCount = 3;
+const uint32_t materialTextureCount = 5;
 uint32_t materialCountLimit;
 uint32_t materialCount;
 Material *materials;
@@ -76,16 +76,19 @@ void loadDefaultMaterial() {
 
     material->baseColor         = defaultWhiteTexture;
     material->metallicRoughness = defaultBlackTexture;
-    material->normal            = defaultBlackTexture;
+    material->emissive          = defaultWhiteTexture;
+    material->occlusion         = defaultWhiteTexture;
+    material->normal            = defaultBlackTexture; // TODO: Add a blue texture
 
     material->isTransparent = false;
     material->isDoubleSided = false;
 
     glmc_vec4_one(materialUniform->baseColorFactor);
     glmc_vec2_one(materialUniform->metallicRoughnessFactor);
-    glmc_vec3_one(materialUniform->emissiveFactor);
+    glmc_vec3_zero(materialUniform->emissiveFactor);
 
-    materialUniform->normalScale = 1.0f;
+    materialUniform->occlusionScale = 1.0f;
+    materialUniform->normalScale    = 1.0f;
 }
 
 void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
@@ -100,6 +103,8 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
 
     material->baseColor         = nullptr;
     material->metallicRoughness = nullptr;
+    material->emissive          = nullptr;
+    material->occlusion         = nullptr;
     material->normal            = nullptr;
 
     if(materialData->alpha_mode == cgltf_alpha_mode_blend) {
@@ -147,6 +152,40 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
         }
     }
 
+    memcpy(materialUniform->emissiveFactor, materialData->emissive_factor, sizeof(vec3));
+    debug("\tEmissive factor: [%0.4f, %0.4f, %0.4f]", materialUniform->emissiveFactor[0], materialUniform->emissiveFactor[1], materialUniform->emissiveFactor[2]);
+
+    if(materialData->emissive_texture.texture) {
+        if(materialData->emissive_texture.texture->has_basisu) {
+            material->emissive = loadTexture(subdirectory, materialData->emissive_texture.texture->basisu_image->uri, true);
+        } else {
+            material->emissive = loadUncompressedTexture(subdirectory, materialData->emissive_texture.texture->image->uri, true);
+        }
+    } else {
+        if(defaultWhiteTexture == nullptr) {
+            defaultWhiteTexture = loadTexture("assets/default/textures", "white.ktx2", true);
+        }
+
+        material->emissive = defaultWhiteTexture;
+    }
+
+    materialUniform->occlusionScale = materialData->occlusion_texture.scale;
+    debug("\tOcclusion scale: %0.4f", materialUniform->occlusionScale);
+
+    if(materialData->occlusion_texture.texture) {
+        if(materialData->occlusion_texture.texture->has_basisu) {
+            material->occlusion = loadTexture(subdirectory, materialData->occlusion_texture.texture->basisu_image->uri, false);
+        } else {
+            material->occlusion = loadUncompressedTexture(subdirectory, materialData->occlusion_texture.texture->image->uri, false);
+        }
+    } else {
+        if(defaultWhiteTexture == nullptr) {
+            defaultWhiteTexture = loadTexture("assets/default/textures", "white.ktx2", true);
+        }
+
+        material->occlusion = defaultBlackTexture;
+    }
+
     if(materialData->normal_texture.texture) {
         materialUniform->normalScale = materialData->normal_texture.scale;
         debug("\tNormal scale: %0.4f", materialUniform->normalScale);
@@ -163,9 +202,6 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
 
         material->normal = defaultBlackTexture;
     }
-
-    memcpy(materialUniform->emissiveFactor, materialData->emissive_factor, sizeof(vec3));
-    debug("\tEmissive factor: [%0.4f, %0.4f, %0.4f]", materialUniform->emissiveFactor[0], materialUniform->emissiveFactor[1], materialUniform->emissiveFactor[2]);
 
     material->factorOffset = materialIndex * materialUniformAlignment;
     material->samplerDescriptorSet = getSamplerDescriptorSet(material);
@@ -208,6 +244,16 @@ void destroyMaterial(Material *material) {
     if(material->normal && material->normal != defaultBlackTexture) {
         destroyImageView(material->normal);
         destroyImage(material->normal);
+    }
+
+    if(material->occlusion && material->occlusion != defaultWhiteTexture) {
+        destroyImageView(material->occlusion);
+        destroyImage(material->occlusion);
+    }
+
+    if(material->emissive && material->emissive != defaultWhiteTexture) {
+        destroyImageView(material->emissive);
+        destroyImage(material->emissive);
     }
 
     if(material->metallicRoughness && material->metallicRoughness != defaultBlackTexture) {
