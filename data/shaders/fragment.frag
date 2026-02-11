@@ -59,22 +59,22 @@ vec4 color() {
     return baseColorFactor * texture(baseColorSampler, inputTexcoord0);
 }
 
-vec4 metallicRoughness() {
-    vec4 metallicRoughnessValue = texture(metallicRoughnessSampler, inputTexcoord0);
+vec3 metallicRoughness() {
+    vec3 metallicRoughnessValue = texture(metallicRoughnessSampler, inputTexcoord0).rgb;
 
-    return vec4(metallicRoughnessValue.r, metallicRoughnessFactor.y * metallicRoughnessValue.g, metallicRoughnessFactor.x * metallicRoughnessValue.b, metallicRoughnessValue.a);
+    return vec3(0.0f, metallicRoughnessFactor.y * metallicRoughnessValue.g, metallicRoughnessFactor.x * metallicRoughnessValue.b);
 }
 
-vec4 normal() {
-    return texture(normalSampler, inputTexcoord0);
 vec3 emissive() {
-    return emissiveFactor.rgb;// * texture(emissiveSampler, inputTexcoord0).rgb;
+    return texture(emissiveSampler, inputTexcoord0).rgb;
 }
 
 vec3 occlusion() {
     return vec3(occlusionScale * texture(occlusionSampler, inputTexcoord0).r);
 }
 
+vec3 normal() {
+    return normalScale * texture(normalSampler, inputTexcoord0).rgb;
 }
 
 vec3 pointLightDiffuse(uint pointLightIndex) {
