@@ -71,7 +71,7 @@ void loadDefaultMaterial() {
     }
 
     if(defaultBlackTexture == nullptr) {
-        defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", false);
+        defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
     }
 
     material->baseColor         = defaultWhiteTexture;
@@ -145,7 +145,7 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
             }
         } else {
             if(defaultBlackTexture == nullptr) {
-                defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", false);
+                defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
             }
 
             material->metallicRoughness = defaultBlackTexture;
@@ -197,7 +197,7 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
         }
     } else {
         if(defaultBlackTexture == nullptr) {
-            defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", false);
+            defaultBlackTexture = loadTexture("assets/default/textures", "black.ktx2", true);
         }
 
         material->normal = defaultBlackTexture;
