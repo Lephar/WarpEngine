@@ -186,10 +186,10 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
         material->occlusion = defaultBlackTexture;
     }
 
-    if(materialData->normal_texture.texture) {
-        materialUniform->normalScale = materialData->normal_texture.scale;
-        debug("\tNormal scale: %0.4f", materialUniform->normalScale);
+    materialUniform->normalScale = materialData->normal_texture.scale;
+    debug("\tNormal scale: %0.4f", materialUniform->normalScale);
 
+    if(materialData->normal_texture.texture) {
         if(materialData->normal_texture.texture->has_basisu) {
             material->normal = loadTexture(subdirectory, materialData->normal_texture.texture->basisu_image->uri, false);
         } else {
