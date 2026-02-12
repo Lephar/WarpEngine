@@ -68,8 +68,7 @@ void createInstance() {
     void *instanceNext = nullptr;
 
 #if DEBUG
-    //VkBool32 valueTrue  = VK_TRUE;
-    VkBool32 valueFalse = VK_FALSE;
+    VkBool32 settingsValue = VK_FALSE;
 
     VkLayerSettingEXT settings[] = {
         {
@@ -77,31 +76,31 @@ void createInstance() {
             .pSettingName = "validate_sync",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
-            .pValues = &valueFalse
+            .pValues = &settingsValue
         }, {
             .pLayerName = validationLayer,
             .pSettingName = "gpuav_enable",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
-            .pValues = &valueFalse
+            .pValues = &settingsValue
         }, {
             .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
-            .pValues = &valueFalse
+            .pValues = &settingsValue
         }, {
             .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices_amd",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
-            .pValues = &valueFalse
+            .pValues = &settingsValue
         }, {
             .pLayerName = validationLayer,
             .pSettingName = "validate_best_practices_nvidia",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
-            .pValues = &valueFalse
+            .pValues = &settingsValue
         }
     };
 
