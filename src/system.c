@@ -29,7 +29,7 @@ void initializeSystem() {
     debug("Video system initialized with %s driver", SDL_GetCurrentVideoDriver());
 
     char const *basePath = SDL_GetBasePath(); // NOTICE: Already ends with /
-    snprintf(dataPath, PATH_MAX, "%sdata", basePath);
+    snprintf(dataPath, PATH_MAX, "%s%s", basePath, DEBUG ? "../data" : "data");
     debug("Data path: %s", dataPath);
 
     SDL_Vulkan_LoadLibrary(nullptr);

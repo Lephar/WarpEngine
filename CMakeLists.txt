@@ -13,12 +13,11 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     list(APPEND COMPILE_OPTIONS -g -Og)
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     list(APPEND COMPILE_OPTIONS -O3 -ffast-math -march=native -mtune=native)
+    file(COPY data DESTINATION ${PROJECT_BINARY_DIR})
 endif()
 
 file(GLOB_RECURSE HEADERS include/*.h)
 file(GLOB_RECURSE SOURCES src/*.c)
-
-file(COPY data DESTINATION ${PROJECT_BINARY_DIR})
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 target_compile_options(${PROJECT_NAME} PUBLIC ${COMPILE_OPTIONS})
