@@ -84,11 +84,8 @@ void loadDefaultMaterial() {
     material->isDoubleSided = false;
 
     glmc_vec4_one(materialUniform->baseColorFactor);
-    glmc_vec2_one(materialUniform->metallicRoughnessFactor);
-    glmc_vec3_zero(materialUniform->emissiveFactor);
-
-    materialUniform->occlusionScale = 1.0f;
-    materialUniform->normalScale    = 1.0f;
+    glmc_vec4_one(materialUniform->occlusionMetallicRoughnessNormalFactor);
+    glmc_vec3_one(materialUniform->emissiveFactor);
 }
 
 void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
@@ -116,7 +113,11 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
     material->isDoubleSided = materialData->double_sided;
 
     if(materialData->has_pbr_metallic_roughness) {
-        memcpy(materialUniform->baseColorFactor, materialData->pbr_metallic_roughness.base_color_factor, sizeof(vec4));
+        materialUniform->baseColorFactor[0] = materialData->pbr_metallic_roughness.base_color_factor[0];
+        materialUniform->baseColorFactor[1] = materialData->pbr_metallic_roughness.base_color_factor[1];
+        materialUniform->baseColorFactor[2] = materialData->pbr_metallic_roughness.base_color_factor[2];
+        materialUniform->baseColorFactor[3] = materialData->pbr_metallic_roughness.base_color_factor[3];
+
         debug("\tBase color factor: [%0.4f, %0.4f, %0.4f, %0.4f]", materialUniform->baseColorFactor[0], materialUniform->baseColorFactor[1], materialUniform->baseColorFactor[2], materialUniform->baseColorFactor[3]);
 
         if(materialData->pbr_metallic_roughness.base_color_texture.texture) {
@@ -133,9 +134,10 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
             material->baseColor = defaultWhiteTexture;
         }
 
-        materialUniform->metallicRoughnessFactor[0] = materialData->pbr_metallic_roughness.metallic_factor;
-        materialUniform->metallicRoughnessFactor[1] = materialData->pbr_metallic_roughness.roughness_factor;
-        debug("\tMetallic roughness factor: [%0.4f, %0.4f]", materialUniform->metallicRoughnessFactor[0], materialUniform->metallicRoughnessFactor[1]);
+        materialUniform->occlusionMetallicRoughnessNormalFactor[1] = materialData->pbr_metallic_roughness.metallic_factor;
+        materialUniform->occlusionMetallicRoughnessNormalFactor[2] = materialData->pbr_metallic_roughness.roughness_factor;
+
+        debug("\tMetallic roughness factor: [%0.4f, %0.4f]", materialUniform->occlusionMetallicRoughnessNormalFactor[1], materialUniform->occlusionMetallicRoughnessNormalFactor[2]);
 
         if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture) {
             if(materialData->pbr_metallic_roughness.metallic_roughness_texture.texture->has_basisu) {
@@ -152,7 +154,10 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
         }
     }
 
-    memcpy(materialUniform->emissiveFactor, materialData->emissive_factor, sizeof(vec3));
+    materialUniform->emissiveFactor[0] = materialData->emissive_factor[0];
+    materialUniform->emissiveFactor[1] = materialData->emissive_factor[1];
+    materialUniform->emissiveFactor[2] = materialData->emissive_factor[2];
+
     debug("\tEmissive factor: [%0.4f, %0.4f, %0.4f]", materialUniform->emissiveFactor[0], materialUniform->emissiveFactor[1], materialUniform->emissiveFactor[2]);
 
     if(materialData->emissive_texture.texture) {
@@ -169,8 +174,8 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
         material->emissive = defaultWhiteTexture;
     }
 
-    materialUniform->occlusionScale = materialData->occlusion_texture.scale;
-    debug("\tOcclusion scale: %0.4f", materialUniform->occlusionScale);
+    materialUniform->occlusionMetallicRoughnessNormalFactor[0] = materialData->occlusion_texture.scale;
+    debug("\tOcclusion scale: %0.4f", materialUniform->occlusionMetallicRoughnessNormalFactor[0]);
 
     if(materialData->occlusion_texture.texture) {
         if(materialData->occlusion_texture.texture->has_basisu) {
@@ -186,8 +191,8 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
         material->occlusion = defaultBlackTexture;
     }
 
-    materialUniform->normalScale = materialData->normal_texture.scale;
-    debug("\tNormal scale: %0.4f", materialUniform->normalScale);
+    materialUniform->occlusionMetallicRoughnessNormalFactor[3] = materialData->normal_texture.scale;
+    debug("\tNormal scale: %0.4f", materialUniform->occlusionMetallicRoughnessNormalFactor[3]);
 
     if(materialData->normal_texture.texture) {
         if(materialData->normal_texture.texture->has_basisu) {

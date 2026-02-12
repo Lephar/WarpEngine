@@ -6,10 +6,8 @@ typedef struct image Image;
 
 typedef struct materialUniform {
     vec4 baseColorFactor;
-    vec4 metallicRoughnessFactor;
-    vec4 emissiveFactor;
-    float occlusionScale;
-    float normalScale;
+    vec4 occlusionMetallicRoughnessNormalFactor;
+    vec3 emissiveFactor;
 } MaterialUniform, *PMaterialUniform;
 
 typedef struct material {

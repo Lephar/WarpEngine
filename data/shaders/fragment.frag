@@ -33,10 +33,8 @@ layout(set = 1, binding = 0) uniform Camera {
 
 layout(set = 3, binding = 0) uniform Material {
     vec4 baseColorFactor;
-    vec4 metallicRoughnessFactor;
-    vec4 emissiveFactor;
-    float occlusionScale;
-    float normalScale;
+    vec4 occlusionMetallicRoughnessNormalFactor;
+    vec3 emissiveFactor;
 };
 
 layout(set = 4, binding = 0) uniform sampler2D baseColorSampler;
@@ -60,21 +58,19 @@ vec4 color() {
 }
 
 vec3 metallicRoughness() {
-    vec3 metallicRoughnessValue = texture(metallicRoughnessSampler, inputTexcoord0).rgb;
-
-    return vec3(0.0f, metallicRoughnessFactor.y * metallicRoughnessValue.g, metallicRoughnessFactor.x * metallicRoughnessValue.b);
+    return vec3(0.0f, occlusionMetallicRoughnessNormalFactor.gb * texture(metallicRoughnessSampler, inputTexcoord0).gb);
 }
 
 vec3 emissive() {
-    return texture(emissiveSampler, inputTexcoord0).rgb;
+    return emissiveFactor * texture(emissiveSampler, inputTexcoord0).rgb;
 }
 
 vec3 occlusion() {
-    return vec3(occlusionScale * texture(occlusionSampler, inputTexcoord0).r);
+    return vec3(occlusionMetallicRoughnessNormalFactor.r * texture(occlusionSampler, inputTexcoord0).r);
 }
 
 vec3 normal() {
-    return normalScale * texture(normalSampler, inputTexcoord0).rgb;
+    return occlusionMetallicRoughnessNormalFactor.a * texture(normalSampler, inputTexcoord0).rgb;
 }
 
 vec3 pointLightDiffuse(uint pointLightIndex) {
