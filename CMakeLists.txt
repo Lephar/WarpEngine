@@ -12,7 +12,7 @@ set(COMPILE_OPTIONS -Wall -Wextra)
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     list(APPEND COMPILE_OPTIONS -g -Og)
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    list(APPEND COMPILE_OPTIONS -O3 -ffast-math -march=native -mtune=native)
+    list(APPEND COMPILE_OPTIONS -O2 -ffast-math -march=native -mtune=native)
     file(COPY data DESTINATION ${PROJECT_BINARY_DIR})
 endif()
 
