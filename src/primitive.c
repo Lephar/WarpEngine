@@ -59,7 +59,9 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
             indexBuffer[indexCount + dataIndex] = ((uint16_t *) data)[dataIndex];
         }
     } else if(accessor->component_type == cgltf_component_type_r_32u) {
-        memcpy(&indexBuffer[indexCount], data, view->size);
+        for(cgltf_size dataIndex = 0; dataIndex < accessor->count; dataIndex++) {
+            indexBuffer[indexCount + dataIndex] = ((uint32_t *) data)[dataIndex];
+        }
     } // TODO: Can it be something else?
 
     cgltf_size primitiveVertexCount = 0;
@@ -73,50 +75,59 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
 
         void              *attributeData     = attributeBuffer->data + attributeView->offset + attributeAccessor->offset;
 
+        cgltf_size         numComponents     = cgltf_num_components(attributeAccessor->type);
+
         if(primitiveVertexCount == 0) {
             primitiveVertexCount = attributeAccessor->count;
         }
 
         assert(primitiveVertexCount == attributeAccessor->count);
-
         debug("\tAttribute %s:\t%lu elements of type %lu, total of %lu bytes in size", attribute->name, attributeAccessor->count, attributeAccessor->type, attributeView->size);
 
         // TODO: Check component data types too (Is this necessary?)
+        // WARN: mempcy() and glm_vec#_copy() on components cause segfault
         if(attribute->type == cgltf_attribute_type_position) {
+            assert(numComponents == 3);
             vec3 *positions = attributeData;
 
             for(cgltf_size positionIndex = 0; positionIndex < attributeAccessor->count; positionIndex++) {
-                memcpy(vertexBuffer[vertexCount + positionIndex].position, positions[positionIndex], sizeof(vec3));
+                for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
+                    vertexBuffer[vertexCount + positionIndex].position[componentIndex] = positions[positionIndex][componentIndex];
+                }
             }
         } else if(attribute->type == cgltf_attribute_type_tangent) {
+            assert(numComponents == 4);
             vec4 *tangents = attributeData;
 
             for(cgltf_size tangentIndex = 0; tangentIndex < attributeAccessor->count; tangentIndex++) {
-                // WARN: THERE IS A CLANG BUG ON THE LINE BELOW!
-                //memcpy(vertexBuffer[vertexCount + tangentIndex].tangent, tangents[tangentIndex], sizeof(vec4));
-
-                // TODO: Revert this when they fix the issue with clang
-                vertexBuffer[vertexCount + tangentIndex].tangent[0] = tangents[tangentIndex][0];
-                vertexBuffer[vertexCount + tangentIndex].tangent[1] = tangents[tangentIndex][1];
-                vertexBuffer[vertexCount + tangentIndex].tangent[2] = tangents[tangentIndex][2];
-                vertexBuffer[vertexCount + tangentIndex].tangent[3] = tangents[tangentIndex][3];
+                for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
+                    vertexBuffer[vertexCount + tangentIndex].tangent[componentIndex] = tangents[tangentIndex][componentIndex];
+                }
             }
         } else if(attribute->type == cgltf_attribute_type_normal) {
+            assert(numComponents == 3);
             vec3 *normals = attributeData;
 
             for(cgltf_size normalIndex = 0; normalIndex < attributeAccessor->count; normalIndex++) {
-                memcpy(vertexBuffer[vertexCount + normalIndex].normal, normals[normalIndex], sizeof(vec3));
+                for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
+                    vertexBuffer[vertexCount + normalIndex].normal[componentIndex] = normals[normalIndex][componentIndex];
+                }
             }
         } else if(attribute->type == cgltf_attribute_type_texcoord) {
+            assert(numComponents == 2);
             vec2 *texcoords = attributeData;
 
             if(!strcmp(attribute->name, "TEXCOORD_0")) {
                 for(cgltf_size texcoordIndex = 0; texcoordIndex < attributeAccessor->count; texcoordIndex++) {
-                    memcpy(vertexBuffer[vertexCount + texcoordIndex].texcoord0, texcoords[texcoordIndex], sizeof(vec2));
+                    for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
+                        vertexBuffer[vertexCount + texcoordIndex].texcoord0[componentIndex] = texcoords[texcoordIndex][componentIndex];
+                    }
                 }
             } else if(!strcmp(attribute->name, "TEXCOORD_1")) {
                 for(cgltf_size texcoordIndex = 0; texcoordIndex < attributeAccessor->count; texcoordIndex++) {
-                    memcpy(vertexBuffer[vertexCount + texcoordIndex].texcoord1, texcoords[texcoordIndex], sizeof(vec2));
+                    for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
+                        vertexBuffer[vertexCount + texcoordIndex].texcoord1[componentIndex] = texcoords[texcoordIndex][componentIndex];
+                    }
                 }
             }
         } // TODO: Load color and weight too if not too redundant
