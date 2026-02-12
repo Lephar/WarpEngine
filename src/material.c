@@ -152,6 +152,14 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
 
             material->metallicRoughness = defaultBlackTexture;
         }
+    } else {
+        materialUniform->baseColorFactor[0] = 1.0f;
+        materialUniform->baseColorFactor[1] = 1.0f;
+        materialUniform->baseColorFactor[2] = 1.0f;
+        materialUniform->baseColorFactor[3] = 1.0f;
+
+        materialUniform->occlusionMetallicRoughnessNormalFactor[1] = 1.0f;
+        materialUniform->occlusionMetallicRoughnessNormalFactor[2] = 1.0f;
     }
 
     materialUniform->emissiveFactor[0] = materialData->emissive_factor[0];
