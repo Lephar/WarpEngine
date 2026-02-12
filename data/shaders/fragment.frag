@@ -53,8 +53,12 @@ vec4 depth() {
     return vec4(vec3(normalisedDepthValue), 1.0f);
 }
 
-vec4 color() {
-    return baseColorFactor * texture(baseColorSampler, inputTexcoord0);
+float alpha() {
+    return baseColorFactor.a * texture(baseColorSampler, inputTexcoord0).a;
+}
+
+vec3 color() {
+    return baseColorFactor.rgb * texture(baseColorSampler, inputTexcoord0).rgb;
 }
 
 vec3 metallicRoughness() {
@@ -120,21 +124,17 @@ vec3 pointLightSpecular(uint pointLightIndex) {
 }
 
 void main() {
-    vec3 ambient  = ambientLight.a * ambientLight.rgb;
-    vec3 diffuse  = vec3(0.0f, 0.0f, 0.0f);
-    vec3 specular = vec3(0.0f, 0.0f, 0.0f);
+    vec3  ambient  = ambientLight.a * ambientLight.rgb;
+    vec3  diffuse  = vec3(0.0f, 0.0f, 0.0f);
+    vec3  specular = vec3(0.0f, 0.0f, 0.0f);
+    vec3  emissive = emissive();
+    vec3  color    = color();
+    float alpha    = alpha();
 
     for(int pointLightIndex = 1; pointLightIndex < pointLightCount; pointLightIndex++) {
         diffuse  += pointLightDiffuse(pointLightIndex);
         specular += pointLightSpecular(pointLightIndex);
     }
 
-    vec3 emissive = emissive();
-
-    vec4 color = color();
-
-    vec3 rgb = color.rgb;
-    float a = color.a;
-
-    outputColor = vec4((ambient + diffuse + specular + emissive) * rgb, a);
+    outputColor = vec4((ambient + diffuse + specular + emissive) * color, alpha);
 }
