@@ -39,33 +39,27 @@ void render() {
     bindPipeline(framebufferSetIndex, framebufferIndex);
     bindShaders(framebufferSetIndex, framebufferIndex, vertexShaderModule, fragmentShaderModule);
 
-    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        Material *material = &materials[materialIndex];
+    PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
 
-        if(!material->isTransparent) {
-            bindMaterial(framebufferSetIndex, framebufferIndex, material);
+    for(uint32_t blending = 0u; blending <= 1u; blending++) {
+        cmdSetColorBlendEnable(framebuffer->renderCommandBuffer, 0, 1, &blending);
 
-            for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
-                Primitive *primitive = &primitives[primitiveIndex];
+        for(uint32_t culling = 0u; culling <= 1u; culling++) {
+            vkCmdSetCullMode(framebuffer->renderCommandBuffer, culling ? VK_CULL_MODE_BACK_BIT : VK_CULL_MODE_NONE);
 
-                if(primitive->material == material) {
-                    drawPrimitive(framebufferSetIndex, framebufferIndex, primitive);
-                }
-            }
-        }
-    }
+            for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
+                Material *material = &materials[materialIndex];
 
-    for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        Material *material = &materials[materialIndex];
+                if(material->isTransparent == blending && material->isDoubleSided != culling) {
+                    bindMaterial(framebufferSetIndex, framebufferIndex, material);
 
-        if(material->isTransparent) {
-            bindMaterial(framebufferSetIndex, framebufferIndex, material);
+                    for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
+                        Primitive *primitive = &primitives[primitiveIndex];
 
-            for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
-                Primitive *primitive = &primitives[primitiveIndex];
-
-                if(primitive->material == material) {
-                    drawPrimitive(framebufferSetIndex, framebufferIndex, primitive);
+                        if(primitive->material == material) {
+                            drawPrimitive(framebufferSetIndex, framebufferIndex, primitive);
+                        }
+                    }
                 }
             }
         }

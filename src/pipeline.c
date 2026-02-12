@@ -112,7 +112,6 @@ void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
 
     vkCmdSetRasterizerDiscardEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    vkCmdSetCullMode(framebuffer->renderCommandBuffer, VK_CULL_MODE_BACK_BIT);
     vkCmdSetFrontFace(framebuffer->renderCommandBuffer, VK_FRONT_FACE_COUNTER_CLOCKWISE);
 
     vkCmdSetDepthTestEnable(framebuffer->renderCommandBuffer, VK_TRUE);
