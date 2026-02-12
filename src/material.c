@@ -188,7 +188,7 @@ void loadMaterial(const char *subdirectory, cgltf_material *materialData) {
             defaultWhiteTexture = loadTexture("assets/default/textures", "white.ktx2", true);
         }
 
-        material->occlusion = defaultBlackTexture;
+        material->occlusion = defaultWhiteTexture;
     }
 
     materialUniform->occlusionMetallicRoughnessNormalFactor[3] = materialData->normal_texture.scale;

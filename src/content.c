@@ -233,10 +233,14 @@ void freeContent() {
     if(defaultWhiteTexture != nullptr) {
         destroyImageView(defaultWhiteTexture);
         destroyImage(defaultWhiteTexture);
+
+        defaultWhiteTexture = nullptr;
     }
 
     if(defaultBlackTexture != nullptr) {
         destroyImageView(defaultBlackTexture);
         destroyImage(defaultBlackTexture);
+
+        defaultBlackTexture = nullptr;
     }
 }
