@@ -14,14 +14,14 @@ layout(location = 2) out vec4 outputNormal;
 layout(location = 3) out vec2 outputTexcoord0;
 layout(location = 4) out vec2 outputTexcoord1;
 
-layout(set = 1, binding = 0) uniform Camera {
+layout(set = 1, binding = 0, std140) uniform Camera {
     mat4 view;
     mat4 projection;
     mat4 projectionView;
     vec4 cameraProperties;
 };
 
-layout(set = 2, binding = 0) uniform Primitive {
+layout(set = 2, binding = 0, std140) uniform Primitive {
     mat4 model;
 };
 

@@ -12,26 +12,28 @@ layout(location = 4) in  vec2 inputTexcoord1;
 
 layout(location = 0) out vec4 outputColor;
 
-struct PointLight {
+layout(std140) struct PointLight {
     mat4 lightTransform;
     vec4 lightColor;
+    vec4 lightPadding;
 };
 
-layout(set = 0, binding = 0) uniform Lighting {
+layout(set = 0, binding = 0, std140) uniform Lighting {
     vec4 ambientLight;
     vec4 attenuationCoefficients;
-    uint pointLightCount;
+    uvec4 lightTypeCounts;
+    uvec4 lightingPadding;
     PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };
 
-layout(set = 1, binding = 0) uniform Camera {
+layout(set = 1, binding = 0, std140) uniform Camera {
     mat4 view;
     mat4 projection;
     mat4 projectionView;
     vec4 cameraProperties;
 };
 
-layout(set = 3, binding = 0) uniform Material {
+layout(set = 3, binding = 0, std140) uniform Material {
     vec4 baseColorFactor;
     vec4 occlusionMetallicRoughnessNormalFactor;
     vec3 emissiveFactor;
@@ -131,7 +133,7 @@ void main() {
     vec3  color    = color();
     float alpha    = alpha();
 
-    for(int pointLightIndex = 1; pointLightIndex < pointLightCount; pointLightIndex++) {
+    for(int pointLightIndex = 1; pointLightIndex < lightTypeCounts[0]; pointLightIndex++) {
         diffuse  += pointLightDiffuse(pointLightIndex);
         specular += pointLightSpecular(pointLightIndex);
     }

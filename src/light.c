@@ -26,13 +26,13 @@ uint32_t loadLight(cgltf_light *lightData) {
         return UINT32_MAX;
     }
 
-    if(lightingUniform.pointLightCount >= pointLightCountLimit) {
+    if(lightingUniform.lightTypeCounts[0] >= pointLightCountLimit) {
         debug("\t\tLight count limit reached, skipping...");
         return UINT32_MAX;
     }
 
-    const uint32_t lightIndex = lightingUniform.pointLightCount;
-    lightingUniform.pointLightCount++;
+    const uint32_t lightIndex = lightingUniform.lightTypeCounts[0];
+    lightingUniform.lightTypeCounts[0]++;
 
     PPointLightUniform light = &lightingUniform.pointLightUniforms[lightIndex];
 

@@ -58,7 +58,10 @@ void createContentBuffers() {
     nodeCount  = 0;
     sceneCount = 0;
 
-    lightingUniform.pointLightCount = 0;
+    lightingUniform.lightTypeCounts[0] = 0;
+    lightingUniform.lightTypeCounts[1] = 0;
+    lightingUniform.lightTypeCounts[2] = 0;
+    lightingUniform.lightTypeCounts[3] = 0;
 
     cameraCount    = 0;
     materialCount  = 0;
