@@ -79,52 +79,6 @@ vec3 normal() {
     return occlusionMetallicRoughnessNormalFactor.a * texture(normalSampler, inputTexcoord0).rgb;
 }
 
-vec3 pointLightDiffuse(uint pointLightIndex) {
-    vec3  lightColor     = vec3(pointLights[pointLightIndex].lightColor);
-    vec4  lightPosition  = pointLights[pointLightIndex].lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec4  lightVector    = lightPosition - inputPosition;
-    vec4  lightDirection = normalize(lightVector);
-    float lightDistance  = length(lightVector);
-
-    float Kc = attenuationCoefficients[0];
-    float Kl = attenuationCoefficients[1];
-    float Kq = attenuationCoefficients[2];
-
-    float lightAttenuation = 1.0f / (Kc + Kl * lightDistance + Kq * lightDistance * lightDistance);
-    float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
-    float lightImpact      = lightIntensity * lightAttenuation;
-
-    float lightDiffuse = max(dot(vec3(normalize(inputNormal)), vec3(lightDirection)), 0.0f);
-
-    return lightImpact * lightDiffuse * lightColor;
-}
-
-vec3 pointLightSpecular(uint pointLightIndex) {
-    vec4  viewPosition   = inverse(view) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec4  viewVector     = viewPosition - inputPosition;
-    vec4  viewDirection  = normalize(viewVector);
-
-    vec3  lightColor     = vec3(pointLights[pointLightIndex].lightColor);
-    vec4  lightPosition  = pointLights[pointLightIndex].lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    vec4  lightVector    = lightPosition - inputPosition;
-    vec4  lightDirection = normalize(lightVector);
-    float lightDistance  = length(lightVector);
-
-    float Kc = attenuationCoefficients[0];
-    float Kl = attenuationCoefficients[1];
-    float Kq = attenuationCoefficients[2];
-
-    float lightAttenuation = 1.0f / (Kc + Kl * lightDistance + Kq * lightDistance * lightDistance);
-    float lightIntensity   = pointLights[pointLightIndex].lightColor[3];
-    float lightImpact      = lightIntensity * lightAttenuation;
-
-    float specularFalloff  = attenuationCoefficients[3];
-    vec4  halfwayDirection = normalize(viewDirection + lightDirection);
-    float lightSpecular    = pow(max(dot(normalize(inputNormal), halfwayDirection), 0.0f), specularFalloff);
-
-    return lightImpact * lightSpecular * lightColor;
-}
-
 void main() {
     vec3  ambient  = ambientLight.a * ambientLight.rgb;
     vec3  diffuse  = vec3(0.0f, 0.0f, 0.0f);
@@ -133,9 +87,36 @@ void main() {
     vec3  color    = color();
     float alpha    = alpha();
 
-    for(int pointLightIndex = 1; pointLightIndex < lightTypeCounts[0]; pointLightIndex++) {
-        diffuse  += pointLightDiffuse(pointLightIndex);
-        specular += pointLightSpecular(pointLightIndex);
+    vec4 viewPosition  = inverse(view) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec3 viewVector    = viewPosition.xyz - inputPosition;
+    vec3 viewDirection = normalize(viewVector);
+
+    for(int pointLightIndex = 0; pointLightIndex < lightTypeCounts[0]; pointLightIndex++) {
+        PointLight pointLight = pointLights[pointLightIndex];
+
+        vec3  lightColor     = pointLight.lightColor.rgb;
+        vec4  lightPosition  = pointLight.lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        vec3  lightVector    = lightPosition.xyz - inputPosition;
+        vec3  lightDirection = normalize(lightVector);
+        float lightDistance  = length(lightVector);
+
+        vec3  halfwayDirection = normalize(viewDirection + lightDirection);
+
+        float Kc = attenuationCoefficients[0];
+        float Kl = attenuationCoefficients[1];
+        float Kq = attenuationCoefficients[2];
+
+        float specularFalloff = attenuationCoefficients[3];
+
+        float attenuation = Kc + Kl * lightDistance + Kq * lightDistance * lightDistance;
+        float intensity   = pointLight.lightColor.a;
+        float impact      = intensity / attenuation;
+
+        float lightSpecular = pow(max(dot(normalize(inputNormal), halfwayDirection), 0.0f), specularFalloff);
+        float lightDiffuse  = max(dot(normalize(inputNormal), lightDirection), 0.0f);
+
+        diffuse  += impact * lightDiffuse  * lightColor;
+        specular += impact * lightSpecular * lightColor;
     }
 
     outputColor = vec4((ambient + diffuse + specular + emissive) * color, alpha);
