@@ -4,9 +4,9 @@
 
 #define POINT_LIGHT_COUNT_LIMIT 1024
 
-layout(location = 0) in  vec4 inputPosition;
+layout(location = 0) in  vec3 inputPosition;
 layout(location = 1) in  vec4 inputTangent;
-layout(location = 2) in  vec4 inputNormal;
+layout(location = 2) in  vec3 inputNormal;
 layout(location = 3) in  vec2 inputTexcoord0;
 layout(location = 4) in  vec2 inputTexcoord1;
 

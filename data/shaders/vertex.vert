@@ -8,9 +8,9 @@ layout(location = 2) in  vec3 inputNormal;
 layout(location = 3) in  vec2 inputTexcoord0;
 layout(location = 4) in  vec2 inputTexcoord1;
 
-layout(location = 0) out vec4 outputPosition;
+layout(location = 0) out vec3 outputPosition;
 layout(location = 1) out vec4 outputTangent;
-layout(location = 2) out vec4 outputNormal;
+layout(location = 2) out vec3 outputNormal;
 layout(location = 3) out vec2 outputTexcoord0;
 layout(location = 4) out vec2 outputTexcoord1;
 
@@ -26,12 +26,15 @@ layout(set = 2, binding = 0, std140) uniform Primitive {
 };
 
 void main() {
-    outputPosition  = model * vec4(inputPosition, 1.0f);
+    vec4 position = model * vec4(inputPosition, 1.0f);
+    vec4 normal   = model * vec4(inputNormal,   0.0f); // NOTICE: DO NOT normalize here! Fragment interpolation changes its length. Normalize it there instead.
+
+    outputPosition  = position.xyz;
     outputTangent   = inputTangent;
-    outputNormal    = model * vec4(inputNormal,   0.0f); // NOTICE: DO NOT normalize here! Fragment interpolation changes its length. Normalize it there instead.
+    outputNormal    = normal.xyz;
     outputTexcoord0 = inputTexcoord0;
     outputTexcoord1 = inputTexcoord1;
 
     gl_PointSize = 1.0f;
-    gl_Position  = projectionView * outputPosition;
+    gl_Position  = projectionView * position;
 }
