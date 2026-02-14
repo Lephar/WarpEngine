@@ -21,8 +21,7 @@ void initializeDraw() {
     debug("Draw loop started");
 }
 
-void render() {
-    uint32_t framebufferSetIndex = 0;
+void render(uint32_t framebufferSetIndex) {
     FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
 
     uint32_t framebufferIndex = frameIndex % framebufferSet->framebufferCount;
@@ -84,8 +83,7 @@ void render() {
     vkQueueSubmit(graphicsQueue.queue, 1, &submitInfo, framebuffer->drawFence);
 }
 
-void present() {
-    uint32_t framebufferSetIndex = 0;
+void present(uint32_t framebufferSetIndex) {
     FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
 
     uint32_t framebufferIndex = frameIndex % framebufferSet->framebufferCount;
@@ -263,8 +261,9 @@ void present() {
 }
 
 void draw() {
-    render();
-    present();
+    // We only have 1 framebuffer set
+    render(0);
+    present(0);
 }
 
 void finalizeDraw() {
