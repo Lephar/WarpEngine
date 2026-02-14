@@ -23,15 +23,15 @@ layout(set = 1, binding = 0, std140) uniform Camera {
 
 layout(set = 2, binding = 0, std140) uniform Primitive {
     mat4 model;
+    mat4 normal;
 };
 
 void main() {
     vec4 position = model * vec4(inputPosition, 1.0f);
-    vec4 normal   = model * vec4(inputNormal,   0.0f); // NOTICE: DO NOT normalize here! Fragment interpolation changes its length. Normalize it there instead.
 
     outputPosition  = position.xyz;
     outputTangent   = inputTangent;
-    outputNormal    = normal.xyz;
+    outputNormal    = vec3(normal * vec4(inputNormal, 0.0f)); // NOTICE: DO NOT normalize here! Fragment interpolation changes its length. Normalize it there instead.
     outputTexcoord0 = inputTexcoord0;
     outputTexcoord1 = inputTexcoord1;
 

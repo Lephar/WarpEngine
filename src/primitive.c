@@ -139,6 +139,7 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
     debug("\tUniform offset: %lu", primitive->uniformOffset);
 
     glmc_mat4_identity(primitiveUniform->model);
+    glmc_mat4_identity(primitiveUniform->normal);
 
     indexCount  += accessor->count;
     vertexCount += primitiveVertexCount;

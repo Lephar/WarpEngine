@@ -187,6 +187,8 @@ void updateNodeUniforms(PNode node, mat4 transform) {
 
     for(uint32_t meshIndex = 0; meshIndex < node->meshCount; meshIndex++) {
         glmc_mat4_copy(nodeTransform, primitiveUniforms[node->meshIndices[meshIndex]].model);
+        glmc_mat4_inv(primitiveUniforms[node->meshIndices[meshIndex]].model, primitiveUniforms[node->meshIndices[meshIndex]].normal);
+        glmc_mat4_transpose(primitiveUniforms[node->meshIndices[meshIndex]].normal);
     }
 
     for(uint32_t childIndex = 0; childIndex < node->childCount; childIndex++) {

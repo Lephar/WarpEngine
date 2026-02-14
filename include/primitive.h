@@ -6,6 +6,7 @@ typedef struct material Material;
 
 typedef struct primitiveUniform {
     mat4 model;
+    mat4 normal;
 } PrimitiveUniform, *PPrimitiveUniform;
 
 typedef struct primitive {
