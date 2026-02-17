@@ -181,7 +181,8 @@ void updateNodeUniforms(PNode node, mat4 transform) {
     if(node->cameraIndex != UINT32_MAX) {
         PCameraUniform cameraUniform = &cameraUniforms[node->cameraIndex];
 
-        glmc_mat4_inv(nodeTransform, cameraUniform->view);
+        glmc_mat4_copy(nodeTransform, cameraUniform->transform);
+        glmc_mat4_inv(cameraUniform->transform, cameraUniform->view);
         glmc_mat4_mul(cameraUniform->projection, cameraUniform->view, cameraUniform->projectionView);
     }
 

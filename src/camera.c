@@ -43,7 +43,10 @@ uint32_t loadCamera(cgltf_camera *cameraData) {
     debug("\t\tNear Frustum Plane:     %g", camera->nearPlane);
     debug("\t\tFar Frustum Plane:      %g", camera->farPlane);
 
+    glmc_mat4_identity(cameraUniform->transform);
+    glmc_mat4_identity(cameraUniform->view);
     glmc_perspective(camera->fieldOfView, camera->aspectRatio, camera->nearPlane, camera->farPlane, cameraUniform->projection);
+    glmc_mat4_mul(cameraUniform->projection, cameraUniform->view, cameraUniform->projectionView);
 
     cameraUniform->properties[0] = camera->fieldOfView;
     cameraUniform->properties[1] = camera->aspectRatio;

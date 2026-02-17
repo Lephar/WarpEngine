@@ -27,6 +27,7 @@ layout(set = 0, binding = 0, std140) uniform Lighting {
 };
 
 layout(set = 1, binding = 0, std140) uniform Camera {
+    mat4 transform;
     mat4 view;
     mat4 projection;
     mat4 projectionView;
@@ -87,7 +88,7 @@ void main() {
     vec3  color    = color();
     float alpha    = alpha();
 
-    vec4 viewPosition  = inverse(view) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    vec4 viewPosition  = transform * vec4(0.0f, 0.0f, 0.0f, 1.0f);
     vec3 viewVector    = viewPosition.xyz - inputPosition;
     vec3 viewDirection = normalize(viewVector);
 

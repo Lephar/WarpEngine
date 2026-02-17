@@ -12,6 +12,7 @@ typedef struct camera {
 } Camera, *PCamera;
 
 typedef struct cameraUniform {
+    mat4 transform;
     mat4 view;
     mat4 projection;
     mat4 projectionView; // NOTICE: Premultiplied to save redundant multiplications on all shader units
