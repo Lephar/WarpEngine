@@ -20,6 +20,7 @@ void createDevice() {
     const char *baseExtensions[] = {
         VK_KHR_MAINTENANCE_7_EXTENSION_NAME,
         VK_KHR_MAINTENANCE_8_EXTENSION_NAME,
+        VK_KHR_MAINTENANCE_9_EXTENSION_NAME,
         VK_EXT_SHADER_OBJECT_EXTENSION_NAME,
     };
 
@@ -67,9 +68,15 @@ void createDevice() {
         .shaderObject = VK_TRUE,
     };
 
+    VkPhysicalDeviceMaintenance9FeaturesKHR maintenance9Features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR,
+        .pNext = &shaderObjectFeatures,
+        .maintenance9 = VK_TRUE,
+    };
+
     VkPhysicalDeviceMaintenance8FeaturesKHR maintenance8Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR,
-        .pNext = &shaderObjectFeatures,
+        .pNext = &maintenance9Features,
         .maintenance8 = VK_TRUE,
     };
 
@@ -83,12 +90,15 @@ void createDevice() {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
         .pNext = &maintenance7Features,
         .hostImageCopy = VK_TRUE,
+        .maintenance5 = VK_TRUE,
+        .maintenance6 = VK_TRUE,
     };
 
     VkPhysicalDeviceVulkan13Features version13Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
         .pNext = &version14Features,
         .dynamicRendering = VK_TRUE,
+        .maintenance4 = VK_TRUE,
     };
 
     VkPhysicalDeviceVulkan12Features version12Features = {
