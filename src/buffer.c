@@ -39,7 +39,7 @@ void bindBufferMemory(Buffer *buffer, Memory *memory) {
 }
 
 void createBuffers() {
-    createBuffer(&deviceBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, contentMemory.size / 8);
+    createBuffer(&deviceBuffer, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, contentMemory.size / 8);
     bindBufferMemory(&deviceBuffer, &contentMemory);
     debug("Device local buffer created: %ld bytes", deviceBuffer.size);
 
