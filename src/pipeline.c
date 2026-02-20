@@ -19,7 +19,7 @@ VkDescriptorSetLayout *descriptorSetLayouts;
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
-    descriptorSetLayoutCount = 5;
+    descriptorSetLayoutCount = 6;
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
 
     descriptorSetLayouts[0] = lightingDescriptorPool.layout;
@@ -27,6 +27,7 @@ void createPipelineLayout() {
     descriptorSetLayouts[2] = primitiveDescriptorPool.layout;
     descriptorSetLayouts[3] = materialDescriptorPool.layout;
     descriptorSetLayouts[4] = samplerDescriptorPool.layout;
+    descriptorSetLayouts[5] = storageDescriptorPool.layout;
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -96,8 +97,11 @@ void createPipeline() {
     createBufferDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
     createBufferDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
     createSamplerDescriptorPool(&samplerDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
+    createBufferDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);
 
     createPipelineLayout();
+
+    storageDescriptorSet = getStorageDescriptorSet();
 }
 
 void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
@@ -136,9 +140,12 @@ void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     cmdSetAlphaToOneEnable(framebuffer->renderCommandBuffer, VK_FALSE);
     PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadDeviceFunction("vkCmdSetAlphaToCoverageEnableEXT");
     cmdSetAlphaToCoverageEnable(framebuffer->renderCommandBuffer, VK_FALSE);
+
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &storageDescriptorSet, 0, nullptr);
 }
 
 void destroyPipeline() {
+    destroyDescriptorPool(&storageDescriptorPool);
     destroyDescriptorPool(&samplerDescriptorPool);
     destroyDescriptorPool(&materialDescriptorPool);
     destroyDescriptorPool(&primitiveDescriptorPool);

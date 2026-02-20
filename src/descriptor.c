@@ -15,7 +15,10 @@ DescriptorPool lightingDescriptorPool;
 DescriptorPool cameraDescriptorPool;
 DescriptorPool primitiveDescriptorPool;
 DescriptorPool materialDescriptorPool;
+DescriptorPool storageDescriptorPool;
 DescriptorPool samplerDescriptorPool;
+
+VkDescriptorSet storageDescriptorSet;
 
 // TODO: Load sampler from asset file
 void createSampler() {
@@ -45,7 +48,7 @@ void createSampler() {
 }
 
 void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage) {
-    debug("%s buffer descriptor pool:", type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER ? "Dynamic uniform" : "Uniform");
+    debug("Buffer descriptor pool:");
 
     descriptorPool->type  = type;
     descriptorPool->count = count;
@@ -245,6 +248,10 @@ VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t
 
 VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange,  materialUniformBufferRange);
+}
+
+VkDescriptorSet getStorageDescriptorSet() {
+    return createBufferDescriptorSet(&storageDescriptorPool, deviceBuffer.buffer, 0, deviceBuffer.size);
 }
 
 VkDescriptorSet getSamplerDescriptorSet(Material *material) {
