@@ -38,13 +38,18 @@ layout(set = 6, binding = 0) readonly buffer Vertices {
 };
 
 void main() {
-    vec4 position = model * vec4(inputPosition, 1.0f);
+    uint   index  = indices[gl_VertexIndex];
+    Vertex vertex = vertices[index];
+
+    vec4 position = model * vertex.position;
+
+    debugPrintfEXT("%d, %d, %v4f", gl_VertexIndex, index, position);
 
     outputPosition  = position.xyz;
-    outputTangent   = inputTangent;
-    outputNormal    = vec3(normal * vec4(inputNormal, 0.0f)); // NOTICE: DO NOT normalize here! Fragment interpolation changes its length. Normalize it there instead.
-    outputTexcoord0 = inputTexcoord0;
-    outputTexcoord1 = inputTexcoord1;
+    outputTangent   = vertex.tangent;
+    outputNormal    = vec3(normal * vertex.normal); // NOTICE: DO NOT normalize here! Fragment interpolation changes its length. Normalize it there instead.
+    outputTexcoord0 = vertex.texcoord.xy;
+    outputTexcoord1 = vertex.texcoord.zw;
 
     gl_PointSize = 1.0f;
     gl_Position  = projectionView * position;

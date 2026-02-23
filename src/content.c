@@ -163,6 +163,8 @@ void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
 void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
     Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    /*
+    const VkDeviceSize vertexBufferOffset = indexCount * sizeof(Index);
 
     VkVertexInputBindingDescription2EXT vertexBinding = {
         .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
@@ -214,13 +216,16 @@ void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex)
 
     uint32_t vertexAttributeCount = sizeof(vertexAttributes) / sizeof(VkVertexInputAttributeDescription2EXT);
 
-    const VkDeviceSize vertexBufferOffset = indexCount * sizeof(Index);
+    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
+    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
 
     vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
     vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &vertexBufferOffset);
-
+    */
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
-    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
+    cmdSetVertexInput(framebuffer->renderCommandBuffer, 0, VK_NULL_HANDLE, 0, VK_NULL_HANDLE);
+
+    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, VK_NULL_HANDLE, 0, VK_INDEX_TYPE_UINT32);
 }
 
 void freeContent() {
