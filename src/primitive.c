@@ -94,6 +94,7 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
                 for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
                     vertexBuffer[vertexCount + positionIndex].position[componentIndex] = positions[positionIndex][componentIndex];
                 }
+                vertexBuffer[vertexCount + positionIndex].position[3] = 1.0f;
             }
         } else if(attribute->type == cgltf_attribute_type_tangent) {
             assert(numComponents == 4);
@@ -112,6 +113,7 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
                 for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
                     vertexBuffer[vertexCount + normalIndex].normal[componentIndex] = normals[normalIndex][componentIndex];
                 }
+                vertexBuffer[vertexCount + normalIndex].normal[3] = 0.0f;
             }
         } else if(attribute->type == cgltf_attribute_type_texcoord) {
             assert(numComponents == 2);
@@ -120,13 +122,13 @@ uint32_t loadPrimitive(cgltf_primitive *primitiveData) {
             if(!strcmp(attribute->name, "TEXCOORD_0")) {
                 for(cgltf_size texcoordIndex = 0; texcoordIndex < attributeAccessor->count; texcoordIndex++) {
                     for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
-                        vertexBuffer[vertexCount + texcoordIndex].texcoord0[componentIndex] = texcoords[texcoordIndex][componentIndex];
+                        vertexBuffer[vertexCount + texcoordIndex].texcoord[componentIndex] = texcoords[texcoordIndex][componentIndex];
                     }
                 }
             } else if(!strcmp(attribute->name, "TEXCOORD_1")) {
                 for(cgltf_size texcoordIndex = 0; texcoordIndex < attributeAccessor->count; texcoordIndex++) {
                     for(cgltf_size componentIndex = 0; componentIndex < numComponents; componentIndex++) {
-                        vertexBuffer[vertexCount + texcoordIndex].texcoord1[componentIndex] = texcoords[texcoordIndex][componentIndex];
+                        vertexBuffer[vertexCount + texcoordIndex].texcoord[componentIndex + numComponents] = texcoords[texcoordIndex][componentIndex];
                     }
                 }
             }

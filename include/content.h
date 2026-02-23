@@ -5,11 +5,10 @@
 typedef uint32_t Index;
 
 typedef struct vertex {
-    vec3 position;
+    vec4 position;
     vec4 tangent;
-    vec3 normal;
-    vec2 texcoord0;
-    vec2 texcoord1;
+    vec4 normal;
+    vec4 texcoord; // texcoord0 and texcoord1 is packed together
 } Vertex, *PVertex;
 
 extern uint32_t indexCount;

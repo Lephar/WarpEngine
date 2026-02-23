@@ -3,12 +3,6 @@
 #extension GL_EXT_debug_printf            : enable
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(location = 0) in  vec3 inputPosition;
-layout(location = 1) in  vec4 inputTangent;
-layout(location = 2) in  vec3 inputNormal;
-layout(location = 3) in  vec2 inputTexcoord0;
-layout(location = 4) in  vec2 inputTexcoord1;
-
 layout(location = 0) out vec3 outputPosition;
 layout(location = 1) out vec4 outputTangent;
 layout(location = 2) out vec3 outputNormal;
@@ -26,6 +20,13 @@ layout(set = 1, binding = 0, std140) uniform Camera {
 layout(set = 2, binding = 0, std140) uniform Primitive {
     mat4 model;
     mat4 normal;
+};
+
+struct Vertex {
+    vec4 position;
+    vec4 tangent;
+    vec4 normal;
+    vec4 texcoord; // texcoord0 and texcoord1 is packed together
 };
 
 void main() {
