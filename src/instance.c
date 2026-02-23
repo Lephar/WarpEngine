@@ -70,6 +70,17 @@ void createInstance() {
 #if DEBUG
     VkBool32 settingsValue = VK_FALSE;
 
+    VkValidationFeatureEnableEXT debugFeature = VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT;
+
+    VkValidationFeaturesEXT featureInfo = {
+        .sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT,
+        .pNext = nullptr,
+        .enabledValidationFeatureCount = 1,
+        .pEnabledValidationFeatures = &debugFeature,
+        .disabledValidationFeatureCount = 0,
+        .pDisabledValidationFeatures = nullptr,
+    };
+
     VkLayerSettingEXT settings[] = {
         {
             .pLayerName = validationLayer,
@@ -108,7 +119,7 @@ void createInstance() {
 
     VkLayerSettingsCreateInfoEXT settingsInfo = {
         .sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT,
-        .pNext = nullptr,
+        .pNext = &featureInfo,
         .settingCount = settingsCount,
         .pSettings = settings
     };
