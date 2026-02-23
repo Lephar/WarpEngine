@@ -9,7 +9,7 @@ layout(location = 2) out vec3 outputNormal;
 layout(location = 3) out vec2 outputTexcoord0;
 layout(location = 4) out vec2 outputTexcoord1;
 
-layout(set = 1, binding = 0, std140) uniform Camera {
+layout(set = 1, binding = 0) uniform Camera {
     mat4 transform;
     mat4 view;
     mat4 projection;
@@ -17,7 +17,7 @@ layout(set = 1, binding = 0, std140) uniform Camera {
     vec4 cameraProperties;
 };
 
-layout(set = 2, binding = 0, std140) uniform Primitive {
+layout(set = 2, binding = 0) uniform Primitive {
     mat4 model;
     mat4 normal;
 };

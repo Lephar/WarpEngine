@@ -12,13 +12,13 @@ layout(location = 4) in  vec2 inputTexcoord1;
 
 layout(location = 0) out vec4 outputColor;
 
-layout(std140) struct PointLight {
+struct PointLight {
     mat4 lightTransform;
     vec4 lightColor;
     vec4 lightPadding;
 };
 
-layout(set = 0, binding = 0, std140) uniform Lighting {
+layout(set = 0, binding = 0) uniform Lighting {
     vec4 ambientLight;
     vec4 attenuationCoefficients;
     uvec4 lightTypeCounts;
@@ -26,7 +26,7 @@ layout(set = 0, binding = 0, std140) uniform Lighting {
     PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
 };
 
-layout(set = 1, binding = 0, std140) uniform Camera {
+layout(set = 1, binding = 0) uniform Camera {
     mat4 transform;
     mat4 view;
     mat4 projection;
@@ -34,7 +34,7 @@ layout(set = 1, binding = 0, std140) uniform Camera {
     vec4 cameraProperties;
 };
 
-layout(set = 3, binding = 0, std140) uniform Material {
+layout(set = 3, binding = 0) uniform Material {
     vec4 baseColorFactor;
     vec4 occlusionMetallicRoughnessNormalFactor;
     vec3 emissiveFactor;
