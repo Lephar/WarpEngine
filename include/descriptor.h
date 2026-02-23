@@ -21,7 +21,8 @@ extern DescriptorPool materialDescriptorPool;
 extern DescriptorPool samplerDescriptorPool;
 extern DescriptorPool storageDescriptorPool;
 
-extern VkDescriptorSet storageDescriptorSet;
+extern VkDescriptorSet indexDescriptorSet;
+extern VkDescriptorSet vertexDescriptorSet;
 
 void createSampler();
 
@@ -33,7 +34,7 @@ VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t fr
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 VkDescriptorSet getSamplerDescriptorSet(Material *material);
-VkDescriptorSet getStorageDescriptorSet();
+VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offset, VkDeviceSize range);
 
 void resetDescriptorPool(DescriptorPool *descriptorPool);
 void destroyDescriptorPool(DescriptorPool *descriptorPool);

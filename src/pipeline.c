@@ -19,7 +19,7 @@ VkDescriptorSetLayout *descriptorSetLayouts;
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
-    descriptorSetLayoutCount = 6;
+    descriptorSetLayoutCount = 7;
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
 
     descriptorSetLayouts[0] = lightingDescriptorPool.layout;
@@ -27,7 +27,8 @@ void createPipelineLayout() {
     descriptorSetLayouts[2] = primitiveDescriptorPool.layout;
     descriptorSetLayouts[3] = materialDescriptorPool.layout;
     descriptorSetLayouts[4] = samplerDescriptorPool.layout;
-    descriptorSetLayouts[5] = storageDescriptorPool.layout;
+    descriptorSetLayouts[5] = storageDescriptorPool.layout; // Index
+    descriptorSetLayouts[6] = storageDescriptorPool.layout; // Vertex
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -97,11 +98,9 @@ void createPipeline() {
     createBufferDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
     createBufferDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
     createSamplerDescriptorPool(&samplerDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
-    createBufferDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);
+    createBufferDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 3 /* Index and Vertex, and Shader Debug */, VK_SHADER_STAGE_VERTEX_BIT);
 
     createPipelineLayout();
-
-    storageDescriptorSet = getStorageDescriptorSet();
 }
 
 void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
@@ -141,7 +140,14 @@ void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadDeviceFunction("vkCmdSetAlphaToCoverageEnableEXT");
     cmdSetAlphaToCoverageEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &storageDescriptorSet, 0, nullptr);
+    VkDescriptorSet descriptorSets[] = {
+        indexDescriptorSet,
+        vertexDescriptorSet,
+    };
+
+    uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
+
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, descriptorSetCount, descriptorSets, 0, nullptr);
 }
 
 void destroyPipeline() {

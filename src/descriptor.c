@@ -18,7 +18,8 @@ DescriptorPool materialDescriptorPool;
 DescriptorPool storageDescriptorPool;
 DescriptorPool samplerDescriptorPool;
 
-VkDescriptorSet storageDescriptorSet;
+VkDescriptorSet indexDescriptorSet;
+VkDescriptorSet vertexDescriptorSet;
 
 // TODO: Load sampler from asset file
 void createSampler() {
@@ -250,8 +251,8 @@ VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t 
     return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange,  materialUniformBufferRange);
 }
 
-VkDescriptorSet getStorageDescriptorSet() {
-    return createBufferDescriptorSet(&storageDescriptorPool, deviceBuffer.buffer, 0, deviceBuffer.size);
+VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offset, VkDeviceSize range) {
+    return createBufferDescriptorSet(&storageDescriptorPool, deviceBuffer.buffer, deviceBuffer.memoryOffset + offset, range);
 }
 
 VkDescriptorSet getSamplerDescriptorSet(Material *material) {

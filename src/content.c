@@ -1,5 +1,6 @@
 #include "content.h"
 
+#include "physicalDevice.h"
 #include "device.h"
 #include "memory.h"
 #include "buffer.h"
@@ -10,9 +11,11 @@
 #include "primitive.h"
 #include "asset.h"
 #include "control.h"
+#include "descriptor.h"
 #include "framebuffer.h"
 
 #include "logger.h"
+#include "numerics.h"
 
 uint32_t indexCount;
 uint32_t vertexCount;
@@ -91,13 +94,20 @@ void loadContent() {
 
     debug("Control sets successfully set");
 
-    const VkDeviceSize indexBufferSize  = indexCount  * sizeof(Index);
-    const VkDeviceSize vertexBufferSize = vertexCount * sizeof(Vertex);
+    const VkDeviceSize storageBufferAlignment = physicalDeviceProperties.limits.minStorageBufferOffsetAlignment;
+
+    const VkDeviceSize indexBufferSize  = align(indexCount  * sizeof(Index),  storageBufferAlignment);
+    const VkDeviceSize vertexBufferSize = align(vertexCount * sizeof(Vertex), storageBufferAlignment);
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);
 
     debug("Index and vertex data copied into device memory");
+
+    indexDescriptorSet  = getStorageDescriptorSet(0,               indexBufferSize);
+    vertexDescriptorSet = getStorageDescriptorSet(indexBufferSize, vertexBufferSize);
+
+    debug("Index and vertex descriptor sets created and updated");
 
     free(vertexBuffer);
     free(indexBuffer);

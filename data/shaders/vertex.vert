@@ -29,6 +29,14 @@ struct Vertex {
     vec4 texcoord; // texcoord0 and texcoord1 is packed together
 };
 
+layout(set = 5, binding = 0) readonly buffer Indices {
+    uint indices[];
+};
+
+layout(set = 6, binding = 0) readonly buffer Vertices {
+    Vertex vertices[];
+};
+
 void main() {
     vec4 position = model * vec4(inputPosition, 1.0f);
 
