@@ -225,7 +225,7 @@ void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex)
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 0, VK_NULL_HANDLE, 0, VK_NULL_HANDLE);
 
-    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, VK_NULL_HANDLE, 0, VK_INDEX_TYPE_UINT32);
+    //vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, VK_NULL_HANDLE, 0, VK_INDEX_TYPE_UINT32);
 }
 
 void freeContent() {
