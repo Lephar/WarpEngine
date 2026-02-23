@@ -261,7 +261,7 @@ void bindFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
 
 void endFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
-    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebuffer    framebuffer    = &framebufferSet->framebuffers[framebufferIndex];
 
     vkCmdEndRendering( framebuffer->renderCommandBuffer);
     vkEndCommandBuffer(framebuffer->renderCommandBuffer);
@@ -269,7 +269,7 @@ void endFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
 
 void destroyFramebuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     PFramebufferSet framebufferSet = &framebufferSets[framebufferSetIndex];
-    PFramebuffer framebuffer = &framebufferSet->framebuffers[framebufferIndex];
+    PFramebuffer    framebuffer    = &framebufferSet->framebuffers[framebufferIndex];
 
     vkDestroyFence(device, framebuffer->blitFence, nullptr);
     vkDestroyFence(device, framebuffer->drawFence, nullptr);
