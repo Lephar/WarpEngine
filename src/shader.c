@@ -32,11 +32,15 @@ void freeShaderCode(ShaderCode *shaderCode) {
 }
 
 ShaderIntermediate *compileShaderCode(ShaderCode *shaderCode) {
-    shaderc_compilation_result_t result = shaderc_compile_into_spv(shaderCompiler, shaderCode->data, shaderCode->size, shaderCode->stage, "shader", "main", shaderCompileOptions);
-    shaderc_compilation_status   status = shaderc_result_get_compilation_status(result);
+    shaderc_compilation_result_t result  = shaderc_compile_into_spv(shaderCompiler, shaderCode->data, shaderCode->size, shaderCode->stage, "shader", "main", shaderCompileOptions);
+    shaderc_compilation_status   status  = shaderc_result_get_compilation_status(result);
+    const char                  *message = shaderc_result_get_error_message(result);
+
+    if(message != nullptr && strncmp(message, "", 1) != 0) {
+        debug("%s", message);
+    }
 
     if(status != shaderc_compilation_status_success) {
-        debug("%s", shaderc_result_get_error_message(result));
         shaderc_result_release(result);
         assert(status == shaderc_compilation_status_success);
     }
@@ -127,7 +131,9 @@ void createModules() {
     shaderc_compile_options_set_target_spirv(shaderCompileOptions, shaderc_spirv_version_1_6);
     shaderc_compile_options_set_target_env(shaderCompileOptions, shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_4);
 #if DEBUG
+    shaderc_compile_options_add_macro_definition(shaderCompileOptions, "DEBUG", 5, "1", 1);
     shaderc_compile_options_set_generate_debug_info(shaderCompileOptions);
+    shaderc_compile_options_set_optimization_level(shaderCompileOptions, shaderc_optimization_level_zero);
 #else
     shaderc_compile_options_set_optimization_level(shaderCompileOptions, shaderc_optimization_level_performance);
 #endif

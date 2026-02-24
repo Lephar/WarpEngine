@@ -1,6 +1,8 @@
 #version 460 core
 
-//#extension GL_EXT_debug_printf            : enable
+#if DEBUG
+#extension GL_EXT_debug_printf            : enable
+#endif
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(location = 0) out vec3 outputPosition;
@@ -46,8 +48,6 @@ void main() {
     Vertex vertex = vertices[index + vertexOffset];
 
     vec4 position = model * vertex.position;
-
-    //debugPrintfEXT("%u, %u, %v4f", gl_VertexIndex, index, position);
 
     outputPosition  = position.xyz;
     outputTangent   = vertex.tangent;
