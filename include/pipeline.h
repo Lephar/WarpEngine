@@ -4,6 +4,10 @@
 
 extern uint32_t descriptorSetLayoutCount;
 extern VkDescriptorSetLayout *descriptorSetLayouts;
+
+extern uint32_t pushConstantCount;
+extern VkPushConstantRange *pushConstantRanges;
+
 extern VkPipelineLayout pipelineLayout;
 
 void setPipelineDetails();

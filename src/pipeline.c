@@ -16,11 +16,18 @@
 
 uint32_t descriptorSetLayoutCount;
 VkDescriptorSetLayout *descriptorSetLayouts;
+
+uint32_t pushConstantCount;
+VkPushConstantRange *pushConstantRanges;
+
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
     descriptorSetLayoutCount = 7;
+    pushConstantCount        = 1;
+
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
+    pushConstantRanges   = malloc(pushConstantCount        * sizeof(VkPushConstantRange));
 
     descriptorSetLayouts[0] = lightingDescriptorPool.layout;
     descriptorSetLayouts[1] = cameraDescriptorPool.layout;
@@ -30,14 +37,18 @@ void createPipelineLayout() {
     descriptorSetLayouts[5] = storageDescriptorPool.layout; // Index
     descriptorSetLayouts[6] = storageDescriptorPool.layout; // Vertex
 
+    pushConstantRanges[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    pushConstantRanges[0].offset = 0;
+    pushConstantRanges[0].size = 4;
+
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
         .setLayoutCount = descriptorSetLayoutCount,
         .pSetLayouts = descriptorSetLayouts,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges = nullptr
+        .pushConstantRangeCount = pushConstantCount,
+        .pPushConstantRanges = pushConstantRanges,
     };
 
     vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout);

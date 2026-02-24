@@ -37,9 +37,13 @@ layout(set = 6, binding = 0) readonly buffer Vertices {
     Vertex vertices[];
 };
 
+layout(push_constant) uniform VertexOffset {
+    int vertexOffset;
+};
+
 void main() {
     uint   index  = indices[gl_VertexIndex];
-    Vertex vertex = vertices[index];
+    Vertex vertex = vertices[index + vertexOffset];
 
     vec4 position = model * vertex.position;
 

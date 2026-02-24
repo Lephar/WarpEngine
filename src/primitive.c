@@ -156,5 +156,6 @@ void drawPrimitive(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Prim
     Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
 
     vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 2, 1, &framebuffer->primitiveDescriptorSet, 1, &primitive->uniformOffset);
-    vkCmdDraw(framebuffer->renderCommandBuffer, primitive->indexCount, 1, primitive->vertexOffset, 0);
+    vkCmdPushConstants(framebuffer->renderCommandBuffer, pipelineLayout, pushConstantRanges[0].stageFlags, pushConstantRanges[0].offset, pushConstantRanges[0].size, &primitive->vertexOffset);
+    vkCmdDraw(framebuffer->renderCommandBuffer, primitive->indexCount, 1, primitive->indexBegin, 0);
 }

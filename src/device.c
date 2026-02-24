@@ -109,6 +109,7 @@ void createDevice() {
     VkPhysicalDeviceVulkan11Features version11Features = {
         .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
         .pNext = &version12Features,
+        .shaderDrawParameters = VK_TRUE,
     };
 
     VkPhysicalDeviceFeatures2 physicalDeviceFeatures2 = {
