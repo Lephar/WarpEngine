@@ -4,13 +4,11 @@
 
 #define POINT_LIGHT_COUNT_LIMIT 1024
 
-layout(location = 0) in  vec3 inputPosition;
-layout(location = 1) in  vec4 inputTangent;
-layout(location = 2) in  vec3 inputNormal;
-layout(location = 3) in  vec2 inputTexcoord0;
-layout(location = 4) in  vec2 inputTexcoord1;
-
-layout(location = 0) out vec4 outputColor;
+layout(location = 0) in vec3 inputPosition;
+layout(location = 1) in vec4 inputTangent;
+layout(location = 2) in vec3 inputNormal;
+layout(location = 3) in vec2 inputTexcoord0;
+layout(location = 4) in vec2 inputTexcoord1;
 
 struct PointLight {
     mat4 lightTransform;
@@ -45,6 +43,8 @@ layout(set = 4, binding = 1) uniform sampler2D metallicRoughnessSampler;
 layout(set = 4, binding = 2) uniform sampler2D emissiveSampler;
 layout(set = 4, binding = 3) uniform sampler2D occlusionSampler;
 layout(set = 4, binding = 4) uniform sampler2D normalSampler;
+
+layout(location = 0) out vec4 outputColor;
 
 vec4 depth() {
     float nearPlane = cameraProperties[2];

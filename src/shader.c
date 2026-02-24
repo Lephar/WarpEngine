@@ -88,7 +88,7 @@ ShaderModule *makeShaderModule(ShaderIntermediate *shaderIntermediate) {
         .pName = "main",
         .setLayoutCount = descriptorSetLayoutCount,
         .pSetLayouts = descriptorSetLayouts,
-        .pushConstantRangeCount = pushConstantCount,
+        .pushConstantRangeCount = pushConstantRangeCount,
         .pPushConstantRanges = pushConstantRanges,
         .pSpecializationInfo = nullptr
     };

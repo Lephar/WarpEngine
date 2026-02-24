@@ -17,14 +17,14 @@
 uint32_t descriptorSetLayoutCount;
 VkDescriptorSetLayout *descriptorSetLayouts;
 
-uint32_t pushConstantCount;
+uint32_t pushConstantRangeCount;
 VkPushConstantRange *pushConstantRanges;
 
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
-    pushConstantCount        = 1;
     descriptorSetLayoutCount = 6;
+    pushConstantRangeCount   = 1;
 
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
     pushConstantRanges   = malloc(pushConstantRangeCount   * sizeof(VkPushConstantRange));
@@ -38,7 +38,7 @@ void createPipelineLayout() {
 
     pushConstantRanges[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     pushConstantRanges[0].offset = 0;
-    pushConstantRanges[0].size = 4;
+    pushConstantRanges[0].size   = sizeof(int32_t);
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -46,7 +46,7 @@ void createPipelineLayout() {
         .flags = 0,
         .setLayoutCount = descriptorSetLayoutCount,
         .pSetLayouts = descriptorSetLayouts,
-        .pushConstantRangeCount = pushConstantCount,
+        .pushConstantRangeCount = pushConstantRangeCount,
         .pPushConstantRanges = pushConstantRanges,
     };
 
