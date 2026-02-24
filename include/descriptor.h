@@ -6,8 +6,9 @@ typedef struct material Material;
 
 typedef struct descriptorPool {
     VkDescriptorType type;
-    uint32_t count;
+    uint32_t descriptorCount;
     VkShaderStageFlags stage;
+    uint32_t bindingCount;
     VkDescriptorSetLayout layout;
     VkDescriptorPool pool;
 } DescriptorPool, *PDescriptorPool;
@@ -26,8 +27,7 @@ extern VkDescriptorSet vertexDescriptorSet;
 
 void createSampler();
 
-void createBufferDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage);
-void createSamplerDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t count, VkShaderStageFlags stage);
+void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t descriptorCount, VkShaderStageFlags stage, uint32_t bindingCount);
 
 VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
