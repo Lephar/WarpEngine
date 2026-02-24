@@ -34,7 +34,6 @@ void render(uint32_t framebufferSetIndex) {
     beginFramebuffer(framebufferSetIndex, framebufferIndex);
     bindFramebuffer(framebufferSetIndex, framebufferIndex);
 
-    bindContentBuffers(framebufferSetIndex, framebufferIndex);
     bindPipeline(framebufferSetIndex, framebufferIndex);
     bindShaders(framebufferSetIndex, framebufferIndex, vertexShaderModule, fragmentShaderModule);
 

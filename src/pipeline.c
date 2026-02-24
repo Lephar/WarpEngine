@@ -140,6 +140,9 @@ void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     PFN_vkCmdSetAlphaToCoverageEnableEXT cmdSetAlphaToCoverageEnable = loadDeviceFunction("vkCmdSetAlphaToCoverageEnableEXT");
     cmdSetAlphaToCoverageEnable(framebuffer->renderCommandBuffer, VK_FALSE);
 
+    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
+    cmdSetVertexInput(framebuffer->renderCommandBuffer, 0, VK_NULL_HANDLE, 0, VK_NULL_HANDLE);
+
     VkDescriptorSet descriptorSets[] = {
         indexDescriptorSet,
         vertexDescriptorSet,

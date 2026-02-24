@@ -33,5 +33,4 @@ void createContentBuffers();
 void loadContent();
 void prepareUniforms();
 void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
-void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 void freeContent();

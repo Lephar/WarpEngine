@@ -1,7 +1,6 @@
 #include "content.h"
 
 #include "physicalDevice.h"
-#include "device.h"
 #include "memory.h"
 #include "buffer.h"
 #include "image.h"
@@ -12,7 +11,6 @@
 #include "asset.h"
 #include "control.h"
 #include "descriptor.h"
-#include "framebuffer.h"
 
 #include "logger.h"
 #include "numerics.h"
@@ -158,74 +156,6 @@ void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
         memcpy(mappedSharedMemory + uniformBufferOffset + materials[materialIndex].factorOffset, &materialUniforms[materialIndex], sizeof(MaterialUniform));
     }
-}
-
-void bindContentBuffers(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    FramebufferSet *framebufferSet = &framebufferSets[framebufferSetIndex];
-    Framebuffer *framebuffer = &framebufferSet->framebuffers[framebufferIndex];
-    /*
-    const VkDeviceSize vertexBufferOffset = indexCount * sizeof(Index);
-
-    VkVertexInputBindingDescription2EXT vertexBinding = {
-        .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
-        .pNext = nullptr,
-        .binding = 0,
-        .stride = sizeof(Vertex),
-        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
-        .divisor = 1
-    };
-
-    VkVertexInputAttributeDescription2EXT vertexAttributes[] = {
-        {
-            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = nullptr,
-            .location = 0,
-            .binding = 0,
-            .format = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset = offsetof(Vertex, position)
-        },{
-            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = nullptr,
-            .location = 1,
-            .binding = 0,
-            .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-            .offset = offsetof(Vertex, tangent)
-        },{
-            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = nullptr,
-            .location = 2,
-            .binding = 0,
-            .format = VK_FORMAT_R32G32B32_SFLOAT,
-            .offset = offsetof(Vertex, normal)
-        }, {
-            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = nullptr,
-            .location = 3,
-            .binding = 0,
-            .format = VK_FORMAT_R32G32_SFLOAT,
-            .offset = offsetof(Vertex, texcoord0)
-        }, {
-            .sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-            .pNext = nullptr,
-            .location = 4,
-            .binding = 0,
-            .format = VK_FORMAT_R32G32_SFLOAT,
-            .offset = offsetof(Vertex, texcoord1)
-        }
-    };
-
-    uint32_t vertexAttributeCount = sizeof(vertexAttributes) / sizeof(VkVertexInputAttributeDescription2EXT);
-
-    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
-    cmdSetVertexInput(framebuffer->renderCommandBuffer, 1, &vertexBinding, vertexAttributeCount, vertexAttributes);
-
-    vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, deviceBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-    vkCmdBindVertexBuffers(framebuffer->renderCommandBuffer, 0, 1, &deviceBuffer.buffer, &vertexBufferOffset);
-    */
-    PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
-    cmdSetVertexInput(framebuffer->renderCommandBuffer, 0, VK_NULL_HANDLE, 0, VK_NULL_HANDLE);
-
-    //vkCmdBindIndexBuffer(framebuffer->renderCommandBuffer, VK_NULL_HANDLE, 0, VK_INDEX_TYPE_UINT32);
 }
 
 void freeContent() {
