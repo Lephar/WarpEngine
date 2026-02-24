@@ -263,9 +263,6 @@ void draw() {
     // We only have 1 framebuffer set
     render(0);
     present(0);
-
-    vkDeviceWaitIdle(device);
-    assert(0);
 }
 
 void finalizeDraw() {

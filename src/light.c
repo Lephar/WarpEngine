@@ -7,16 +7,10 @@ uint32_t pointLightCountLimit;
 LightingUniform lightingUniform;
 
 void initializeLighting() {
-    /*
     lightingUniform.ambientLight[0] = 1.0f;
     lightingUniform.ambientLight[1] = 0.8f;
     lightingUniform.ambientLight[2] = 0.6f;
     lightingUniform.ambientLight[3] = 0.03125f;
-    */
-    lightingUniform.ambientLight[0] = 1.0f;
-    lightingUniform.ambientLight[1] = 1.0f;
-    lightingUniform.ambientLight[2] = 1.0f;
-    lightingUniform.ambientLight[3] = 1.0f;
 
     lightingUniform.attenuationCoefficients[0] = 1.0f;
     lightingUniform.attenuationCoefficients[1] = 0.7f;
