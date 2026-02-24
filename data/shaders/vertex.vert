@@ -5,11 +5,18 @@
 #endif
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(location = 0) out vec3 outputPosition;
-layout(location = 1) out vec4 outputTangent;
-layout(location = 2) out vec3 outputNormal;
-layout(location = 3) out vec2 outputTexcoord0;
-layout(location = 4) out vec2 outputTexcoord1;
+#define Index int
+
+struct Vertex {
+    vec4 position;
+    vec4 tangent;
+    vec4 normal;
+    vec4 texcoord; // texcoord0 and texcoord1 is packed together
+};
+
+layout(push_constant) uniform VertexOffset {
+    int vertexOffset;
+};
 
 layout(set = 1, binding = 0) uniform Camera {
     mat4 transform;
@@ -24,27 +31,22 @@ layout(set = 2, binding = 0) uniform Primitive {
     mat4 normal;
 };
 
-struct Vertex {
-    vec4 position;
-    vec4 tangent;
-    vec4 normal;
-    vec4 texcoord; // texcoord0 and texcoord1 is packed together
-};
-
 layout(set = 5, binding = 0) readonly buffer Indices {
-    uint indices[];
+    Index indices[];
 };
 
-layout(set = 6, binding = 0) readonly buffer Vertices {
+layout(set = 5, binding = 1) readonly buffer Vertices {
     Vertex vertices[];
 };
 
-layout(push_constant) uniform VertexOffset {
-    int vertexOffset;
-};
+layout(location = 0) out vec3 outputPosition;
+layout(location = 1) out vec4 outputTangent;
+layout(location = 2) out vec3 outputNormal;
+layout(location = 3) out vec2 outputTexcoord0;
+layout(location = 4) out vec2 outputTexcoord1;
 
 void main() {
-    uint   index  = indices[gl_VertexIndex];
+    Index  index  = indices[gl_VertexIndex];
     Vertex vertex = vertices[index + vertexOffset];
 
     vec4 position = model * vertex.position;

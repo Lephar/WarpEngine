@@ -15,11 +15,10 @@ DescriptorPool lightingDescriptorPool;
 DescriptorPool cameraDescriptorPool;
 DescriptorPool primitiveDescriptorPool;
 DescriptorPool materialDescriptorPool;
-DescriptorPool storageDescriptorPool;
 DescriptorPool samplerDescriptorPool;
+DescriptorPool storageDescriptorPool;
 
-VkDescriptorSet indexDescriptorSet;
-VkDescriptorSet vertexDescriptorSet;
+VkDescriptorSet storageDescriptorSet;
 
 // TODO: Load sampler from asset file
 void createSampler() {
@@ -116,35 +115,57 @@ VkDescriptorSet allocateDescriptorSet(DescriptorPool *descriptorPool) {
     return descriptorSet;
 }
 
-VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range) {
+VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkBuffer buffer, VkDeviceSize offsets[], VkDeviceSize ranges[]) {
+    debug("Buffer Descriptor Set:");
+
     VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
+    debug("\tAllocated");
 
-    VkDescriptorBufferInfo bufferInfo = {
-        .buffer = buffer,
-        .offset = offset,
-        .range  = range
-    };
+    VkDescriptorBufferInfo *bufferInfos      = malloc(descriptorPool->bindingCount * sizeof(VkDescriptorBufferInfo));
+    VkWriteDescriptorSet   *descriptorWrites = malloc(descriptorPool->bindingCount * sizeof(VkWriteDescriptorSet));
 
-    VkWriteDescriptorSet descriptorWrite = {
-        .sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-        .pNext = nullptr,
-        .dstSet = descriptorSet,
-        .dstBinding = 0,
-        .dstArrayElement = 0,
-        .descriptorCount = 1,
-        .descriptorType = descriptorPool->type,
-        .pImageInfo = nullptr,
-        .pBufferInfo = &bufferInfo,
-        .pTexelBufferView = nullptr
-    };
+    for(uint32_t binding = 0; binding < descriptorPool->bindingCount; binding++) {
+        VkDescriptorBufferInfo *bufferInfo      = &bufferInfos[binding];
+        VkWriteDescriptorSet   *descriptorWrite = &descriptorWrites[binding];
 
-    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+        VkDeviceSize offset = offsets[binding];
+        VkDeviceSize range  = ranges[binding];
+
+        bufferInfo->buffer = buffer;
+        bufferInfo->offset = offset;
+        bufferInfo->range  = range;
+
+        debug("\tBinding:  %u",  binding);
+        debug("\t\tOffset: %lu", offset);
+        debug("\t\tRange:  %lu", range);
+
+        descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite->pNext = nullptr;
+        descriptorWrite->dstSet = descriptorSet;
+        descriptorWrite->dstBinding = binding;
+        descriptorWrite->dstArrayElement = 0;
+        descriptorWrite->descriptorCount = 1;
+        descriptorWrite->descriptorType = descriptorPool->type;
+        descriptorWrite->pImageInfo = nullptr;
+        descriptorWrite->pBufferInfo = bufferInfo;
+        descriptorWrite->pTexelBufferView = nullptr;
+    }
+
+    vkUpdateDescriptorSets(device, descriptorPool->bindingCount, descriptorWrites, 0, nullptr);
+    free(descriptorWrites);
+    free(bufferInfos);
+    debug("\tUpdated");
 
     return descriptorSet;
 }
 
 VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, Material *material) {
+    assert(descriptorPool->bindingCount == materialTextureCount);
+
+    debug("Sampler Descriptor Set:");
+
     VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
+    debug("\tAllocated");
 
     VkDescriptorImageInfo imageInfos[] = {
         {
@@ -170,51 +191,66 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, Materia
         }
     };
 
-    VkWriteDescriptorSet descriptorWrites[materialTextureCount];
+    debug("\tBinding Count: %u", descriptorPool->bindingCount);
 
-    for(uint32_t bindingIndex = 0; bindingIndex < materialTextureCount; bindingIndex++) {
-        VkDescriptorImageInfo *imageInfo = &imageInfos[bindingIndex];
-        VkWriteDescriptorSet *descriptorWrite = &descriptorWrites[bindingIndex];
+    VkWriteDescriptorSet *descriptorWrites = malloc(descriptorPool->bindingCount * sizeof(VkWriteDescriptorSet));
+
+    for(uint32_t binding = 0; binding < descriptorPool->bindingCount; binding++) {
+        VkWriteDescriptorSet *descriptorWrite = &descriptorWrites[binding];
 
         descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrite->pNext = nullptr;
         descriptorWrite->dstSet = descriptorSet;
-        descriptorWrite->dstBinding = bindingIndex;
+        descriptorWrite->dstBinding = binding;
         descriptorWrite->dstArrayElement = 0;
         descriptorWrite->descriptorCount = 1;
         descriptorWrite->descriptorType = descriptorPool->type;
-        descriptorWrite->pImageInfo = imageInfo;
+        descriptorWrite->pImageInfo = &imageInfos[binding];
         descriptorWrite->pBufferInfo = nullptr;
         descriptorWrite->pTexelBufferView = nullptr;
     }
 
-    vkUpdateDescriptorSets(device, materialTextureCount, descriptorWrites, 0, nullptr);
+    vkUpdateDescriptorSets(device, descriptorPool->bindingCount, descriptorWrites, 0, nullptr);
+    free(descriptorWrites);
+    debug("\tUpdated");
 
     return descriptorSet;
 }
 
 VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&lightingDescriptorPool,  sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize,  lightingUniformBufferRange);
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
+    VkDeviceSize range  = lightingUniformBufferRange;
+
+    return createBufferDescriptorSet(&lightingDescriptorPool, sharedBuffer.buffer, &offset, &range);
 }
 
 VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&cameraDescriptorPool,    sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange,  cameraUniformBufferRange);
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange;
+    VkDeviceSize range  = cameraUniformBufferRange;
+
+    return createBufferDescriptorSet(&cameraDescriptorPool, sharedBuffer.buffer, &offset, &range);
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange,  primitiveUniformBufferRange);
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange;
+    VkDeviceSize range  = primitiveUniformBufferRange;
+
+    return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, &offset, &range);
 }
 
 VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange,  materialUniformBufferRange);
-}
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange;
+    VkDeviceSize range  = materialUniformBufferRange;
 
-VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offset, VkDeviceSize range) {
-    return createBufferDescriptorSet(&storageDescriptorPool, deviceBuffer.buffer, deviceBuffer.memoryOffset + offset, range);
+    return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, &offset, &range);
 }
 
 VkDescriptorSet getSamplerDescriptorSet(Material *material) {
     return createImageDescriptorSet(&samplerDescriptorPool, material);
+}
+
+VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offsets[], VkDeviceSize ranges[]) {
+    return createBufferDescriptorSet(&storageDescriptorPool, deviceBuffer.buffer, offsets, ranges);
 }
 
 void resetDescriptorPool(DescriptorPool *descriptorPool) {

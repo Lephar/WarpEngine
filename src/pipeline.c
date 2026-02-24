@@ -23,19 +23,18 @@ VkPushConstantRange *pushConstantRanges;
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
-    descriptorSetLayoutCount = 7;
     pushConstantCount        = 1;
+    descriptorSetLayoutCount = 6;
 
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
-    pushConstantRanges   = malloc(pushConstantCount        * sizeof(VkPushConstantRange));
+    pushConstantRanges   = malloc(pushConstantRangeCount   * sizeof(VkPushConstantRange));
 
     descriptorSetLayouts[0] = lightingDescriptorPool.layout;
     descriptorSetLayouts[1] = cameraDescriptorPool.layout;
     descriptorSetLayouts[2] = primitiveDescriptorPool.layout;
     descriptorSetLayouts[3] = materialDescriptorPool.layout;
     descriptorSetLayouts[4] = samplerDescriptorPool.layout;
-    descriptorSetLayouts[5] = storageDescriptorPool.layout; // Index
-    descriptorSetLayouts[6] = storageDescriptorPool.layout; // Vertex
+    descriptorSetLayouts[5] = storageDescriptorPool.layout;
 
     pushConstantRanges[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     pushConstantRanges[0].offset = 0;
@@ -104,12 +103,14 @@ void setPipelineDetails() {
 void createPipeline() {
     createSampler();
 
-    createBufferDescriptorPool(&lightingDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
-    createBufferDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
-    createBufferDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT);
-    createBufferDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferSetCountLimit * framebufferSetFramebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
-    createSamplerDescriptorPool(&samplerDescriptorPool,  VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT);
-    createBufferDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2 /* Index and Vertex, increment by 1 for shaderDebugPrintf */, VK_SHADER_STAGE_VERTEX_BIT);
+    uint32_t framebufferCountLimit = framebufferSetCountLimit * framebufferSetFramebufferCountLimit;
+
+    createDescriptorPool(&lightingDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+    createDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+    createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT,   1);
+    createDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+    createDescriptorPool(&samplerDescriptorPool,   VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    VK_SHADER_STAGE_FRAGMENT_BIT, materialTextureCount);
+    createDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1,                     VK_SHADER_STAGE_VERTEX_BIT,   2);
 
     createPipelineLayout();
 }
@@ -154,14 +155,7 @@ void bindPipeline(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
     PFN_vkCmdSetVertexInputEXT cmdSetVertexInput = loadDeviceFunction("vkCmdSetVertexInputEXT");
     cmdSetVertexInput(framebuffer->renderCommandBuffer, 0, VK_NULL_HANDLE, 0, VK_NULL_HANDLE);
 
-    VkDescriptorSet descriptorSets[] = {
-        indexDescriptorSet,
-        vertexDescriptorSet,
-    };
-
-    uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
-
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, descriptorSetCount, descriptorSets, 0, nullptr);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 5, 1, &storageDescriptorSet, 0, nullptr);
 }
 
 void destroyPipeline() {
