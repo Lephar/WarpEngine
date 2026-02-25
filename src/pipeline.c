@@ -79,7 +79,7 @@ void setPipelineDetails() {
     debug("\tPrimitive: %u", primitiveUniformBufferRange);
     debug("\tMaterial:  %u", materialUniformBufferRange);
 
-    pointLightCountLimit = umin(POINT_LIGHT_COUNT_HARD_LIMIT, lightingUniformBufferRange / sizeof(PointLightUniform));
+    pointLightCountLimit = umin(LIGHT_COUNT_HARD_LIMIT, lightingUniformBufferRange / sizeof(PointLightUniform));
 
     cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
@@ -89,7 +89,7 @@ void setPipelineDetails() {
 
     debug("Count Limits:");
     debug("\tPoint Lights:");
-    debug("\t\tHard Limit: %u", POINT_LIGHT_COUNT_HARD_LIMIT);
+    debug("\t\tHard Limit: %u", LIGHT_COUNT_HARD_LIMIT);
     debug("\t\tSoft Limit: %u", pointLightCountLimit);
     debug("\tCameras:      %u", cameraCountLimit);
     debug("\tPrimitives:   %u", primitiveCountLimit);
@@ -105,12 +105,12 @@ void createPipeline() {
 
     uint32_t framebufferCountLimit = framebufferSetCountLimit * framebufferSetFramebufferCountLimit;
 
-    createDescriptorPool(&lightingDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+    createDescriptorPool(&lightingDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 4 /* Ambient, Point, Spot, Directional */);
     createDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
     createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT,   1);
     createDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 1);
     createDescriptorPool(&samplerDescriptorPool,   VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    VK_SHADER_STAGE_FRAGMENT_BIT, materialTextureCount);
-    createDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1,                     VK_SHADER_STAGE_VERTEX_BIT,   2);
+    createDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1,                     VK_SHADER_STAGE_VERTEX_BIT,   2 /* Index, Vertex */);
 
     createPipelineLayout();
 }

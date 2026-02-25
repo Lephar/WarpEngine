@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-#define POINT_LIGHT_COUNT_HARD_LIMIT 1U<<10U
+#define LIGHT_COUNT_HARD_LIMIT 1U<<10U
 
 typedef struct pointLightUniform {
     mat4 transform;
@@ -15,8 +15,9 @@ typedef struct lightingUniform {
     vec4 attenuationCoefficients; // Constant, Linear, Quadratic, Specular Falloff
     uint32_t lightTypeCounts[4]; // Point, Spot, Directional, Ambient. Only the first one is used for now, others are just padding
     uint32_t padding[4];
-    PointLightUniform pointLightUniforms[POINT_LIGHT_COUNT_HARD_LIMIT];
 } LightingUniform, *PLightingUniform;
+
+PointLightUniform pointLightUniforms[LIGHT_COUNT_HARD_LIMIT];
 
 extern uint32_t pointLightCountLimit;
 extern LightingUniform lightingUniform;
