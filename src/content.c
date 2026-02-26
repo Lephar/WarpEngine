@@ -21,14 +21,20 @@ uint32_t vertexCount;
 Index  *indexBuffer;
 Vertex *vertexBuffer;
 
-VkDeviceSize cameraUniformAlignment;
 VkDeviceSize primitiveUniformAlignment;
+VkDeviceSize cameraUniformAlignment;
 VkDeviceSize materialUniformAlignment;
 
-VkDeviceSize lightingUniformBufferRange;
-VkDeviceSize cameraUniformBufferRange;
 VkDeviceSize primitiveUniformBufferRange;
+VkDeviceSize cameraUniformBufferRange;
 VkDeviceSize materialUniformBufferRange;
+VkDeviceSize sceneLightingUniformBufferRange;
+VkDeviceSize lightUniformBufferRange;
+
+VkDeviceSize primitiveUniformBufferOffset;
+VkDeviceSize cameraUniformBufferOffset;
+VkDeviceSize materialUniformBufferOffset;
+VkDeviceSize sceneLightingUniformBufferOffset;
 
 VkDeviceSize framebufferUniformBufferSize;
 VkDeviceSize framebufferSetUniformBufferSize;

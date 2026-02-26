@@ -63,41 +63,55 @@ void setPipelineDetails() {
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
 
     debug("Uniform Alignments:");
-    debug("\tPrimitive: %u", primitiveUniformAlignment);
-    debug("\tCamera:    %u", cameraUniformAlignment);
-    debug("\tMaterial:  %u", materialUniformAlignment);
+    debug("\tPrimitive: %lu", primitiveUniformAlignment);
+    debug("\tCamera:    %lu", cameraUniformAlignment);
+    debug("\tMaterial:  %lu", materialUniformAlignment);
 
     primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
     cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
 
-    lightingUniformBufferRange = ulmin(sizeof(LightingUniform), maxUniformBufferRange);
+    sceneLightingUniformBufferRange = align(sizeof(SceneLightingUniform), minUniformBufferOffsetAlignment);
+    lightUniformBufferRange = maxUniformBufferRange;
 
     debug("Uniform Buffer Ranges:");
-    debug("\tPrimitive: %u", primitiveUniformBufferRange);
-    debug("\tCamera:    %u", cameraUniformBufferRange);
-    debug("\tMaterial:  %u", materialUniformBufferRange);
-    debug("\tLighting:  %u", lightingUniformBufferRange);
+    debug("\tPrimitive: %lu", primitiveUniformBufferRange);
+    debug("\tCamera:    %lu", cameraUniformBufferRange);
+    debug("\tMaterial:  %lu", materialUniformBufferRange);
+    debug("\tScene:     %lu", sceneLightingUniformBufferRange);
+    debug("\tLight:     %lu", lightUniformBufferRange);
 
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
     cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
 
-    lightCountLimit = umin(LIGHT_COUNT_HARD_LIMIT, lightingUniformBufferRange / sizeof(PointLightUniform));
+    lightCountLimit = lightUniformBufferRange / sizeof(LightUniform);
 
     nodeCountLimit = primitiveCountLimit;
 
     debug("Count Limits:");
-    debug("\tPrimitives:   %u", primitiveCountLimit);
-    debug("\tCameras:      %u", cameraCountLimit);
-    debug("\tMaterials:    %u", materialCountLimit);
-    debug("\tNodes:        %u", nodeCountLimit);
-    debug("\tPoint Lights:");
-    debug("\t\tHard Limit: %u", LIGHT_COUNT_HARD_LIMIT);
-    debug("\t\tSoft Limit: %u", lightCountLimit);
+    debug("\tPrimitives: %u", primitiveCountLimit);
+    debug("\tCameras:    %u", cameraCountLimit);
+    debug("\tMaterials:  %u", materialCountLimit);
+    debug("\tLights:     %u", lightCountLimit);
+    debug("\tNodes:      %u", nodeCountLimit);
 
-    framebufferUniformBufferSize    = lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange + materialUniformBufferRange;
+    primitiveUniformBufferOffset     = 0;
+    cameraUniformBufferOffset        = primitiveUniformBufferRange;
+    materialUniformBufferOffset      = cameraUniformBufferOffset   + cameraUniformBufferRange;
+    sceneLightingUniformBufferOffset = materialUniformBufferOffset + materialUniformBufferRange;
+
+    debug("Uniform Buffer Offsets:");
+    debug("\tPrimitives: %lu", primitiveUniformBufferOffset);
+    debug("\tCameras:    %lu", cameraUniformBufferOffset);
+    debug("\tMaterials:  %lu", materialUniformBufferOffset);
+    debug("\tLights:     %lu", sceneLightingUniformBufferOffset);
+
+    framebufferUniformBufferSize    = primitiveUniformBufferRange + cameraUniformBufferRange + materialUniformBufferRange + sceneLightingUniformBufferRange + lightUniformBufferRange * 3;
     framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;
+
+    debug("Framebuffer Uniform Buffer Size:     %lu", framebufferUniformBufferSize);
+    debug("Framebuffer Set Uniform Buffer Size: %lu", framebufferSetUniformBufferSize);
 }
 
 void createPipeline() {
