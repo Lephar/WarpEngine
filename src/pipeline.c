@@ -29,12 +29,12 @@ void createPipelineLayout() {
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
     pushConstantRanges   = malloc(pushConstantRangeCount   * sizeof(VkPushConstantRange));
 
-    descriptorSetLayouts[0] = lightingDescriptorPool.layout;
-    descriptorSetLayouts[1] = cameraDescriptorPool.layout;
-    descriptorSetLayouts[2] = primitiveDescriptorPool.layout;
+    descriptorSetLayouts[0] = storageDescriptorPool.layout;
+    descriptorSetLayouts[1] = primitiveDescriptorPool.layout;
+    descriptorSetLayouts[2] = cameraDescriptorPool.layout;
     descriptorSetLayouts[3] = materialDescriptorPool.layout;
     descriptorSetLayouts[4] = samplerDescriptorPool.layout;
-    descriptorSetLayouts[5] = storageDescriptorPool.layout;
+    descriptorSetLayouts[5] = lightingDescriptorPool.layout;
 
     pushConstantRanges[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     pushConstantRanges[0].offset = 0;
@@ -58,43 +58,43 @@ void setPipelineDetails() {
     const uint32_t minUniformBufferOffsetAlignment = physicalDeviceProperties.limits.minUniformBufferOffsetAlignment;
     const uint32_t maxUniformBufferRange = umin(physicalDeviceProperties.limits.maxUniformBufferRange, USHRT_MAX + 1);
 
-    cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
     primitiveUniformAlignment = align(sizeof(PrimitiveUniform), minUniformBufferOffsetAlignment);
+    cameraUniformAlignment    = align(sizeof(CameraUniform),    minUniformBufferOffsetAlignment);
     materialUniformAlignment  = align(sizeof(MaterialUniform),  minUniformBufferOffsetAlignment);
 
     debug("Uniform Alignments:");
-    debug("\tCamera:    %u", cameraUniformAlignment);
     debug("\tPrimitive: %u", primitiveUniformAlignment);
+    debug("\tCamera:    %u", cameraUniformAlignment);
     debug("\tMaterial:  %u", materialUniformAlignment);
+
+    primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
+    cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
+    materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
 
     lightingUniformBufferRange = ulmin(sizeof(LightingUniform), maxUniformBufferRange);
 
-    cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
-    primitiveUniformBufferRange = alignBack(maxUniformBufferRange, primitiveUniformAlignment);
-    materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
-
     debug("Uniform Buffer Ranges:");
-    debug("\tLighting:  %u", lightingUniformBufferRange);
-    debug("\tCamera:    %u", cameraUniformBufferRange);
     debug("\tPrimitive: %u", primitiveUniformBufferRange);
+    debug("\tCamera:    %u", cameraUniformBufferRange);
     debug("\tMaterial:  %u", materialUniformBufferRange);
+    debug("\tLighting:  %u", lightingUniformBufferRange);
 
-    pointLightCountLimit = umin(LIGHT_COUNT_HARD_LIMIT, lightingUniformBufferRange / sizeof(PointLightUniform));
-
-    cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
+    cameraCountLimit    = cameraUniformBufferRange    / cameraUniformAlignment;
     materialCountLimit  = materialUniformBufferRange  / materialUniformAlignment;
+
+    lightCountLimit = umin(LIGHT_COUNT_HARD_LIMIT, lightingUniformBufferRange / sizeof(PointLightUniform));
 
     nodeCountLimit = primitiveCountLimit;
 
     debug("Count Limits:");
-    debug("\tPoint Lights:");
-    debug("\t\tHard Limit: %u", LIGHT_COUNT_HARD_LIMIT);
-    debug("\t\tSoft Limit: %u", pointLightCountLimit);
-    debug("\tCameras:      %u", cameraCountLimit);
     debug("\tPrimitives:   %u", primitiveCountLimit);
+    debug("\tCameras:      %u", cameraCountLimit);
     debug("\tMaterials:    %u", materialCountLimit);
     debug("\tNodes:        %u", nodeCountLimit);
+    debug("\tPoint Lights:");
+    debug("\t\tHard Limit: %u", LIGHT_COUNT_HARD_LIMIT);
+    debug("\t\tSoft Limit: %u", lightCountLimit);
 
     framebufferUniformBufferSize    = lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange + materialUniformBufferRange;
     framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;
@@ -105,12 +105,12 @@ void createPipeline() {
 
     uint32_t framebufferCountLimit = framebufferSetCountLimit * framebufferSetFramebufferCountLimit;
 
-    createDescriptorPool(&lightingDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 4 /* Ambient, Point, Spot, Directional */);
-    createDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
+    createDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1,                     VK_SHADER_STAGE_VERTEX_BIT,   2 /* Index, Vertex */);
     createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT,   1);
+    createDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
     createDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 1);
     createDescriptorPool(&samplerDescriptorPool,   VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    VK_SHADER_STAGE_FRAGMENT_BIT, materialTextureCount);
-    createDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1,                     VK_SHADER_STAGE_VERTEX_BIT,   2 /* Index, Vertex */);
+    createDescriptorPool(&lightingDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 4 /* Ambient, Point, Spot, Directional */);
 
     createPipelineLayout();
 }

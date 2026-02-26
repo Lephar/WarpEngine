@@ -3,7 +3,7 @@
 #include "numerics.h"
 #include "logger.h"
 
-uint32_t pointLightCountLimit;
+uint32_t lightCountLimit;
 LightingUniform lightingUniform;
 
 void initializeLighting() {
@@ -26,7 +26,7 @@ uint32_t loadLight(cgltf_light *lightData) {
         return UINT32_MAX;
     }
 
-    if(lightingUniform.lightTypeCounts[0] >= pointLightCountLimit) {
+    if(lightingUniform.lightTypeCounts[0] >= lightCountLimit) {
         debug("\t\tLight count limit reached, skipping...");
         return UINT32_MAX;
     }

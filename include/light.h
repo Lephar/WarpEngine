@@ -19,7 +19,7 @@ typedef struct lightingUniform {
 
 PointLightUniform pointLightUniforms[LIGHT_COUNT_HARD_LIMIT];
 
-extern uint32_t pointLightCountLimit;
+extern uint32_t lightCountLimit;
 extern LightingUniform lightingUniform;
 
 void initializeLighting();
