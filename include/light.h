@@ -2,25 +2,24 @@
 
 #include "pch.h"
 
-#define LIGHT_COUNT_HARD_LIMIT 1U<<10U
-
-typedef struct pointLightUniform {
-    mat4 transform;
-    vec4 color; // R,G,B,Intensity
-    vec4 padding;
-} PointLightUniform, *PPointLightUniform;
-
-typedef struct lightingUniform {
+typedef struct sceneLightingUniform {
     vec4 ambientLight; // R,G,B,Intensity
     vec4 attenuationCoefficients; // Constant, Linear, Quadratic, Specular Falloff
     uint32_t lightTypeCounts[4]; // Point, Spot, Directional, Ambient. Only the first one is used for now, others are just padding
     uint32_t padding[4];
-} LightingUniform, *PLightingUniform;
+} SceneLightingUniform, *PSceneLightingUniform;
 
-PointLightUniform pointLightUniforms[LIGHT_COUNT_HARD_LIMIT];
+typedef struct lightUniform {
+    mat4 transform;
+    vec4 color; // R,G,B,Intensity
+    vec4 extra; // Different values depending on light type
+} LightUniform, *PLightUniform;
 
 extern uint32_t lightCountLimit;
-extern LightingUniform lightingUniform;
+extern SceneLightingUniform sceneLightingUniform;
+extern PLightUniform pointLightUniforms;
+extern PLightUniform spotLightUniforms;
+extern PLightUniform directionalLightUniforms;
 
 void initializeLighting();
 uint32_t loadLight(cgltf_light *lightData);

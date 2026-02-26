@@ -4,7 +4,10 @@
 #include "logger.h"
 
 uint32_t lightCountLimit;
-LightingUniform lightingUniform;
+SceneLightingUniform sceneLightingUniform;
+PLightUniform pointLightUniforms;
+PLightUniform spotLightUniforms;
+PLightUniform directionalLightUniforms;
 
 void initializeLighting() {
     sceneLightingUniform.lightTypeCounts[0] = 0;
@@ -31,15 +34,15 @@ uint32_t loadLight(cgltf_light *lightData) {
         return UINT32_MAX;
     }
 
-    if(lightingUniform.lightTypeCounts[0] >= lightCountLimit) {
+    if(sceneLightingUniform.lightTypeCounts[0] >= lightCountLimit) {
         debug("\t\tLight count limit reached, skipping...");
         return UINT32_MAX;
     }
 
-    const uint32_t lightIndex = lightingUniform.lightTypeCounts[0];
-    lightingUniform.lightTypeCounts[0]++;
+    const uint32_t lightIndex = sceneLightingUniform.lightTypeCounts[0];
+    sceneLightingUniform.lightTypeCounts[0]++;
 
-    PPointLightUniform light = &lightingUniform.pointLightUniforms[lightIndex];
+    PLightUniform light = &pointLightUniforms[lightIndex];
 
     glmc_vec3_copy(lightData->color, light->color);
     light->color[3] = compareFloat(lightData->intensity, 0.0f) > 0 ? lightData->intensity : 1.0f;
