@@ -18,25 +18,25 @@ layout(push_constant) uniform VertexOffset {
     int vertexOffset;
 };
 
-layout(set = 1, binding = 0) uniform Camera {
+layout(set = 0, binding = 0) readonly buffer Indices {
+    Index indices[];
+};
+
+layout(set = 0, binding = 1) readonly buffer Vertices {
+    Vertex vertices[];
+};
+
+layout(set = 1, binding = 0) uniform Primitive {
+    mat4 model;
+    mat4 normal;
+};
+
+layout(set = 2, binding = 0) uniform Camera {
     mat4 transform;
     mat4 view;
     mat4 projection;
     mat4 projectionView;
     vec4 cameraProperties;
-};
-
-layout(set = 2, binding = 0) uniform Primitive {
-    mat4 model;
-    mat4 normal;
-};
-
-layout(set = 5, binding = 0) readonly buffer Indices {
-    Index indices[];
-};
-
-layout(set = 5, binding = 1) readonly buffer Vertices {
-    Vertex vertices[];
 };
 
 layout(location = 0) out vec3 outputPosition;

@@ -1,8 +1,17 @@
 #version 460 core
 
+#if DEBUG
+#extension GL_EXT_debug_printf            : enable
+#endif
 #extension GL_ARB_separate_shader_objects : enable
 
-#define POINT_LIGHT_COUNT_LIMIT 1024
+#define LIGHT_COUNT_HARD_LIMIT 1024
+
+struct Light {
+    mat4 lightTransform;
+    vec4 lightColor;
+    vec4 lightExtra;
+};
 
 layout(location = 0) in vec3 inputPosition;
 layout(location = 1) in vec4 inputTangent;
@@ -10,21 +19,7 @@ layout(location = 2) in vec3 inputNormal;
 layout(location = 3) in vec2 inputTexcoord0;
 layout(location = 4) in vec2 inputTexcoord1;
 
-struct PointLight {
-    mat4 lightTransform;
-    vec4 lightColor;
-    vec4 lightPadding;
-};
-
-layout(set = 0, binding = 0) uniform Lighting {
-    vec4 ambientLight;
-    vec4 attenuationCoefficients;
-    uvec4 lightTypeCounts;
-    uvec4 lightingPadding;
-    PointLight pointLights[POINT_LIGHT_COUNT_LIMIT];
-};
-
-layout(set = 1, binding = 0) uniform Camera {
+layout(set = 2, binding = 0) uniform Camera {
     mat4 transform;
     mat4 view;
     mat4 projection;
@@ -43,6 +38,25 @@ layout(set = 4, binding = 1) uniform sampler2D metallicRoughnessSampler;
 layout(set = 4, binding = 2) uniform sampler2D emissiveSampler;
 layout(set = 4, binding = 3) uniform sampler2D occlusionSampler;
 layout(set = 4, binding = 4) uniform sampler2D normalSampler;
+
+layout(set = 5, binding = 0) uniform SceneLighting {
+    vec4 ambientLight;
+    vec4 attenuationCoefficients;
+    uvec4 lightTypeCounts;
+    uvec4 lightingPadding;
+};
+
+layout(set = 5, binding = 1) uniform PointLights {
+    Light pointLights[LIGHT_COUNT_HARD_LIMIT];
+};
+
+layout(set = 5, binding = 2) uniform SpotLights {
+    Light spotLights[LIGHT_COUNT_HARD_LIMIT];
+};
+
+layout(set = 5, binding = 3) uniform DirectionalLights {
+    Light directionalLights[LIGHT_COUNT_HARD_LIMIT];
+};
 
 layout(location = 0) out vec4 outputColor;
 
@@ -92,8 +106,10 @@ void main() {
     vec3 viewVector    = viewPosition.xyz - inputPosition;
     vec3 viewDirection = normalize(viewVector);
 
-    for(int pointLightIndex = 0; pointLightIndex < lightTypeCounts[0]; pointLightIndex++) {
-        PointLight pointLight = pointLights[pointLightIndex];
+    uint pointLightCount = lightTypeCounts[0];
+
+    for(int pointLightIndex = 0; pointLightIndex < pointLightCount; pointLightIndex++) {
+        Light pointLight = pointLights[pointLightIndex];
 
         vec3  lightColor     = pointLight.lightColor.rgb;
         vec4  lightPosition  = pointLight.lightTransform * vec4(0.0f, 0.0f, 0.0f, 1.0f);

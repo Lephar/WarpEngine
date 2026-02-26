@@ -15,12 +15,12 @@ typedef struct descriptorPool {
 
 extern VkSampler sampler;
 
-extern DescriptorPool lightingDescriptorPool;
-extern DescriptorPool cameraDescriptorPool;
+extern DescriptorPool storageDescriptorPool;
 extern DescriptorPool primitiveDescriptorPool;
+extern DescriptorPool cameraDescriptorPool;
 extern DescriptorPool materialDescriptorPool;
 extern DescriptorPool samplerDescriptorPool;
-extern DescriptorPool storageDescriptorPool;
+extern DescriptorPool lightingDescriptorPool;
 
 extern VkDescriptorSet storageDescriptorSet;
 
@@ -28,12 +28,12 @@ void createSampler();
 
 void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t descriptorCount, VkShaderStageFlags stage, uint32_t bindingCount);
 
-VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
-VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offsets[], VkDeviceSize ranges[]);
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 VkDescriptorSet getSamplerDescriptorSet(Material *material);
-VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offsets[], VkDeviceSize ranges[]);
+VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 
 void resetDescriptorPool(DescriptorPool *descriptorPool);
 void destroyDescriptorPool(DescriptorPool *descriptorPool);

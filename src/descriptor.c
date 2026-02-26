@@ -11,12 +11,12 @@
 
 VkSampler sampler;
 
-DescriptorPool lightingDescriptorPool;
-DescriptorPool cameraDescriptorPool;
+DescriptorPool storageDescriptorPool;
 DescriptorPool primitiveDescriptorPool;
+DescriptorPool cameraDescriptorPool;
 DescriptorPool materialDescriptorPool;
 DescriptorPool samplerDescriptorPool;
-DescriptorPool storageDescriptorPool;
+DescriptorPool lightingDescriptorPool;
 
 VkDescriptorSet storageDescriptorSet;
 
@@ -217,29 +217,26 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, Materia
     return descriptorSet;
 }
 
-VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
-    VkDeviceSize range  = lightingUniformBufferRange;
-
-    return createBufferDescriptorSet(&lightingDescriptorPool, sharedBuffer.buffer, &offset, &range);
-}
-
-VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange;
-    VkDeviceSize range  = cameraUniformBufferRange;
-
-    return createBufferDescriptorSet(&cameraDescriptorPool, sharedBuffer.buffer, &offset, &range);
+VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offsets[], VkDeviceSize ranges[]) {
+    return createBufferDescriptorSet(&storageDescriptorPool, deviceBuffer.buffer, offsets, ranges);
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange;
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + primitiveUniformBufferOffset;
     VkDeviceSize range  = primitiveUniformBufferRange;
 
     return createBufferDescriptorSet(&primitiveDescriptorPool, sharedBuffer.buffer, &offset, &range);
 }
 
+VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + cameraUniformBufferOffset;
+    VkDeviceSize range  = cameraUniformBufferRange;
+
+    return createBufferDescriptorSet(&cameraDescriptorPool, sharedBuffer.buffer, &offset, &range);
+}
+
 VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + lightingUniformBufferRange + cameraUniformBufferRange + primitiveUniformBufferRange;
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + materialUniformBufferOffset;
     VkDeviceSize range  = materialUniformBufferRange;
 
     return createBufferDescriptorSet(&materialDescriptorPool,  sharedBuffer.buffer, &offset, &range);
@@ -249,8 +246,24 @@ VkDescriptorSet getSamplerDescriptorSet(Material *material) {
     return createImageDescriptorSet(&samplerDescriptorPool, material);
 }
 
-VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offsets[], VkDeviceSize ranges[]) {
-    return createBufferDescriptorSet(&storageDescriptorPool, deviceBuffer.buffer, offsets, ranges);
+VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
+    VkDeviceSize offset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize + sceneLightingUniformBufferOffset;
+
+    VkDeviceSize offsets[] = {
+        offset,
+        offset + sceneLightingUniformBufferRange + lightUniformBufferRange * 0,
+        offset + sceneLightingUniformBufferRange + lightUniformBufferRange * 1,
+        offset + sceneLightingUniformBufferRange + lightUniformBufferRange * 2,
+    };
+
+    VkDeviceSize ranges[] = {
+        sceneLightingUniformBufferRange,
+        lightUniformBufferRange,
+        lightUniformBufferRange,
+        lightUniformBufferRange,
+    };
+
+    return createBufferDescriptorSet(&lightingDescriptorPool, sharedBuffer.buffer, offsets, ranges);
 }
 
 void resetDescriptorPool(DescriptorPool *descriptorPool) {
