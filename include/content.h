@@ -17,14 +17,20 @@ extern uint32_t vertexCount;
 extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 
-extern VkDeviceSize cameraUniformAlignment;
 extern VkDeviceSize primitiveUniformAlignment;
+extern VkDeviceSize cameraUniformAlignment;
 extern VkDeviceSize materialUniformAlignment;
 
-extern VkDeviceSize lightingUniformBufferRange;
-extern VkDeviceSize cameraUniformBufferRange;
 extern VkDeviceSize primitiveUniformBufferRange;
+extern VkDeviceSize cameraUniformBufferRange;
 extern VkDeviceSize materialUniformBufferRange;
+extern VkDeviceSize sceneLightingUniformBufferRange;
+extern VkDeviceSize lightUniformBufferRange;
+
+extern VkDeviceSize primitiveUniformBufferOffset;
+extern VkDeviceSize cameraUniformBufferOffset;
+extern VkDeviceSize materialUniformBufferOffset;
+extern VkDeviceSize sceneLightingUniformBufferOffset;
 
 extern VkDeviceSize framebufferUniformBufferSize;
 extern VkDeviceSize framebufferSetUniformBufferSize;

@@ -173,7 +173,7 @@ void updateNodeUniforms(PNode node, mat4 transform) {
     glmc_mul(transform, nodeTransform, nodeTransform);
 
     if(node->lightIndex != UINT32_MAX) {
-        PPointLightUniform lightUniform = &lightingUniform.pointLightUniforms[node->lightIndex];
+        PLightUniform lightUniform = &pointLightUniforms[node->lightIndex];
 
         glmc_mat4_copy(nodeTransform, lightUniform->transform);
     }
