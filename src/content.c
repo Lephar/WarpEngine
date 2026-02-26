@@ -59,11 +59,6 @@ void createContentBuffers() {
     nodeCount  = 0;
     sceneCount = 0;
 
-    lightingUniform.lightTypeCounts[0] = 0;
-    lightingUniform.lightTypeCounts[1] = 0;
-    lightingUniform.lightTypeCounts[2] = 0;
-    lightingUniform.lightTypeCounts[3] = 0;
-
     cameraCount    = 0;
     materialCount  = 0;
     primitiveCount = 0;
@@ -78,7 +73,7 @@ void loadContent() {
     debug("Coordinate system set");
 
     initializeLighting();
-    debug("Ambient lighting set");
+    debug("Scene lighting set");
 
     loadAsset("assets/skybox", "Skybox.gltf");
     loadAsset("assets/main_sponza", "NewSponza_Main_glTF_003.gltf");

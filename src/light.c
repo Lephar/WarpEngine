@@ -7,15 +7,20 @@ uint32_t lightCountLimit;
 LightingUniform lightingUniform;
 
 void initializeLighting() {
-    lightingUniform.ambientLight[0] = 1.0f;
-    lightingUniform.ambientLight[1] = 0.8f;
-    lightingUniform.ambientLight[2] = 0.6f;
-    lightingUniform.ambientLight[3] = 0.03125f;
+    sceneLightingUniform.lightTypeCounts[0] = 0;
+    sceneLightingUniform.lightTypeCounts[1] = 0;
+    sceneLightingUniform.lightTypeCounts[2] = 0;
+    sceneLightingUniform.lightTypeCounts[3] = 0;
 
-    lightingUniform.attenuationCoefficients[0] = 1.0f;
-    lightingUniform.attenuationCoefficients[1] = 0.7f;
-    lightingUniform.attenuationCoefficients[2] = 1.8f;
-    lightingUniform.attenuationCoefficients[3] = 32.0f;
+    sceneLightingUniform.ambientLight[0] = 1.0f;
+    sceneLightingUniform.ambientLight[1] = 0.8f;
+    sceneLightingUniform.ambientLight[2] = 0.6f;
+    sceneLightingUniform.ambientLight[3] = 0.03125f;
+
+    sceneLightingUniform.attenuationCoefficients[0] = 1.0f;
+    sceneLightingUniform.attenuationCoefficients[1] = 0.7f;
+    sceneLightingUniform.attenuationCoefficients[2] = 1.8f;
+    sceneLightingUniform.attenuationCoefficients[3] = 32.0f;
 }
 
 uint32_t loadLight(cgltf_light *lightData) {
