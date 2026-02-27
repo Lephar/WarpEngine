@@ -9,15 +9,25 @@
 
 #include "logger.h"
 
-VkSampler sampler;
-
-DescriptorPool storageDescriptorPool;
+DescriptorPool   storageDescriptorPool;
 DescriptorPool primitiveDescriptorPool;
-DescriptorPool cameraDescriptorPool;
-DescriptorPool materialDescriptorPool;
-DescriptorPool samplerDescriptorPool;
-DescriptorPool lightingDescriptorPool;
+DescriptorPool    cameraDescriptorPool;
+DescriptorPool  lightingDescriptorPool;
+DescriptorPool  materialDescriptorPool;
+DescriptorPool   samplerDescriptorPool;
 
+const PDescriptorPool descriptorPoolReferences[] = {
+      &storageDescriptorPool,
+    &primitiveDescriptorPool,
+       &cameraDescriptorPool,
+     &lightingDescriptorPool,
+     &materialDescriptorPool,
+      &samplerDescriptorPool,
+};
+
+const uint32_t descriptorPoolCount = sizeof(descriptorPoolReferences) / sizeof(*descriptorPoolReferences);
+
+VkSampler sampler;
 VkDescriptorSet storageDescriptorSet;
 
 // TODO: Load sampler from asset file

@@ -4,24 +4,36 @@
 
 typedef struct material Material;
 
+typedef struct descriptorBinding {
+    uint32_t bindingIndex;
+    union {
+        VkDescriptorBufferInfo bufferInfo;
+        VkDescriptorImageInfo imageInfo;
+    };
+} DescriptorBinding, *PDescriptorBinding;
+
 typedef struct descriptorPool {
     VkDescriptorType type;
-    uint32_t descriptorCount;
     VkShaderStageFlags stage;
+    uint32_t setIndex;
+    uint32_t setCount;
     uint32_t bindingCount;
+    PDescriptorBinding bindings;
     VkDescriptorSetLayout layout;
     VkDescriptorPool pool;
 } DescriptorPool, *PDescriptorPool;
 
-extern VkSampler sampler;
-
-extern DescriptorPool storageDescriptorPool;
+extern DescriptorPool   storageDescriptorPool;
 extern DescriptorPool primitiveDescriptorPool;
-extern DescriptorPool cameraDescriptorPool;
-extern DescriptorPool materialDescriptorPool;
-extern DescriptorPool samplerDescriptorPool;
-extern DescriptorPool lightingDescriptorPool;
+extern DescriptorPool    cameraDescriptorPool;
+extern DescriptorPool  lightingDescriptorPool;
+extern DescriptorPool  materialDescriptorPool;
+extern DescriptorPool   samplerDescriptorPool;
 
+extern const PDescriptorPool descriptorPoolReferences[];
+extern const uint32_t        descriptorPoolCount;
+
+extern VkSampler sampler;
 extern VkDescriptorSet storageDescriptorSet;
 
 void createSampler();
