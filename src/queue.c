@@ -13,15 +13,15 @@ Queue graphicsQueue;
 Queue  computeQueue;
 Queue transferQueue;
 
-uint32_t queueCount;
-Queue *queueReferences[] = {
+const PQueue queueReferences[] = {
     &graphicsQueue,
     & computeQueue,
     &transferQueue
 };
 
+const uint32_t queueCount = sizeof(queueReferences) / sizeof(*queueReferences);
+
 void generateQueueDetails() {
-    queueCount = sizeof(queueReferences) / sizeof(Queue *);
     debug("Queue count: %d",  queueCount);
 
     graphicsQueue.requiredFlags = VK_QUEUE_GRAPHICS_BIT;

@@ -18,8 +18,8 @@ extern Queue graphicsQueue;
 extern Queue  computeQueue;
 extern Queue transferQueue;
 
-extern uint32_t queueCount;
-extern Queue *queueReferences[];
+extern const PQueue   queueReferences[];
+extern const uint32_t queueCount;
 
 void generateQueueDetails();
 void getQueues();
