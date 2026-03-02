@@ -6,6 +6,7 @@
 #include "image.h"
 #include "material.h"
 #include "content.h"
+#include "framebuffer.h"
 
 #include "logger.h"
 
@@ -57,13 +58,15 @@ void createSampler() {
     debug("Texture sampler created");
 }
 
-void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t descriptorCount, VkShaderStageFlags stage, uint32_t bindingCount) {
+void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, VkShaderStageFlags stage, uint32_t setCount, uint32_t bindingCount) {
     debug("Descriptor pool:");
 
     descriptorPool->type            = type;
-    descriptorPool->descriptorCount = descriptorCount;
     descriptorPool->stage           = stage;
+    descriptorPool->setIndex        = UINT32_MAX;
+    descriptorPool->setCount        = setCount;
     descriptorPool->bindingCount    = bindingCount;
+    descriptorPool->bindings        = nullptr;
 
     VkDescriptorSetLayoutBinding *layoutBindings = malloc(bindingCount * sizeof(VkDescriptorSetLayoutBinding));
 
@@ -92,20 +95,35 @@ void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type,
 
     VkDescriptorPoolSize poolSize = {
         .type = type,
-        .descriptorCount = descriptorCount * bindingCount,
+        .descriptorCount = setCount * bindingCount,
     };
 
     VkDescriptorPoolCreateInfo poolInfo = {
         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .pNext = nullptr,
         .flags = 0,
-        .maxSets = descriptorCount,
+        .maxSets = setCount,
         .poolSizeCount = 1,
         .pPoolSizes = &poolSize,
     };
 
     vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool->pool);
-    debug("\tDescriptor pool created with %u sets and %u bindings", descriptorPool->descriptorCount, descriptorPool->bindingCount);
+    debug("\tDescriptor pool created with %u sets and %u bindings", descriptorPool->setCount, descriptorPool->bindingCount);
+}
+
+void createDescriptorPools() {
+    const uint32_t framebufferCountLimit = framebufferSetCountLimit * framebufferSetFramebufferCountLimit;
+
+    createDescriptorPool(&  storageDescriptorPool, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         VK_SHADER_STAGE_VERTEX_BIT,                                1,                     2 /* Index, Vertex */);
+    createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT,                                framebufferCountLimit, 1);
+    createDescriptorPool(&   cameraDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, framebufferCountLimit, 1);
+    createDescriptorPool(& lightingDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 4 /* Ambient, Point, Spot, Directional */);
+    createDescriptorPool(& materialDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 1);
+    createDescriptorPool(&  samplerDescriptorPool, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT,                              materialCountLimit,    materialTextureCount);
+
+    for(uint32_t descriptorPoolIndex = 0; descriptorPoolIndex < descriptorPoolCount; descriptorPoolIndex++) {
+        descriptorPoolReferences[descriptorPoolIndex]->setIndex = descriptorPoolIndex;
+    }
 }
 
 // TODO: Count the allocated sets

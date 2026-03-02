@@ -38,7 +38,8 @@ extern VkDescriptorSet storageDescriptorSet;
 
 void createSampler();
 
-void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, uint32_t descriptorCount, VkShaderStageFlags stage, uint32_t bindingCount);
+void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, VkShaderStageFlags stage, uint32_t setCount, uint32_t bindingCount);
+void createDescriptorPools();
 
 VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offsets[], VkDeviceSize ranges[]);
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
