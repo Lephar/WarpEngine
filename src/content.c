@@ -18,6 +18,9 @@
 uint32_t indexCount;
 uint32_t vertexCount;
 
+VkDeviceSize indexBufferSize;
+VkDeviceSize vertexBufferSize;
+
 Index  *indexBuffer;
 Vertex *vertexBuffer;
 
@@ -99,8 +102,8 @@ void loadContent() {
 
     const VkDeviceSize storageBufferAlignment = physicalDeviceProperties.limits.minStorageBufferOffsetAlignment;
 
-    const VkDeviceSize indexBufferSize  = align(indexCount  * sizeof(Index),  storageBufferAlignment);
-    const VkDeviceSize vertexBufferSize = align(vertexCount * sizeof(Vertex), storageBufferAlignment);
+    indexBufferSize  = align(indexCount  * sizeof(Index),  storageBufferAlignment);
+    vertexBufferSize = align(vertexCount * sizeof(Vertex), storageBufferAlignment);
 
     stagingBufferCopy(indexBuffer,  0, 0,               indexBufferSize);
     stagingBufferCopy(vertexBuffer, 0, indexBufferSize, vertexBufferSize);

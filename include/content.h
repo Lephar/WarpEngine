@@ -14,6 +14,9 @@ typedef struct vertex {
 extern uint32_t indexCount;
 extern uint32_t vertexCount;
 
+extern VkDeviceSize indexBufferSize;
+extern VkDeviceSize vertexBufferSize;
+
 extern Index  *indexBuffer;
 extern Vertex *vertexBuffer;
 
