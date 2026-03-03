@@ -27,13 +27,12 @@ extern VkDeviceSize materialUniformAlignment;
 extern VkDeviceSize primitiveUniformBufferRange;
 extern VkDeviceSize cameraUniformBufferRange;
 extern VkDeviceSize materialUniformBufferRange;
-extern VkDeviceSize sceneLightingUniformBufferRange;
 extern VkDeviceSize lightUniformBufferRange;
 
 extern VkDeviceSize primitiveUniformBufferOffset;
 extern VkDeviceSize cameraUniformBufferOffset;
 extern VkDeviceSize materialUniformBufferOffset;
-extern VkDeviceSize sceneLightingUniformBufferOffset;
+extern VkDeviceSize lightUniformBufferOffset;
 
 extern VkDeviceSize framebufferUniformBufferSize;
 extern VkDeviceSize framebufferSetUniformBufferSize;

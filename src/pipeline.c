@@ -71,14 +71,12 @@ void setPipelineDetails() {
     cameraUniformBufferRange    = alignBack(maxUniformBufferRange, cameraUniformAlignment);
     materialUniformBufferRange  = alignBack(maxUniformBufferRange, materialUniformAlignment);
 
-    sceneLightingUniformBufferRange = align(sizeof(SceneLightingUniform), minUniformBufferOffsetAlignment);
     lightUniformBufferRange = maxUniformBufferRange;
 
     debug("Uniform Buffer Ranges:");
     debug("\tPrimitive: %lu", primitiveUniformBufferRange);
     debug("\tCamera:    %lu", cameraUniformBufferRange);
     debug("\tMaterial:  %lu", materialUniformBufferRange);
-    debug("\tScene:     %lu", sceneLightingUniformBufferRange);
     debug("\tLight:     %lu", lightUniformBufferRange);
 
     primitiveCountLimit = primitiveUniformBufferRange / primitiveUniformAlignment;
@@ -96,19 +94,22 @@ void setPipelineDetails() {
     debug("\tLights:     %u", lightCountLimit);
     debug("\tNodes:      %u", nodeCountLimit);
 
-    primitiveUniformBufferOffset     = 0;
-    cameraUniformBufferOffset        = primitiveUniformBufferRange;
-    sceneLightingUniformBufferOffset = cameraUniformBufferOffset   + cameraUniformBufferRange;
-    materialUniformBufferOffset      = sceneLightingUniformBufferOffset + sceneLightingUniformBufferRange + lightUniformBufferRange * 3;
+    primitiveUniformBufferOffset = 0;
+    cameraUniformBufferOffset    = primitiveUniformBufferOffset + primitiveUniformBufferRange;
+    lightUniformBufferOffset     = cameraUniformBufferOffset    + cameraUniformBufferRange;
+    materialUniformBufferOffset  = lightUniformBufferOffset     + lightUniformBufferRange * lightTypeCount;
 
     debug("Uniform Buffer Offsets:");
     debug("\tPrimitives: %lu", primitiveUniformBufferOffset);
     debug("\tCameras:    %lu", cameraUniformBufferOffset);
     debug("\tMaterials:  %lu", materialUniformBufferOffset);
-    debug("\tLights:     %lu", sceneLightingUniformBufferOffset);
+    debug("\tLights:     %lu", lightUniformBufferOffset);
 
-    framebufferUniformBufferSize    = primitiveUniformBufferRange + cameraUniformBufferRange + materialUniformBufferRange + sceneLightingUniformBufferRange + lightUniformBufferRange * 3;
-    framebufferSetUniformBufferSize = framebufferSetFramebufferCountLimit * framebufferUniformBufferSize;
+    framebufferUniformBufferRange    = primitiveUniformBufferRange + cameraUniformBufferRange + materialUniformBufferRange + lightUniformBufferRange * lightTypeCount;
+    framebufferSetUniformBufferRange = framebufferSetFramebufferCountLimit * framebufferUniformBufferRange;
+
+    debug("Framebuffer Uniform Buffer Range:     %lu", framebufferUniformBufferRange);
+    debug("Framebuffer Set Uniform Buffer Range: %lu", framebufferSetUniformBufferRange);
 
     debug("Framebuffer Uniform Buffer Size:     %lu", framebufferUniformBufferSize);
     debug("Framebuffer Set Uniform Buffer Size: %lu", framebufferSetUniformBufferSize);

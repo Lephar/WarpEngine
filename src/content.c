@@ -31,13 +31,12 @@ VkDeviceSize materialUniformAlignment;
 VkDeviceSize primitiveUniformBufferRange;
 VkDeviceSize cameraUniformBufferRange;
 VkDeviceSize materialUniformBufferRange;
-VkDeviceSize sceneLightingUniformBufferRange;
 VkDeviceSize lightUniformBufferRange;
 
 VkDeviceSize primitiveUniformBufferOffset;
 VkDeviceSize cameraUniformBufferOffset;
 VkDeviceSize materialUniformBufferOffset;
-VkDeviceSize sceneLightingUniformBufferOffset;
+VkDeviceSize lightUniformBufferOffset;
 
 VkDeviceSize framebufferUniformBufferSize;
 VkDeviceSize framebufferSetUniformBufferSize;
