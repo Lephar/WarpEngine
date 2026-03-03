@@ -14,6 +14,7 @@
 
 const uint32_t framebufferSetCountLimit = 3;
 const uint32_t framebufferSetFramebufferCountLimit = 3;
+const uint32_t framebufferCountLimit = framebufferSetCountLimit * framebufferSetFramebufferCountLimit;
 
 uint32_t framebufferSetCount;
 PFramebufferSet framebufferSets;

@@ -40,6 +40,7 @@ typedef struct framebufferSet {
 
 extern const uint32_t framebufferSetCountLimit;
 extern const uint32_t framebufferSetFramebufferCountLimit;
+extern const uint32_t framebufferCountLimit;
 
 extern uint32_t framebufferSetCount;
 extern PFramebufferSet framebufferSets;
