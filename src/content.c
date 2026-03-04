@@ -65,10 +65,10 @@ void createContentBuffers() {
     directionalLightUniforms = malloc(lightCountLimit * sizeof(LightUniform));
     ambientLightUniforms     = malloc(lightCountLimit * sizeof(LightUniform));
 
-    lightTypeReferences[0] = pointLightUniforms;
-    lightTypeReferences[1] = spotLightUniforms;
-    lightTypeReferences[2] = directionalLightUniforms;
-    lightTypeReferences[3] = ambientLightUniforms;
+    lightTypeReferences[pointLightTypeIndex]       = pointLightUniforms;
+    lightTypeReferences[spotLightTypeIndex]        = spotLightUniforms;
+    lightTypeReferences[directionalLightTypeIndex] = directionalLightUniforms;
+    lightTypeReferences[ambientLightTypeIndex]     = ambientLightUniforms;
 
     sceneLight = ambientLightUniforms;
 

@@ -5,7 +5,7 @@
 typedef struct lightUniform {
     mat4  transform;
     vec4  color; // R,G,B,Intensity
-    vec4  extra; // Different integer values depending on light type
+    vec4  extra; // Different float   values depending on light type
     vec4  fVals; // Different float   values depending on light type
     ivec4 iVals; // Different integer values depending on light type
 } LightUniform, *PLightUniform;

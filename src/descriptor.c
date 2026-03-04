@@ -264,7 +264,7 @@ VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t 
         VkDescriptorBufferInfo *bufferInfo = &bufferInfos[lightTypeIndex];
 
         bufferInfo->buffer = sharedBuffer.buffer;
-        bufferInfo->offset = framebufferUniformBufferOffset + lightUniformBufferRange * lightTypeIndex;
+        bufferInfo->offset = framebufferUniformBufferOffset + lightUniformBufferOffset + lightUniformBufferRange * lightTypeIndex;
         bufferInfo->range  = lightUniformBufferRange;
     }
 
