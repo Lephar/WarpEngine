@@ -152,25 +152,23 @@ void prepareUniforms() {
 }
 
 void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
-    VkDeviceSize uniformBufferOffset = framebufferSetIndex * framebufferSetUniformBufferSize + framebufferIndex * framebufferUniformBufferSize;
+    VkDeviceSize framebufferUniformBufferOffset = framebufferUniformBufferOffsets[framebufferSetIndex][framebufferIndex];
 
     for(uint32_t primitiveIndex = 0; primitiveIndex < primitiveCount; primitiveIndex++) {
-        memcpy(mappedSharedMemory + uniformBufferOffset + primitiveUniformBufferOffset + primitives[primitiveIndex].uniformOffset, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
+        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + primitiveUniformBufferOffset + primitives[primitiveIndex].uniformOffset, &primitiveUniforms[primitiveIndex], sizeof(PrimitiveUniform));
     }
 
     for(uint32_t cameraIndex = 0; cameraIndex < cameraCount; cameraIndex++) {
-        memcpy(mappedSharedMemory + uniformBufferOffset + cameraUniformBufferOffset    + cameras[cameraIndex].uniformOffset,       &cameraUniforms[cameraIndex],       sizeof(CameraUniform));
+        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + cameraUniformBufferOffset    + cameras[cameraIndex].uniformOffset,       &cameraUniforms[cameraIndex],       sizeof(CameraUniform));
     }
 
     for(uint32_t materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-        memcpy(mappedSharedMemory + uniformBufferOffset + materialUniformBufferOffset  + materials[materialIndex].factorOffset,    &materialUniforms[materialIndex],   sizeof(MaterialUniform));
+        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + materialUniformBufferOffset  + materials[materialIndex].factorOffset,    &materialUniforms[materialIndex],   sizeof(MaterialUniform));
     }
 
-    memcpy(mappedSharedMemory + uniformBufferOffset + sceneLightingUniformBufferOffset, &sceneLightingUniform, sizeof(SceneLightingUniform));
-
-    memcpy(mappedSharedMemory + uniformBufferOffset + sceneLightingUniformBufferOffset + sceneLightingUniformBufferRange + lightUniformBufferRange * 0, pointLightUniforms,       sceneLightingUniform.lightTypeCounts[0] * sizeof(LightUniform));
-    memcpy(mappedSharedMemory + uniformBufferOffset + sceneLightingUniformBufferOffset + sceneLightingUniformBufferRange + lightUniformBufferRange * 1, spotLightUniforms,        sceneLightingUniform.lightTypeCounts[1] * sizeof(LightUniform));
-    memcpy(mappedSharedMemory + uniformBufferOffset + sceneLightingUniformBufferOffset + sceneLightingUniformBufferRange + lightUniformBufferRange * 2, directionalLightUniforms, sceneLightingUniform.lightTypeCounts[2] * sizeof(LightUniform));
+    for(uint32_t lightTypeIndex = 0; lightTypeIndex < lightTypeCount; lightTypeIndex++) {
+        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + lightUniformBufferOffset + lightUniformBufferRange * lightTypeIndex, lightTypeReferences[lightTypeIndex], sceneLight->iVals[lightTypeIndex] * sizeof(LightUniform));
+    }
 }
 
 void freeContent() {
