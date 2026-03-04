@@ -63,6 +63,14 @@ void createContentBuffers() {
     pointLightUniforms       = malloc(lightCountLimit * sizeof(LightUniform));
     spotLightUniforms        = malloc(lightCountLimit * sizeof(LightUniform));
     directionalLightUniforms = malloc(lightCountLimit * sizeof(LightUniform));
+    ambientLightUniforms     = malloc(lightCountLimit * sizeof(LightUniform));
+
+    lightTypeReferences[0] = pointLightUniforms;
+    lightTypeReferences[1] = spotLightUniforms;
+    lightTypeReferences[2] = directionalLightUniforms;
+    lightTypeReferences[3] = ambientLightUniforms;
+
+    sceneLight = ambientLightUniforms;
 
     controlSets = malloc(nodeCountLimit * sizeof(ControlSet));
 
@@ -85,7 +93,7 @@ void loadContent() {
     initializeCoordinateSystem();
     debug("Coordinate system set");
 
-    initializeLighting();
+    initializeLights();
     debug("Scene lighting set");
 
     loadAsset("assets/skybox", "Skybox.gltf");

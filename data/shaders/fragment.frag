@@ -5,12 +5,14 @@
 #endif
 #extension GL_ARB_separate_shader_objects : enable
 
-#define LIGHT_COUNT_HARD_LIMIT 1024
+#define LIGHT_COUNT_HARD_LIMIT 512
 
 struct Light {
-    mat4 lightTransform;
-    vec4 lightColor;
-    vec4 lightExtra;
+    mat4  lightTransform;
+    vec4  lightColor;
+    vec4  lightExtra;
+    vec4  lightFloatValues;
+    ivec4 lightIntegerValues;
 };
 
 layout(location = 0) in vec3 inputPosition;
@@ -27,36 +29,33 @@ layout(set = 2, binding = 0) uniform Camera {
     vec4 cameraProperties;
 };
 
-layout(set = 3, binding = 0) uniform Material {
+layout(set = 3, binding = 0) uniform PointLights {
+    Light pointLights[LIGHT_COUNT_HARD_LIMIT];
+};
+
+layout(set = 3, binding = 1) uniform SpotLights {
+    Light spotLights[LIGHT_COUNT_HARD_LIMIT];
+};
+
+layout(set = 3, binding = 2) uniform DirectionalLights {
+    Light directionalLights[LIGHT_COUNT_HARD_LIMIT];
+};
+
+layout(set = 3, binding = 3) uniform AmbientLights {
+    Light ambientLights[LIGHT_COUNT_HARD_LIMIT];
+};
+
+layout(set = 4, binding = 0) uniform Material {
     vec4 baseColorFactor;
     vec4 occlusionMetallicRoughnessNormalFactor;
     vec3 emissiveFactor;
 };
 
-layout(set = 4, binding = 0) uniform sampler2D baseColorSampler;
-layout(set = 4, binding = 1) uniform sampler2D metallicRoughnessSampler;
-layout(set = 4, binding = 2) uniform sampler2D emissiveSampler;
-layout(set = 4, binding = 3) uniform sampler2D occlusionSampler;
-layout(set = 4, binding = 4) uniform sampler2D normalSampler;
-
-layout(set = 5, binding = 0) uniform SceneLighting {
-    vec4 ambientLight;
-    vec4 attenuationCoefficients;
-    uvec4 lightTypeCounts;
-    uvec4 lightingPadding;
-};
-
-layout(set = 5, binding = 1) uniform PointLights {
-    Light pointLights[LIGHT_COUNT_HARD_LIMIT];
-};
-
-layout(set = 5, binding = 2) uniform SpotLights {
-    Light spotLights[LIGHT_COUNT_HARD_LIMIT];
-};
-
-layout(set = 5, binding = 3) uniform DirectionalLights {
-    Light directionalLights[LIGHT_COUNT_HARD_LIMIT];
-};
+layout(set = 5, binding = 0) uniform sampler2D baseColorSampler;
+layout(set = 5, binding = 1) uniform sampler2D metallicRoughnessSampler;
+layout(set = 5, binding = 2) uniform sampler2D emissiveSampler;
+layout(set = 5, binding = 3) uniform sampler2D occlusionSampler;
+layout(set = 5, binding = 4) uniform sampler2D normalSampler;
 
 layout(location = 0) out vec4 outputColor;
 
@@ -95,7 +94,9 @@ vec3 normal() {
 }
 
 void main() {
-    vec3  ambient  = ambientLight.a * ambientLight.rgb;
+    Light sceneLight = ambientLights[0];
+
+    vec3  ambient  = sceneLight.lightColor.a * sceneLight.lightColor.rgb;
     vec3  diffuse  = vec3(0.0f, 0.0f, 0.0f);
     vec3  specular = vec3(0.0f, 0.0f, 0.0f);
     vec3  emissive = emissive();
@@ -106,7 +107,7 @@ void main() {
     vec3 viewVector    = viewPosition.xyz - inputPosition;
     vec3 viewDirection = normalize(viewVector);
 
-    uint pointLightCount = lightTypeCounts[0];
+    uint pointLightCount = sceneLight.lightIntegerValues[0];
 
     for(int pointLightIndex = 0; pointLightIndex < pointLightCount; pointLightIndex++) {
         Light pointLight = pointLights[pointLightIndex];
@@ -119,11 +120,11 @@ void main() {
 
         vec3  halfwayDirection = normalize(viewDirection + lightDirection);
 
-        float Kc = attenuationCoefficients[0];
-        float Kl = attenuationCoefficients[1];
-        float Kq = attenuationCoefficients[2];
+        float Kc = sceneLight.lightFloatValues[0];
+        float Kl = sceneLight.lightFloatValues[1];
+        float Kq = sceneLight.lightFloatValues[2];
 
-        float specularFalloff = attenuationCoefficients[3];
+        float specularFalloff = sceneLight.lightFloatValues[3];
 
         float attenuation = Kc + Kl * lightDistance + Kq * lightDistance * lightDistance;
         float intensity   = pointLight.lightColor.a;

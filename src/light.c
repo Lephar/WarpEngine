@@ -3,27 +3,36 @@
 #include "numerics.h"
 #include "logger.h"
 
-uint32_t lightCountLimit;
-SceneLightingUniform sceneLightingUniform;
-PLightUniform pointLightUniforms;
-PLightUniform spotLightUniforms;
+const uint32_t            lightTypeCount = 4;
+const uint32_t       pointLightTypeIndex = 0;
+const uint32_t        spotLightTypeIndex = 1;
+const uint32_t directionalLightTypeIndex = 2;
+const uint32_t     ambientLightTypeIndex = 3;
+      uint32_t           lightCountLimit;
+
+PLightUniform       pointLightUniforms;
+PLightUniform        spotLightUniforms;
 PLightUniform directionalLightUniforms;
+PLightUniform     ambientLightUniforms;
 
-void initializeLighting() {
-    sceneLightingUniform.lightTypeCounts[0] = 0;
-    sceneLightingUniform.lightTypeCounts[1] = 0;
-    sceneLightingUniform.lightTypeCounts[2] = 0;
-    sceneLightingUniform.lightTypeCounts[3] = 0;
+PLightUniform lightTypeReferences[4]; // lightTypeCount
+PLightUniform sceneLight;
 
-    sceneLightingUniform.ambientLight[0] = 1.0f;
-    sceneLightingUniform.ambientLight[1] = 0.8f;
-    sceneLightingUniform.ambientLight[2] = 0.6f;
-    sceneLightingUniform.ambientLight[3] = 0.03125f;
+void initializeLights() {
+    sceneLight->color[0] = 1.0f;
+    sceneLight->color[1] = 0.8f;
+    sceneLight->color[2] = 0.6f;
+    sceneLight->color[3] = 0.03125f;
 
-    sceneLightingUniform.attenuationCoefficients[0] = 1.0f;
-    sceneLightingUniform.attenuationCoefficients[1] = 0.7f;
-    sceneLightingUniform.attenuationCoefficients[2] = 1.8f;
-    sceneLightingUniform.attenuationCoefficients[3] = 32.0f;
+    sceneLight->fVals[0] = 1.0f;  // Constant  Attenuation Coefficient
+    sceneLight->fVals[1] = 0.7f;  // Linear    Attenuation Coefficient
+    sceneLight->fVals[2] = 1.8f;  // Quadratic Attenuation Coefficient
+    sceneLight->fVals[3] = 32.0f; // Specular  Falloff     Coefficient
+
+    sceneLight->iVals[0] = 0; // Point       Light Count
+    sceneLight->iVals[1] = 0; // Spot        Light Count
+    sceneLight->iVals[2] = 0; // Directional Light Count
+    sceneLight->iVals[3] = 1; // Ambient     Light Count
 }
 
 uint32_t loadLight(cgltf_light *lightData) {
@@ -34,13 +43,14 @@ uint32_t loadLight(cgltf_light *lightData) {
         return UINT32_MAX;
     }
 
-    if(sceneLightingUniform.lightTypeCounts[0] >= lightCountLimit) {
+    const uint32_t lightIndex = sceneLight->iVals[pointLightTypeIndex];
+
+    if(lightIndex >= lightCountLimit) {
         debug("\t\tLight count limit reached, skipping...");
         return UINT32_MAX;
     }
 
-    const uint32_t lightIndex = sceneLightingUniform.lightTypeCounts[0];
-    sceneLightingUniform.lightTypeCounts[0]++;
+    sceneLight->iVals[pointLightTypeIndex]++;
 
     PLightUniform light = &pointLightUniforms[lightIndex];
 

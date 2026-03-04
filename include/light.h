@@ -2,24 +2,28 @@
 
 #include "pch.h"
 
-typedef struct sceneLightingUniform {
-    vec4 ambientLight; // R,G,B,Intensity
-    vec4 attenuationCoefficients; // Constant, Linear, Quadratic, Specular Falloff
-    uint32_t lightTypeCounts[4]; // Point, Spot, Directional, Ambient. Only the first one is used for now, others are just padding
-    uint32_t padding[4];
-} SceneLightingUniform, *PSceneLightingUniform;
-
 typedef struct lightUniform {
-    mat4 transform;
-    vec4 color; // R,G,B,Intensity
-    vec4 extra; // Different values depending on light type
+    mat4  transform;
+    vec4  color; // R,G,B,Intensity
+    vec4  extra; // Different integer values depending on light type
+    vec4  fVals; // Different float   values depending on light type
+    ivec4 iVals; // Different integer values depending on light type
 } LightUniform, *PLightUniform;
 
-extern uint32_t lightCountLimit;
-extern SceneLightingUniform sceneLightingUniform;
-extern PLightUniform pointLightUniforms;
-extern PLightUniform spotLightUniforms;
-extern PLightUniform directionalLightUniforms;
+extern const uint32_t            lightTypeCount;
+extern const uint32_t       pointLightTypeIndex;
+extern const uint32_t        spotLightTypeIndex;
+extern const uint32_t directionalLightTypeIndex;
+extern const uint32_t     ambientLightTypeIndex;
+extern       uint32_t           lightCountLimit;
 
-void initializeLighting();
+extern PLightUniform       pointLightUniforms;
+extern PLightUniform        spotLightUniforms;
+extern PLightUniform directionalLightUniforms;
+extern PLightUniform     ambientLightUniforms;
+
+extern PLightUniform lightTypeReferences[];
+extern PLightUniform sceneLight;
+
+void initializeLights();
 uint32_t loadLight(cgltf_light *lightData);
