@@ -4,21 +4,11 @@
 
 typedef struct material Material;
 
-typedef struct descriptorBinding {
-    uint32_t bindingIndex;
-    union {
-        VkDescriptorBufferInfo bufferInfo;
-        VkDescriptorImageInfo imageInfo;
-    };
-} DescriptorBinding, *PDescriptorBinding;
-
 typedef struct descriptorPool {
     VkDescriptorType type;
     VkShaderStageFlags stage;
-    uint32_t setIndex;
     uint32_t setCount;
     uint32_t bindingCount;
-    PDescriptorBinding bindings;
     VkDescriptorSetLayout layout;
     VkDescriptorPool pool;
 } DescriptorPool, *PDescriptorPool;

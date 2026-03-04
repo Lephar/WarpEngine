@@ -23,7 +23,7 @@ VkPushConstantRange *pushConstantRanges;
 VkPipelineLayout pipelineLayout;
 
 void createPipelineLayout() {
-    descriptorSetLayoutCount = 6;
+    descriptorSetLayoutCount = descriptorPoolCount;
     pushConstantRangeCount   = 1;
 
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
@@ -123,7 +123,6 @@ void setPipelineDetails() {
 
 void createPipeline() {
     createSampler();
-
     createDescriptorPools();
     createPipelineLayout();
 }

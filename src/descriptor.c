@@ -62,12 +62,10 @@ void createSampler() {
 void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, VkShaderStageFlags stage, uint32_t setCount, uint32_t bindingCount) {
     debug("Descriptor pool:");
 
-    descriptorPool->type            = type;
-    descriptorPool->stage           = stage;
-    descriptorPool->setIndex        = UINT32_MAX;
-    descriptorPool->setCount        = setCount;
-    descriptorPool->bindingCount    = bindingCount;
-    descriptorPool->bindings        = nullptr;
+    descriptorPool->type         = type;
+    descriptorPool->stage        = stage;
+    descriptorPool->setCount     = setCount;
+    descriptorPool->bindingCount = bindingCount;
 
     VkDescriptorSetLayoutBinding *layoutBindings = malloc(bindingCount * sizeof(VkDescriptorSetLayoutBinding));
 
@@ -119,10 +117,6 @@ void createDescriptorPools() {
     createDescriptorPool(& lightingDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 4 /* Point, Spot, Directional, Ambient */);
     createDescriptorPool(& materialDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 1);
     createDescriptorPool(&  samplerDescriptorPool, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT,                              materialCountLimit,    materialTextureCount);
-
-    for(uint32_t descriptorPoolIndex = 0; descriptorPoolIndex < descriptorPoolCount; descriptorPoolIndex++) {
-        descriptorPoolReferences[descriptorPoolIndex]->setIndex = descriptorPoolIndex;
-    }
 }
 
 // TODO: Count the allocated sets
