@@ -248,7 +248,7 @@ void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Mater
         material->samplerDescriptorSet,
     };
 
-    uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
+    uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(*descriptorSets);
 
     vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 4, descriptorSetCount, descriptorSets, 1, &material->factorOffset);
 }
