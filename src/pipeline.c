@@ -29,12 +29,9 @@ void createPipelineLayout() {
     descriptorSetLayouts = malloc(descriptorSetLayoutCount * sizeof(VkDescriptorSetLayout));
     pushConstantRanges   = malloc(pushConstantRangeCount   * sizeof(VkPushConstantRange));
 
-    descriptorSetLayouts[0] = storageDescriptorPool.layout;
-    descriptorSetLayouts[1] = primitiveDescriptorPool.layout;
-    descriptorSetLayouts[2] = cameraDescriptorPool.layout;
-    descriptorSetLayouts[3] = lightingDescriptorPool.layout;
-    descriptorSetLayouts[4] = materialDescriptorPool.layout;
-    descriptorSetLayouts[5] = samplerDescriptorPool.layout;
+    for(uint32_t layoutIndex = 0; layoutIndex < descriptorSetLayoutCount; layoutIndex++) {
+        descriptorSetLayouts[layoutIndex] = descriptorPoolReferences[layoutIndex]->layout;
+    }
 
     pushConstantRanges[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
     pushConstantRanges[0].offset = 0;
@@ -127,15 +124,7 @@ void setPipelineDetails() {
 void createPipeline() {
     createSampler();
 
-    uint32_t framebufferCountLimit = framebufferSetCountLimit * framebufferSetFramebufferCountLimit;
-
-    createDescriptorPool(&storageDescriptorPool,   VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         1,                     VK_SHADER_STAGE_VERTEX_BIT,   2 /* Index, Vertex */);
-    createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT,   1);
-    createDescriptorPool(&cameraDescriptorPool,    VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1);
-    createDescriptorPool(&lightingDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 4 /* Ambient, Point, Spot, Directional */);
-    createDescriptorPool(&materialDescriptorPool,  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, framebufferCountLimit, VK_SHADER_STAGE_FRAGMENT_BIT, 1);
-    createDescriptorPool(&samplerDescriptorPool,   VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, materialCountLimit,    VK_SHADER_STAGE_FRAGMENT_BIT, materialTextureCount);
-
+    createDescriptorPools();
     createPipelineLayout();
 }
 

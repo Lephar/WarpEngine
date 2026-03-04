@@ -4,6 +4,7 @@
 #include "device.h"
 #include "buffer.h"
 #include "image.h"
+#include "light.h"
 #include "material.h"
 #include "content.h"
 #include "framebuffer.h"
@@ -112,12 +113,10 @@ void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type,
 }
 
 void createDescriptorPools() {
-    const uint32_t framebufferCountLimit = framebufferSetCountLimit * framebufferSetFramebufferCountLimit;
-
     createDescriptorPool(&  storageDescriptorPool, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         VK_SHADER_STAGE_VERTEX_BIT,                                1,                     2 /* Index, Vertex */);
     createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT,                                framebufferCountLimit, 1);
     createDescriptorPool(&   cameraDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, framebufferCountLimit, 1);
-    createDescriptorPool(& lightingDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 4 /* Ambient, Point, Spot, Directional */);
+    createDescriptorPool(& lightingDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 4 /* Point, Spot, Directional, Ambient */);
     createDescriptorPool(& materialDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 1);
     createDescriptorPool(&  samplerDescriptorPool, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT,                              materialCountLimit,    materialTextureCount);
 

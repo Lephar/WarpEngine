@@ -41,12 +41,12 @@ void createSampler();
 void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type, VkShaderStageFlags stage, uint32_t setCount, uint32_t bindingCount);
 void createDescriptorPools();
 
-VkDescriptorSet getStorageDescriptorSet(VkDeviceSize offsets[], VkDeviceSize ranges[]);
+VkDescriptorSet getStorageDescriptorSet();
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
-VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
-VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getCameraDescriptorSet(   uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getLightingDescriptorSet( uint32_t framebufferSetIndex, uint32_t framebufferIndex);
+VkDescriptorSet getMaterialDescriptorSet( uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 VkDescriptorSet getSamplerDescriptorSet(Material *material);
-VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex);
 
 void resetDescriptorPool(DescriptorPool *descriptorPool);
 void destroyDescriptorPool(DescriptorPool *descriptorPool);
