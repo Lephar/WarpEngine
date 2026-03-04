@@ -110,17 +110,7 @@ void loadContent() {
 
     debug("Index and vertex data copied into device memory");
 
-    VkDeviceSize descriptorOffsets[] = {
-        0,
-        indexBufferSize,
-    };
-
-    VkDeviceSize descriptorRanges[] = {
-        indexBufferSize,
-        vertexBufferSize,
-    };
-
-    storageDescriptorSet = getStorageDescriptorSet(descriptorOffsets, descriptorRanges);
+    storageDescriptorSet = getStorageDescriptorSet();
 
     debug("Index and vertex descriptor sets created and updated");
 

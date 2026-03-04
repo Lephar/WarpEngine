@@ -232,10 +232,10 @@ void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Mater
     VkColorBlendEquationEXT colorBlendEquations = {
         .srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
         .dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-        .colorBlendOp = VK_BLEND_OP_ADD,
+        .colorBlendOp        = VK_BLEND_OP_ADD,
         .srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE,
         .dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
-        .alphaBlendOp = VK_BLEND_OP_ADD
+        .alphaBlendOp        = VK_BLEND_OP_ADD
     };
 
     PFN_vkCmdSetColorBlendEnableEXT cmdSetColorBlendEnable = loadDeviceFunction("vkCmdSetColorBlendEnableEXT");
@@ -250,7 +250,7 @@ void bindMaterial(uint32_t framebufferSetIndex, uint32_t framebufferIndex, Mater
 
     uint32_t descriptorSetCount = sizeof(descriptorSets) / sizeof(VkDescriptorSet);
 
-    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 3 , descriptorSetCount, descriptorSets, 1, &material->factorOffset);
+    vkCmdBindDescriptorSets(framebuffer->renderCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 4, descriptorSetCount, descriptorSets, 1, &material->factorOffset);
 }
 
 void destroyMaterial(Material *material) {
