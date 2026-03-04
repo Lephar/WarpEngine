@@ -38,8 +38,9 @@ VkDeviceSize cameraUniformBufferOffset;
 VkDeviceSize materialUniformBufferOffset;
 VkDeviceSize lightUniformBufferOffset;
 
-VkDeviceSize framebufferUniformBufferSize;
-VkDeviceSize framebufferSetUniformBufferSize;
+VkDeviceSize framebufferUniformBufferRange;
+VkDeviceSize framebufferSetUniformBufferRange;
+VkDeviceSize **framebufferUniformBufferOffsets;
 
 void createContentBuffers() {
     const VkDeviceSize indexBufferSizeLimit  = deviceBuffer.size / 4;

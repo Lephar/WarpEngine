@@ -111,8 +111,17 @@ void setPipelineDetails() {
     debug("Framebuffer Uniform Buffer Range:     %lu", framebufferUniformBufferRange);
     debug("Framebuffer Set Uniform Buffer Range: %lu", framebufferSetUniformBufferRange);
 
-    debug("Framebuffer Uniform Buffer Size:     %lu", framebufferUniformBufferSize);
-    debug("Framebuffer Set Uniform Buffer Size: %lu", framebufferSetUniformBufferSize);
+    debug("Framebuffer Uniform Buffer Offsets:");
+    framebufferUniformBufferOffsets = malloc(framebufferSetCountLimit * sizeof(*framebufferUniformBufferOffsets));
+
+    for(uint32_t framebufferSetIndex = 0; framebufferSetIndex < framebufferSetCountLimit; framebufferSetIndex++) {
+        framebufferUniformBufferOffsets[framebufferSetIndex] = malloc(framebufferSetFramebufferCountLimit * sizeof(**framebufferUniformBufferOffsets));
+
+        for(uint32_t framebufferIndex = 0; framebufferIndex < framebufferSetFramebufferCountLimit; framebufferIndex++) {
+            framebufferUniformBufferOffsets[framebufferSetIndex][framebufferIndex] = framebufferSetIndex * framebufferSetUniformBufferRange + framebufferIndex * framebufferUniformBufferRange;
+            debug("\t[%u][%u] = %lu", framebufferSetIndex, framebufferIndex, framebufferUniformBufferOffsets[framebufferSetIndex][framebufferIndex]);
+        }
+    }
 }
 
 void createPipeline() {

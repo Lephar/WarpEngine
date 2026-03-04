@@ -34,8 +34,9 @@ extern VkDeviceSize cameraUniformBufferOffset;
 extern VkDeviceSize materialUniformBufferOffset;
 extern VkDeviceSize lightUniformBufferOffset;
 
-extern VkDeviceSize framebufferUniformBufferSize;
-extern VkDeviceSize framebufferSetUniformBufferSize;
+extern VkDeviceSize framebufferUniformBufferRange;
+extern VkDeviceSize framebufferSetUniformBufferRange;
+extern VkDeviceSize **framebufferUniformBufferOffsets;
 
 void createContentBuffers();
 void loadContent();
