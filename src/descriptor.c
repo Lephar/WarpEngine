@@ -135,52 +135,13 @@ VkDescriptorSet allocateDescriptorSet(DescriptorPool *descriptorPool) {
     return descriptorSet;
 }
 
-VkDescriptorSet createBufferDescriptorSet(DescriptorPool *descriptorPool, VkDescriptorBufferInfo bufferInfos[]) {
-    debug("Buffer Descriptor Set:");
+VkDescriptorSet createDescriptorSet(DescriptorPool *descriptorPool, VkDescriptorImageInfo imageInfos[], VkDescriptorBufferInfo bufferInfos[]) {
+    debug("Descriptor Set:");
 
     VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
     debug("\tAllocated");
 
     VkWriteDescriptorSet   *descriptorWrites = malloc(descriptorPool->bindingCount * sizeof(VkWriteDescriptorSet));
-
-    for(uint32_t binding = 0; binding < descriptorPool->bindingCount; binding++) {
-        VkDescriptorBufferInfo *bufferInfo      = &bufferInfos[binding];
-        VkWriteDescriptorSet   *descriptorWrite = &descriptorWrites[binding];
-
-        debug("\tBinding:  %u",  binding);
-        debug("\t\tOffset: %lu", bufferInfo->offset);
-        debug("\t\tRange:  %lu", bufferInfo->range);
-
-        descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrite->pNext = nullptr;
-        descriptorWrite->dstSet = descriptorSet;
-        descriptorWrite->dstBinding = binding;
-        descriptorWrite->dstArrayElement = 0;
-        descriptorWrite->descriptorCount = 1;
-        descriptorWrite->descriptorType = descriptorPool->type;
-        descriptorWrite->pImageInfo = nullptr;
-        descriptorWrite->pBufferInfo = bufferInfo;
-        descriptorWrite->pTexelBufferView = nullptr;
-    }
-
-    vkUpdateDescriptorSets(device, descriptorPool->bindingCount, descriptorWrites, 0, nullptr);
-    free(descriptorWrites);
-    debug("\tUpdated");
-
-    return descriptorSet;
-}
-
-VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkDescriptorImageInfo imageInfos[]) {
-    assert(descriptorPool->bindingCount == materialTextureCount);
-
-    debug("Sampler Descriptor Set:");
-
-    VkDescriptorSet descriptorSet = allocateDescriptorSet(descriptorPool);
-    debug("\tAllocated");
-
-    debug("\tBinding Count: %u", descriptorPool->bindingCount);
-
-    VkWriteDescriptorSet *descriptorWrites = malloc(descriptorPool->bindingCount * sizeof(VkWriteDescriptorSet));
 
     for(uint32_t binding = 0; binding < descriptorPool->bindingCount; binding++) {
         VkWriteDescriptorSet *descriptorWrite = &descriptorWrites[binding];
@@ -192,9 +153,16 @@ VkDescriptorSet createImageDescriptorSet(DescriptorPool *descriptorPool, VkDescr
         descriptorWrite->dstArrayElement = 0;
         descriptorWrite->descriptorCount = 1;
         descriptorWrite->descriptorType = descriptorPool->type;
-        descriptorWrite->pImageInfo = &imageInfos[binding];
+        descriptorWrite->pImageInfo = nullptr;
         descriptorWrite->pBufferInfo = nullptr;
         descriptorWrite->pTexelBufferView = nullptr;
+
+        if(descriptorPool->type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE ||
+           descriptorPool->type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER) {
+            descriptorWrite->pImageInfo  = &imageInfos[binding];
+        } else {
+            descriptorWrite->pBufferInfo = &bufferInfos[binding];
+        }
     }
 
     vkUpdateDescriptorSets(device, descriptorPool->bindingCount, descriptorWrites, 0, nullptr);
@@ -217,7 +185,7 @@ VkDescriptorSet getStorageDescriptorSet() {
         },
     };
 
-    return createBufferDescriptorSet(&storageDescriptorPool, bufferInfos);
+    return createDescriptorSet(&storageDescriptorPool, nullptr, bufferInfos);
 }
 
 VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
@@ -231,7 +199,7 @@ VkDescriptorSet getPrimitiveDescriptorSet(uint32_t framebufferSetIndex, uint32_t
         },
     };
 
-    return createBufferDescriptorSet(&primitiveDescriptorPool, bufferInfos);
+    return createDescriptorSet(&primitiveDescriptorPool, nullptr, bufferInfos);
 }
 
 VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
@@ -245,7 +213,7 @@ VkDescriptorSet getCameraDescriptorSet(uint32_t framebufferSetIndex, uint32_t fr
         },
     };
 
-    return createBufferDescriptorSet(&cameraDescriptorPool, bufferInfos);
+    return createDescriptorSet(&cameraDescriptorPool, nullptr, bufferInfos);
 }
 
 VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
@@ -261,7 +229,7 @@ VkDescriptorSet getLightingDescriptorSet(uint32_t framebufferSetIndex, uint32_t 
         bufferInfo->range  = lightUniformBufferRange;
     }
 
-    return createBufferDescriptorSet(&lightingDescriptorPool, bufferInfos);
+    return createDescriptorSet(&lightingDescriptorPool, nullptr, bufferInfos);
 }
 
 VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t framebufferIndex) {
@@ -275,7 +243,7 @@ VkDescriptorSet getMaterialDescriptorSet(uint32_t framebufferSetIndex, uint32_t 
         },
     };
 
-    return createBufferDescriptorSet(&materialDescriptorPool, bufferInfos);
+    return createDescriptorSet(&materialDescriptorPool, nullptr, bufferInfos);
 }
 
 VkDescriptorSet getSamplerDescriptorSet(Material *material) {
@@ -303,7 +271,7 @@ VkDescriptorSet getSamplerDescriptorSet(Material *material) {
         }
     };
 
-    return createImageDescriptorSet(&samplerDescriptorPool, imageInfos);
+    return createDescriptorSet(&samplerDescriptorPool, imageInfos, nullptr);
 }
 
 void resetDescriptorPool(DescriptorPool *descriptorPool) {
