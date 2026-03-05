@@ -19,12 +19,12 @@ DescriptorPool  materialDescriptorPool;
 DescriptorPool   samplerDescriptorPool;
 
 const PDescriptorPool descriptorPoolReferences[] = {
-      &storageDescriptorPool,
+    &  storageDescriptorPool,
     &primitiveDescriptorPool,
-       &cameraDescriptorPool,
-     &lightingDescriptorPool,
-     &materialDescriptorPool,
-      &samplerDescriptorPool,
+    &   cameraDescriptorPool,
+    & lightingDescriptorPool,
+    & materialDescriptorPool,
+    &  samplerDescriptorPool,
 };
 
 const uint32_t descriptorPoolCount = sizeof(descriptorPoolReferences) / sizeof(*descriptorPoolReferences);
@@ -69,8 +69,7 @@ void createDescriptorPool(DescriptorPool *descriptorPool, VkDescriptorType type,
 
     VkDescriptorSetLayoutBinding *layoutBindings = malloc(bindingCount * sizeof(VkDescriptorSetLayoutBinding));
 
-    for(uint32_t binding = 0; binding < bindingCount; binding++)
-    {
+    for(uint32_t binding = 0; binding < bindingCount; binding++) {
         VkDescriptorSetLayoutBinding *layoutBinding = &layoutBindings[binding];
 
         layoutBinding->binding = binding;

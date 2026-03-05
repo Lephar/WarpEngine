@@ -29,20 +29,20 @@ layout(set = 2, binding = 0) uniform Camera {
     vec4 cameraProperties;
 };
 
-layout(set = 3, binding = 0) uniform PointLights {
-    Light pointLights[LIGHT_COUNT_HARD_LIMIT];
+layout(set = 3, binding = 0) uniform       PointLights {
+    Light       pointLights[LIGHT_COUNT_HARD_LIMIT];
 };
 
-layout(set = 3, binding = 1) uniform SpotLights {
-    Light spotLights[LIGHT_COUNT_HARD_LIMIT];
+layout(set = 3, binding = 1) uniform        SpotLights {
+    Light        spotLights[LIGHT_COUNT_HARD_LIMIT];
 };
 
 layout(set = 3, binding = 2) uniform DirectionalLights {
     Light directionalLights[LIGHT_COUNT_HARD_LIMIT];
 };
 
-layout(set = 3, binding = 3) uniform AmbientLights {
-    Light ambientLights[LIGHT_COUNT_HARD_LIMIT];
+layout(set = 3, binding = 3) uniform     AmbientLights {
+    Light     ambientLights[LIGHT_COUNT_HARD_LIMIT];
 };
 
 layout(set = 4, binding = 0) uniform Material {

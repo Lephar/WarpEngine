@@ -169,6 +169,7 @@ void freeContent() {
 
     free(nodes);
 
+    free(ambientLightUniforms);
     free(directionalLightUniforms);
     free(spotLightUniforms);
     free(pointLightUniforms);
