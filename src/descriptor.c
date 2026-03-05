@@ -114,7 +114,7 @@ void createDescriptorPools() {
     createDescriptorPool(&  storageDescriptorPool, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         VK_SHADER_STAGE_VERTEX_BIT,                                1,                     2 /* Index, Vertex */);
     createDescriptorPool(&primitiveDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT,                                framebufferCountLimit, 1);
     createDescriptorPool(&   cameraDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, framebufferCountLimit, 1);
-    createDescriptorPool(& lightingDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 4 /* Point, Spot, Directional, Ambient */);
+    createDescriptorPool(& lightingDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,         VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, lightTypeCount);
     createDescriptorPool(& materialDescriptorPool, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_FRAGMENT_BIT,                              framebufferCountLimit, 1);
     createDescriptorPool(&  samplerDescriptorPool, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT,                              materialCountLimit,    materialTextureCount);
 }

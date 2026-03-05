@@ -65,13 +65,6 @@ void createContentBuffers() {
     directionalLightUniforms = malloc(lightCountLimit * sizeof(LightUniform));
     ambientLightUniforms     = malloc(lightCountLimit * sizeof(LightUniform));
 
-    lightTypeReferences[pointLightTypeIndex]       = pointLightUniforms;
-    lightTypeReferences[spotLightTypeIndex]        = spotLightUniforms;
-    lightTypeReferences[directionalLightTypeIndex] = directionalLightUniforms;
-    lightTypeReferences[ambientLightTypeIndex]     = ambientLightUniforms;
-
-    sceneLight = ambientLightUniforms;
-
     controlSets = malloc(nodeCountLimit * sizeof(ControlSet));
 
     indexCount  = 0;
@@ -165,7 +158,7 @@ void loadUniformBuffer(uint32_t framebufferSetIndex, uint32_t framebufferIndex) 
     }
 
     for(uint32_t lightTypeIndex = 0; lightTypeIndex < lightTypeCount; lightTypeIndex++) {
-        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + lightUniformBufferOffset + lightUniformBufferRange * lightTypeIndex, lightTypeReferences[lightTypeIndex], sceneLight->iVals[lightTypeIndex] * sizeof(LightUniform));
+        memcpy(mappedSharedMemory + framebufferUniformBufferOffset + lightUniformBufferOffset + lightUniformBufferRange * lightTypeIndex, *lightTypeReferences[lightTypeIndex], (*sceneLight)->iVals[lightTypeIndex] * sizeof(LightUniform));
     }
 }
 

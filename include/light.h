@@ -10,20 +10,20 @@ typedef struct lightUniform {
     ivec4 iVals; // Different integer values depending on light type
 } LightUniform, *PLightUniform;
 
+extern PLightUniform       pointLightUniforms;
+extern PLightUniform        spotLightUniforms;
+extern PLightUniform directionalLightUniforms;
+extern PLightUniform     ambientLightUniforms;
+
+extern const PLightUniform *lightTypeReferences[];
+extern const PLightUniform *sceneLight;
+
 extern const uint32_t            lightTypeCount;
 extern const uint32_t       pointLightTypeIndex;
 extern const uint32_t        spotLightTypeIndex;
 extern const uint32_t directionalLightTypeIndex;
 extern const uint32_t     ambientLightTypeIndex;
 extern       uint32_t           lightCountLimit;
-
-extern PLightUniform       pointLightUniforms;
-extern PLightUniform        spotLightUniforms;
-extern PLightUniform directionalLightUniforms;
-extern PLightUniform     ambientLightUniforms;
-
-extern PLightUniform lightTypeReferences[];
-extern PLightUniform sceneLight;
 
 void initializeLights();
 uint32_t loadLight(cgltf_light *lightData);
