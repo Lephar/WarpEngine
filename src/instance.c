@@ -68,13 +68,19 @@ void createInstance() {
     void *instanceNext = nullptr;
 
 #if DEBUG
-    VkBool32 boolFalse = VK_FALSE;
-    VkBool32 boolTrue  = VK_TRUE;
+    const VkBool32 boolFalse = VK_FALSE;
+    const VkBool32 boolTrue  = VK_TRUE;
 
     VkLayerSettingEXT settings[] = {
         {
             .pLayerName = validationLayer,
             .pSettingName = "printf_enable",
+            .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
+            .valueCount = 1,
+            .pValues = &boolTrue
+        }, {
+            .pLayerName = validationLayer,
+            .pSettingName = "printf_verbose",
             .type = VK_LAYER_SETTING_TYPE_BOOL32_EXT,
             .valueCount = 1,
             .pValues = &boolTrue
